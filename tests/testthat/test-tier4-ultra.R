@@ -473,7 +473,7 @@ test_that("get_voice_quality_ultra HNR output does not depend on pitch settings"
     very_accurate = FALSE
   )
 
-  expect_equal(default_hnr, ac_hnr)
+  expect_equal(default_hnr, ac_hnr, tolerance = sqrt(.Machine$double.eps))
 })
 
 

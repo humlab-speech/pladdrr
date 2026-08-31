@@ -31,15 +31,15 @@ test_that("RLPC getters not exposed via LPC$ dispatch table work via $.cpp direc
   expect_type(lpc$.cpp$get_xmin(), "double")
   expect_type(lpc$.cpp$get_xmax(), "double")
   expect_gt(lpc$.cpp$get_xmax(), lpc$.cpp$get_xmin())
-  expect_equal(lpc$.cpp$get_duration(), lpc$.cpp$get_xmax() - lpc$.cpp$get_xmin())
+  expect_equal(lpc$.cpp$get_duration(), lpc$.cpp$get_xmax() - lpc$.cpp$get_xmin(), tolerance = sqrt(.Machine$double.eps))
   expect_type(lpc$.cpp$get_x1(), "double")
   expect_type(lpc$.cpp$get_sampling_frequency(), "double")
-  expect_equal(lpc$.cpp$get_sampling_frequency(), 1 / lpc$.cpp$get_sampling_period())
+  expect_equal(lpc$.cpp$get_sampling_frequency(), 1 / lpc$.cpp$get_sampling_period(), tolerance = sqrt(.Machine$double.eps))
 
   # get_nx/get_dx are the underlying implementations behind the R6-exposed
   # aliases get_number_of_frames()/get_time_step() -- cross check.
-  expect_equal(lpc$.cpp$get_nx(), lpc$get_number_of_frames())
-  expect_equal(lpc$.cpp$get_dx(), lpc$get_time_step())
+  expect_equal(lpc$.cpp$get_nx(), lpc$get_number_of_frames(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(lpc$.cpp$get_dx(), lpc$get_time_step(), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("RLPC$get_num_coefficients_at_frame works (no R6-dispatch counterpart)", {
@@ -50,7 +50,7 @@ test_that("RLPC$get_num_coefficients_at_frame works (no R6-dispatch counterpart)
   expect_type(n_coef, "integer")
   expect_gte(n_coef, 1)
   # Should agree with the length of the coefficient vector for that frame.
-  expect_equal(n_coef, length(lpc$get_coefficients_at_frame(1)))
+  expect_equal(n_coef, length(lpc$get_coefficients_at_frame(1)), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("RLPC frame/time conversion methods work (no R6-dispatch counterpart)", {
@@ -65,7 +65,7 @@ test_that("RLPC frame/time conversion methods work (no R6-dispatch counterpart)"
   # for the first frame's own time.
   frame_back <- lpc$.cpp$get_frame_from_time(t1)
   expect_type(frame_back, "integer")
-  expect_equal(frame_back, 1L)
+  expect_equal(frame_back, 1L, tolerance = sqrt(.Machine$double.eps))
 
   t_last <- lpc$.cpp$get_time_from_frame(n_frames)
   expect_gt(t_last, t1)
@@ -127,9 +127,9 @@ test_that("RLPC$as_data_frame / get_info / save work directly (no R6-dispatch co
 
   df <- lpc$.cpp$as_data_frame()
   expect_s3_class(df, "data.frame")
-  expect_equal(nrow(df), n_frames)
+  expect_equal(nrow(df), n_frames, tolerance = sqrt(.Machine$double.eps))
   expect_setequal(names(df), c("time", "gain", "n_coefficients"))
-  expect_equal(df$gain, lpc$get_all_gains())
+  expect_equal(df$gain, lpc$get_all_gains(), tolerance = sqrt(.Machine$double.eps))
 
   info <- lpc$.cpp$get_info()
   expect_type(info, "list")
@@ -137,8 +137,8 @@ test_that("RLPC$as_data_frame / get_info / save work directly (no R6-dispatch co
     names(info),
     c("xmin", "xmax", "nx", "dx", "x1", "sampling_period", "max_n_coefficients")
   )
-  expect_equal(info$nx, n_frames)
-  expect_equal(info$max_n_coefficients, lpc$get_max_num_coefficients())
+  expect_equal(info$nx, n_frames, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(info$max_n_coefficients, lpc$get_max_num_coefficients(), tolerance = sqrt(.Machine$double.eps))
 
   tmp <- tempfile(fileext = ".LPC")
   on.exit(unlink(tmp), add = TRUE)

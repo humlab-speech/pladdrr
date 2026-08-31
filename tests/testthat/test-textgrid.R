@@ -18,9 +18,9 @@ test_that("TextGrid basic properties are correct", {
   tg <- TextGrid$new(tg_path)
   
   # Time properties
-  expect_equal(tg$get_start_time(), 0)
-  expect_equal(tg$get_end_time(), 3)
-  expect_equal(tg$get_total_duration(), 3)
+  expect_equal(tg$get_start_time(), 0, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(tg$get_end_time(), 3, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(tg$get_total_duration(), 3, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("TextGrid tier properties are correct", {
@@ -30,7 +30,7 @@ test_that("TextGrid tier properties are correct", {
   tg <- TextGrid$new(tg_path)
   
   # Tier count and names
-  expect_equal(tg$get_number_of_tiers(), 3)
+  expect_identical(tg$get_number_of_tiers(), 3L)
   tier_names <- tg$get_tier_names()
   expect_length(tier_names, 3)
   expect_identical(tier_names[1], "words")
@@ -65,20 +65,20 @@ test_that("TextGrid interval tier queries work", {
   tg <- TextGrid$new(tg_path)
   
   # Number of intervals
-  expect_equal(tg$get_number_of_intervals("words"), 4)
-  expect_equal(tg$get_number_of_intervals("phones"), 7)
+  expect_identical(tg$get_number_of_intervals("words"), 4L)
+  expect_identical(tg$get_number_of_intervals("phones"), 7L)
   
   # Interval times
   expect_equal(tg$get_interval_start_time("words", 2), 0.5)
   expect_equal(tg$get_interval_end_time("words", 2), 1.5)
   
   # Interval text
-  expect_equal(tg$get_interval_text("words", 2), "hello")
-  expect_equal(tg$get_interval_text("words", 3), "world")
+  expect_identical(tg$get_interval_text("words", 2), "hello")
+  expect_identical(tg$get_interval_text("words", 3), "world")
   
   # Empty intervals
-  expect_equal(tg$get_interval_text("words", 1), "")
-  expect_equal(tg$get_interval_text("words", 4), "")
+  expect_identical(tg$get_interval_text("words", 1), "")
+  expect_identical(tg$get_interval_text("words", 4), "")
 })
 
 test_that("TextGrid can get interval at time", {
@@ -88,10 +88,10 @@ test_that("TextGrid can get interval at time", {
   tg <- TextGrid$new(tg_path)
   
   # Get interval number at various times
-  expect_equal(tg$get_interval_at_time("words", 0.2), 1)
-  expect_equal(tg$get_interval_at_time("words", 1.0), 2)
-  expect_equal(tg$get_interval_at_time("words", 2.0), 3)
-  expect_equal(tg$get_interval_at_time("words", 2.8), 4)
+  expect_equal(tg$get_interval_at_time("words", 0.2), 1, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(tg$get_interval_at_time("words", 1.0), 2, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(tg$get_interval_at_time("words", 2.0), 3, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(tg$get_interval_at_time("words", 2.8), 4, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("TextGrid can get label at time", {
@@ -101,15 +101,15 @@ test_that("TextGrid can get label at time", {
   tg <- TextGrid$new(tg_path)
   
   # Get label at various times
-  expect_equal(tg$get_label_at_time("words", 0.2), "")
-  expect_equal(tg$get_label_at_time("words", 1.0), "hello")
-  expect_equal(tg$get_label_at_time("words", 2.0), "world")
-  expect_equal(tg$get_label_at_time("words", 2.8), "")
+  expect_identical(tg$get_label_at_time("words", 0.2), "")
+  expect_identical(tg$get_label_at_time("words", 1.0), "hello")
+  expect_identical(tg$get_label_at_time("words", 2.0), "world")
+  expect_identical(tg$get_label_at_time("words", 2.8), "")
   
   # Phone tier
-  expect_equal(tg$get_label_at_time("phones", 0.6), "h")
-  expect_equal(charToRaw(tg$get_label_at_time("phones", 1.0)), charToRaw("\u025b"))
-  expect_equal(tg$get_label_at_time("phones", 1.7), "w")
+  expect_identical(tg$get_label_at_time("phones", 0.6), "h")
+  expect_equal(charToRaw(tg$get_label_at_time("phones", 1.0)), charToRaw("\u025b"), tolerance = sqrt(.Machine$double.eps))
+  expect_identical(tg$get_label_at_time("phones", 1.7), "w")
 })
 
 test_that("TextGrid point tier queries work", {
@@ -119,15 +119,15 @@ test_that("TextGrid point tier queries work", {
   tg <- TextGrid$new(tg_path)
   
   # Number of points
-  expect_equal(tg$get_number_of_points("tones"), 2)
+  expect_identical(tg$get_number_of_points("tones"), 2L)
   
   # Point times
   expect_equal(tg$get_point_time("tones", 1), 1.0)
   expect_equal(tg$get_point_time("tones", 2), 2.2)
   
   # Point text
-  expect_equal(tg$get_point_text("tones", 1), "H*")
-  expect_equal(tg$get_point_text("tones", 2), "L-L%")
+  expect_identical(tg$get_point_text("tones", 1), "H*")
+  expect_identical(tg$get_point_text("tones", 2), "L-L%")
 })
 
 test_that("TextGrid can export to data frame", {
@@ -159,11 +159,11 @@ test_that("TextGrid can modify interval labels", {
   
   # Modify interval text
   tg$set_interval_text("words", 2, "hi")
-  expect_equal(tg$get_interval_text("words", 2), "hi")
+  expect_identical(tg$get_interval_text("words", 2), "hi")
   
   # Restore original
   tg$set_interval_text("words", 2, "hello")
-  expect_equal(tg$get_interval_text("words", 2), "hello")
+  expect_identical(tg$get_interval_text("words", 2), "hello")
 })
 
 test_that("TextGrid can insert and remove boundaries", {
@@ -177,11 +177,11 @@ test_that("TextGrid can insert and remove boundaries", {
   
   # Insert boundary
   tg$insert_boundary("words", 1.0)
-  expect_equal(tg$get_number_of_intervals("words"), initial_count + 1)
+  expect_equal(tg$get_number_of_intervals("words"), initial_count + 1, tolerance = sqrt(.Machine$double.eps))
   
   # Remove boundary  
   tg$remove_boundary("words", 1.0)
-  expect_equal(tg$get_number_of_intervals("words"), initial_count)
+  expect_equal(tg$get_number_of_intervals("words"), initial_count, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("TextGrid can save to file", {
@@ -199,8 +199,8 @@ test_that("TextGrid can save to file", {
   
   # Read it back and verify
   tg2 <- TextGrid$new(temp_file)
-  expect_equal(tg2$get_number_of_tiers(), 3)
-  expect_equal(tg2$get_tier_names(), c("words", "phones", "tones"))
+  expect_identical(tg2$get_number_of_tiers(), 3L)
+  expect_equal(tg2$get_tier_names(), c("words", "phones", "tones"), tolerance = sqrt(.Machine$double.eps))
   
   # Clean up
   unlink(temp_file)
@@ -212,9 +212,9 @@ test_that("TextGrid can be created programmatically", {
   tg <- TextGrid$create(0, 5, tier_names = "segments events", point_tiers = "events")
   
   expect_s3_class(tg, "TextGrid")
-  expect_equal(tg$get_start_time(), 0)
-  expect_equal(tg$get_end_time(), 5)
-  expect_equal(tg$get_number_of_tiers(), 2)
+  expect_equal(tg$get_start_time(), 0, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(tg$get_end_time(), 5, tolerance = sqrt(.Machine$double.eps))
+  expect_identical(tg$get_number_of_tiers(), 2L)
 })
 
 test_that("TextGrid handles tier name/number conversion", {
@@ -224,9 +224,9 @@ test_that("TextGrid handles tier name/number conversion", {
   tg <- TextGrid$new(tg_path)
   
   # Both tier number and name should work
-  expect_equal(tg$get_number_of_intervals(1), tg$get_number_of_intervals("words"))
-  expect_equal(tg$get_interval_text(1, 2), tg$get_interval_text("words", 2))
-  expect_equal(tg$tier_is_interval_tier(1), tg$tier_is_interval_tier("words"))
+  expect_equal(tg$get_number_of_intervals(1), tg$get_number_of_intervals("words"), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(tg$get_interval_text(1, 2), tg$get_interval_text("words", 2), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(tg$tier_is_interval_tier(1), tg$tier_is_interval_tier("words"), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("TextGrid handles errors gracefully", {

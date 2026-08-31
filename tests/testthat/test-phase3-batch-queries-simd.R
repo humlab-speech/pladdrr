@@ -28,14 +28,14 @@ test_that("SIMD mean handles edge cases", {
   expect_true(is.na(calculate_mean_simd_bridge(numeric(0))))
 
   # Single value
-  expect_equal(calculate_mean_simd_bridge(42), 42)
+  expect_equal(calculate_mean_simd_bridge(42), 42, tolerance = sqrt(.Machine$double.eps))
 
   # Two values
-  expect_equal(calculate_mean_simd_bridge(c(10, 20)), 15)
+  expect_equal(calculate_mean_simd_bridge(c(10, 20)), 15, tolerance = sqrt(.Machine$double.eps))
 
   # Large values
   large_values <- rep(1e10, 100)
-  expect_equal(calculate_mean_simd_bridge(large_values), 1e10)
+  expect_equal(calculate_mean_simd_bridge(large_values), 1e10, tolerance = sqrt(.Machine$double.eps))
 })
 
 # ============================================================================
@@ -69,13 +69,13 @@ test_that("SIMD stdev with pre-computed mean", {
 
 test_that("SIMD stdev handles edge cases", {
   # Single value
-  expect_equal(calculate_stdev_simd_bridge(42), 0)
+  expect_equal(calculate_stdev_simd_bridge(42), 0, tolerance = sqrt(.Machine$double.eps))
 
   # Two identical values
-  expect_equal(calculate_stdev_simd_bridge(c(10, 10)), 0)
+  expect_equal(calculate_stdev_simd_bridge(c(10, 10)), 0, tolerance = sqrt(.Machine$double.eps))
 
   # Two different values
-  expect_equal(calculate_stdev_simd_bridge(c(10, 20)), sd(c(10, 20)))
+  expect_equal(calculate_stdev_simd_bridge(c(10, 20)), sd(c(10, 20)), tolerance = sqrt(.Machine$double.eps))
 })
 
 # ============================================================================
@@ -96,8 +96,8 @@ test_that("SIMD min/max handles negative and positive values", {
 
   result <- calculate_min_max_simd_bridge(values)
 
-  expect_equal(result$min, -100)
-  expect_equal(result$max, 100)
+  expect_equal(result$min, -100, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(result$max, 100, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("SIMD min/max handles edge cases", {
@@ -108,8 +108,8 @@ test_that("SIMD min/max handles edge cases", {
 
   # Single value
   result <- calculate_min_max_simd_bridge(42)
-  expect_equal(result$min, 42)
-  expect_equal(result$max, 42)
+  expect_equal(result$min, 42, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(result$max, 42, tolerance = sqrt(.Machine$double.eps))
 })
 
 # ============================================================================
@@ -134,7 +134,7 @@ test_that("SIMD quantile handles edge cases", {
   expect_true(is.na(calculate_quantile_simd_bridge(numeric(0), 0.5)))
 
   # Single value
-  expect_equal(calculate_quantile_simd_bridge(42, 0.5), 42)
+  expect_equal(calculate_quantile_simd_bridge(42, 0.5), 42, tolerance = sqrt(.Machine$double.eps))
 
   # Edge quantiles
   values <- 1:100
@@ -167,10 +167,10 @@ test_that("SIMD batch statistics handles edge cases", {
 
   # Single value
   result <- calculate_batch_statistics_simd_bridge(42)
-  expect_equal(result$mean, 42)
-  expect_equal(result$stdev, 0)
-  expect_equal(result$min, 42)
-  expect_equal(result$max, 42)
+  expect_equal(result$mean, 42, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(result$stdev, 0, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(result$min, 42, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(result$max, 42, tolerance = sqrt(.Machine$double.eps))
 })
 
 # ============================================================================
@@ -188,9 +188,9 @@ test_that("SIMD interval statistics processes multiple intervals", {
   # Test "all" metrics
   result <- calculate_interval_statistics_simd_bridge(intervals, "all")
 
-  expect_equal(nrow(result), 3)
-  expect_equal(ncol(result), 4)
-  expect_equal(colnames(result), c("mean", "stdev", "min", "max"))
+  expect_identical(nrow(result), 3L)
+  expect_identical(ncol(result), 4L)
+  expect_equal(colnames(result), c("mean", "stdev", "min", "max"), tolerance = sqrt(.Machine$double.eps))
 
   # Verify first interval (result cells carry dimnames; compare values only)
   expect_equal(as.numeric(result[1, "mean"]), mean(intervals[[1]]), tolerance = 1e-10)
@@ -227,9 +227,9 @@ test_that("SIMD interval quantiles processes multiple quantiles", {
 
   result <- calculate_interval_quantiles_simd_bridge(intervals, quantiles)
 
-  expect_equal(nrow(result), 2)
-  expect_equal(ncol(result), 3)
-  expect_equal(colnames(result), c("q0.25", "q0.5", "q0.75"))
+  expect_identical(nrow(result), 2L)
+  expect_identical(ncol(result), 3L)
+  expect_equal(colnames(result), c("q0.25", "q0.5", "q0.75"), tolerance = sqrt(.Machine$double.eps))
 
   # Verify approximate match to R quantile
   for (i in 1:2) {

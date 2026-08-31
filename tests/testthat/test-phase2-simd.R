@@ -43,7 +43,7 @@ test_that("Spectrogram SIMD matches scalar (Gaussian window)", {
   scalar_mat <- spec_scalar$as_matrix()
   simd_mat <- spec_simd$as_matrix()
 
-  expect_equal(dim(scalar_mat), dim(simd_mat))
+  expect_equal(dim(scalar_mat), dim(simd_mat), tolerance = sqrt(.Machine$double.eps))
   expect_equal(simd_mat, scalar_mat, tolerance = 1e-10)
 })
 

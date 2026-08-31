@@ -219,7 +219,7 @@ test_that("PointProcess nearest indices query works", {
   
   # Verify correctness for first query
   individual_idx <- pp$get_nearest_index(query_times[1])
-  expect_equal(result[1], individual_idx)
+  expect_equal(result[1], individual_idx, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("PointProcess batch operations handle empty objects", {
@@ -375,8 +375,8 @@ test_that("pitch_get_statistics_batch supports median/count_voiced metrics and v
   result <- pladdrr:::pitch_get_statistics_batch(
     pitch$.xptr, 0, 0, c("q50", "count_voiced"), 0L
   )
-  expect_equal(colnames(result), c("q50", "count_voiced"))
-  expect_equal(nrow(result), 1)
+  expect_equal(colnames(result), c("q50", "count_voiced"), tolerance = sqrt(.Machine$double.eps))
+  expect_identical(nrow(result), 1L)
   expect_gte(result[1, "count_voiced"], 0)
 
   # Unrecognized metric name -> "Unknown metric" C++ input-validation error
@@ -421,8 +421,8 @@ test_that("intensity_get_statistics_batch supports q25/q75 metrics and validates
   result <- pladdrr:::intensity_get_statistics_batch(
     intensity$.xptr, 0, 0, c("q25", "q75"), 0L
   )
-  expect_equal(colnames(result), c("q25", "q75"))
-  expect_equal(nrow(result), 1)
+  expect_equal(colnames(result), c("q25", "q75"), tolerance = sqrt(.Machine$double.eps))
+  expect_identical(nrow(result), 1L)
   expect_gte(result[1, "q75"], result[1, "q25"])
 
   # "q50"/"median" (both accepted spellings) are supported but exercised by
@@ -430,7 +430,7 @@ test_that("intensity_get_statistics_batch supports q25/q75 metrics and validates
   result_median <- pladdrr:::intensity_get_statistics_batch(
     intensity$.xptr, 0, 0, c("q50", "median"), 0L
   )
-  expect_equal(as.numeric(result_median[1, "q50"]), as.numeric(result_median[1, "median"]))
+  expect_equal(as.numeric(result_median[1, "q50"]), as.numeric(result_median[1, "median"]), tolerance = sqrt(.Machine$double.eps))
 
   # Unrecognized metric name -> "Unknown metric" C++ input-validation error
   expect_error(

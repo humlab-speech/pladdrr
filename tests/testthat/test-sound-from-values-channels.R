@@ -11,7 +11,7 @@ test_that("Sound$from_values preserves per-channel data for multi-channel input"
 
   sound <- Sound$from_values(values, sampling_rate = n_samples)
 
-  expect_equal(sound$get_number_of_channels(), 2)
+  expect_identical(sound$get_number_of_channels(), 2L)
   expect_equal(sound$get_values(1), ch1, tolerance = 1e-10)
   expect_equal(sound$get_values(2), ch2, tolerance = 1e-10)
 })
@@ -27,7 +27,7 @@ test_that("Sound$from_values preserves per-channel data for 4+ channels", {
 
   sound <- Sound$from_values(values, sampling_rate = n_samples)
 
-  expect_equal(sound$get_number_of_channels(), 4)
+  expect_identical(sound$get_number_of_channels(), 4L)
   for (ch in 1:4) {
     expect_equal(sound$get_values(ch), values[ch, ], tolerance = 1e-10)
   }

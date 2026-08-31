@@ -44,8 +44,8 @@ test_that("matrix_create named-args constructor", {
   m <- matrix_create(xmin = 0, xmax = 1, nx = 10, dx = 0.1, x1 = 0,
                      ymin = 0, ymax = 1, ny = 5, dy = 0.2, y1 = 0)
   expect_s3_class(m, "Matrix")
-  expect_equal(m$get_nx(), 10L)
-  expect_equal(m$get_ny(), 5L)
+  expect_identical(m$get_nx(), 10L)
+  expect_identical(m$get_ny(), 5L)
 })
 
 test_that("praat-interpreter helpers validate input", {

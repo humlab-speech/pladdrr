@@ -9,7 +9,9 @@ d <- df[df$linter == "expect_identical_linter", ]
 dirs <- c("tests/testthat", "R", "inst/examples", "inst/benchmarks",
           "vignettes/articles", "vignettes", "data-raw")
 find_file <- function(base) {
-  for (d0 in dirs) if (file.exists(file.path(d0, base))) return(file.path(d0, base))
+  # base may be 'tests/testthat/foo.R' or bare 'foo.R'
+  b <- basename(base)
+  for (d0 in dirs) if (file.exists(file.path(d0, b))) return(file.path(d0, b))
   NA_character_
 }
 count_pat <- "nrow|ncol|length\\s*\\(|_count\\b|get_number_of|get_dimension|get_ny|get_nx|nlevels|get_num_|object_count|n_points|get_number|dim\\s*\\("

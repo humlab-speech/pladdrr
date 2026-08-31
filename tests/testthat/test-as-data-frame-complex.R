@@ -16,13 +16,13 @@ test_that("as.data.frame.Matrix returns long-format with real axis values", {
 
   # One row per matrix cell, in the same order as as.vector() (column-major).
   expect_identical(nrow(df), length(m$as_matrix()))
-  expect_equal(df$value, as.vector(m$as_matrix()))
+  expect_equal(df$value, as.vector(m$as_matrix()), tolerance = sqrt(.Machine$double.eps))
 
   # Axis values are real coordinates, not bin indices.
   expect_equal(sort(unique(df$col)),
-               m$get_x1() + (seq_len(m$get_nx()) - 1) * m$get_dx())
+               m$get_x1() + (seq_len(m$get_nx()) - 1) * m$get_dx(), tolerance = sqrt(.Machine$double.eps))
   expect_equal(sort(unique(df$row)),
-               m$get_y1() + (seq_len(m$get_ny()) - 1) * m$get_dy())
+               m$get_y1() + (seq_len(m$get_ny()) - 1) * m$get_dy(), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("as.data.frame.KlattGrid returns one row per (time, formant)", {
@@ -31,9 +31,9 @@ test_that("as.data.frame.KlattGrid returns one row per (time, formant)", {
   expect_true(all(c("time", "formant_number", "frequency") %in% names(df)))
 
   # 100 sample times x 6 oral formants; all frequencies finite (NA dropped).
-  expect_equal(sort(unique(df$formant_number)), 1:6)
+  expect_equal(sort(unique(df$formant_number)), 1:6, tolerance = sqrt(.Machine$double.eps))
   expect_true(all(is.finite(df$frequency)))
-  expect_equal(max(table(df$time)), 6L)
+  expect_equal(max(table(df$time)), 6L, tolerance = sqrt(.Machine$double.eps))
   expect_gt(length(unique(df$time)), 50)
 })
 
@@ -44,6 +44,6 @@ test_that("as.data.frame.Matrix handles a 1-row edge case", {
   m <- sound$to_ltas(bandwidth = 100)$to_matrix()
   df <- as.data.frame(m)
   mat <- m$as_matrix()
-  expect_equal(nrow(df), nrow(mat) * ncol(mat))
-  expect_equal(df$value, as.vector(mat))
+  expect_equal(nrow(df), nrow(mat) * ncol(mat), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(df$value, as.vector(mat), tolerance = sqrt(.Machine$double.eps))
 })

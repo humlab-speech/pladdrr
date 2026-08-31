@@ -9,10 +9,10 @@ ltas_fixture <- function() {
 }
 
 test_that(".ltas_unit_code maps units and defaults", {
-  expect_equal(pladdrr:::.ltas_unit_code("energy"), 1L)
-  expect_equal(pladdrr:::.ltas_unit_code("sones"), 2L)
-  expect_equal(pladdrr:::.ltas_unit_code("db"), 0L)
-  expect_equal(pladdrr:::.ltas_unit_code("bogus_unit"), 1L)
+  expect_equal(pladdrr:::.ltas_unit_code("energy"), 1L, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pladdrr:::.ltas_unit_code("sones"), 2L, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pladdrr:::.ltas_unit_code("db"), 0L, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pladdrr:::.ltas_unit_code("bogus_unit"), 1L, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("Ltas constructor validation and accessor branches", {

@@ -18,10 +18,10 @@ test_that("PointProcess() creates an empty object spanning [tmin, tmax]", {
   expect_s3_class(pp, "PointProcess")
   expect_s3_class(pp, "PraatObject")
   expect_true(pp$is_valid())
-  expect_equal(pp$get_xmin(), 0)
-  expect_equal(pp$get_xmax(), 1)
-  expect_equal(pp$get_duration(), 1)
-  expect_equal(pp$get_number_of_points(), 0)
+  expect_equal(pp$get_xmin(), 0, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pp$get_xmax(), 1, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pp$get_duration(), 1, tolerance = sqrt(.Machine$double.eps))
+  expect_identical(pp$get_number_of_points(), 0L)
 })
 
 test_that("PointProcess() with no arguments and no .xptr errors clearly", {
@@ -51,12 +51,12 @@ test_that("basic query getters work on a manually-populated empty PointProcess",
   pp$add_point(0.2)
   pp$add_point(0.3)
 
-  expect_equal(pp$get_number_of_points(), 3)
+  expect_identical(pp$get_number_of_points(), 3L)
   expect_equal(pp$get_time(1), 0.1, tolerance = 1e-10)
   expect_equal(pp$get_time_from_index(2), 0.2, tolerance = 1e-10)
-  expect_equal(pp$get_low_index(0.15), 1L)
-  expect_equal(pp$get_high_index(0.15), 2L)
-  expect_equal(pp$get_nearest_index(0.19), 2L)
+  expect_equal(pp$get_low_index(0.15), 1L, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pp$get_high_index(0.15), 2L, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pp$get_nearest_index(0.19), 2L, tolerance = sqrt(.Machine$double.eps))
   expect_equal(pp$get_interval(0.15), 0.1, tolerance = 1e-10)
 })
 
@@ -81,13 +81,13 @@ test_that("period statistics work with both qualifying and non-qualifying period
   expect_gt(n_periods, 0)
   expect_true(is.finite(pp$get_mean_period(0, 0)))
   expect_true(is.finite(pp$get_stdev_period(0, 0)))
-  expect_equal(pp$get_voice_breaks(0, 0), 0)
+  expect_equal(pp$get_voice_breaks(0, 0), 0, tolerance = sqrt(.Machine$double.eps))
 
   # A period_ceiling far below any real period disqualifies everything;
   # this exercises the "0 qualifying periods" (NaN) branch too.
   pp2 <- PointProcess(0, 1)
   pp2$add_point(0.1); pp2$add_point(0.2); pp2$add_point(0.3)
-  expect_equal(pp2$get_number_of_periods(0, 0, period_floor = 0.0001, period_ceiling = 0.02), 0)
+  expect_identical(pp2$get_number_of_periods(0, 0, period_floor = 0.0001, period_ceiling = 0.02), 0L)
   expect_true(is.nan(pp2$get_mean_period(0, 0, period_floor = 0.0001, period_ceiling = 0.02)))
 })
 
@@ -96,12 +96,12 @@ test_that("period statistics work with both qualifying and non-qualifying period
 test_that("get_periods_vector() and get_periods_filtered() work, including the n<2 empty branch", {
   # n < 2 points: both should return an empty (length-0) numeric vector.
   pp_empty <- PointProcess(0, 1)
-  expect_equal(pp_empty$get_periods_vector(), numeric(0))
-  expect_equal(pp_empty$get_periods_filtered(), numeric(0))
+  expect_equal(pp_empty$get_periods_vector(), numeric(0), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pp_empty$get_periods_filtered(), numeric(0), tolerance = sqrt(.Machine$double.eps))
 
   pp_one <- PointProcess(0, 1)
   pp_one$add_point(0.1)
-  expect_equal(pp_one$get_periods_vector(), numeric(0))
+  expect_equal(pp_one$get_periods_vector(), numeric(0), tolerance = sqrt(.Machine$double.eps))
 
   pp <- PointProcess(0, 1)
   pp$add_point(0.1); pp$add_point(0.2); pp$add_point(0.3); pp$add_point(0.45)
@@ -113,7 +113,7 @@ test_that("get_periods_vector() and get_periods_filtered() work, including the n
 
   # A range matching nothing should return an empty vector too.
   none <- pp$get_periods_filtered(min_period = 0.9, max_period = 1.0)
-  expect_equal(none, numeric(0))
+  expect_equal(none, numeric(0), tolerance = sqrt(.Machine$double.eps))
 })
 
 # --- Modification methods ---
@@ -125,22 +125,22 @@ test_that("add_point/remove_point/remove_point_near/remove_points_between/fill/v
   expect_s3_class(ret, "PointProcess")
   pp$add_point(0.2)
   pp$add_point(0.3)
-  expect_equal(pp$get_number_of_points(), 3)
+  expect_identical(pp$get_number_of_points(), 3L)
 
   pp$remove_point(2)
-  expect_equal(pp$get_number_of_points(), 2)
+  expect_identical(pp$get_number_of_points(), 2L)
   expect_equal(sort(pp$as_vector()), c(0.1, 0.3), tolerance = 1e-10)
 
   pp$add_point(0.31)
   pp$remove_point_near(0.305)
-  expect_equal(pp$get_number_of_points(), 2)
+  expect_identical(pp$get_number_of_points(), 2L)
 
   pp$fill(0.5, 0.6, 0.02)
   n_after_fill <- pp$get_number_of_points()
   expect_gt(n_after_fill, 2)
 
   pp$remove_points_between(0.5, 0.6)
-  expect_equal(pp$get_number_of_points(), 2)
+  expect_identical(pp$get_number_of_points(), 2L)
 
   pp$voice(0.01, 1.3)
   expect_gte(pp$get_number_of_points(), 2)
@@ -156,22 +156,22 @@ test_that("union_with/intersection_with/difference_with combine two PointProcess
   pp2 <- PointProcess(0, 1); pp2$add_point(0.15); pp2$add_point(0.25)
   merged <- pp1$union_with(pp2)
   expect_s3_class(merged, "PointProcess")
-  expect_equal(merged$get_number_of_points(), 4)
+  expect_identical(merged$get_number_of_points(), 4L)
   # The receiver is NOT mutated in place (the C++ side only returns the new
   # xptr; mutating the receiver's ptr in place would free the original
   # PointProcess while the caller's .xptr still referenced it).
-  expect_equal(pp1$get_number_of_points(), 2)
+  expect_identical(pp1$get_number_of_points(), 2L)
 
   ipp1 <- PointProcess(0, 1); ipp1$add_point(0.1); ipp1$add_point(0.2)
   ipp2 <- PointProcess(0, 1); ipp2$add_point(0.2); ipp2$add_point(0.3)
   intersected <- ipp1$intersection_with(ipp2)
-  expect_equal(intersected$get_number_of_points(), 1)
+  expect_identical(intersected$get_number_of_points(), 1L)
   expect_equal(intersected$as_vector(), 0.2, tolerance = 1e-10)
 
   dpp1 <- PointProcess(0, 1); dpp1$add_point(0.1); dpp1$add_point(0.2)
   dpp2 <- PointProcess(0, 1); dpp2$add_point(0.2)
   diffed <- dpp1$difference_with(dpp2)
-  expect_equal(diffed$get_number_of_points(), 1)
+  expect_identical(diffed$get_number_of_points(), 1L)
   expect_equal(diffed$as_vector(), 0.1, tolerance = 1e-10)
 })
 
@@ -264,7 +264,7 @@ test_that("as_vector()/as_data_frame() export point times", {
 
   df <- pp$as_data_frame()
   expect_true(is.data.frame(df) || inherits(df, "data.table"))
-  expect_equal(nrow(df), 3)
+  expect_identical(nrow(df), 3L)
   expect_true("time" %in% names(df))
 })
 

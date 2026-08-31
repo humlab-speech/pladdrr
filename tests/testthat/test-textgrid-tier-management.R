@@ -12,7 +12,7 @@ test_that("set_tier_name() works with tier number", {
   
   # Verify
   expect_identical(tg$get_tier_name(1), "WORDS")
-  expect_equal(tg$get_tier_names(), c("WORDS", "phones"))
+  expect_equal(tg$get_tier_names(), c("WORDS", "phones"), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("set_tier_name() works with tier name", {
@@ -23,7 +23,7 @@ test_that("set_tier_name() works with tier name", {
   
   # Verify
   expect_identical(tg$get_tier_name(2), "PHONES")
-  expect_equal(tg$get_tier_names(), c("words", "PHONES"))
+  expect_equal(tg$get_tier_names(), c("words", "PHONES"), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("duplicate_tier() works for IntervalTier", {
@@ -38,15 +38,15 @@ test_that("duplicate_tier() works for IntervalTier", {
   tg$duplicate_tier(1, "words_copy")
   
   # Verify structure
-  expect_equal(tg$get_number_of_tiers(), 2)
-  expect_equal(tg$get_tier_names(), c("words", "words_copy"))
+  expect_identical(tg$get_number_of_tiers(), 2L)
+  expect_equal(tg$get_tier_names(), c("words", "words_copy"), tolerance = sqrt(.Machine$double.eps))
   
   # Verify both tiers have same number of intervals
-  expect_equal(tg$get_number_of_intervals(1), tg$get_number_of_intervals(2))
+  expect_equal(tg$get_number_of_intervals(1), tg$get_number_of_intervals(2), tolerance = sqrt(.Machine$double.eps))
   
   # Verify labels are copied
-  expect_equal(tg$get_interval_text(2, 1), "hello")
-  expect_equal(tg$get_interval_text(2, 2), "world")
+  expect_identical(tg$get_interval_text(2, 1), "hello")
+  expect_identical(tg$get_interval_text(2, 2), "world")
 })
 
 test_that("duplicate_tier() works for PointTier", {
@@ -60,15 +60,15 @@ test_that("duplicate_tier() works for PointTier", {
   tg$duplicate_tier(1, "events_copy")
   
   # Verify structure
-  expect_equal(tg$get_number_of_tiers(), 2)
-  expect_equal(tg$get_tier_names(), c("events", "events_copy"))
+  expect_identical(tg$get_number_of_tiers(), 2L)
+  expect_equal(tg$get_tier_names(), c("events", "events_copy"), tolerance = sqrt(.Machine$double.eps))
   
   # Verify both tiers have same number of points
-  expect_equal(tg$get_number_of_points(1), tg$get_number_of_points(2))
+  expect_equal(tg$get_number_of_points(1), tg$get_number_of_points(2), tolerance = sqrt(.Machine$double.eps))
   
   # Verify marks are copied
-  expect_equal(tg$get_point_text(2, 1), "tone1")
-  expect_equal(tg$get_point_text(2, 2), "tone2")
+  expect_identical(tg$get_point_text(2, 1), "tone1")
+  expect_identical(tg$get_point_text(2, 2), "tone2")
 })
 
 test_that("duplicate_tier() works with tier name", {
@@ -77,7 +77,7 @@ test_that("duplicate_tier() works with tier name", {
   # Duplicate using tier name
   tg$duplicate_tier("words", "words_backup")
   
-  expect_equal(tg$get_number_of_tiers(), 2)
+  expect_identical(tg$get_number_of_tiers(), 2L)
   expect_true("words_backup" %in% tg$get_tier_names())
 })
 
@@ -95,8 +95,8 @@ test_that("Method chaining works with new methods", {
   expect_identical(result, tg)
   
   # Verify operations were applied
-  expect_equal(tg$get_number_of_tiers(), 3)
-  expect_equal(tg$get_tier_names(), c("renamed", "copy", "events"))
+  expect_identical(tg$get_number_of_tiers(), 3L)
+  expect_equal(tg$get_tier_names(), c("renamed", "copy", "events"), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("duplicate_tier() creates independent copy", {
@@ -111,8 +111,8 @@ test_that("duplicate_tier() creates independent copy", {
   tg$set_interval_text(1, 1, "modified")
   
   # Verify copy is unchanged
-  expect_equal(tg$get_interval_text(1, 1), "modified")
-  expect_equal(tg$get_interval_text(2, 1), "original")
+  expect_identical(tg$get_interval_text(1, 1), "modified")
+  expect_identical(tg$get_interval_text(2, 1), "original")
 })
 
 test_that("Error handling for invalid tier", {
@@ -143,10 +143,10 @@ test_that("Integration with existing benchmark TextGrid", {
   
   # Duplicate first tier
   tg$duplicate_tier(1, "TIER1_COPY")
-  expect_equal(tg$get_number_of_tiers(), initial_tiers + 1)
+  expect_equal(tg$get_number_of_tiers(), initial_tiers + 1, tolerance = sqrt(.Machine$double.eps))
   expect_true("TIER1_COPY" %in% tg$get_tier_names())
   
   # Verify original tier count can be restored
   tg$remove_tier("TIER1_COPY")
-  expect_equal(tg$get_number_of_tiers(), initial_tiers)
+  expect_equal(tg$get_number_of_tiers(), initial_tiers, tolerance = sqrt(.Machine$double.eps))
 })

@@ -74,7 +74,7 @@ test_that("extract_formants() on a legacy praat_sound runs the R Burg-algorithm 
 
   expect_true(all(c("values", "n_frames", "time_step", "max_formant", "n_formants") %in% names(formants)))
   expect_true(all(c("time", "formant_number", "frequency", "bandwidth") %in% names(formants$values)))
-  expect_equal(formants$n_formants, 3)
+  expect_equal(formants$n_formants, 3, tolerance = sqrt(.Machine$double.eps))
   expect_gt(nrow(formants$values), 0)
   # Before the array-indexing fix, this was always 0 (every frequency NA).
   expect_gt(sum(!is.na(formants$values$frequency)), 0)
@@ -122,12 +122,12 @@ test_that("get_formant_at_time() finds the nearest frame and interpolates", {
     nearest <- get_formant_at_time(formant, formant_number = 1, time = 0.11),
     "deprecated"
   )
-  expect_equal(nearest, 500)
+  expect_equal(nearest, 500, tolerance = sqrt(.Machine$double.eps))
 
   interpolated <- suppressWarnings(
     get_formant_at_time(formant, formant_number = 1, time = 0.15, interpolate = TRUE)
   )
-  expect_equal(interpolated, 510)
+  expect_equal(interpolated, 510, tolerance = sqrt(.Machine$double.eps))
 
   none <- suppressWarnings(get_formant_at_time(formant, formant_number = 9, time = 0.1))
   expect_true(is.na(none))
@@ -140,12 +140,12 @@ test_that("get_mean_formant() averages over all frames or a restricted time_rang
     mean_f1 <- get_mean_formant(formant, formant_number = 1),
     "deprecated"
   )
-  expect_equal(mean_f1, mean(c(500, 520)))
+  expect_equal(mean_f1, mean(c(500, 520)), tolerance = sqrt(.Machine$double.eps))
 
   mean_f1_range <- suppressWarnings(
     get_mean_formant(formant, formant_number = 1, time_range = c(0.05, 0.15))
   )
-  expect_equal(mean_f1_range, 500)
+  expect_equal(mean_f1_range, 500, tolerance = sqrt(.Machine$double.eps))
 
   none <- suppressWarnings(get_mean_formant(formant, formant_number = 9))
   expect_true(is.na(none))

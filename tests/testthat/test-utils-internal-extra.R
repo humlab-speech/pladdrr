@@ -35,25 +35,25 @@ test_that("extract_xptr errors for non-object, non-pointer input", {
 })
 
 test_that("unit_to_code covers all pitch unit aliases", {
-  expect_equal(pladdrr:::unit_to_code("hertz", "pitch"), 0L)
-  expect_equal(pladdrr:::unit_to_code("HZ", "pitch"), 0L)
-  expect_equal(pladdrr:::unit_to_code("semitones_re_100hz", "pitch"), 5L)
-  expect_equal(pladdrr:::unit_to_code("semitones_re_200hz", "pitch"), 6L)
-  expect_equal(pladdrr:::unit_to_code("semitones_re_440hz", "pitch"), 7L)
-  expect_equal(pladdrr:::unit_to_code("erb", "pitch"), 8L)
-  expect_equal(pladdrr:::unit_to_code("nonsense", "pitch"), 0L)
+  expect_equal(pladdrr:::unit_to_code("hertz", "pitch"), 0L, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pladdrr:::unit_to_code("HZ", "pitch"), 0L, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pladdrr:::unit_to_code("semitones_re_100hz", "pitch"), 5L, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pladdrr:::unit_to_code("semitones_re_200hz", "pitch"), 6L, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pladdrr:::unit_to_code("semitones_re_440hz", "pitch"), 7L, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pladdrr:::unit_to_code("erb", "pitch"), 8L, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pladdrr:::unit_to_code("nonsense", "pitch"), 0L, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("unit_to_code covers formant units", {
-  expect_equal(pladdrr:::unit_to_code("hertz", "formant"), 0L)
-  expect_equal(pladdrr:::unit_to_code("Hz", "formant"), 0L)
-  expect_equal(pladdrr:::unit_to_code("bark", "formant"), 1L)
-  expect_equal(pladdrr:::unit_to_code("nonsense", "formant"), 0L)
+  expect_equal(pladdrr:::unit_to_code("hertz", "formant"), 0L, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pladdrr:::unit_to_code("Hz", "formant"), 0L, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pladdrr:::unit_to_code("bark", "formant"), 1L, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pladdrr:::unit_to_code("nonsense", "formant"), 0L, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("unit_to_code covers intensity units", {
-  expect_equal(pladdrr:::unit_to_code("db", "intensity"), 0L)
-  expect_equal(pladdrr:::unit_to_code("nonsense", "intensity"), 0L)
+  expect_equal(pladdrr:::unit_to_code("db", "intensity"), 0L, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pladdrr:::unit_to_code("nonsense", "intensity"), 0L, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("unit_to_code errors for an unknown type", {

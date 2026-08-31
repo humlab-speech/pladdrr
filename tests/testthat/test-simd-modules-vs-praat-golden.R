@@ -49,7 +49,7 @@ for (fixture in mono_fixtures) {
         formant <- snd$to_formant()
         golden <- read_golden_numeric(golden_path(fixture, "formant"))
 
-        expect_equal(formant$get_number_of_frames(), nrow(golden))
+        expect_equal(formant$get_number_of_frames(), nrow(golden), tolerance = sqrt(.Machine$double.eps))
 
         for (col in c("f1", "f2", "f3")) {
           fnum <- match(col, c("f1", "f2", "f3"))
@@ -69,7 +69,7 @@ for (fixture in mono_fixtures) {
         harm <- snd$to_harmonicity_cc()
         golden <- read_golden_numeric(golden_path(fixture, "harmonicity"))
 
-        expect_equal(harm$get_number_of_frames(), nrow(golden))
+        expect_equal(harm$get_number_of_frames(), nrow(golden), tolerance = sqrt(.Machine$double.eps))
 
         hnr <- vapply(seq_len(nrow(golden)), function(i) {
           harm$get_value_at_time(golden$time[i], interpolation = "none")
@@ -85,7 +85,7 @@ for (fixture in mono_fixtures) {
         mfcc <- snd$to_mfcc(13, 0.025, 0.01, 100, 7800, 100)
         golden <- read_golden_numeric(golden_path(fixture, "mfcc"))
 
-        expect_equal(mfcc$get_number_of_frames(), nrow(golden))
+        expect_equal(mfcc$get_number_of_frames(), nrow(golden), tolerance = sqrt(.Machine$double.eps))
 
         for (col in c("c1", "c2", "c3")) {
           idx <- match(col, c("c1", "c2", "c3"))

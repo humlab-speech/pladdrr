@@ -14,7 +14,7 @@ test_that("get_pitch_stats_direct returns full stats and accepts R6 or xptr inpu
   expect_gt(stats$count_voiced, 0)
 
   stats_xptr <- get_pitch_stats_direct(pitch$.xptr)
-  expect_equal(stats_xptr$mean, stats$mean)
+  expect_equal(stats_xptr$mean, stats$mean, tolerance = sqrt(.Machine$double.eps))
 
   expect_error(get_pitch_stats_direct(list()), "Pitch object or external pointer")
 })
@@ -27,7 +27,7 @@ test_that("get_formants_direct returns F1-F4 and accepts R6 or xptr input", {
   expect_named(f, c("F1", "F2", "F3", "F4"))
 
   f_xptr <- get_formants_direct(formant$.xptr, time = 0.25)
-  expect_equal(f_xptr, f)
+  expect_equal(f_xptr, f, tolerance = sqrt(.Machine$double.eps))
 
   expect_error(get_formants_direct(list(), time = 0.25), "Formant object or external pointer")
 })

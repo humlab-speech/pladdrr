@@ -24,7 +24,7 @@ test_that("sound_from_values validates input", {
 test_that("sound_create_tone with explicit channels", {
   s <- sound_create_pure_tone(frequency = 220, duration = 0.2, sampling_rate = 16000, channels = 2)
   expect_s3_class(s, "Sound")
-  expect_equal(s$get_number_of_channels(), 2L)
+  expect_identical(s$get_number_of_channels(), 2L)
 })
 
 test_that("sound_create_tone_complex auto-ceiling", {

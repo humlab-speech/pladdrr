@@ -30,7 +30,7 @@ last_object <- function(interp) {
 test_that("PraatInterpreter$run() executes scripts and validates input", {
   interp <- interp_fixture("run")
   expect_invisible(interp$run('Create TextGrid: 0, 1, "words", ""'))
-  expect_equal(interp$eval("2 + 2"), 4)
+  expect_equal(interp$eval("2 + 2"), 4, tolerance = sqrt(.Machine$double.eps))
   expect_error(interp$run(123), "single non-empty character")
   expect_error(interp$run(character()), "single non-empty character")
 })

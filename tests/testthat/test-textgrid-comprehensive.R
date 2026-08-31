@@ -11,10 +11,10 @@ test_that("TextGrid loads without errors", {
 test_that("TextGrid basic info methods work", {
   tg <- TextGrid$new(benchmark_tg)
   
-  expect_equal(tg$get_start_time(), 0)
-  expect_equal(tg$get_end_time(), 60)
-  expect_equal(tg$get_total_duration(), 60)
-  expect_equal(tg$get_number_of_tiers(), 10)
+  expect_equal(tg$get_start_time(), 0, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(tg$get_end_time(), 60, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(tg$get_total_duration(), 60, tolerance = sqrt(.Machine$double.eps))
+  expect_identical(tg$get_number_of_tiers(), 10L)
 })
 
 test_that("TextGrid tier name queries work", {
@@ -31,7 +31,7 @@ test_that("IntervalTier queries work", {
   tg <- TextGrid$new(benchmark_tg)
   
   expect_true(tg$tier_is_interval_tier(1))
-  expect_equal(tg$get_number_of_intervals(1), 400)
+  expect_identical(tg$get_number_of_intervals(1), 400L)
   
   # First interval
   start <- tg$get_interval_start_time(1, 1)
@@ -49,7 +49,7 @@ test_that("PointTier queries work", {
   tg <- TextGrid$new(benchmark_tg)
   
   expect_true(tg$tier_is_point_tier(5))
-  expect_equal(tg$get_number_of_points(5), 403)
+  expect_identical(tg$get_number_of_points(5), 403L)
   
   # First point
   time <- tg$get_point_time(5, 1)
@@ -210,18 +210,18 @@ test_that("set_point_text and remove_point work and error appropriately", {
   tg$insert_point(2, 0.3, "a")
 
   tg$set_point_text(2, 1, "b")
-  expect_equal(tg$get_point_text(2, 1), "b")
+  expect_identical(tg$get_point_text(2, 1), "b")
   expect_error(tg$set_point_text(2, 99, "x"))
 
   tg$remove_point(2, 1)
-  expect_equal(tg$get_number_of_points(2), 0)
+  expect_identical(tg$get_number_of_points(2), 0L)
   expect_error(tg$remove_point(2, 1))  # nothing left to remove
 })
 
 test_that("add_interval_tier, remove_tier(invalid), extract_part, get_info work", {
   tg <- TextGrid$create(0, 2, tier_names = "phones")
   tg$add_interval_tier("new_tier")
-  expect_equal(tg$get_number_of_tiers(), 2)
+  expect_identical(tg$get_number_of_tiers(), 2L)
   expect_error(tg$remove_tier(99))
 
   sub <- tg$extract_part(0.5, 1.5)
@@ -229,7 +229,7 @@ test_that("add_interval_tier, remove_tier(invalid), extract_part, get_info work"
   expect_equal(sub$get_total_duration(), 1, tolerance = 1e-10)
 
   info <- tg$get_info()
-  expect_equal(info$n_tiers, 2)
+  expect_equal(info$n_tiers, 2, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("to_table_ptr() C++ module method converts a TextGrid to a Table", {
@@ -264,7 +264,7 @@ test_that("Module_TextGrid_create/Module_TextGrid_read factory functions work di
   ptr <- mod$TextGrid_create(0, 1, "phones", "")
   expect_type(ptr, "externalptr")
   tg <- TextGrid(.xptr = ptr)
-  expect_equal(tg$get_number_of_tiers(), 1)
+  expect_identical(tg$get_number_of_tiers(), 1L)
 
   # Praat throws when there are no tiers to create
   expect_error(mod$TextGrid_create(0, 1, "", ""))
@@ -273,7 +273,7 @@ test_that("Module_TextGrid_create/Module_TextGrid_read factory functions work di
   tg$save(tmp)
   ptr2 <- mod$TextGrid_read(tmp)
   tg2 <- TextGrid(.xptr = ptr2)
-  expect_equal(tg2$get_number_of_tiers(), 1)
+  expect_identical(tg2$get_number_of_tiers(), 1L)
 
   # Reading a nonexistent file must error, not crash
   expect_error(mod$TextGrid_read(file.path(tempdir(), "does_not_exist_task21_xyz.TextGrid")))

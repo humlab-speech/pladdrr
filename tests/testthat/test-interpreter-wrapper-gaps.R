@@ -23,14 +23,14 @@ test_that("set_variable validates its name", {
   expect_error(interp$set_variable(42, 1), "single non-empty character")
   expect_error(interp$set_variable("", 1), "single non-empty character")
   interp$set_variable("ok_var", 7)
-  expect_equal(interp$get_variable("ok_var"), 7)
+  expect_equal(interp$get_variable("ok_var"), 7, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("eval validates its expression", {
   interp <- PraatInterpreter$new()
   expect_error(interp$eval(123), "single non-empty character")
   expect_error(interp$eval(""), "single non-empty character")
-  expect_equal(interp$eval("1 + 1"), 2)
+  expect_equal(interp$eval("1 + 1"), 2, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("set_object validates and sends PraatObjects", {
@@ -42,5 +42,5 @@ test_that("set_object validates and sends PraatObjects", {
   id <- interp$set_object("gap_test_tone", s)
   expect_type(id, "integer")
   interp$remove_object("gap_test_tone")
-  expect_equal(nrow(interp$list_objects()), 0)
+  expect_identical(nrow(interp$list_objects()), 0L)
 })

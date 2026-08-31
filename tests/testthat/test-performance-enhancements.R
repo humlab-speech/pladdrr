@@ -202,12 +202,12 @@ test_that("TextGrid$get_all_intervals works correctly", {
   
   expect_s3_class(intervals, "data.frame")
   expect_named(intervals, c("start", "end", "text"))
-  expect_equal(nrow(intervals), 3)
+  expect_identical(nrow(intervals), 3L)
   
   for (i in 1:3) {
-    expect_equal(intervals$start[i], tg$get_interval_start_time("words", i))
-    expect_equal(intervals$end[i], tg$get_interval_end_time("words", i))
-    expect_equal(intervals$text[i], tg$get_interval_text("words", i))
+    expect_equal(intervals$start[i], tg$get_interval_start_time("words", i), tolerance = sqrt(.Machine$double.eps))
+    expect_equal(intervals$end[i], tg$get_interval_end_time("words", i), tolerance = sqrt(.Machine$double.eps))
+    expect_equal(intervals$text[i], tg$get_interval_text("words", i), tolerance = sqrt(.Machine$double.eps))
   }
 })
 
@@ -228,7 +228,7 @@ test_that("TextGrid$get_all_points works correctly", {
   
   expect_s3_class(points, "data.frame")
   expect_named(points, c("time", "text"))
-  expect_equal(nrow(points), 3)
+  expect_identical(nrow(points), 3L)
 })
 
 test_that("TextGrid$extract_intervals_batch works correctly", {
@@ -267,10 +267,10 @@ test_that("TextGrid$extract_intervals_batch works correctly", {
   
   # Should extract 3 "V" intervals
   expect_length(result$indices, 3)
-  expect_equal(result$indices, c(1, 3, 5))
-  expect_equal(result$labels, c("V", "V", "V"))
-  expect_equal(result$start_times, c(0, 2, 4))
-  expect_equal(result$end_times, c(1, 3, 5))
+  expect_equal(result$indices, c(1, 3, 5), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(result$labels, c("V", "V", "V"), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(result$start_times, c(0, 2, 4), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(result$end_times, c(1, 3, 5), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("TextGrid$extract_intervals_batch with sounds works correctly", {
@@ -514,9 +514,9 @@ test_that("pitch_get_statistics_batch returns correct matrix", {
 
   # Verify structure
   expect_true(is.matrix(result))
-  expect_equal(nrow(result), 3)
-  expect_equal(ncol(result), 6)
-  expect_equal(colnames(result), metrics)
+  expect_identical(nrow(result), 3L)
+  expect_identical(ncol(result), 6L)
+  expect_equal(colnames(result), metrics, tolerance = sqrt(.Machine$double.eps))
 
   # Verify values are reasonable
   for (i in seq_len(nrow(result))) {
@@ -556,9 +556,9 @@ test_that("intensity_get_statistics_batch returns correct matrix", {
 
   # Verify structure
   expect_true(is.matrix(result))
-  expect_equal(nrow(result), 3)
-  expect_equal(ncol(result), 4)
-  expect_equal(colnames(result), metrics)
+  expect_identical(nrow(result), 3L)
+  expect_identical(ncol(result), 4L)
+  expect_equal(colnames(result), metrics, tolerance = sqrt(.Machine$double.eps))
 
   # Verify values are reasonable
   for (i in seq_len(nrow(result))) {

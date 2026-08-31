@@ -31,12 +31,12 @@ test_that("plot_powercepstrogram is not quefrency/time-transposed", {
   # Cross-check against the known-correct accessor directly.
   reference <- as.data.frame(cepstrogram)
   reference <- reference[reference$quefrency >= 0 & reference$quefrency <= 0.05, ]
-  expect_equal(nrow(p$data), nrow(reference))
-  expect_equal(sort(unique(p$data$time)), sort(unique(reference$time)))
+  expect_equal(nrow(p$data), nrow(reference), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(sort(unique(p$data$time)), sort(unique(reference$time)), tolerance = sqrt(.Machine$double.eps))
 
   p_ordered <- p$data[order(p$data$time, p$data$quefrency), ]
   ref_ordered <- reference[order(reference$time, reference$quefrency), ]
-  expect_equal(p_ordered$power_db, 10 * log10(pmax(ref_ordered$power, 1e-20)))
+  expect_equal(p_ordered$power_db, 10 * log10(pmax(ref_ordered$power, 1e-20)), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("plot_powercepstrogram converts power to dB", {
@@ -72,7 +72,7 @@ test_that("plot_cpp_timeseries drops failed samples as NA, not silent zeros", {
   # NA-filter downstream never removes them — 5 rows all showing cpp = 0
   # instead of 0 rows.
   p <- plot_cpp_timeseries(cepstrogram, time_range = c(0, 0.2), qmin = -1, n_samples = 5)
-  expect_equal(nrow(p$data), 0)
+  expect_identical(nrow(p$data), 0L)
 })
 
 test_that("plot_powercepstrum uses the cepstrum's real quefrency range, not a hardcoded placeholder", {

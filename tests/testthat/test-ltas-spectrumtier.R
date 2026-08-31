@@ -23,7 +23,7 @@ test_that("Ltas get_frequency_range matches highest minus lowest frequency", {
   expect_equal(
     ltas$get_frequency_range(),
     ltas$get_highest_frequency() - ltas$get_lowest_frequency()
-  )
+  , tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("Ltas get_standard_deviation returns a finite non-negative dB value", {
@@ -58,7 +58,7 @@ test_that("Ltas to_matrix returns a Matrix object with matching data", {
   expect_s3_class(mat_obj, "Matrix")
 
   ltas_df <- ltas$as_data_frame()
-  expect_equal(mat_obj$get_number_of_columns(), nrow(ltas_df))
+  expect_equal(mat_obj$get_number_of_columns(), nrow(ltas_df), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("Ltas save writes a readable Praat text file", {
@@ -95,11 +95,11 @@ test_that("SpectrumTier as_data_frame and as_matrix expose frequency and power",
 
   df <- peaks$as_data_frame()
   expect_named(df, c("frequency", "power_db"))
-  expect_equal(nrow(df), peaks$get_number_of_points())
+  expect_equal(nrow(df), peaks$get_number_of_points(), tolerance = sqrt(.Machine$double.eps))
 
   mat <- peaks$as_matrix()
-  expect_equal(rownames(mat), c("frequency", "power_db"))
-  expect_equal(ncol(mat), peaks$get_number_of_points())
+  expect_equal(rownames(mat), c("frequency", "power_db"), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(ncol(mat), peaks$get_number_of_points(), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("SpectrumTier save writes a readable Praat text file", {

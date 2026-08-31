@@ -79,8 +79,8 @@ test_that("fast data remains valid while Sound exists", {
   rms2 <- sqrt(mean(fast^2))
   peak2 <- max(abs(fast))
 
-  expect_equal(rms1, rms2)
-  expect_equal(peak1, peak2)
+  expect_equal(rms1, rms2, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(peak1, peak2, tolerance = sqrt(.Machine$double.eps))
 })
 
 

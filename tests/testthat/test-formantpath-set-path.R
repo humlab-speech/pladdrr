@@ -14,7 +14,7 @@ test_that("extract_formant() after set_path() does not crash and returns valid d
   frm <- fp$extract_formant()
 
   expect_s3_class(frm, "Formant")
-  expect_equal(frm$get_number_of_frames(), fp$get_nx())
+  expect_equal(frm$get_number_of_frames(), fp$get_nx(), tolerance = sqrt(.Machine$double.eps))
 
   f1 <- frm$get_value_at_time(1, 0.2, "hertz")
   expect_type(f1, "double")
@@ -30,5 +30,5 @@ test_that("extract_formant() after set_optimal_path() does not crash", {
   frm <- fp$extract_formant()
 
   expect_s3_class(frm, "Formant")
-  expect_equal(frm$get_number_of_frames(), fp$get_nx())
+  expect_equal(frm$get_number_of_frames(), fp$get_nx(), tolerance = sqrt(.Machine$double.eps))
 })

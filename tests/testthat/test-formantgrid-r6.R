@@ -8,9 +8,9 @@ test_that("FormantGrid creation works", {
   
   expect_s3_class(grid, "FormantGrid")
   expect_s3_class(grid, "PraatObject")
-  expect_equal(grid$get_start_time(), 0)
-  expect_equal(grid$get_end_time(), 1)
-  expect_equal(grid$get_number_of_formants(), 5)
+  expect_equal(grid$get_start_time(), 0, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(grid$get_end_time(), 1, tolerance = sqrt(.Machine$double.eps))
+  expect_identical(grid$get_number_of_formants(), 5L)
 })
 
 test_that("FormantGrid with initial values works", {
@@ -24,7 +24,7 @@ test_that("FormantGrid with initial values works", {
   )
   
   expect_s3_class(grid, "FormantGrid")
-  expect_equal(grid$get_number_of_formants(), 3)
+  expect_identical(grid$get_number_of_formants(), 3L)
 })
 
 test_that("FormantGrid point addition works", {
@@ -60,8 +60,8 @@ test_that("FormantGrid point removal works", {
   grid$remove_formant_points_between(1, 0.3, 0.7)
   
   # First and last should still exist
-  expect_equal(grid$get_formant_at_time(1, 0.2), 500)
-  expect_equal(grid$get_formant_at_time(1, 0.8), 600)
+  expect_equal(grid$get_formant_at_time(1, 0.2), 500, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(grid$get_formant_at_time(1, 0.8), 600, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("FormantGrid to Formant conversion works", {
@@ -98,7 +98,7 @@ test_that("FormantGrid synthesis works", {
   )
   
   expect_s3_class(sound, "Sound")
-  expect_equal(sound$get_sampling_frequency(), 22050)
+  expect_equal(sound$get_sampling_frequency(), 22050, tolerance = sqrt(.Machine$double.eps))
   expect_gt(sound$get_duration(), 0)
 })
 
@@ -106,9 +106,9 @@ test_that("praat_formantgrid_create_empty works", {
   grid <- FormantGrid(.xptr = pladdrr:::.formantgrid_create_empty(0, 1, 4))
   
   expect_s3_class(grid, "FormantGrid")
-  expect_equal(grid$get_start_time(), 0)
-  expect_equal(grid$get_end_time(), 1)
-  expect_equal(grid$get_number_of_formants(), 4)
+  expect_equal(grid$get_start_time(), 0, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(grid$get_end_time(), 1, tolerance = sqrt(.Machine$double.eps))
+  expect_identical(grid$get_number_of_formants(), 4L)
 })
 
 test_that("Sound FormantGrid filtering works", {
@@ -126,7 +126,7 @@ test_that("Sound FormantGrid filtering works", {
   filtered <- Sound(.xptr = pladdrr:::.sound_formantgrid_filter(sound$get_xptr(), grid$get_xptr()))
   
   expect_s3_class(filtered, "Sound")
-  expect_equal(filtered$get_sampling_frequency(), 44100)
+  expect_equal(filtered$get_sampling_frequency(), 44100, tolerance = sqrt(.Machine$double.eps))
   expect_gt(filtered$get_duration(), 0)
 })
 

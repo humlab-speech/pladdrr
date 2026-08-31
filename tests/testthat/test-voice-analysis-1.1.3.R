@@ -17,7 +17,7 @@ test_that("Sound$to_textgrid_silences() works with all parameters", {
   )
   
   expect_s3_class(tg, "TextGrid")
-  expect_equal(tg$get_number_of_tiers(), 1)
+  expect_identical(tg$get_number_of_tiers(), 1L)
   
   # Check tier name
   tier_name <- tg$get_tier_name(1)
@@ -110,7 +110,7 @@ test_that("PointProcess$to_textgrid_vuv() creates voiced/unvoiced intervals", {
   )
   
   expect_s3_class(tg_vuv, "TextGrid")
-  expect_equal(tg_vuv$get_number_of_tiers(), 1)
+  expect_identical(tg_vuv$get_number_of_tiers(), 1L)
   
   # Check tier name
   tier_name <- tg_vuv$get_tier_name(1)

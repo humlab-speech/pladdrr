@@ -4,10 +4,10 @@
 test_that("sound_mean/min/max/rms work on module Sound objects", {
   snd <- Sound$from_values(c(-1, 0, 1), sampling_rate = 1000)
 
-  expect_equal(sound_mean(snd), 0)
-  expect_equal(sound_min(snd), -1)
-  expect_equal(sound_max(snd), 1)
-  expect_equal(sound_rms(snd), sqrt(mean(c(-1, 0, 1)^2)))
+  expect_equal(sound_mean(snd), 0, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(sound_min(snd), -1, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(sound_max(snd), 1, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(sound_rms(snd), sqrt(mean(c(-1, 0, 1)^2)), tolerance = sqrt(.Machine$double.eps))
 })
 
 legacy_praat_sound <- function(values, sampling_rate = 8000) {
@@ -29,10 +29,10 @@ legacy_praat_sound <- function(values, sampling_rate = 8000) {
 test_that("sound_mean/min/max/rms work on legacy S3 praat_sound objects", {
   snd <- legacy_praat_sound(c(-1, 0, 0.5, 1))
 
-  expect_equal(sound_mean(snd), mean(snd$values))
-  expect_equal(sound_min(snd), min(snd$values))
-  expect_equal(sound_max(snd), max(snd$values))
-  expect_equal(sound_rms(snd), sqrt(mean(snd$values^2)))
+  expect_equal(sound_mean(snd), mean(snd$values), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(sound_min(snd), min(snd$values), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(sound_max(snd), max(snd$values), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(sound_rms(snd), sqrt(mean(snd$values^2)), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("sound_rms approximates 1/sqrt(2) for a full-cycle sine", {
@@ -47,10 +47,10 @@ test_that("sound_statistics returns all expected fields for a module Sound", {
 
   expect_named(stats, c("mean", "min", "max", "rms", "duration", "n_samples",
                          "sampling_rate"))
-  expect_equal(stats$duration, snd$get_duration())
-  expect_equal(stats$n_samples, snd$get_number_of_samples())
-  expect_equal(stats$sampling_rate, snd$get_sampling_frequency())
-  expect_equal(stats$rms, sound_rms(snd))
+  expect_equal(stats$duration, snd$get_duration(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(stats$n_samples, snd$get_number_of_samples(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(stats$sampling_rate, snd$get_sampling_frequency(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(stats$rms, sound_rms(snd), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("sound_statistics returns all expected fields for a legacy S3 praat_sound", {
@@ -59,9 +59,9 @@ test_that("sound_statistics returns all expected fields for a legacy S3 praat_so
 
   expect_named(stats, c("mean", "min", "max", "rms", "duration", "n_samples",
                          "sampling_rate"))
-  expect_equal(stats$duration, snd$duration)
-  expect_equal(stats$n_samples, snd$n_samples)
-  expect_equal(stats$sampling_rate, snd$sampling_rate)
+  expect_equal(stats$duration, snd$duration, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(stats$n_samples, snd$n_samples, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(stats$sampling_rate, snd$sampling_rate, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("sound_mean etc. reject non-sound input via validate_sound_object", {

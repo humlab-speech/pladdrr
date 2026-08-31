@@ -37,11 +37,11 @@ test_that("Pitch get_statistics accepts every metric alias, including count_voic
   )
 
   expect_equal(stats$minimum, stats$maximum, tolerance = 1)  # pure tone: near-constant F0
-  expect_equal(stats$standard_deviation, stats$sd)
-  expect_equal(stats$quantile25, stats$q25)
-  expect_equal(stats$quantile75, stats$q75)
-  expect_equal(stats$count_voiced, stats$voiced_frames)
-  expect_equal(stats$count_voiced, pitch$count_voiced_frames())
+  expect_equal(stats$standard_deviation, stats$sd, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(stats$quantile25, stats$q25, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(stats$quantile75, stats$q75, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(stats$count_voiced, stats$voiced_frames, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(stats$count_voiced, pitch$count_voiced_frames(), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("Pitch get_statistics warns (not errors) on an unknown metric name", {
@@ -135,7 +135,7 @@ test_that("Pitch kill_octave_jumps returns a new, valid Pitch object", {
 
   expect_s3_class(cleaned, "Pitch")
   expect_true(cleaned$is_valid())
-  expect_equal(cleaned$get_number_of_frames(), pitch$get_number_of_frames())
+  expect_equal(cleaned$get_number_of_frames(), pitch$get_number_of_frames(), tolerance = sqrt(.Machine$double.eps))
   # Not the same underlying object
   expect_false(identical(cleaned$.xptr, pitch$.xptr))
 })
@@ -149,7 +149,7 @@ test_that("Pitch as_data_frame with both include_strength and include_intensity 
   df <- pitch$as_data_frame(include_strength = TRUE, include_intensity = TRUE)
 
   expect_true(all(c("time", "frequency", "voiced", "strength", "intensity_db") %in% names(df)))
-  expect_equal(nrow(df), pitch$get_number_of_frames())
+  expect_equal(nrow(df), pitch$get_number_of_frames(), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("Pitch as_data_frame with only include_intensity returns intensity but not strength", {
@@ -194,7 +194,7 @@ test_that("Pitch to_textgrid_silences on a fully-voiced tone returns one soundin
   expect_s3_class(tg, "TextGrid")
   expect_true(tg$is_valid())
   df <- tg$as_data_frame()
-  expect_equal(nrow(df), 1)
+  expect_identical(nrow(df), 1L)
   expect_identical(df$label[1], "sounding")
 })
 
@@ -212,11 +212,11 @@ test_that("Pitch to_textgrid_silences splits silence/tone/silence into three lab
   tg <- pitch$to_textgrid_silences(min_silent_duration = 0.05, min_sounding_duration = 0.05)
   df <- tg$as_data_frame()
 
-  expect_equal(nrow(df), 3)
-  expect_equal(df$label, c("silent", "sounding", "silent"))
+  expect_identical(nrow(df), 3L)
+  expect_equal(df$label, c("silent", "sounding", "silent"), tolerance = sqrt(.Machine$double.eps))
   # Intervals must be contiguous and span the whole pitch domain
-  expect_equal(df$start_time[1], pitch$get_start_time())
-  expect_equal(df$end_time[nrow(df)], pitch$get_end_time())
+  expect_equal(df$start_time[1], pitch$get_start_time(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(df$end_time[nrow(df)], pitch$get_end_time(), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("Pitch to_textgrid_silences with a very high min_sounding_duration collapses short voiced spans away", {
@@ -238,7 +238,7 @@ test_that("Pitch to_textgrid_silences with a very high min_sounding_duration col
   tg <- pitch$to_textgrid_silences(min_silent_duration = 0.05, min_sounding_duration = 100)
   df <- tg$as_data_frame()
 
-  expect_equal(nrow(df), 2)
+  expect_identical(nrow(df), 2L)
   expect_true(all(df$label == "silent"))
   expect_lt(df$end_time[1], df$start_time[2])  # gap = the dropped sounding span
 })

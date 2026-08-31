@@ -38,7 +38,7 @@ test_that("LTAS get_minima_batch matches individual calls", {
 
   minima_batch <- ltas$get_minima_batch(fmins, fmaxs)
 
-  expect_equal(nrow(minima_batch), 3)
+  expect_identical(nrow(minima_batch), 3L)
   expect_true(all(c("fmin", "fmax", "min_value", "min_frequency") %in% names(minima_batch)))
 })
 
@@ -90,7 +90,7 @@ test_that("Pitch subtract_linear_fit returns new Pitch object", {
 
   expect_s3_class(detrended_pitch, "Pitch")
   expect_true(detrended_pitch$is_valid())
-  expect_equal(detrended_pitch$get_number_of_frames(), pitch$get_number_of_frames())
+  expect_equal(detrended_pitch$get_number_of_frames(), pitch$get_number_of_frames(), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("Pitch interpolate returns new Pitch object", {

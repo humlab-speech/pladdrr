@@ -64,14 +64,14 @@ test_that("as.data.frame.LPC returns one row per (frame, coefficient), not one p
 
   # One row per (frame, coefficient); the old bug emitted one row per frame
   # and dropped (n_coeffs - 1) * n_frames coefficients.
-  expect_equal(nrow(df), n_coeffs * n_frames)
-  expect_equal(sort(unique(df$frame)), seq_len(n_frames))
-  expect_equal(sort(unique(df$coefficient)), seq_len(n_coeffs))
+  expect_equal(nrow(df), n_coeffs * n_frames, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(sort(unique(df$frame)), seq_len(n_frames), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(sort(unique(df$coefficient)), seq_len(n_coeffs), tolerance = sqrt(.Machine$double.eps))
 
   # Each frame's values are exactly that frame's coefficient column.
   for (i in seq_len(min(n_frames, 3L))) {
-    expect_equal(df$value[df$frame == i], as.numeric(coeffs[, i]))
-    expect_equal(unique(df$gain[df$frame == i]), gains[i])
+    expect_equal(df$value[df$frame == i], as.numeric(coeffs[, i]), tolerance = sqrt(.Machine$double.eps))
+    expect_equal(unique(df$gain[df$frame == i]), gains[i], tolerance = sqrt(.Machine$double.eps))
   }
 })
 

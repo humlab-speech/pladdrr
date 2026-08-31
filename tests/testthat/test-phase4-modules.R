@@ -65,8 +65,8 @@ test_that("RMatrix can be created from R matrix", {
 
   rmatrix <- new(mod$RMatrix, ptr)
   expect_true(rmatrix$is_valid())
-  expect_equal(rmatrix$get_nrow(), 3)
-  expect_equal(rmatrix$get_ncol(), 4)
+  expect_identical(rmatrix$get_nrow(), 3L)
+  expect_identical(rmatrix$get_ncol(), 4L)
 })
 
 test_that("RMatrix statistics work", {
@@ -77,10 +77,10 @@ test_that("RMatrix statistics work", {
   ptr <- mod$Matrix_from_r_matrix(r_mat)
   rmatrix <- new(mod$RMatrix, ptr)
 
-  expect_equal(rmatrix$get_sum(), sum(1:12))
-  expect_equal(rmatrix$get_mean(), mean(1:12))
-  expect_equal(rmatrix$get_minimum(), 1)
-  expect_equal(rmatrix$get_maximum(), 12)
+  expect_equal(rmatrix$get_sum(), sum(1:12), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(rmatrix$get_mean(), mean(1:12), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(rmatrix$get_minimum(), 1, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(rmatrix$get_maximum(), 12, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("RMatrix value access works", {
@@ -92,12 +92,12 @@ test_that("RMatrix value access works", {
   rmatrix <- new(mod$RMatrix, ptr)
 
   # Note: Praat matrices are 1-indexed (row, col)
-  expect_equal(rmatrix$get_value(1, 1), 1)
-  expect_equal(rmatrix$get_value(3, 4), 12)
+  expect_equal(rmatrix$get_value(1, 1), 1, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(rmatrix$get_value(3, 4), 12, tolerance = sqrt(.Machine$double.eps))
 
   # Set and verify
   rmatrix$set_value(2, 2, 99)
-  expect_equal(rmatrix$get_value(2, 2), 99)
+  expect_equal(rmatrix$get_value(2, 2), 99, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("RMatrix export works", {
@@ -109,8 +109,8 @@ test_that("RMatrix export works", {
   rmatrix <- new(mod$RMatrix, ptr)
 
   exported <- rmatrix$as_matrix()
-  expect_equal(dim(exported), c(3, 4))
-  expect_equal(exported[1, 1], 1)
+  expect_equal(dim(exported), c(3, 4), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(exported[1, 1], 1, tolerance = sqrt(.Machine$double.eps))
 })
 
 # ============================================================================
@@ -381,8 +381,8 @@ test_that("RCochleagram export works", {
 
   mat <- rcoch$as_matrix()
   expect_true(is.matrix(mat))
-  expect_equal(nrow(mat), rcoch$get_ny())
-  expect_equal(ncol(mat), rcoch$get_nx())
+  expect_equal(nrow(mat), rcoch$get_ny(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(ncol(mat), rcoch$get_nx(), tolerance = sqrt(.Machine$double.eps))
 })
 
 # ============================================================================
@@ -497,8 +497,8 @@ test_that("RFormantGrid can be created", {
 
   rfg <- new(fg_mod$RFormantGrid, fg_ptr)
   expect_true(rfg$is_valid())
-  expect_equal(rfg$get_number_of_formants(), 5)
-  expect_equal(rfg$get_duration(), 1)
+  expect_identical(rfg$get_number_of_formants(), 5L)
+  expect_equal(rfg$get_duration(), 1, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("RFormantGrid query works", {

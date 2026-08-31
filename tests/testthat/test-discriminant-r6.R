@@ -16,11 +16,11 @@ test_that("Discriminant constructs from a matrix and reports basic properties", 
   expect_s3_class(disc, "Discriminant")
   expect_s3_class(disc, "PraatObject")
   expect_true(disc$is_valid())
-  expect_equal(disc$get_number_of_groups(), 2)
+  expect_identical(disc$get_number_of_groups(), 2L)
   expect_gte(disc$get_number_of_functions(), 1)
-  expect_equal(disc$get_dimension(), 1)
-  expect_equal(disc$get_number_of_observations(1), 10)
-  expect_equal(disc$get_total_observations(), 20)
+  expect_identical(disc$get_dimension(), 1L)
+  expect_identical(disc$get_number_of_observations(1), 10L)
+  expect_equal(disc$get_total_observations(), 20, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("Discriminant eigen/variance/probability queries work", {
@@ -31,14 +31,14 @@ test_that("Discriminant eigen/variance/probability queries work", {
   disc <- discriminant_from_matrix(data, labels)
 
   # dimension 1 -> only min(n_groups - 1, dimension) = 1 discriminant function
-  expect_equal(disc$get_number_of_functions(), 1)
+  expect_identical(disc$get_number_of_functions(), 1L)
 
   ev <- disc$get_eigenvalues()
   expect_type(ev, "double")
   expect_length(ev, 1)
-  expect_equal(disc$get_eigenvalue(1), ev[1])
+  expect_equal(disc$get_eigenvalue(1), ev[1], tolerance = sqrt(.Machine$double.eps))
   expect_type(disc$get_fraction_variance(1, 1), "double")
-  expect_equal(disc$get_fraction_variance(1, 1), 1)  # only function explains 100%
+  expect_equal(disc$get_fraction_variance(1, 1), 1, tolerance = sqrt(.Machine$double.eps))  # only function explains 100%
   expect_type(disc$get_variance_explained(1, 1), "double")
   expect_type(disc$get_wilks_lambda(1), "double")
 
@@ -62,16 +62,16 @@ test_that("Discriminant eigen/variance/probability queries work", {
   vec <- disc$get_eigenvector(1)
   expect_type(vec, "double")
   expect_length(vec, disc$get_dimension())
-  expect_equal(disc$get_eigenvectors(), disc$get_coefficients())
+  expect_equal(disc$get_eigenvectors(), disc$get_coefficients(), tolerance = sqrt(.Machine$double.eps))
   expect_true(is.matrix(disc$get_eigenvectors()))
-  expect_equal(disc$get_group_labels(), c("a", "e", "i"))
+  expect_equal(disc$get_group_labels(), c("a", "e", "i"), tolerance = sqrt(.Machine$double.eps))
 
   # get_group_centroids() returns a numeric matrix: one row per group,
   # one column per variable, row-named by group label.
   centroids <- disc$get_group_centroids()
   expect_true(is.matrix(centroids))
-  expect_equal(dim(centroids), c(3, 1))
-  expect_equal(rownames(centroids), c("a", "e", "i"))
+  expect_equal(dim(centroids), c(3, 1), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(rownames(centroids), c("a", "e", "i"), tolerance = sqrt(.Machine$double.eps))
 
   expect_type(disc$get_apriori_probabilities(), "double")
   expect_length(disc$get_apriori_probabilities(), 3)
@@ -96,16 +96,16 @@ test_that("Discriminant set_apriori_probability, as_data_frame, get_info, save r
   # to "function." on the R side.
   expect_named(df, c("function.", "eigenvalue", "variance_fraction",
                              "cumulative_variance", "wilks_lambda"))
-  expect_equal(nrow(df), disc$get_number_of_functions())
+  expect_equal(nrow(df), disc$get_number_of_functions(), tolerance = sqrt(.Machine$double.eps))
 
   # get_info() returns a structured list summary, not a character string.
   info <- disc$get_info()
   expect_type(info, "list")
   expect_named(info, c("n_groups", "n_functions", "dimension", "n_observations",
                         "eigenvalues", "group_labels", "apriori_probabilities"))
-  expect_equal(info$n_groups, 2)
-  expect_equal(info$n_observations, 20)
-  expect_equal(info$group_labels, c("a", "i"))
+  expect_equal(info$n_groups, 2, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(info$n_observations, 20, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(info$group_labels, c("a", "i"), tolerance = sqrt(.Machine$double.eps))
 
   tmp <- tempfile(fileext = ".Discriminant")
   on.exit(unlink(tmp), add = TRUE)

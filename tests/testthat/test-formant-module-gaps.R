@@ -108,13 +108,13 @@ test_that("RFormant default (no-arg) constructor rejects a NULL xptr cleanly", {
 test_that("RFormant module time-domain methods not wired into the R6 API are reachable via .cpp$", {
   formant <- make_test_formant()
 
-  expect_equal(formant$.cpp$get_duration(), formant$get_xmax() - formant$get_xmin())
+  expect_equal(formant$.cpp$get_duration(), formant$get_xmax() - formant$get_xmin(), tolerance = sqrt(.Machine$double.eps))
   expect_type(formant$.cpp$get_x1(), "double")
   # x1 (centre of first analysis frame) should be within the signal's domain
   expect_gte(formant$.cpp$get_x1(), formant$get_xmin())
   expect_lte(formant$.cpp$get_x1(), formant$get_xmax())
 
-  expect_equal(formant$.cpp$get_time_from_frame(1L), formant$.cpp$get_x1())
+  expect_equal(formant$.cpp$get_time_from_frame(1L), formant$.cpp$get_x1(), tolerance = sqrt(.Machine$double.eps))
   expect_type(formant$.cpp$get_frame_from_time(0.1), "integer")
   expect_gte(formant$.cpp$get_frame_from_time(0.1), 1L)
 })
@@ -126,19 +126,19 @@ test_that("RFormant module query methods (dead via R6, live via .cpp$) match the
   # implementation (Formant_getValueAtTime etc. called directly from
   # RFormant:: methods) agrees with the public bare-wrapper result.
   expect_equal(formant$.cpp$get_value_at_time(1L, 0.1, 0L),
-               formant$get_value_at_time(1, 0.1, "hertz"))
+               formant$get_value_at_time(1, 0.1, "hertz"), tolerance = sqrt(.Machine$double.eps))
   expect_equal(formant$.cpp$get_bandwidth_at_time(1L, 0.1, 0L),
-               formant$get_bandwidth_at_time(1, 0.1, "hertz"))
+               formant$get_bandwidth_at_time(1, 0.1, "hertz"), tolerance = sqrt(.Machine$double.eps))
   expect_equal(formant$.cpp$get_mean(1L, 0, 0, 0L),
-               formant$get_mean(1, unit = "hertz"))
+               formant$get_mean(1, unit = "hertz"), tolerance = sqrt(.Machine$double.eps))
   expect_equal(formant$.cpp$get_standard_deviation(1L, 0, 0, 0L),
-               formant$get_standard_deviation(1, unit = "hertz"))
+               formant$get_standard_deviation(1, unit = "hertz"), tolerance = sqrt(.Machine$double.eps))
   expect_equal(formant$.cpp$get_quantile(1L, 0.5, 0, 0, 0L),
-               formant$get_quantile(1, 0.5, unit = "hertz"))
+               formant$get_quantile(1, 0.5, unit = "hertz"), tolerance = sqrt(.Machine$double.eps))
   expect_equal(formant$.cpp$get_minimum(1L, 0, 0, 0L, FALSE),
-               formant$get_minimum(1, unit = "hertz"))
+               formant$get_minimum(1, unit = "hertz"), tolerance = sqrt(.Machine$double.eps))
   expect_equal(formant$.cpp$get_maximum(1L, 0, 0, 0L, FALSE),
-               formant$get_maximum(1, unit = "hertz"))
+               formant$get_maximum(1, unit = "hertz"), tolerance = sqrt(.Machine$double.eps))
   expect_type(formant$.cpp$get_time_of_minimum(1L, 0, 0, 0L, FALSE), "double")
   expect_type(formant$.cpp$get_time_of_maximum(1L, 0, 0, 0L, FALSE), "double")
 })
@@ -151,7 +151,7 @@ test_that("RFormant module as_data_frame() (dead via R6, live via .cpp$) matches
 
   expect_s3_class(df_module, "data.frame")
   expect_setequal(colnames(df_module), c("time", "formant", "frequency", "bandwidth"))
-  expect_equal(nrow(df_module), nrow(df_public))
+  expect_equal(nrow(df_module), nrow(df_public), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("RFormant module as_matrix() (unreachable from any public method) exports frames x formants", {
@@ -160,11 +160,11 @@ test_that("RFormant module as_matrix() (unreachable from any public method) expo
 
   mat_bw <- formant$.cpp$as_matrix(5L, TRUE)
   expect_true(is.matrix(mat_bw))
-  expect_equal(dim(mat_bw), c(nx, 1L + 5L * 2L))  # time + 5 freq + 5 bandwidth
+  expect_equal(dim(mat_bw), c(nx, 1L + 5L * 2L), tolerance = sqrt(.Machine$double.eps))  # time + 5 freq + 5 bandwidth
 
   mat_nobw <- formant$.cpp$as_matrix(3L, FALSE)
   expect_true(is.matrix(mat_nobw))
-  expect_equal(dim(mat_nobw), c(nx, 1L + 3L))  # time + 3 freq only
+  expect_equal(dim(mat_nobw), c(nx, 1L + 3L), tolerance = sqrt(.Machine$double.eps))  # time + 3 freq only
 })
 
 test_that("RFormant module save() (dead via R6, live via .cpp$) writes a readable Praat text file", {
@@ -240,7 +240,7 @@ test_that("Formant$track re-tracks formants and returns a new valid Formant", {
   tracked <- formant$track(number_of_tracks = 3)
   expect_s3_class(tracked, "Formant")
   expect_true(tracked$is_valid())
-  expect_equal(tracked$get_number_of_frames(), formant$get_number_of_frames())
+  expect_equal(tracked$get_number_of_frames(), formant$get_number_of_frames(), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("Formant$track accepts custom reference frequencies and costs", {

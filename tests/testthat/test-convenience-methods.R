@@ -10,7 +10,7 @@ test_that("get_spectral_slope returns numeric scalar matching report_spectral_tr
 
   expect_type(slope, "double")
   expect_length(slope, 1)
-  expect_equal(slope, trend$slope)
+  expect_equal(slope, trend$slope, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("get_spectral_slope respects frequency_scale and fit_method", {

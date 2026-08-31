@@ -30,12 +30,12 @@ test_that("batch_process reports progress and passes data frames through", {
                          progress = TRUE),
     "Processing 2 files"
   )
-  expect_equal(nrow(res), 2)
+  expect_identical(nrow(res), 2L)
   # func returning a data.frame directly (line 124 branch)
   res2 <- batch_process(dir, pattern = "\\.wav$",
                         func = function(snd) data.frame(dur = snd$get_duration()))
   expect_s3_class(res2, "data.frame")
-  expect_equal(nrow(res2), 2)
+  expect_identical(nrow(res2), 2L)
 })
 
 test_that("pair_sound_textgrid warns on an empty directory", {

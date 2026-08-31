@@ -66,7 +66,7 @@ test_that("fitted_values has correct number of rows", {
   
   result <- ltas$report_spectral_trend(100, 5000, "logarithmic", "least squares")
   
-  expect_equal(nrow(result$fitted_values), result$n_points)
+  expect_equal(nrow(result$fitted_values), result$n_points, tolerance = sqrt(.Machine$double.eps))
   expect_gt(result$n_points, 1)  # Should have at least 2 points
 })
 
@@ -125,8 +125,8 @@ test_that("default parameters work correctly", {
   
   expect_identical(result$frequency_scale, "logarithmic")
   expect_identical(result$fit_method, "least squares")
-  expect_equal(result$fmin, 100)
-  expect_equal(result$fmax, 5000)
+  expect_equal(result$fmin, 100, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(result$fmax, 5000, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("print method works without error", {
@@ -155,7 +155,7 @@ test_that("fitted values can be used for plotting", {
   expect_equal(
     result$fitted_values$residual,
     result$fitted_values$power_db_observed - result$fitted_values$power_db_fitted
-  )
+  , tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("fmin=0 and fmax=0 use full frequency range", {
@@ -166,6 +166,6 @@ test_that("fmin=0 and fmax=0 use full frequency range", {
   result <- ltas$report_spectral_trend(0, 0, "logarithmic", "least squares")
   
   # Should use full LTAS range
-  expect_equal(result$fmin, ltas$get_lowest_frequency())
-  expect_equal(result$fmax, ltas$get_highest_frequency())
+  expect_equal(result$fmin, ltas$get_lowest_frequency(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(result$fmax, ltas$get_highest_frequency(), tolerance = sqrt(.Machine$double.eps))
 })

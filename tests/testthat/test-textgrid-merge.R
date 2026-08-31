@@ -21,7 +21,7 @@ test_that("textgrid_merge combines tiers from multiple TextGrids", {
   merged <- textgrid_merge(list(tg1, tg2))
 
   expect_s3_class(merged, "TextGrid")
-  expect_equal(merged$get_number_of_tiers(), 2)
+  expect_identical(merged$get_number_of_tiers(), 2L)
 })
 
 test_that("textgrid_merge with equalize_domains = TRUE extends shorter grids", {
@@ -31,5 +31,5 @@ test_that("textgrid_merge with equalize_domains = TRUE extends shorter grids", {
   merged <- textgrid_merge(list(tg1, tg2), equalize_domains = TRUE)
 
   expect_s3_class(merged, "TextGrid")
-  expect_equal(merged$get_end_time(), 2)
+  expect_equal(merged$get_end_time(), 2, tolerance = sqrt(.Machine$double.eps))
 })

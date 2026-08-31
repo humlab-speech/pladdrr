@@ -53,7 +53,7 @@ test_that("calculate_cpps_fast also accepts a raw Sound external pointer", {
   sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
   result_r6 <- calculate_cpps_fast(sound)
   result_ptr <- calculate_cpps_fast(sound$.xptr)
-  expect_equal(result_ptr, result_r6)
+  expect_equal(result_ptr, result_r6, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("calculate_cpps_fast rejects a non-Sound, non-pointer argument", {
@@ -99,7 +99,7 @@ test_that("apply_window_xptr applies a Hanning window that zeroes the edges", {
   windowed <- apply_window_xptr(sound, hann)
 
   expect_s3_class(windowed, "Sound")
-  expect_equal(windowed$get_total_duration(), sound$get_total_duration())
+  expect_equal(windowed$get_total_duration(), sound$get_total_duration(), tolerance = sqrt(.Machine$double.eps))
 
   orig <- sound$get_values()
   ws <- windowed$get_values()

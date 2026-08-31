@@ -5,11 +5,11 @@
 # === Expression Evaluation Tests ===
 
 test_that("praat_eval_numeric() evaluates numeric expressions correctly", {
-  expect_equal(praat_eval_numeric("2 + 2"), 4)
-  expect_equal(praat_eval_numeric("10 * 5"), 50)
-  expect_equal(praat_eval_numeric("100 / 4"), 25)
-  expect_equal(praat_eval_numeric("2^8"), 256)
-  expect_equal(praat_eval_numeric("sqrt(16)"), 4)
+  expect_equal(praat_eval_numeric("2 + 2"), 4, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(praat_eval_numeric("10 * 5"), 50, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(praat_eval_numeric("100 / 4"), 25, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(praat_eval_numeric("2^8"), 256, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(praat_eval_numeric("sqrt(16)"), 4, tolerance = sqrt(.Machine$double.eps))
   expect_equal(praat_eval_numeric("sin(0)"), 0, tolerance = 1e-10)
 })
 
@@ -22,7 +22,7 @@ test_that("praat_eval_string() evaluates string expressions correctly", {
 
 test_that("praat_eval_vector() evaluates vector expressions correctly", {
   result <- praat_eval_vector("{ 1, 2, 3, 4, 5 }")
-  expect_equal(result, c(1, 2, 3, 4, 5))
+  expect_equal(result, c(1, 2, 3, 4, 5), tolerance = sqrt(.Machine$double.eps))
   
   # TODO: Test zero# function
   # result <- praat_eval_vector("zero# (5)")
@@ -36,7 +36,7 @@ test_that("praat_eval_vector() evaluates vector expressions correctly", {
 test_that("praat_eval_matrix() evaluates matrix expressions correctly", {
   result <- praat_eval_matrix("{{ 1, 2 }, { 3, 4 }}")
   expected <- matrix(c(1, 3, 2, 4), nrow = 2, ncol = 2)
-  expect_equal(result, expected)
+  expect_equal(result, expected, tolerance = sqrt(.Machine$double.eps))
   
   # TODO: Test zero## function
   # result <- praat_eval_matrix("zero## (2, 3)")
@@ -52,10 +52,10 @@ test_that("praat_eval_matrix() evaluates matrix expressions correctly", {
 
 test_that("praat_eval_string_array() evaluates string array expressions correctly", {
   result <- praat_eval_string_array("{ \"a\", \"b\", \"c\" }")
-  expect_equal(result, c("a", "b", "c"))
+  expect_equal(result, c("a", "b", "c"), tolerance = sqrt(.Machine$double.eps))
   
   result <- praat_eval_string_array("empty$# (3)")
-  expect_equal(result, c("", "", ""))
+  expect_equal(result, c("", "", ""), tolerance = sqrt(.Machine$double.eps))
   expect_length(result, 3)
 })
 
@@ -64,20 +64,20 @@ test_that("praat_eval_string_array() evaluates string array expressions correctl
 test_that("PraatInterpreter$new() creates valid interpreter instance", {
   interp <- PraatInterpreter$new()
   expect_s3_class(interp, "PraatInterpreter")
-  expect_equal(interp$eval("1 + 1"), 2)
+  expect_equal(interp$eval("1 + 1"), 2, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("PraatInterpreter$eval() evaluates expressions in interpreter context", {
   interp <- PraatInterpreter$new()
   
   result <- interp$eval("2 + 3")
-  expect_equal(result, 5)
+  expect_equal(result, 5, tolerance = sqrt(.Machine$double.eps))
   
   result <- interp$eval("\"test\"")
   expect_identical(result, "test")
   
   result <- interp$eval("{ 1, 2, 3 }")
-  expect_equal(result, c(1, 2, 3))
+  expect_equal(result, c(1, 2, 3), tolerance = sqrt(.Machine$double.eps))
 })
 
 # === Variable Get/Set Tests ===
@@ -88,12 +88,12 @@ test_that("set_variable() and get_variable() work for numeric variables", {
   # Set and get numeric scalar
   interp$set_variable("x", 42)
   result <- interp$get_variable("x")
-  expect_equal(result, 42)
+  expect_equal(result, 42, tolerance = sqrt(.Machine$double.eps))
   
   # Integer should work too
   interp$set_variable("count", 100L)
   result <- interp$get_variable("count")
-  expect_equal(result, 100)
+  expect_equal(result, 100, tolerance = sqrt(.Machine$double.eps))
   
   # Negative numbers
   interp$set_variable("temp", -273.15)
@@ -131,7 +131,7 @@ test_that("set_variable() and get_variable() work for vector variables", {
   # Integer vector should convert to double
   interp$set_variable("counts", 1:5)
   result <- interp$get_variable("counts#")
-  expect_equal(result, c(1, 2, 3, 4, 5))
+  expect_equal(result, c(1, 2, 3, 4, 5), tolerance = sqrt(.Machine$double.eps))
   
   # Note: Single element c(99) is treated as scalar, not vector in Praat
 })
@@ -143,9 +143,9 @@ test_that("set_variable() and get_variable() work for matrix variables", {
   mat <- matrix(1:6, nrow = 2, ncol = 3)
   interp$set_variable("mat", mat)
   result <- interp$get_variable("mat##")
-  expect_equal(result, mat)
-  expect_equal(nrow(result), 2)
-  expect_equal(ncol(result), 3)
+  expect_equal(result, mat, tolerance = sqrt(.Machine$double.eps))
+  expect_identical(nrow(result), 2L)
+  expect_identical(ncol(result), 3L)
   
   # Double matrix
   mat_dbl <- matrix(c(1.1, 2.2, 3.3, 4.4), nrow = 2, ncol = 2)
@@ -157,7 +157,7 @@ test_that("set_variable() and get_variable() work for matrix variables", {
   mat_small <- matrix(42)
   interp$set_variable("small", mat_small)
   result <- interp$get_variable("small##")
-  expect_equal(result, mat_small)
+  expect_equal(result, mat_small, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("set_variable() and get_variable() work for string array variables", {
@@ -166,14 +166,14 @@ test_that("set_variable() and get_variable() work for string array variables", {
   # Set and get string array (must be length > 1)
   interp$set_variable("names", c("alice", "bob", "charlie"))
   result <- interp$get_variable("names$#")
-  expect_equal(result, c("alice", "bob", "charlie"))
+  expect_equal(result, c("alice", "bob", "charlie"), tolerance = sqrt(.Machine$double.eps))
   
   # Note: Single element c("only") is treated as string scalar, not array in Praat
   
   # Empty strings in array
   interp$set_variable("mixed", c("a", "", "c"))
   result <- interp$get_variable("mixed$#")
-  expect_equal(result, c("a", "", "c"))
+  expect_equal(result, c("a", "", "c"), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("set_variable() auto-detects correct Praat suffix", {
@@ -181,7 +181,7 @@ test_that("set_variable() auto-detects correct Praat suffix", {
   
   # Numeric doesn't need suffix
   interp$set_variable("x", 10)
-  expect_equal(interp$get_variable("x"), 10)
+  expect_equal(interp$get_variable("x"), 10, tolerance = sqrt(.Machine$double.eps))
   
   # String adds $ suffix
   interp$set_variable("str", "test")
@@ -189,15 +189,15 @@ test_that("set_variable() auto-detects correct Praat suffix", {
   
   # Vector adds # suffix
   interp$set_variable("vec", c(1, 2, 3))
-  expect_equal(interp$get_variable("vec#"), c(1, 2, 3))
+  expect_equal(interp$get_variable("vec#"), c(1, 2, 3), tolerance = sqrt(.Machine$double.eps))
   
   # Matrix adds ## suffix
   interp$set_variable("mat", matrix(1:4, 2, 2))
-  expect_equal(interp$get_variable("mat##"), matrix(1:4, 2, 2))
+  expect_equal(interp$get_variable("mat##"), matrix(1:4, 2, 2), tolerance = sqrt(.Machine$double.eps))
   
   # String array adds $# suffix
   interp$set_variable("strs", c("a", "b"))
-  expect_equal(interp$get_variable("strs$#"), c("a", "b"))
+  expect_equal(interp$get_variable("strs$#"), c("a", "b"), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("Variables can be updated with new values", {
@@ -205,9 +205,9 @@ test_that("Variables can be updated with new values", {
   
   # Update numeric variable
   interp$set_variable("x", 10)
-  expect_equal(interp$get_variable("x"), 10)
+  expect_equal(interp$get_variable("x"), 10, tolerance = sqrt(.Machine$double.eps))
   interp$set_variable("x", 20)
-  expect_equal(interp$get_variable("x"), 20)
+  expect_equal(interp$get_variable("x"), 20, tolerance = sqrt(.Machine$double.eps))
   
   # Update string variable
   interp$set_variable("name", "old")
@@ -225,13 +225,13 @@ test_that("Multiple interpreters have isolated variable spaces", {
   interp2$set_variable("x", 200)
   
   # Values should be isolated
-  expect_equal(interp1$get_variable("x"), 100)
-  expect_equal(interp2$get_variable("x"), 200)
+  expect_equal(interp1$get_variable("x"), 100, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(interp2$get_variable("x"), 200, tolerance = sqrt(.Machine$double.eps))
   
   # Setting in one shouldn't affect the other
   interp1$set_variable("x", 300)
-  expect_equal(interp1$get_variable("x"), 300)
-  expect_equal(interp2$get_variable("x"), 200)
+  expect_equal(interp1$get_variable("x"), 300, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(interp2$get_variable("x"), 200, tolerance = sqrt(.Machine$double.eps))
 })
 
 # === Error Handling Tests ===
@@ -284,10 +284,10 @@ test_that("Variables can be used in expressions after being set", {
   interp$set_variable("b", 20)
   
   result <- interp$eval("a + b")
-  expect_equal(result, 30)
+  expect_equal(result, 30, tolerance = sqrt(.Machine$double.eps))
   
   result <- interp$eval("a * b")
-  expect_equal(result, 200)
+  expect_equal(result, 200, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("String variables can be concatenated in expressions", {
@@ -307,11 +307,11 @@ test_that("Vector operations work with set variables", {
   
   # Get size
   result <- interp$eval("size(vec#)")
-  expect_equal(result, 5)
+  expect_equal(result, 5, tolerance = sqrt(.Machine$double.eps))
   
   # Sum vector
   result <- interp$eval("sum(vec#)")
-  expect_equal(result, 15)
+  expect_equal(result, 15, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("Matrix operations work with set variables", {
@@ -322,11 +322,11 @@ test_that("Matrix operations work with set variables", {
   
   # Get number of rows
   result <- interp$eval("numberOfRows(mat##)")
-  expect_equal(result, 2)
+  expect_equal(result, 2, tolerance = sqrt(.Machine$double.eps))
   
   # Get number of columns
   result <- interp$eval("numberOfColumns(mat##)")
-  expect_equal(result, 2)
+  expect_equal(result, 2, tolerance = sqrt(.Machine$double.eps))
 })
 
 # === Object Management Tests ===
@@ -364,26 +364,26 @@ test_that("PraatInterpreter list_objects() method works", {
 test_that("Object list is initially empty in library mode", {
   # In library mode without GUI, object list should be empty
   count <- praat_object_count()
-  expect_equal(count, 0)
+  expect_equal(count, 0, tolerance = sqrt(.Machine$double.eps))
   
   objects <- praat_list_objects()
-  expect_equal(nrow(objects), 0)
+  expect_identical(nrow(objects), 0L)
 })
 
 # === Complex Mathematical Expression Tests ===
 
 test_that("Complex nested mathematical expressions evaluate correctly", {
   # Nested operations
-  expect_equal(praat_eval_numeric("(2 + 3) * (4 - 1)"), 15)
-  expect_equal(praat_eval_numeric("((10 + 5) / 3) * 2"), 10)
+  expect_equal(praat_eval_numeric("(2 + 3) * (4 - 1)"), 15, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(praat_eval_numeric("((10 + 5) / 3) * 2"), 10, tolerance = sqrt(.Machine$double.eps))
   
   # Order of operations
-  expect_equal(praat_eval_numeric("2 + 3 * 4"), 14)
-  expect_equal(praat_eval_numeric("10 - 2 * 3"), 4)
+  expect_equal(praat_eval_numeric("2 + 3 * 4"), 14, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(praat_eval_numeric("10 - 2 * 3"), 4, tolerance = sqrt(.Machine$double.eps))
   
   # Multiple function calls
-  expect_equal(praat_eval_numeric("sqrt(abs(-16))"), 4)
-  expect_equal(praat_eval_numeric("round(sqrt(10))"), 3)
+  expect_equal(praat_eval_numeric("sqrt(abs(-16))"), 4, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(praat_eval_numeric("round(sqrt(10))"), 3, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("Trigonometric functions work correctly", {
@@ -414,30 +414,30 @@ test_that("Logarithmic and exponential functions work correctly", {
 
 test_that("Statistical functions work correctly", {
   # Min and max
-  expect_equal(praat_eval_numeric("min(5, 3)"), 3)
-  expect_equal(praat_eval_numeric("max(5, 3)"), 5)
+  expect_equal(praat_eval_numeric("min(5, 3)"), 3, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(praat_eval_numeric("max(5, 3)"), 5, tolerance = sqrt(.Machine$double.eps))
   
   # Absolute value
-  expect_equal(praat_eval_numeric("abs(-42)"), 42)
-  expect_equal(praat_eval_numeric("abs(42)"), 42)
+  expect_equal(praat_eval_numeric("abs(-42)"), 42, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(praat_eval_numeric("abs(42)"), 42, tolerance = sqrt(.Machine$double.eps))
   
   # Rounding functions
-  expect_equal(praat_eval_numeric("round(3.7)"), 4)
-  expect_equal(praat_eval_numeric("round(3.2)"), 3)
-  expect_equal(praat_eval_numeric("floor(3.9)"), 3)
-  expect_equal(praat_eval_numeric("ceiling(3.1)"), 4)
+  expect_equal(praat_eval_numeric("round(3.7)"), 4, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(praat_eval_numeric("round(3.2)"), 3, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(praat_eval_numeric("floor(3.9)"), 3, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(praat_eval_numeric("ceiling(3.1)"), 4, tolerance = sqrt(.Machine$double.eps))
 })
 
 # === Advanced String Manipulation Tests ===
 
 test_that("String manipulation functions work correctly", {
   # Length
-  expect_equal(praat_eval_numeric("length(\"hello\")"), 5)
-  expect_equal(praat_eval_numeric("length(\"\")"), 0)
+  expect_equal(praat_eval_numeric("length(\"hello\")"), 5, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(praat_eval_numeric("length(\"\")"), 0, tolerance = sqrt(.Machine$double.eps))
   
   # Substring extraction
-  expect_equal(praat_eval_string("mid$(\"testing\", 2, 4)"), "esti")
-  expect_equal(praat_eval_string("right$(\"testing\", 3)"), "ing")
+  expect_identical(praat_eval_string("mid$(\"testing\", 2, 4)"), "esti")
+  expect_identical(praat_eval_string("right$(\"testing\", 3)"), "ing")
   
   # Case conversion
   result <- praat_eval_string("replace_regex$(\"Hello\", \"H\", \"h\", 0)")
@@ -479,15 +479,15 @@ test_that("Vector arithmetic operations work", {
   
   # Vector sum
   result <- interp$eval("sum(v1#)")
-  expect_equal(result, 6)
+  expect_equal(result, 6, tolerance = sqrt(.Machine$double.eps))
   
   # Vector mean
   result <- interp$eval("mean(v1#)")
-  expect_equal(result, 2)
+  expect_equal(result, 2, tolerance = sqrt(.Machine$double.eps))
   
   # Vector size
   result <- interp$eval("size(v1#)")
-  expect_equal(result, 3)
+  expect_equal(result, 3, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("Vector element access works", {
@@ -497,15 +497,15 @@ test_that("Vector element access works", {
   
   # Access first element (1-based indexing)
   result <- interp$eval("data#[1]")
-  expect_equal(result, 10)
+  expect_equal(result, 10, tolerance = sqrt(.Machine$double.eps))
   
   # Access middle element
   result <- interp$eval("data#[3]")
-  expect_equal(result, 30)
+  expect_equal(result, 30, tolerance = sqrt(.Machine$double.eps))
   
   # Access last element
   result <- interp$eval("data#[5]")
-  expect_equal(result, 50)
+  expect_equal(result, 50, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("Matrix element access works", {
@@ -516,11 +516,11 @@ test_that("Matrix element access works", {
   
   # Access element [1,1]
   result <- interp$eval("m##[1, 1]")
-  expect_equal(result, 1)
+  expect_equal(result, 1, tolerance = sqrt(.Machine$double.eps))
   
   # Access element [2,3]
   result <- interp$eval("m##[2, 3]")
-  expect_equal(result, 6)
+  expect_equal(result, 6, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("Matrix statistics work", {
@@ -530,8 +530,8 @@ test_that("Matrix statistics work", {
   interp$set_variable("m", mat)
   
   # Dimensions
-  expect_equal(interp$eval("numberOfRows(m##)"), 3)
-  expect_equal(interp$eval("numberOfColumns(m##)"), 3)
+  expect_equal(interp$eval("numberOfRows(m##)"), 3, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(interp$eval("numberOfColumns(m##)"), 3, tolerance = sqrt(.Machine$double.eps))
 })
 
 # === Cross-Type Variable Interaction Tests ===
@@ -559,11 +559,11 @@ test_that("Multiple variable types can coexist", {
   interp$set_variable("a", c("a", "b"))
   
   # Verify all are accessible
-  expect_equal(interp$get_variable("n"), 42)
+  expect_equal(interp$get_variable("n"), 42, tolerance = sqrt(.Machine$double.eps))
   expect_identical(interp$get_variable("s$"), "hello")
-  expect_equal(interp$get_variable("v#"), c(1, 2, 3))
-  expect_equal(interp$get_variable("m##"), matrix(1:4, 2, 2))
-  expect_equal(interp$get_variable("a$#"), c("a", "b"))
+  expect_equal(interp$get_variable("v#"), c(1, 2, 3), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(interp$get_variable("m##"), matrix(1:4, 2, 2), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(interp$get_variable("a$#"), c("a", "b"), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("Variables can be used in mixed-type expressions", {
@@ -587,12 +587,12 @@ test_that("Variables persist across multiple eval() calls", {
   
   # Use it in eval
   result <- interp$eval("x * 2")
-  expect_equal(result, 20)
+  expect_equal(result, 20, tolerance = sqrt(.Machine$double.eps))
   
   # Update via set_variable and use again
   interp$set_variable("x", 15)
   result <- interp$eval("x")
-  expect_equal(result, 15)
+  expect_equal(result, 15, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("Computed results can be stored and reused", {
@@ -604,11 +604,11 @@ test_that("Computed results can be stored and reused", {
   
   # Retrieve
   result <- interp$get_variable("result")
-  expect_equal(result, 9)
+  expect_equal(result, 9, tolerance = sqrt(.Machine$double.eps))
   
   # Use in further computation
   result <- interp$eval("result * 2")
-  expect_equal(result, 18)
+  expect_equal(result, 18, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("Interpreter maintains separate state per instance", {
@@ -622,9 +622,9 @@ test_that("Interpreter maintains separate state per instance", {
   interp3$set_variable("value", 300)
   
   # Each should maintain its own state
-  expect_equal(interp1$eval("value"), 100)
-  expect_equal(interp2$eval("value"), 200)
-  expect_equal(interp3$eval("value"), 300)
+  expect_equal(interp1$eval("value"), 100, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(interp2$eval("value"), 200, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(interp3$eval("value"), 300, tolerance = sqrt(.Machine$double.eps))
 })
 
 # === Error Recovery and Edge Cases ===
@@ -634,15 +634,15 @@ test_that("Interpreter recovers from errors gracefully", {
   
   # Set valid variable
   interp$set_variable("x", 10)
-  expect_equal(interp$get_variable("x"), 10)
+  expect_equal(interp$get_variable("x"), 10, tolerance = sqrt(.Machine$double.eps))
   
   # Try invalid operation
   expect_error(interp$eval("invalid_function()"))
   
   # Verify interpreter still works
-  expect_equal(interp$get_variable("x"), 10)
+  expect_equal(interp$get_variable("x"), 10, tolerance = sqrt(.Machine$double.eps))
   result <- interp$eval("x + 5")
-  expect_equal(result, 15)
+  expect_equal(result, 15, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("Large vectors work correctly", {
@@ -654,11 +654,11 @@ test_that("Large vectors work correctly", {
   
   # Verify size
   result <- interp$eval("size(big#)")
-  expect_equal(result, 1000)
+  expect_equal(result, 1000, tolerance = sqrt(.Machine$double.eps))
   
   # Verify sum
   result <- interp$eval("sum(big#)")
-  expect_equal(result, sum(large_vec))
+  expect_equal(result, sum(large_vec), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("Large matrices work correctly", {
@@ -669,12 +669,12 @@ test_that("Large matrices work correctly", {
   interp$set_variable("bigmat", large_mat)
   
   # Verify dimensions
-  expect_equal(interp$eval("numberOfRows(bigmat##)"), 100)
-  expect_equal(interp$eval("numberOfColumns(bigmat##)"), 100)
+  expect_equal(interp$eval("numberOfRows(bigmat##)"), 100, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(interp$eval("numberOfColumns(bigmat##)"), 100, tolerance = sqrt(.Machine$double.eps))
   
   # Access corner element
   result <- interp$eval("bigmat##[100, 100]")
-  expect_equal(result, 10000)
+  expect_equal(result, 10000, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("Special numeric values are handled", {
@@ -682,7 +682,7 @@ test_that("Special numeric values are handled", {
   
   # Zero
   interp$set_variable("zero", 0)
-  expect_equal(interp$get_variable("zero"), 0)
+  expect_equal(interp$get_variable("zero"), 0, tolerance = sqrt(.Machine$double.eps))
   
   # Very small number
   interp$set_variable("tiny", 1e-10)
@@ -690,7 +690,7 @@ test_that("Special numeric values are handled", {
   
   # Very large number
   interp$set_variable("huge", 1e10)
-  expect_equal(interp$get_variable("huge"), 1e10)
+  expect_equal(interp$get_variable("huge"), 1e10, tolerance = sqrt(.Machine$double.eps))
   
   # Negative numbers
   interp$set_variable("neg", -999.999)
@@ -706,13 +706,13 @@ test_that("Empty and single-element collections work", {
   
   # Single element vector treated as scalar
   interp$set_variable("single", 42)
-  expect_equal(interp$get_variable("single"), 42)
+  expect_equal(interp$get_variable("single"), 42, tolerance = sqrt(.Machine$double.eps))
   
   # 1x1 matrix
   mat_1x1 <- matrix(99)
   interp$set_variable("mat1x1", mat_1x1)
   result <- interp$get_variable("mat1x1##")
-  expect_equal(result, mat_1x1)
+  expect_equal(result, mat_1x1, tolerance = sqrt(.Machine$double.eps))
 })
 
 # === Practical Statistical Workflow Tests ===
@@ -726,7 +726,7 @@ test_that("Mean and standard deviation workflow works", {
   
   # Calculate mean
   mean_val <- interp$eval("mean(data#)")
-  expect_equal(mean_val, mean(data))
+  expect_equal(mean_val, mean(data), tolerance = sqrt(.Machine$double.eps))
   
   # Calculate standard deviation
   sd_val <- interp$eval("stdev(data#)")
@@ -742,14 +742,14 @@ test_that("Data transformation workflow works", {
   
   # Get size for iteration
   n <- interp$eval("size(original#)")
-  expect_equal(n, 5)
+  expect_equal(n, 5, tolerance = sqrt(.Machine$double.eps))
   
   # Access and transform individual elements
   first <- interp$eval("original#[1]")
-  expect_equal(first, 10)
+  expect_equal(first, 10, tolerance = sqrt(.Machine$double.eps))
   
   last <- interp$eval("original#[5]")
-  expect_equal(last, 50)
+  expect_equal(last, 50, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("Matrix computation workflow works", {
@@ -767,7 +767,7 @@ test_that("Matrix computation workflow works", {
   
   val12 <- interp$eval("corr##[1, 2]")
   val21 <- interp$eval("corr##[2, 1]")
-  expect_equal(val12, val21)
+  expect_equal(val12, val21, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("Conditional expressions work", {
@@ -775,15 +775,15 @@ test_that("Conditional expressions work", {
   
   # Simple conditional
   result <- interp$eval("if 5 > 3 then 1 else 0 fi")
-  expect_equal(result, 1)
+  expect_equal(result, 1, tolerance = sqrt(.Machine$double.eps))
   
   result <- interp$eval("if 2 > 5 then 1 else 0 fi")
-  expect_equal(result, 0)
+  expect_equal(result, 0, tolerance = sqrt(.Machine$double.eps))
   
   # With variables
   interp$set_variable("x", 10)
   result <- interp$eval("if x > 5 then x * 2 else x fi")
-  expect_equal(result, 20)
+  expect_equal(result, 20, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("String comparison and logic work", {
@@ -793,8 +793,8 @@ test_that("String comparison and logic work", {
   
   # String equality uses string$ function
   result <- interp$eval("if name$ = \"test\" then 1 else 0 fi")
-  expect_equal(result, 1)
+  expect_equal(result, 1, tolerance = sqrt(.Machine$double.eps))
   
   result <- interp$eval("if name$ = \"other\" then 1 else 0 fi")
-  expect_equal(result, 0)
+  expect_equal(result, 0, tolerance = sqrt(.Machine$double.eps))
 })

@@ -5,9 +5,9 @@ test_that("DurationTier constructs and reports start/end/points", {
   expect_s3_class(dt, "DurationTier")
   expect_s3_class(dt, "PraatObject")
   expect_true(dt$is_valid())
-  expect_equal(dt$get_start_time(), 0)
-  expect_equal(dt$get_end_time(), 1)
-  expect_equal(dt$get_number_of_points(), 0)
+  expect_equal(dt$get_start_time(), 0, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(dt$get_end_time(), 1, tolerance = sqrt(.Machine$double.eps))
+  expect_identical(dt$get_number_of_points(), 0L)
 })
 
 test_that("DurationTier add_point/remove_point/value queries work", {
@@ -18,7 +18,7 @@ test_that("DurationTier add_point/remove_point/value queries work", {
   expect_identical(ret, dt)
   dt$add_point(0.75, 1.5)
 
-  expect_equal(dt$get_number_of_points(), 2)
+  expect_identical(dt$get_number_of_points(), 2L)
   expect_equal(dt$get_time_from_index(1), 0.25)
   expect_equal(dt$get_value_at_index(1), 1.0)
   expect_equal(dt$get_time_from_index(2), 0.75)
@@ -34,13 +34,13 @@ test_that("DurationTier add_point/remove_point/value queries work", {
   # (get_xmin()/get_xmax()), not just the point range; for this linear tier
   # the curve mean equals the midpoint value
   expect_equal(dt$get_mean(), 1.25)
-  expect_equal(dt$get_mean(0, 1), dt$get_mean())
+  expect_equal(dt$get_mean(0, 1), dt$get_mean(), tolerance = sqrt(.Machine$double.eps))
   expect_equal(dt$get_mean(0.25, 0.75), 1.25)
 
   # remove_point() returns self invisibly
   ret2 <- dt$remove_point(1)
   expect_identical(ret2, dt)
-  expect_equal(dt$get_number_of_points(), 1)
+  expect_identical(dt$get_number_of_points(), 1L)
   expect_equal(dt$get_time_from_index(1), 0.75)
 
   # out-of-range point indices error
@@ -61,11 +61,11 @@ test_that("DurationTier as_data_frame, save, print", {
   expect_equal(df$duration_factor, c(1.0, 1.5))
 
   # as.data.frame.DurationTier() S3 method delegates to as_data_frame()
-  expect_equal(as.data.frame(dt), df)
+  expect_equal(as.data.frame(dt), df, tolerance = sqrt(.Machine$double.eps))
 
   # empty tier -> zero-row data frame with the right columns/types
   empty_df <- DurationTier(0, 1)$as_data_frame()
-  expect_equal(nrow(empty_df), 0)
+  expect_identical(nrow(empty_df), 0L)
   expect_named(empty_df, c("time", "duration_factor"))
 
   # get_xptr() returns the raw external pointer
@@ -93,7 +93,7 @@ test_that("DurationTier() reconstructs from an external pointer", {
   xptr <- dt$get_xptr()
   dt2 <- DurationTier(.xptr = xptr)
   expect_s3_class(dt2, "DurationTier")
-  expect_equal(dt2$get_number_of_points(), 1)
+  expect_identical(dt2$get_number_of_points(), 1L)
   expect_equal(dt2$get_time_from_index(1), 0.75)
   expect_equal(dt2$get_value_at_index(1), 1.5)
 })

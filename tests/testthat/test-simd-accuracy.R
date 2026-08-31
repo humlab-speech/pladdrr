@@ -52,8 +52,8 @@ test_that("SIMD mono conversion is accurate for stereo", {
   mono <- stereo$convert_to_mono()
   
   # Validate
-  expect_equal(mono$n_channels, 1)
-  expect_equal(mono$n_samples, stereo$n_samples)
+  expect_equal(mono$n_channels, 1, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(mono$n_samples, stereo$n_samples, tolerance = sqrt(.Machine$double.eps))
   
   # Check samples match expected (within floating point tolerance)
   mono_samples <- mono$get_samples(1)
@@ -86,8 +86,8 @@ test_that("SIMD mono conversion is accurate for multi-channel", {
   mono <- multichannel$convert_to_mono()
   
   # Validate
-  expect_equal(mono$n_channels, 1)
-  expect_equal(mono$n_samples, multichannel$n_samples)
+  expect_equal(mono$n_channels, 1, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(mono$n_samples, multichannel$n_samples, tolerance = sqrt(.Machine$double.eps))
   
   # Check samples match expected
   mono_samples <- mono$get_samples(1)
@@ -107,7 +107,7 @@ test_that("SIMD dot product is accurate", {
   # expect_equal(computed, expected, tolerance = 1e-14)
   
   # For now, just validate R's computation
-  expect_equal(sum(x * y), 70)
+  expect_equal(sum(x * y), 70, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("SIMD operations handle edge cases", {

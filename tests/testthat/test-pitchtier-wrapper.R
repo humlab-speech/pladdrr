@@ -7,17 +7,17 @@ test_that("PitchTier() requires (tmin, tmax) or .xptr", {
 test_that("PitchTier construction and point queries", {
   tier <- PitchTier(0, 1)
   expect_s3_class(tier, "PitchTier")
-  expect_equal(tier$get_number_of_points(), 0)
+  expect_identical(tier$get_number_of_points(), 0L)
 
   tier$add_point(0.2, 100)
   tier$add_point(0.5, 150)
   tier$add_point(0.8, 200)
 
-  expect_equal(tier$get_number_of_points(), 3)
+  expect_identical(tier$get_number_of_points(), 3L)
   expect_equal(tier$get_time_from_index(2), 0.5)
-  expect_equal(tier$get_value_at_index(2), 150)
-  expect_equal(tier$get_minimum(), 100)
-  expect_equal(tier$get_maximum(), 200)
+  expect_equal(tier$get_value_at_index(2), 150, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(tier$get_minimum(), 100, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(tier$get_maximum(), 200, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("PitchTier get_mean/get_standard_deviation over the full and partial domain", {
@@ -42,10 +42,10 @@ test_that("PitchTier remove_point and remove_points_between", {
   tier$add_point(0.8, 200)
 
   tier$remove_point(2)
-  expect_equal(tier$get_number_of_points(), 2)
+  expect_identical(tier$get_number_of_points(), 2L)
 
   tier$remove_points_between(0, 1)
-  expect_equal(tier$get_number_of_points(), 0)
+  expect_identical(tier$get_number_of_points(), 0L)
 })
 
 test_that("PitchTier multiply_frequencies_in_range and shift_frequencies_in_range", {
@@ -53,10 +53,10 @@ test_that("PitchTier multiply_frequencies_in_range and shift_frequencies_in_rang
   tier$add_point(0.5, 100)
 
   tier$multiply_frequencies_in_range(0, 1, 2)
-  expect_equal(tier$get_value_at_index(1), 200)
+  expect_equal(tier$get_value_at_index(1), 200, tolerance = sqrt(.Machine$double.eps))
 
   tier$shift_frequencies_in_range(0, 1, 50, unit = "hertz")
-  expect_equal(tier$get_value_at_index(1), 250)
+  expect_equal(tier$get_value_at_index(1), 250, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("PitchTier stylize and interpolate_quadratically run without error", {
@@ -77,11 +77,11 @@ test_that("PitchTier as_data_frame/as_matrix reflect the stored points", {
 
   df <- tier$as_data_frame()
   expect_named(df, c("time", "frequency"))
-  expect_equal(nrow(df), 2)
+  expect_identical(nrow(df), 2L)
 
   mat <- tier$as_matrix()
-  expect_equal(colnames(mat), c("time", "frequency"))
-  expect_equal(nrow(mat), 2)
+  expect_equal(colnames(mat), c("time", "frequency"), tolerance = sqrt(.Machine$double.eps))
+  expect_identical(nrow(mat), 2L)
 })
 
 test_that("PitchTier save/pitchtier_from_file round-trips through a file", {
@@ -94,8 +94,8 @@ test_that("PitchTier save/pitchtier_from_file round-trips through a file", {
   unlink(tmp)
 
   expect_s3_class(loaded, "PitchTier")
-  expect_equal(loaded$get_number_of_points(), 1)
-  expect_equal(loaded$get_value_at_index(1), 150)
+  expect_identical(loaded$get_number_of_points(), 1L)
+  expect_equal(loaded$get_value_at_index(1), 150, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("PitchTier to_sound_pulse_train/to_sound_phonation/to_sound_sine produce Sounds", {
@@ -143,5 +143,5 @@ test_that("PitchTier$new static method loads a PitchTier from file", {
   unlink(tmp)
 
   expect_s3_class(loaded, "PitchTier")
-  expect_equal(loaded$get_number_of_points(), 1)
+  expect_identical(loaded$get_number_of_points(), 1L)
 })

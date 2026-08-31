@@ -10,27 +10,27 @@ test_that("interpreter can receive and return Sound objects", {
   interp <- PraatInterpreter$new()
   id <- interp$set_object("testSound", sound)
   expect_true(is.numeric(id))
-  expect_equal(interp$object_count(), 1)
+  expect_identical(interp$object_count(), 1L)
 
   # List objects
   objs <- interp$list_objects()
-  expect_equal(nrow(objs), 1)
+  expect_identical(nrow(objs), 1L)
   expect_identical(objs$class[1], "Sound")
 
   # Retrieve the sound
   retrieved <- interp$get_object("testSound", "Sound")
   expect_s3_class(retrieved, "Sound")
-  expect_equal(retrieved$get_duration(), sound$get_duration())
+  expect_equal(retrieved$get_duration(), sound$get_duration(), tolerance = sqrt(.Machine$double.eps))
 
   # Verify data integrity (zero difference)
   orig_data <- sound$as_matrix()
   retr_data <- retrieved$as_matrix()
-  expect_equal(dim(orig_data), dim(retr_data))
-  expect_equal(max(abs(orig_data - retr_data)), 0)
+  expect_equal(dim(orig_data), dim(retr_data), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(max(abs(orig_data - retr_data)), 0, tolerance = sqrt(.Machine$double.eps))
 
   # Cleanup
   interp$remove_object("testSound")
-  expect_equal(interp$object_count(), 0)
+  expect_identical(interp$object_count(), 0L)
 })
 
 test_that("interpreter can receive and return Pitch objects", {
@@ -49,12 +49,12 @@ test_that("interpreter can receive and return Pitch objects", {
   expect_s3_class(retrieved, "Pitch")
 
   # Verify same properties (use available methods)
-  expect_equal(retrieved$get_number_of_frames(), pitch$get_number_of_frames())
-  expect_equal(retrieved$get_time_step(), pitch$get_time_step())
-  expect_equal(retrieved$get_mean(0, 0, "Hertz"), pitch$get_mean(0, 0, "Hertz"))
+  expect_equal(retrieved$get_number_of_frames(), pitch$get_number_of_frames(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(retrieved$get_time_step(), pitch$get_time_step(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(retrieved$get_mean(0, 0, "Hertz"), pitch$get_mean(0, 0, "Hertz"), tolerance = sqrt(.Machine$double.eps))
 
   interp$clear_objects()
-  expect_equal(interp$object_count(), 0)
+  expect_identical(interp$object_count(), 0L)
 })
 
 test_that("interpreter can receive and return TextGrid objects", {
@@ -73,10 +73,10 @@ test_that("interpreter can receive and return TextGrid objects", {
   expect_s3_class(retrieved, "TextGrid")
 
   # Verify structure preserved
-  expect_equal(retrieved$get_number_of_tiers(), tg$get_number_of_tiers())
-  expect_equal(retrieved$get_number_of_intervals(1), tg$get_number_of_intervals(1))
-  expect_equal(retrieved$get_interval_text(1, 1), "hello")
-  expect_equal(retrieved$get_interval_text(1, 2), "world")
+  expect_equal(retrieved$get_number_of_tiers(), tg$get_number_of_tiers(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(retrieved$get_number_of_intervals(1), tg$get_number_of_intervals(1), tolerance = sqrt(.Machine$double.eps))
+  expect_identical(retrieved$get_interval_text(1, 1), "hello")
+  expect_identical(retrieved$get_interval_text(1, 2), "world")
 
   interp$clear_objects()
 })
@@ -116,7 +116,7 @@ test_that("interpreter can handle multiple objects", {
   interp$set_object("high", sound2)
   interp$set_object("pitchObj", pitch)
 
-  expect_equal(interp$object_count(), 3)
+  expect_identical(interp$object_count(), 3L)
 
   # Retrieve by ID
   objs <- interp$list_objects()
@@ -126,10 +126,10 @@ test_that("interpreter can handle multiple objects", {
 
   # Remove by ID
   interp$remove_object_by_id(low_id)
-  expect_equal(interp$object_count(), 2)
+  expect_identical(interp$object_count(), 2L)
 
   interp$clear_objects()
-  expect_equal(interp$object_count(), 0)
+  expect_identical(interp$object_count(), 0L)
 })
 
 test_that("interpreter object selection works", {

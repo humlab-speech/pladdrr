@@ -23,10 +23,10 @@ test_that("LongSound$open() opens a file and reports correct properties", {
 
   expect_s3_class(ls, "LongSound")
   expect_true(ls$is_valid())
-  expect_equal(ls$get_sample_rate(), 44100)
-  expect_equal(ls$get_number_of_channels(), 1)
-  expect_equal(ls$get_number_of_samples(), 44100)
-  expect_equal(ls$get_start_time(), 0)
+  expect_equal(ls$get_sample_rate(), 44100, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(ls$get_number_of_channels(), 1, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(ls$get_number_of_samples(), 44100, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(ls$get_start_time(), 0, tolerance = sqrt(.Machine$double.eps))
   expect_equal(ls$get_end_time(), 1.0, tolerance = 1e-6)
   expect_equal(ls$get_duration(), 1.0, tolerance = 1e-6)
   expect_true(nzchar(ls$get_file_path()))
@@ -65,9 +65,9 @@ test_that("LongSound query methods match an equivalent in-memory Sound", {
   ls <- LongSound$open(path)
   snd <- Sound(path = path)
 
-  expect_equal(ls$get_sample_rate(), snd$get_sampling_frequency())
-  expect_equal(ls$get_number_of_channels(), snd$get_number_of_channels())
-  expect_equal(ls$get_number_of_samples(), snd$get_number_of_samples())
+  expect_equal(ls$get_sample_rate(), snd$get_sampling_frequency(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(ls$get_number_of_channels(), snd$get_number_of_channels(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(ls$get_number_of_samples(), snd$get_number_of_samples(), tolerance = sqrt(.Machine$double.eps))
   expect_equal(ls$get_duration(), snd$get_duration(), tolerance = 1e-6)
 })
 
@@ -131,7 +131,7 @@ test_that("get_time_from_sample() and get_sample_from_time() round-trip", {
 
   for (sample in c(1L, 100L, 22050L, 44100L)) {
     t <- ls$get_time_from_sample(sample)
-    expect_equal(ls$get_sample_from_time(t), sample)
+    expect_equal(ls$get_sample_from_time(t), sample, tolerance = sqrt(.Machine$double.eps))
   }
 })
 
@@ -197,6 +197,6 @@ test_that("longsound_get_buffer_size_pref_seconds()/set round-trip and default i
   expect_gt(original, 0)  # regression: used to silently read 0
 
   old <- longsound_set_buffer_size_pref_seconds(120)
-  expect_equal(old, original)
-  expect_equal(longsound_get_buffer_size_pref_seconds(), 120)
+  expect_equal(old, original, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(longsound_get_buffer_size_pref_seconds(), 120, tolerance = sqrt(.Machine$double.eps))
 })

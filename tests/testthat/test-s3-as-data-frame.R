@@ -14,35 +14,35 @@ test_that("as.data.frame.Sound delegates to Sound$as_data_frame()", {
   sound <- tone_sound()
   df <- as.data.frame(sound)
 
-  expect_equal(df, sound$as_data_frame())
+  expect_equal(df, sound$as_data_frame(), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("as.data.frame.Formant delegates to Formant$as_data_frame()", {
   formant <- tone_sound(freq = 220)$to_formant_burg()
   df <- as.data.frame(formant)
 
-  expect_equal(df, formant$as_data_frame())
+  expect_equal(df, formant$as_data_frame(), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("as.data.frame.Intensity delegates to Intensity$as_data_frame()", {
   intensity <- tone_sound()$to_intensity()
   df <- as.data.frame(intensity)
 
-  expect_equal(df, intensity$as_data_frame())
+  expect_equal(df, intensity$as_data_frame(), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("as.data.frame.Pitch delegates to Pitch$as_data_frame()", {
   pitch <- tone_sound()$to_pitch()
   df <- as.data.frame(pitch)
 
-  expect_equal(df, pitch$as_data_frame())
+  expect_equal(df, pitch$as_data_frame(), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("as.data.frame.PointProcess delegates to PointProcess$as_data_frame()", {
   pp <- tone_sound()$to_point_process_periodic_cc(75, 600)
   df <- as.data.frame(pp)
 
-  expect_equal(df, pp$as_data_frame())
+  expect_equal(df, pp$as_data_frame(), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("as.data.frame.TextGrid delegates to TextGrid$as_data_frame()", {
@@ -51,14 +51,14 @@ test_that("as.data.frame.TextGrid delegates to TextGrid$as_data_frame()", {
   tg$set_interval_text("words", 1, "hello")
 
   df <- as.data.frame(tg)
-  expect_equal(df, tg$as_data_frame())
+  expect_equal(df, tg$as_data_frame(), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("as.data.frame.MFCC delegates to MFCC$as_data_frame()", {
   mfcc <- tone_sound()$to_mfcc()
   df <- as.data.frame(mfcc)
 
-  expect_equal(df, mfcc$as_data_frame())
+  expect_equal(df, mfcc$as_data_frame(), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("as.data.frame.LFCC delegates to LFCC$as_data_frame()", {
@@ -66,5 +66,5 @@ test_that("as.data.frame.LFCC delegates to LFCC$as_data_frame()", {
   lfcc <- lpc$to_lfcc()
   df <- as.data.frame(lfcc)
 
-  expect_equal(df, lfcc$as_data_frame())
+  expect_equal(df, lfcc$as_data_frame(), tolerance = sqrt(.Machine$double.eps))
 })

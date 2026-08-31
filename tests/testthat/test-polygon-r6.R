@@ -15,7 +15,7 @@ test_that("Polygon constructs from x/y vectors and reports basics", {
 
   expect_s3_class(poly, "Polygon")
   expect_true(poly$is_valid())
-  expect_equal(poly$n_points(), 4)
+  expect_identical(poly$n_points(), 4L)
   expect_equal(poly$get_x(1), 0, tolerance = 1e-9)
   expect_equal(poly$get_y(2), 0, tolerance = 1e-9)
   expect_equal(poly$get_all_x(), c(0, 1, 1, 0), tolerance = 1e-9)
@@ -37,7 +37,7 @@ test_that("Polygon export methods work", {
 
   mat <- poly$as_matrix()
   expect_true(is.matrix(mat))
-  expect_equal(nrow(mat), 4)
+  expect_identical(nrow(mat), 4L)
 
   tmp <- tempfile(fileext = ".Polygon")
   on.exit(unlink(tmp), add = TRUE)

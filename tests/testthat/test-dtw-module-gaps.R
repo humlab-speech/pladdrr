@@ -19,8 +19,8 @@ test_that("DTW x/y duration and dx/dy are accessible", {
 
   expect_true(is.numeric(dtw$get_x_duration()))
   expect_true(is.numeric(dtw$get_y_duration()))
-  expect_equal(dtw$get_x_duration(), dtw$get_xmax() - dtw$get_xmin())
-  expect_equal(dtw$get_y_duration(), dtw$get_ymax() - dtw$get_ymin())
+  expect_equal(dtw$get_x_duration(), dtw$get_xmax() - dtw$get_xmin(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(dtw$get_y_duration(), dtw$get_ymax() - dtw$get_ymin(), tolerance = sqrt(.Machine$double.eps))
 
   # get_dx()/get_dy() aren't exposed on the R6-style wrapper at all (only
   # get_nx()/get_ny() are); reach them via the raw .cpp module object.
@@ -84,8 +84,8 @@ test_that("DTW to_matrix_cumulative works and produces a valid Matrix", {
   # Matrix is an S3-wrapped Praat object here, not a base R matrix, so
   # base nrow()/ncol() don't apply -- use its own get_nx()/get_ny().
   expect_s3_class(mat, "Matrix")
-  expect_equal(mat$get_ny(), dtw$get_ny())
-  expect_equal(mat$get_nx(), dtw$get_nx())
+  expect_equal(mat$get_ny(), dtw$get_ny(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(mat$get_nx(), dtw$get_nx(), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("DTW to_duration_tier is an unimplemented Praat stub (documented, not fixed)", {

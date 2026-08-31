@@ -137,7 +137,7 @@ test_that("get_textgrid_labels_all returns all labels", {
   
   # Labels should match individual queries
   for (i in 1:min(5, n_intervals)) {
-    expect_equal(labels[i], tg$get_interval_text(1, i))
+    expect_equal(labels[i], tg$get_interval_text(1, i), tolerance = sqrt(.Machine$double.eps))
   }
 })
 
@@ -163,8 +163,8 @@ test_that("get_textgrid_interval_stats returns correct stats", {
   
   # Check dimensions
   n_intervals <- tg$get_number_of_intervals(1)
-  expect_equal(nrow(stats), n_intervals)
-  expect_equal(ncol(stats), 5)
+  expect_equal(nrow(stats), n_intervals, tolerance = sqrt(.Machine$double.eps))
+  expect_identical(ncol(stats), 5L)
   
   # Durations should match
   expect_equal(stats$duration, stats$end - stats$start, tolerance = 1e-10)
@@ -254,7 +254,7 @@ test_that("batch operations return same results as manual", {
   batch_stats <- get_textgrid_interval_stats(tg, tier = 1)
   
   # Compare
-  expect_equal(batch_stats$label, manual_labels)
+  expect_equal(batch_stats$label, manual_labels, tolerance = sqrt(.Machine$double.eps))
   expect_equal(batch_stats$start, manual_starts, tolerance = 1e-10)
   expect_equal(batch_stats$end, manual_ends, tolerance = 1e-10)
 })
@@ -346,12 +346,12 @@ test_that("textgrid_filter_xptr filters with built-in predicates and errors on b
 
   pred_ne <- get_interval_predicate("non_empty")
   result <- textgrid_filter_xptr(tg$.xptr, 1L, pred_ne)
-  expect_equal(result$n_matched, 2L)
-  expect_equal(result$labels, c("b", "d"))
+  expect_equal(result$n_matched, 2L, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(result$labels, c("b", "d"), tolerance = sqrt(.Machine$double.eps))
 
   pred_min <- get_interval_predicate("min_duration", 1.0)
   result2 <- textgrid_filter_xptr(tg$.xptr, 1L, pred_min)
-  expect_equal(result2$n_matched, 1L)  # only interval 4: [0.8, 2.0] = 1.2s
+  expect_equal(result2$n_matched, 1L, tolerance = sqrt(.Machine$double.eps))  # only interval 4: [0.8, 2.0] = 1.2s
 
   # With sound extraction
   sound <- Sound$create_tone(frequency = 150, duration = 2, sampling_rate = 16000)

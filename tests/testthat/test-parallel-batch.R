@@ -17,8 +17,8 @@ make_audio_dir <- function(n = 2) {
 
 test_that(".pladdrr_worker_thread_budget divides cores and honors explicit override", {
   budget <- pladdrr:::.pladdrr_worker_thread_budget
-  expect_equal(budget(2, threads_per_worker = 3), 3)
-  expect_equal(budget(2, threads_per_worker = 0), 1) # clamps to >= 1
+  expect_equal(budget(2, threads_per_worker = 3), 3, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(budget(2, threads_per_worker = 0), 1, tolerance = sqrt(.Machine$double.eps)) # clamps to >= 1
   auto <- budget(2, threads_per_worker = NULL)
   expect_gte(auto, 1)
 })
@@ -111,10 +111,10 @@ test_that("benchmark_parallel returns timing rows for each requested core count"
                                  core_counts = c(1, 2))
 
   expect_s3_class(results, "data.frame")
-  expect_equal(nrow(results), 2)
-  expect_equal(results$cores, c(1, 2))
+  expect_identical(nrow(results), 2L)
+  expect_equal(results$cores, c(1, 2), tolerance = sqrt(.Machine$double.eps))
   expect_true(all(results$time_sec >= 0))
-  expect_equal(results$speedup[1], 1)
+  expect_equal(results$speedup[1], 1, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("process_sounds_parallel uses default n_cores", {

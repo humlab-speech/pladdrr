@@ -5,8 +5,8 @@ test_that("Matrix R6 class basic operations work", {
   expect_s3_class(mat, "Matrix")
   
   # Check dimensions
-  expect_equal(mat$get_ny(), 5)
-  expect_equal(mat$get_nx(), 3)
+  expect_identical(mat$get_ny(), 5L)
+  expect_identical(mat$get_nx(), 3L)
   
   # Set and get values
   mat$set_value(row = 2, col = 2, value = 42.0)
@@ -25,8 +25,8 @@ test_that("Matrix R6 class full parameter creation works", {
   expect_s3_class(mat, "Matrix")
   
   # Check dimensions
-  expect_equal(mat$get_nx(), 10)
-  expect_equal(mat$get_ny(), 20)
+  expect_identical(mat$get_nx(), 10L)
+  expect_identical(mat$get_ny(), 20L)
   expect_equal(mat$get_xmin(), 0.0)
   expect_equal(mat$get_xmax(), 1.0)
 })
@@ -39,9 +39,9 @@ test_that("Matrix export works", {
 
   exported <- mat$as_matrix()
   expect_true(is.matrix(exported))
-  expect_equal(dim(exported), c(3, 3))
-  expect_equal(exported[1, 1], 1)
-  expect_equal(exported[3, 2], 5)
+  expect_equal(dim(exported), c(3, 3), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(exported[1, 1], 1, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(exported[3, 2], 5, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("Matrix R6 class error handling works", {

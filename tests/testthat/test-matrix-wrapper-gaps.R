@@ -8,10 +8,10 @@ mat_fixture <- function() {
 
 test_that("Matrix geometry getters", {
   m <- mat_fixture()
-  expect_equal(m$get_nx(), 4L)
-  expect_equal(m$get_ny(), 3L)
-  expect_equal(m$get_number_of_columns(), 4L)
-  expect_equal(m$get_number_of_rows(), 3L)
+  expect_identical(m$get_nx(), 4L)
+  expect_identical(m$get_ny(), 3L)
+  expect_identical(m$get_number_of_columns(), 4L)
+  expect_identical(m$get_number_of_rows(), 3L)
   expect_gt(m$get_dx(), 0)
   expect_gt(m$get_dy(), 0)
   expect_lte(m$get_xmin(), m$get_xmax())

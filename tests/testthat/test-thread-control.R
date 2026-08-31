@@ -13,7 +13,7 @@ test_that("pladdrr_threads(1) disables multithreading", {
 
   state <- pladdrr_threads(1)
   expect_false(state$enabled)
-  expect_equal(state$max_threads, 1L)
+  expect_equal(state$max_threads, 1L, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("pladdrr_threads(0) restores automatic (all-core) mode", {

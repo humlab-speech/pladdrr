@@ -94,8 +94,8 @@ test_that("Harmonicity batch stats work", {
   stats <- hnr$get_statistics_batch(starts, ends, c("mean", "min", "max"))
 
   expect_true(is.matrix(stats))
-  expect_equal(nrow(stats), 3)
-  expect_equal(ncol(stats), 3)
+  expect_identical(nrow(stats), 3L)
+  expect_identical(ncol(stats), 3L)
 
   # Direct vector access
   values <- hnr$get_values_vector()
@@ -128,8 +128,8 @@ test_that("TextGrid batch labels work", {
 
   # Batch set interval texts
   tg$set_interval_texts_batch("words", c(1, 2), c("foo", "bar"))
-  expect_equal(tg$get_interval_text("words", 1), "foo")
-  expect_equal(tg$get_interval_text("words", 2), "bar")
+  expect_identical(tg$get_interval_text("words", 1), "foo")
+  expect_identical(tg$get_interval_text("words", 2), "bar")
 })
 
 test_that("Spectrum vector operations work", {
@@ -179,7 +179,7 @@ test_that("Formant track extraction works", {
   # Get all formant tracks at once
   all_tracks <- formant$get_all_formant_tracks(3)
   expect_true(is.matrix(all_tracks))
-  expect_equal(ncol(all_tracks), 3)
+  expect_identical(ncol(all_tracks), 3L)
 })
 
 test_that("Spectrogram batch queries work", {

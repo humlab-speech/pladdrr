@@ -85,7 +85,7 @@ test_that(".formant_modeler_long_df degrades gracefully on edge-case inputs", {
   wide_empty <- data.frame(time = numeric(0), F1_modeled = numeric(0),
                             F2_modeled = numeric(0))
   res_empty <- pladdrr:::.formant_modeler_long_df(wide_empty, 1, 0, 2)
-  expect_equal(nrow(res_empty), 0)
+  expect_identical(nrow(res_empty), 0L)
   expect_setequal(names(res_empty), c("time", "formant_number", "frequency"))
 
   # from_track > to_track must not count backward (R's `:` operator would);
@@ -95,5 +95,5 @@ test_that(".formant_modeler_long_df degrades gracefully on edge-case inputs", {
   fm <- formant$to_formant_modeler()
   wide <- as.data.frame(fm)
   res_backwards <- pladdrr:::.formant_modeler_long_df(wide, 3, 1, 3)
-  expect_equal(nrow(res_backwards), 0)
+  expect_identical(nrow(res_backwards), 0L)
 })

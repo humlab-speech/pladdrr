@@ -12,8 +12,8 @@ test_that("sound_pool_clear() does not free an in-use acquired Sound", {
   # in-use entries too.
   pladdrr:::sound_pool_clear()
 
-  expect_equal(sound$get_number_of_samples(), 4410)
-  expect_equal(sound$get_number_of_channels(), 1)
+  expect_identical(sound$get_number_of_samples(), 4410L)
+  expect_identical(sound$get_number_of_channels(), 1L)
 
   pladdrr:::sound_pool_release(xptr)
 })
@@ -30,7 +30,7 @@ test_that("sound_pool_clear() still reclaims unused pooled Sounds", {
   pladdrr:::sound_pool_clear()
 
   stats_after <- pladdrr:::sound_pool_stats()
-  expect_equal(stats_after$pool_size, 0)
+  expect_equal(stats_after$pool_size, 0, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("sound_pool_resize changes capacity without error", {

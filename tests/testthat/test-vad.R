@@ -13,13 +13,13 @@ test_that("sound_to_textgrid_silences returns a TextGrid with silence/sounding i
   tg <- sound_to_textgrid_silences(sound)
 
   expect_s3_class(tg, "TextGrid")
-  expect_equal(tg$get_number_of_tiers(), 1)
-  expect_equal(tg$get_number_of_intervals(1), 3)
-  expect_equal(tg$get_interval_text(1, 1), "sounding")
-  expect_equal(tg$get_interval_text(1, 2), "silence")
-  expect_equal(tg$get_interval_text(1, 3), "sounding")
-  expect_equal(tg$get_interval_start_time(1, 1), 0)
-  expect_equal(tg$get_interval_end_time(1, 3), sound$get_total_duration())
+  expect_identical(tg$get_number_of_tiers(), 1L)
+  expect_identical(tg$get_number_of_intervals(1), 3L)
+  expect_identical(tg$get_interval_text(1, 1), "sounding")
+  expect_identical(tg$get_interval_text(1, 2), "silence")
+  expect_identical(tg$get_interval_text(1, 3), "sounding")
+  expect_equal(tg$get_interval_start_time(1, 1), 0, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(tg$get_interval_end_time(1, 3), sound$get_total_duration(), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("sound_to_textgrid_silences honors custom labels and thresholds", {
@@ -54,8 +54,8 @@ test_that("sound_to_textgrid_silences with a very high min_sounding_interval col
 
   tg <- sound_to_textgrid_silences(sound, min_sounding_interval = 10)
 
-  expect_equal(tg$get_number_of_intervals(1), 1)
-  expect_equal(tg$get_interval_text(1, 1), "silence")
+  expect_identical(tg$get_number_of_intervals(1), 1L)
+  expect_identical(tg$get_interval_text(1, 1), "silence")
 })
 
 test_that("textgrid_get_intervals_where 'equals' returns matching intervals with count", {
@@ -72,7 +72,7 @@ test_that("textgrid_get_intervals_where 'equals' returns matching intervals with
 
   expect_type(voiced, "list")
   expect_setequal(names(voiced), c("xmin", "xmax", "text", "count"))
-  expect_equal(voiced$count, 2L)
+  expect_equal(voiced$count, 2L, tolerance = sqrt(.Machine$double.eps))
   expect_length(voiced$xmin, 2)
   expect_length(voiced$xmax, 2)
   expect_true(all(voiced$text == "sounding"))
@@ -90,18 +90,18 @@ test_that("textgrid_get_intervals_where 'contains' / 'does not contain' / 'start
   tg <- sound_to_textgrid_silences(sound, silent_label = "sil", sounding_label = "voi")
 
   contains <- textgrid_get_intervals_where(tg, tier = 1, condition = "contains", text = "il")
-  expect_equal(contains$count, 1L)
+  expect_equal(contains$count, 1L, tolerance = sqrt(.Machine$double.eps))
   expect_identical(contains$text, "sil")
 
   does_not_contain <- textgrid_get_intervals_where(tg, tier = 1, condition = "does not contain", text = "sil")
-  expect_equal(does_not_contain$count, 2L)
+  expect_equal(does_not_contain$count, 2L, tolerance = sqrt(.Machine$double.eps))
   expect_true(all(does_not_contain$text == "voi"))
 
   starts_with <- textgrid_get_intervals_where(tg, tier = 1, condition = "starts with", text = "v")
-  expect_equal(starts_with$count, 2L)
+  expect_equal(starts_with$count, 2L, tolerance = sqrt(.Machine$double.eps))
 
   ends_with <- textgrid_get_intervals_where(tg, tier = 1, condition = "ends with", text = "l")
-  expect_equal(ends_with$count, 1L)
+  expect_equal(ends_with$count, 1L, tolerance = sqrt(.Machine$double.eps))
   expect_identical(ends_with$text, "sil")
 })
 
@@ -111,7 +111,7 @@ test_that("textgrid_get_intervals_where returns empty result when nothing matche
 
   none <- textgrid_get_intervals_where(tg, tier = 1, condition = "equals", text = "nope")
 
-  expect_equal(none$count, 0L)
+  expect_equal(none$count, 0L, tolerance = sqrt(.Machine$double.eps))
   expect_length(none$xmin, 0)
   expect_length(none$xmax, 0)
   expect_length(none$text, 0)

@@ -9,7 +9,7 @@ test_that("VocalTract constructs with defaults and reports basics", {
 
   expect_s3_class(vt, "VocalTract")
   expect_true(vt$is_valid())
-  expect_equal(vt$get_number_of_sections(), 17)
+  expect_identical(vt$get_number_of_sections(), 17L)
   expect_type(vt$get_length(), "double")
   expect_type(vt$get_section_length(), "double")
   expect_type(vt$get_areas(), "double")

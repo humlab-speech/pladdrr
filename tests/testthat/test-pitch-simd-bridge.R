@@ -40,8 +40,8 @@ test_that("Pitch AC/CC SIMD path (pitch_simd_bridge.cpp) matches scalar for a re
   pitch_simd_ac <- sound$to_pitch_ac()
   pitch_simd_cc <- sound$to_pitch_cc()
 
-  expect_equal(pitch_simd_ac$get_number_of_frames(), pitch_scalar_ac$get_number_of_frames())
-  expect_equal(pitch_simd_cc$get_number_of_frames(), pitch_scalar_cc$get_number_of_frames())
+  expect_equal(pitch_simd_ac$get_number_of_frames(), pitch_scalar_ac$get_number_of_frames(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pitch_simd_cc$get_number_of_frames(), pitch_scalar_cc$get_number_of_frames(), tolerance = sqrt(.Machine$double.eps))
 
   # autocorrelation SIMD bridge must be bit-exact -- it's a direct arithmetic
   # reduction, not an FFT-order-dependent path like Harmonicity AC
@@ -69,8 +69,8 @@ test_that("Pitch AC/CC SIMD path matches scalar on a noisier/unvoiced-mixed sign
 
   expect_equal(simd_ac$get_mean(), scalar_ac$get_mean(), tolerance = 1e-10)
   expect_equal(simd_cc$get_mean(), scalar_cc$get_mean(), tolerance = 1e-10)
-  expect_equal(simd_ac$count_voiced_frames(), scalar_ac$count_voiced_frames())
-  expect_equal(simd_cc$count_voiced_frames(), scalar_cc$count_voiced_frames())
+  expect_equal(simd_ac$count_voiced_frames(), scalar_ac$count_voiced_frames(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(simd_cc$count_voiced_frames(), scalar_cc$count_voiced_frames(), tolerance = sqrt(.Machine$double.eps))
 
   pladdrr_simd(TRUE) # restore default
 })

@@ -4,7 +4,7 @@
 # --- validate_positive -------------------------------------------------------
 
 test_that("validate_positive accepts positive numbers and rejects everything else", {
-  expect_equal(pladdrr:::validate_positive(5), 5)
+  expect_equal(pladdrr:::validate_positive(5), 5, tolerance = sqrt(.Machine$double.eps))
   expect_error(pladdrr:::validate_positive(0), "must be positive")
   expect_error(pladdrr:::validate_positive(-1), "must be positive")
   expect_error(pladdrr:::validate_positive(NA_real_), "cannot be NA")
@@ -15,8 +15,8 @@ test_that("validate_positive accepts positive numbers and rejects everything els
 # --- validate_non_negative ----------------------------------------------------
 
 test_that("validate_non_negative accepts zero and positive, rejects negative", {
-  expect_equal(pladdrr:::validate_non_negative(0), 0)
-  expect_equal(pladdrr:::validate_non_negative(5), 5)
+  expect_equal(pladdrr:::validate_non_negative(0), 0, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pladdrr:::validate_non_negative(5), 5, tolerance = sqrt(.Machine$double.eps))
   expect_error(pladdrr:::validate_non_negative(-0.1), "non-negative")
   expect_error(pladdrr:::validate_non_negative(NA_real_), "cannot be NA")
   expect_error(pladdrr:::validate_non_negative("x"), "single numeric value")
@@ -27,7 +27,7 @@ test_that("validate_non_negative accepts zero and positive, rejects negative", {
 # --- validate_positive_int -----------------------------------------------------
 
 test_that("validate_positive_int accepts positive integers and rejects the rest", {
-  expect_equal(pladdrr:::validate_positive_int(5), 5L)
+  expect_equal(pladdrr:::validate_positive_int(5), 5L, tolerance = sqrt(.Machine$double.eps))
   expect_error(pladdrr:::validate_positive_int(5.5), "must be a positive integer")
   expect_error(pladdrr:::validate_positive_int(0), "must be a positive integer")
   expect_error(pladdrr:::validate_positive_int(-3), "must be a positive integer")
@@ -78,7 +78,7 @@ test_that("is_praat_sound rejects legacy praat_sound objects missing required fi
 
 test_that("validate_sound_object passes through valid sounds and errors otherwise", {
   sound <- Sound$create_tone(frequency = 150, duration = 0.1, sampling_rate = 8000)
-  expect_equal(pladdrr:::validate_sound_object(sound), sound)
+  expect_equal(pladdrr:::validate_sound_object(sound), sound, tolerance = sqrt(.Machine$double.eps))
   expect_error(pladdrr:::validate_sound_object(42), "must be a praat_sound object")
 })
 
@@ -124,7 +124,7 @@ test_that("is_praat_formant recognizes R6 Formant and well-formed legacy praat_f
 test_that("validate_formant_object passes through valid formants and errors otherwise", {
   sound <- Sound$create_tone(frequency = 220, duration = 0.2, sampling_rate = 16000)
   formant <- sound$to_formant_burg()
-  expect_equal(pladdrr:::validate_formant_object(formant), formant)
+  expect_equal(pladdrr:::validate_formant_object(formant), formant, tolerance = sqrt(.Machine$double.eps))
   expect_error(pladdrr:::validate_formant_object(42), "must be a praat_formant object")
 })
 

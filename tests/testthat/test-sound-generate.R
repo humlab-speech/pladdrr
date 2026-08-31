@@ -18,8 +18,8 @@ test_that("generate_sine_wave() creates mathematically correct waveform", {
 
   # Check dimensions
   expected_samples <- round(duration * sampling_rate)
-  expect_equal(sound$get_number_of_samples(), expected_samples)
-  expect_equal(sound$get_sampling_frequency(), sampling_rate)
+  expect_equal(sound$get_number_of_samples(), expected_samples, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(sound$get_sampling_frequency(), sampling_rate, tolerance = sqrt(.Machine$double.eps))
   expect_equal(sound$get_total_duration(), duration, tolerance = 1e-6)
 
   # Check amplitude range
@@ -43,7 +43,7 @@ test_that("generate_sine_wave() uses default parameters correctly", {
   sound <- generate_sine_wave(440, 0.1)
 
   expect_s3_class(sound, "Sound")
-  expect_equal(sound$get_sampling_frequency(), 44100)  # Default
+  expect_equal(sound$get_sampling_frequency(), 44100, tolerance = sqrt(.Machine$double.eps))  # Default
   # Default amplitude should create values in [-1, 1] range
   expect_true(all(sound$get_values() >= -1.0))
   expect_true(all(sound$get_values() <= 1.0))
@@ -75,7 +75,7 @@ test_that("generate_sine_wave() creates phase-coherent waveform", {
   sound2 <- generate_sine_wave(440, 0.1, sampling_rate = 44100)
 
   # They should be identical (deterministic, no phase offset)
-  expect_equal(sound1$get_values(), sound2$get_values())
+  expect_equal(sound1$get_values(), sound2$get_values(), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("generate_noise() creates random noise with correct properties", {
@@ -92,8 +92,8 @@ test_that("generate_noise() creates random noise with correct properties", {
 
   # Check dimensions
   expected_samples <- round(duration * sampling_rate)
-  expect_equal(sound$get_number_of_samples(), expected_samples)
-  expect_equal(sound$get_sampling_frequency(), sampling_rate)
+  expect_equal(sound$get_number_of_samples(), expected_samples, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(sound$get_sampling_frequency(), sampling_rate, tolerance = sqrt(.Machine$double.eps))
 
   # Check values are numeric
   expect_type(sound$get_values(), "double")
@@ -117,7 +117,7 @@ test_that("generate_noise() with seed produces reproducible results", {
   sound2 <- generate_noise(duration, seed = seed)
 
   # With same seed, should get identical noise
-  expect_equal(sound1$get_values(), sound2$get_values())
+  expect_equal(sound1$get_values(), sound2$get_values(), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("generate_noise() without seed produces different results", {
@@ -136,7 +136,7 @@ test_that("generate_noise() uses default parameters correctly", {
   sound <- generate_noise(0.1)
 
   expect_s3_class(sound, "Sound")
-  expect_equal(sound$get_sampling_frequency(), 44100)  # Default
+  expect_equal(sound$get_sampling_frequency(), 44100, tolerance = sqrt(.Machine$double.eps))  # Default
   expect_equal(sound$get_total_duration(), 0.1, tolerance = 1e-6)
 })
 

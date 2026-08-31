@@ -82,8 +82,8 @@ for (fixture in mono_fixtures) {
                                               min_sounding_duration = 0.05)
         golden <- read.csv(golden_path(fixture, "textgrid_silences"))
 
-        expect_equal(tg$get_number_of_intervals(1), golden$n_intervals[1])
-        expect_equal(tg$get_label_at_time(1, 0.0 + 1e-9), golden$label1[1])
+        expect_equal(tg$get_number_of_intervals(1), golden$n_intervals[1], tolerance = sqrt(.Machine$double.eps))
+        expect_equal(tg$get_label_at_time(1, 0.0 + 1e-9), golden$label1[1], tolerance = sqrt(.Machine$double.eps))
       })
     })
   }

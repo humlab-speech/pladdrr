@@ -12,10 +12,10 @@ test_that("check_audio_quality returns expected metrics for a clean tone", {
   ))
 
   expect_false(q$is_clipped)
-  expect_equal(q$n_clipping_samples, 0)
-  expect_equal(q$clipping_percentage, 0)
+  expect_equal(q$n_clipping_samples, 0, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(q$clipping_percentage, 0, tolerance = sqrt(.Machine$double.eps))
   expect_equal(q$duration, 0.5, tolerance = 1e-6)
-  expect_equal(q$sampling_frequency, 16000)
+  expect_equal(q$sampling_frequency, 16000, tolerance = sqrt(.Machine$double.eps))
   expect_gt(q$rms_amplitude, 0)
   expect_gt(q$max_amplitude, 0); expect_lte(q$max_amplitude, 1)
   expect_gte(q$intensity_range_db, 0)

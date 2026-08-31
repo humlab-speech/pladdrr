@@ -75,7 +75,7 @@ test_that("duration filtering returns correct indices", {
   indices <- .filter_dur(durations, min_dur, max_dur)
 
   # Expected: indices 2, 3, 4 (0.1, 0.15, 0.2) - 1-based
-  expect_equal(indices, c(2, 3, 4))
+  expect_equal(indices, c(2, 3, 4), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("SIMD toggle functions work", {

@@ -55,15 +55,15 @@ test_that("MFCC time-domain and CC properties are correct", {
   expect_type(mfcc$get_xmin(), "double")
   expect_type(mfcc$get_xmax(), "double")
   expect_gt(mfcc$get_xmax(), mfcc$get_xmin())
-  expect_equal(mfcc$get_duration(), mfcc$get_xmax() - mfcc$get_xmin())
+  expect_equal(mfcc$get_duration(), mfcc$get_xmax() - mfcc$get_xmin(), tolerance = sqrt(.Machine$double.eps))
   # get_max_num_coefficients() reflects MFCC's mel-filter-bank *capacity*
   # (MelSpectrogram_to_MFCC sets maximumNumberOfCoefficients = ny - 1, the
   # number of mel filters), not the num_coefficients requested at
   # extraction time -- so just check it's a sane positive integer, and
   # confirm the number *actually used per frame* via get_info() instead.
   expect_gt(mfcc$get_max_num_coefficients(), 0)
-  expect_equal(mfcc$get_info()$max_n_coefficients_used, 12)
-  expect_equal(mfcc$get_number_of_frames(), mfcc$get_number_of_frames())
+  expect_equal(mfcc$get_info()$max_n_coefficients_used, 12, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(mfcc$get_number_of_frames(), mfcc$get_number_of_frames(), tolerance = sqrt(.Machine$double.eps))
   expect_gt(mfcc$get_time_step(), 0)
 
   # get_fmin/get_fmax (mel-scale range) are exposed at the R level
@@ -73,7 +73,7 @@ test_that("MFCC time-domain and CC properties are correct", {
   # all (only get_time_step, an alias for get_dx, is) -- reach them via the
   # underlying Rcpp module object directly, same pattern used elsewhere in
   # this test suite (e.g. test-lpc-r6.R, test-dtw.R).
-  expect_equal(mfcc$.cpp$get_dx(), mfcc$get_time_step())
+  expect_equal(mfcc$.cpp$get_dx(), mfcc$get_time_step(), tolerance = sqrt(.Machine$double.eps))
   expect_type(mfcc$.cpp$get_x1(), "double")
 })
 
@@ -87,7 +87,7 @@ test_that("MFCC frame-level queries work for valid frame numbers", {
   expect_gt(n_frames, 1)
 
   expect_type(mfcc$get_c0_at_frame(1), "double")
-  expect_equal(mfcc$get_num_coefficients_at_frame(1), 12)
+  expect_identical(mfcc$get_num_coefficients_at_frame(1), 12L)
   expect_type(mfcc$get_value_in_frame(1, 1), "double")
   expect_type(mfcc$get_value_at_time(mfcc$get_xmin(), 1), "double")
 
@@ -99,8 +99,8 @@ test_that("MFCC frame-level queries work for valid frame numbers", {
   expect_length(all_c0, n_frames)
 
   all_coefs <- mfcc$get_all_coefficients()
-  expect_equal(ncol(all_coefs), n_frames)
-  expect_equal(nrow(all_coefs), 13)  # c0 row + 12 coefficient rows
+  expect_equal(ncol(all_coefs), n_frames, tolerance = sqrt(.Machine$double.eps))
+  expect_identical(nrow(all_coefs), 13L)  # c0 row + 12 coefficient rows
 })
 
 test_that("MFCC frame-level queries handle out-of-range frames per their own C++ guards", {
@@ -116,8 +116,8 @@ test_that("MFCC frame-level queries handle out-of-range frames per their own C++
 
   # get_num_coefficients_at_frame delegates to CC_getNumberOfCoefficients(),
   # which bounds-checks internally and returns 0 for an out-of-range frame.
-  expect_equal(mfcc$get_num_coefficients_at_frame(n_frames + 1000), 0)
-  expect_equal(mfcc$get_num_coefficients_at_frame(0), 0)
+  expect_identical(mfcc$get_num_coefficients_at_frame(n_frames + 1000), 0L)
+  expect_identical(mfcc$get_num_coefficients_at_frame(0), 0L)
 
   # get_value_in_frame delegates to CC_getValueInFrame(), which
   # bounds-checks internally and returns Praat's `undefined` (NaN) for an
@@ -136,7 +136,7 @@ test_that("MFCC frame/time conversion round-trips", {
   t <- mfcc$get_time_from_frame(1)
   expect_type(t, "double")
   f <- mfcc$get_frame_from_time(t)
-  expect_equal(f, 1)
+  expect_equal(f, 1, tolerance = sqrt(.Machine$double.eps))
 
   t_last <- mfcc$get_time_from_frame(n_frames)
   expect_gt(t_last, t)
@@ -176,7 +176,7 @@ test_that("MFCC$as_data_frame includes/excludes c0 as requested", {
   expect_true("c0" %in% names(df_with_c0))
   expect_true("time" %in% names(df_with_c0))
   expect_true("c1" %in% names(df_with_c0))
-  expect_equal(nrow(df_with_c0), mfcc$get_number_of_frames())
+  expect_equal(nrow(df_with_c0), mfcc$get_number_of_frames(), tolerance = sqrt(.Machine$double.eps))
 
   df_no_c0 <- mfcc$as_data_frame(include_c0 = FALSE)
   expect_false("c0" %in% names(df_no_c0))
@@ -189,8 +189,8 @@ test_that("MFCC$get_info returns the expected named fields", {
   expect_type(info, "list")
   expect_true(all(c("xmin", "xmax", "nx", "dx", "x1", "fmin_mel", "fmax_mel",
                      "max_n_coefficients", "max_n_coefficients_used") %in% names(info)))
-  expect_equal(info$nx, mfcc$get_number_of_frames())
-  expect_equal(info$max_n_coefficients_used, 12)
+  expect_equal(info$nx, mfcc$get_number_of_frames(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(info$max_n_coefficients_used, 12, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("MFCC$save writes a readable Praat text file", {
@@ -242,13 +242,13 @@ test_that("LFCC time-domain and CC properties are correct", {
   expect_type(lfcc$get_xmin(), "double")
   expect_type(lfcc$get_xmax(), "double")
   expect_gt(lfcc$get_xmax(), lfcc$get_xmin())
-  expect_equal(lfcc$get_duration(), lfcc$get_xmax() - lfcc$get_xmin())
-  expect_equal(lfcc$get_max_num_coefficients(), 12)
+  expect_equal(lfcc$get_duration(), lfcc$get_xmax() - lfcc$get_xmin(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(lfcc$get_max_num_coefficients(), 12, tolerance = sqrt(.Machine$double.eps))
   expect_gt(lfcc$get_number_of_frames(), 1)
   expect_gt(lfcc$get_time_step(), 0)
   expect_gt(lfcc$get_fmax(), lfcc$get_fmin())
 
-  expect_equal(lfcc$.cpp$get_dx(), lfcc$get_time_step())
+  expect_equal(lfcc$.cpp$get_dx(), lfcc$get_time_step(), tolerance = sqrt(.Machine$double.eps))
   expect_type(lfcc$.cpp$get_x1(), "double")
 })
 
@@ -257,7 +257,7 @@ test_that("LFCC frame-level queries work for valid frame numbers", {
   n_frames <- lfcc$get_number_of_frames()
 
   expect_type(lfcc$get_c0_at_frame(1), "double")
-  expect_equal(lfcc$get_num_coefficients_at_frame(1), 12)
+  expect_identical(lfcc$get_num_coefficients_at_frame(1), 12L)
   expect_type(lfcc$get_value_in_frame(1, 1), "double")
   expect_type(lfcc$get_value_at_time(lfcc$get_xmin(), 1), "double")
 
@@ -265,8 +265,8 @@ test_that("LFCC frame-level queries work for valid frame numbers", {
   expect_length(coefs, 13)
 
   all_coefs <- lfcc$get_all_coefficients()
-  expect_equal(ncol(all_coefs), n_frames)
-  expect_equal(nrow(all_coefs), 13)
+  expect_equal(ncol(all_coefs), n_frames, tolerance = sqrt(.Machine$double.eps))
+  expect_identical(nrow(all_coefs), 13L)
 })
 
 test_that("LFCC frame-level queries handle out-of-range frames per their own C++ guards", {
@@ -278,7 +278,7 @@ test_that("LFCC frame-level queries handle out-of-range frames per their own C++
   expect_error(lfcc$get_coefficients_at_frame(0))
   expect_error(lfcc$get_coefficients_at_frame(n_frames + 1000))
 
-  expect_equal(lfcc$get_num_coefficients_at_frame(n_frames + 1000), 0)
+  expect_identical(lfcc$get_num_coefficients_at_frame(n_frames + 1000), 0L)
   expect_true(is.nan(lfcc$get_value_in_frame(n_frames + 1000, 1)))
 })
 
@@ -286,7 +286,7 @@ test_that("LFCC frame/time conversion round-trips", {
   lfcc <- make_test_lfcc(12)
   t <- lfcc$get_time_from_frame(1)
   expect_type(t, "double")
-  expect_equal(lfcc$get_frame_from_time(t), 1)
+  expect_equal(lfcc$get_frame_from_time(t), 1, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("LFCC$to_lpc and $to_matrix convert correctly", {
@@ -317,7 +317,7 @@ test_that("LFCC$get_info returns the expected named fields", {
   expect_type(info, "list")
   expect_true(all(c("xmin", "xmax", "nx", "dx", "x1", "fmin", "fmax",
                      "max_n_coefficients", "max_n_coefficients_used") %in% names(info)))
-  expect_equal(info$max_n_coefficients, 12)
+  expect_equal(info$max_n_coefficients, 12, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("LFCC$save writes a readable Praat text file", {

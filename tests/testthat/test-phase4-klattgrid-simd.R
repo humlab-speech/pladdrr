@@ -37,7 +37,7 @@ test_that("KlattGrid add pitch point works", {
 test_that("KlattGrid getters work", {
     kg <- KlattGrid(0, 0.5)
 
-    expect_equal(kg$get_xmin(), 0)
+    expect_equal(kg$get_xmin(), 0, tolerance = sqrt(.Machine$double.eps))
     expect_equal(kg$get_xmax(), 0.5)
     expect_equal(kg$get_duration(), 0.5)
 })

@@ -7,11 +7,11 @@ pitch_module_ptr <- function() {
 }
 
 test_that("pitch_unit_code maps known units and rejects unknown ones", {
-  expect_equal(pladdrr:::pitch_unit_code("hertz"), 0L)
-  expect_equal(pladdrr:::pitch_unit_code("Hz"), 0L)
-  expect_equal(pladdrr:::pitch_unit_code("semitones"), 1L)
-  expect_equal(pladdrr:::pitch_unit_code("mel"), 2L)
-  expect_equal(pladdrr:::pitch_unit_code("erb"), 3L)
+  expect_equal(pladdrr:::pitch_unit_code("hertz"), 0L, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pladdrr:::pitch_unit_code("Hz"), 0L, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pladdrr:::pitch_unit_code("semitones"), 1L, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pladdrr:::pitch_unit_code("mel"), 2L, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pladdrr:::pitch_unit_code("erb"), 3L, tolerance = sqrt(.Machine$double.eps))
   expect_error(pladdrr:::pitch_unit_code("bogus"), "Unknown unit")
 })
 
@@ -44,7 +44,7 @@ test_that("as.data.frame.PitchModule returns a data frame with expected rows", {
   df <- as.data.frame(pm)
 
   expect_s3_class(df, "data.frame")
-  expect_equal(nrow(df), pm$nx)
+  expect_equal(nrow(df), pm$nx, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("$.PitchModule dispatches query methods with unit conversion", {
@@ -80,7 +80,7 @@ test_that("$.PitchModule as_data_frame accessor mirrors as.data.frame()", {
   df <- pm$as_data_frame(FALSE, FALSE)
 
   expect_s3_class(df, "data.frame")
-  expect_equal(nrow(df), pm$nx)
+  expect_equal(nrow(df), pm$nx, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("$.PitchModule to_point_process transform returns a PointProcess", {

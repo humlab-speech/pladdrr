@@ -23,13 +23,13 @@ test_that("Harmonicity is constructed via Sound$to_harmonicity_cc()/to_harmonici
 test_that("Harmonicity time-domain accessors are consistent", {
   hnr <- hnr_of_tone()
 
-  expect_equal(hnr$get_start_time(), 0)
+  expect_equal(hnr$get_start_time(), 0, tolerance = sqrt(.Machine$double.eps))
   expect_gt(hnr$get_end_time(), 0)
   expect_gt(hnr$get_number_of_frames(), 0)
   expect_equal(hnr$get_sampling_period(), 0.01, tolerance = 1e-6)
 
   t1 <- hnr$get_time_from_frame(1)
-  expect_equal(hnr$get_frame_from_time(t1), 1)
+  expect_equal(hnr$get_frame_from_time(t1), 1, tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("Harmonicity point queries return numeric HNR values", {
@@ -71,7 +71,7 @@ test_that("Harmonicity get_statistics_batch computes per-interval stats in one c
 
   stats <- hnr$get_statistics_batch(from_times = c(0, 0.5), to_times = c(0.5, 1.0),
                                      metrics = c("mean", "min", "max", "stdev"))
-  expect_equal(nrow(stats), 2)
+  expect_identical(nrow(stats), 2L)
   expect_true(all(c("mean", "min", "max", "stdev") %in% colnames(stats)))
 })
 
@@ -80,10 +80,10 @@ test_that("Harmonicity as_data_frame/as_matrix export the frame-level data", {
 
   df <- hnr$as_data_frame()
   expect_named(df, c("time", "hnr_db", "voiced"))
-  expect_equal(nrow(df), hnr$get_number_of_frames())
+  expect_equal(nrow(df), hnr$get_number_of_frames(), tolerance = sqrt(.Machine$double.eps))
 
   mat <- hnr$as_matrix()
-  expect_equal(rownames(mat), c("time", "hnr_db"))
+  expect_equal(rownames(mat), c("time", "hnr_db"), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("Harmonicity print and unknown $ access", {
@@ -93,5 +93,5 @@ test_that("Harmonicity print and unknown $ access", {
   expect_null(hnr$totally_bogus_field)
 
   df <- as.data.frame(hnr)
-  expect_equal(df, hnr$as_data_frame())
+  expect_equal(df, hnr$as_data_frame(), tolerance = sqrt(.Machine$double.eps))
 })

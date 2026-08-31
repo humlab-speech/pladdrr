@@ -26,10 +26,10 @@ test_that("LPC per-frame coefficient/gain queries work", {
   # they agree rather than just type-checking each independently.
   n_frames <- lpc$get_number_of_frames()
   expect_length(lpc$get_all_gains(), n_frames)
-  expect_equal(lpc$get_all_gains()[1], lpc$get_gain_at_frame(1))
-  expect_equal(lpc$get_all_gains()[n_frames], lpc$get_gain_at_frame(n_frames))
-  expect_equal(ncol(lpc$get_all_coefficients()), n_frames)
-  expect_equal(lpc$get_all_coefficients()[, 1], lpc$get_coefficients_at_frame(1))
+  expect_equal(lpc$get_all_gains()[1], lpc$get_gain_at_frame(1), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(lpc$get_all_gains()[n_frames], lpc$get_gain_at_frame(n_frames), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(ncol(lpc$get_all_coefficients()), n_frames, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(lpc$get_all_coefficients()[, 1], lpc$get_coefficients_at_frame(1), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("LPC conversions: to_spectrum, to_matrix, to_spectrogram, to_lfcc", {

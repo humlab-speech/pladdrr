@@ -107,10 +107,10 @@ test_that("SIMD matrix operations handle special values", {
   # Matrix with zeros
   mat <- matrix(0, nrow = 100, ncol = 100)
   mat_obj <- praat_matrix_from_matrix(mat)
-  expect_equal(mat_obj$get_sum(), 0)
-  expect_equal(mat_obj$get_mean(), 0)
-  expect_equal(mat_obj$get_minimum(), 0)
-  expect_equal(mat_obj$get_maximum(), 0)
+  expect_equal(mat_obj$get_sum(), 0, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(mat_obj$get_mean(), 0, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(mat_obj$get_minimum(), 0, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(mat_obj$get_maximum(), 0, tolerance = sqrt(.Machine$double.eps))
   
   # Matrix with identical values
   mat <- matrix(3.14159, nrow = 100, ncol = 100)

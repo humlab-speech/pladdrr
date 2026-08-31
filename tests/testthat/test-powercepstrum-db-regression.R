@@ -19,7 +19,7 @@ test_that("autoplot.PowerCepstrum plots real dB, not raw linear power", {
   expect_true(all(c("quefrency", "power", "power_db") %in% names(p$data)))
 
   # power_db is the explicit dB conversion of the raw linear power column.
-  expect_equal(p$data$power_db, 10 * log10(pmax(p$data$power, 1e-20)))
+  expect_equal(p$data$power_db, 10 * log10(pmax(p$data$power, 1e-20)), tolerance = sqrt(.Machine$double.eps))
   # Raw linear power spans many orders of magnitude; real dB is bounded.
   expect_true(all(p$data$power_db > -200 & p$data$power_db < 200))
 })
@@ -33,7 +33,7 @@ test_that("autolayer.PowerCepstrum layer data is real dB", {
 
   layer_data <- p$layers[[1]]$data
   expect_true(all(c("quefrency", "power", "power_db") %in% names(layer_data)))
-  expect_equal(layer_data$power_db, 10 * log10(pmax(layer_data$power, 1e-20)))
+  expect_equal(layer_data$power_db, 10 * log10(pmax(layer_data$power, 1e-20)), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("plot.PowerCepstrum plots real dB, not raw linear power", {
@@ -43,7 +43,7 @@ test_that("plot.PowerCepstrum plots real dB, not raw linear power", {
   p <- plot(pc)
   expect_s3_class(p, "ggplot")
   expect_true(all(c("quefrency", "power", "power_db") %in% names(p$data)))
-  expect_equal(p$data$power_db, 10 * log10(pmax(p$data$power, 1e-20)))
+  expect_equal(p$data$power_db, 10 * log10(pmax(p$data$power, 1e-20)), tolerance = sqrt(.Machine$double.eps))
   expect_true(all(p$data$power_db > -200 & p$data$power_db < 200))
 })
 
