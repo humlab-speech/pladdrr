@@ -12,3 +12,4 @@ pladdrr_shared_sound_a()
 \description{
 Shared parameter docs for functions taking an R6 Sound object (alternate)
 }
+\keyword{internal}

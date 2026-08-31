@@ -12,3 +12,4 @@ pladdrr_shared_timeauto75()
 \description{
 Shared parameter docs for functions using the 0.75/pitch_floor auto time-step
 }
+\keyword{internal}

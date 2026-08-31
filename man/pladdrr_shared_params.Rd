@@ -100,3 +100,4 @@ Common `@param` descriptions used across many functions. Functions inherit
 from this topic via `@inheritParams pladdrr_shared_params <param>` to avoid
 duplicating identical documentation.
 }
+\keyword{internal}

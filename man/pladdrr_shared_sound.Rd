@@ -12,3 +12,4 @@ pladdrr_shared_sound()
 \description{
 Shared parameter docs for functions taking a plain Sound object
 }
+\keyword{internal}

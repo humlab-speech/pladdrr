@@ -12,3 +12,4 @@ pladdrr_shared_timeauto()
 \description{
 Shared parameter docs for auto time-step functions
 }
+\keyword{internal}

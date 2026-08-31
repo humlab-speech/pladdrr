@@ -12,3 +12,4 @@ pladdrr_shared_textgrid_r6()
 \description{
 Shared parameter docs for functions taking a TextGrid R6 object
 }
+\keyword{internal}

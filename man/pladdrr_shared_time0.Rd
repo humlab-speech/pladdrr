@@ -14,3 +14,4 @@ pladdrr_shared_time0()
 \description{
 Shared parameter docs for functions using 0-based time conventions
 }
+\keyword{internal}

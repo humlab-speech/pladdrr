@@ -33,3 +33,4 @@ variables}
 \description{
 Shared parameter docs for analysis defaults (batch/parallel wrappers)
 }
+\keyword{internal}

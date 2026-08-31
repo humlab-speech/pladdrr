@@ -12,3 +12,4 @@ pladdrr_shared_pitch_r6()
 \description{
 Shared parameter docs for functions taking an R6 Pitch object
 }
+\keyword{internal}

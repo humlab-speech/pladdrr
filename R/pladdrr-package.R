@@ -202,12 +202,16 @@ utils::globalVariables(c(".data", "formant_number", "cpp", "quefrency",
 
 
 
+#' @keywords internal
+#'
 #' @rdname pladdrr_shared_params
 pladdrr_shared_params <- function() invisible(NULL)
 
 #' Shared parameter docs for functions taking a plain Sound object
 #'
 #' @param sound Sound object
+#' @keywords internal
+#'
 #' @rdname pladdrr_shared_sound
 pladdrr_shared_sound <- function() invisible(NULL)
 
@@ -215,66 +219,88 @@ pladdrr_shared_sound <- function() invisible(NULL)
 #'
 #' @param from_time Start time (0 = beginning)
 #' @param to_time End time (0 = end)
+#' @keywords internal
+#'
 #' @rdname pladdrr_shared_time0
 pladdrr_shared_time0 <- function() invisible(NULL)
 
 #' Shared parameter docs for functions taking an R6 Sound object
 #'
 #' @param sound A Sound R6 object
+#' @keywords internal
+#'
 #' @rdname pladdrr_shared_sound_r6
 pladdrr_shared_sound_r6 <- function() invisible(NULL)
 
 #' Shared parameter docs for functions taking an R6 Sound object (alternate)
 #'
 #' @param sound A Sound object
+#' @keywords internal
+#'
 #' @rdname pladdrr_shared_sound_a
 pladdrr_shared_sound_a <- function() invisible(NULL)
 
 #' Shared parameter docs for functions taking a plain Pitch object
 #'
 #' @param pitch Pitch object
+#' @keywords internal
+#'
 #' @rdname pladdrr_shared_pitch
 pladdrr_shared_pitch <- function() invisible(NULL)
 
 #' Shared parameter docs for functions taking an R6 Pitch object
 #'
 #' @param pitch A Pitch R6 object
+#' @keywords internal
+#'
 #' @rdname pladdrr_shared_pitch_r6
 pladdrr_shared_pitch_r6 <- function() invisible(NULL)
 
 #' Shared parameter docs for functions taking an S3/R6 Sound
 #'
 #' @param sound A praat_sound (S3) or Sound (R6) object
+#' @keywords internal
+#'
 #' @rdname pladdrr_shared_sound_legacy
 pladdrr_shared_sound_legacy <- function() invisible(NULL)
 
 #' Shared parameter docs for auto time-step functions
 #'
 #' @param time_step Time step (0 = auto)
+#' @keywords internal
+#'
 #' @rdname pladdrr_shared_timeauto
 pladdrr_shared_timeauto <- function() invisible(NULL)
 
 #' Shared parameter docs for functions taking a TextGrid R6 object
 #'
 #' @param textgrid A TextGrid object
+#' @keywords internal
+#'
 #' @rdname pladdrr_shared_textgrid_r6
 pladdrr_shared_textgrid_r6 <- function() invisible(NULL)
 
 #' Shared parameter docs for functions taking an R6 Pitch object (alt)
 #'
 #' @param pitch A Pitch object
+#' @keywords internal
+#'
 #' @rdname pladdrr_shared_pitch_a
 pladdrr_shared_pitch_a <- function() invisible(NULL)
 
 #' Shared parameter docs for display-formant functions
 #'
 #' @param max_formant Maximum formant number to display (default: 3)
+#' @keywords internal
+#'
 #' @rdname pladdrr_shared_maxformant
 pladdrr_shared_maxformant <- function() invisible(NULL)
 
 #' Shared parameter docs for functions using the 0.75/pitch_floor auto time-step
 #'
 #' @param time_step Time step (0 = auto, typically 0.75/pitch_floor)
+#' @keywords internal
+#'
 #' @rdname pladdrr_shared_timeauto75
 pladdrr_shared_timeauto75 <- function() invisible(NULL)
 
@@ -292,5 +318,7 @@ pladdrr_shared_timeauto75 <- function() invisible(NULL)
 #' @param max_formants Maximum number of formants
 #' @param start_time Start time in seconds (default: 0.0)
 #' @param numberOfRows Number of rows
+#' @keywords internal
+#'
 #' @rdname pladdrr_shared_analysis
 pladdrr_shared_analysis <- function() invisible(NULL)

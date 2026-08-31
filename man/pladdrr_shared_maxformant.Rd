@@ -12,3 +12,4 @@ pladdrr_shared_maxformant()
 \description{
 Shared parameter docs for display-formant functions
 }
+\keyword{internal}

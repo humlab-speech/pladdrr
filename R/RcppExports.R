@@ -249,8 +249,6 @@ intensity_get_minimum_with_time <- function(intensity_xptr, from_time = 0, to_ti
 #'
 #' @param pp_xptr External pointer to PointProcess object
 #' @param sound_xptr External pointer to Sound object (required for shimmer)
-#' @inheritParams pladdrr_shared_time0 from_time
-#' @inheritParams pladdrr_shared_time0 to_time
 #' @param period_floor Minimum period in seconds (default 0.0001)
 #' @param period_ceiling Maximum period in seconds (default 0.02)
 #' @return Named list with 11 voice quality measures
@@ -1155,7 +1153,6 @@ sound_get_duration_direct <- function(sound_xptr) {
 #' Get Sound RMS directly
 #' @param sound_xptr External pointer to Sound
 #' @param from_time Start time (0 = start)
-#' @inheritParams pladdrr_shared_sound to_time
 #' @return RMS value
 #' @keywords internal
 #' @examples
@@ -1183,6 +1180,7 @@ pitch_get_value_direct <- function(pitch_xptr, time, unit = 0L, interpolate = TR
 #' Get pitch mean directly
 #' @param pitch_xptr External pointer to Pitch
 #' @param from_time Start time (0 = start)
+#' @inheritParams pladdrr_shared_time0 to_time
 #' @param unit Unit code
 #' @return Mean pitch
 #' @examples
@@ -1216,7 +1214,6 @@ pitch_get_stdev_direct <- function(pitch_xptr, from_time = 0, to_time = 0, unit 
 #' @param from_time Start time
 #' @param to_time End time
 #' @param unit Unit code
-#' @inheritParams pladdrr_shared_params interpolate
 #' @return Minimum pitch
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 1.0)
@@ -1277,7 +1274,6 @@ pitch_count_voiced_direct <- function(pitch_xptr) {
 #' Get formant value at time directly
 #' @param formant_xptr External pointer to Formant
 #' @param formant_number Formant number (1=F1, 2=F2, etc)
-#' @inheritParams pladdrr_shared_params time
 #' @param unit 0=Hertz, 1=Bark
 #' @return Formant frequency
 #' @keywords internal
@@ -1425,7 +1421,6 @@ sound_to_pitch_direct <- function(sound_xptr, time_step = 0, pitch_floor = 75, p
 
 #' Create Formant from Sound directly (Burg method)
 #' @param sound_xptr External pointer to Sound
-#' @inheritParams pladdrr_shared_sound_legacy time_step
 #' @return External pointer to Formant
 #' @keywords internal
 #' @examples
@@ -1440,6 +1435,7 @@ sound_to_formant_direct <- function(sound_xptr, time_step = 0, max_formants = 5,
 #' Create Intensity from Sound directly
 #' @param sound_xptr External pointer to Sound
 #' @param minimum_pitch Minimum pitch for analysis (Hz)
+#' @inheritParams pladdrr_shared_timeauto time_step
 #' @return External pointer to Intensity
 #' @keywords internal
 #' @examples
@@ -1497,8 +1493,7 @@ formant_get_f1_f4_direct <- function(formant_xptr, time, unit = 0L) {
 
 #' Get PointProcess mean period directly
 #' @param pp_xptr External pointer to PointProcess
-#' @inheritParams pladdrr_shared_sound from_time
-#' @inheritParams pladdrr_shared_sound to_time
+#' @inheritParams pladdrr_shared_time0 from_time
 #' @return Mean period in seconds
 #' @keywords internal
 #' @examples
@@ -1569,7 +1564,7 @@ sound_stats <- function(sound_data) {
 #'
 #' @param values Numeric vector of sound amplitude values
 #' @inheritParams pladdrr_shared_params sampling_rate
-#' @inheritParams pladdrr_shared_timeauto75 start_time
+#' @inheritParams pladdrr_shared_analysis start_time
 #' @return List representing a praat_sound object with values and metadata
 #' @examples
 #' values <- sin(2 * pi * 220 * seq(0, 0.1, length.out = 1000))
@@ -1645,7 +1640,7 @@ set_global_simd_enabled <- function(enabled) {
 #' accessor in a loop.
 #'
 #' @param sound_xptr External pointer to Sound object
-#' @inheritParams pladdrr_shared_timeauto75 channel
+#' @inheritParams pladdrr_shared_analysis channel
 #'
 #' @return Numeric vector (independent copy of sample data).
 #'   Has class `c("fast_vector", "numeric")` and a `readonly` attribute
@@ -2281,6 +2276,7 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 #' @param pitch_ceiling Pitch ceiling in Hz
 #' @param max_candidates Maximum candidates per frame
 #' @param very_accurate Use very accurate algorithm
+#' @inheritParams pladdrr_shared_analysis silence_threshold
 #' @param voicing_threshold Voicing threshold
 #' @param octave_cost Octave cost
 #' @param octave_jump_cost Octave jump cost
@@ -2323,8 +2319,6 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 #' Combines extract_parts_batch + to_pitch_batch in a single C++ call.
 #'
 #' @param xptr Sound external pointer
-#' @inheritParams pladdrr_shared_params from_times
-#' @inheritParams pladdrr_shared_params to_times
 #' @param time_step Pitch time step
 #' @param pitch_floor Pitch floor in Hz
 #' @param pitch_ceiling Pitch ceiling in Hz
@@ -2338,9 +2332,8 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 #' Combined extract-and-analyze: extract parts and compute formants in one C++ call (internal)
 #'
 #' @param xptr Sound external pointer
-#' @inheritParams pladdrr_shared_params from_times
-#' @inheritParams pladdrr_shared_params to_times
 #' @param time_step Formant time step
+#' @inheritParams pladdrr_shared_analysis max_formants
 #' @param max_frequency Maximum frequency
 #' @param window_length Window length
 #' @param pre_emphasis_from Pre-emphasis frequency

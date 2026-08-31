@@ -12,3 +12,4 @@ pladdrr_shared_pitch()
 \description{
 Shared parameter docs for functions taking a plain Pitch object
 }
+\keyword{internal}

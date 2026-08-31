@@ -12,3 +12,4 @@ pladdrr_shared_sound_legacy()
 \description{
 Shared parameter docs for functions taking an S3/R6 Sound
 }
+\keyword{internal}
