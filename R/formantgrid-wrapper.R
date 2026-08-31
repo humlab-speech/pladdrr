@@ -9,13 +9,18 @@
 #' @param tmin Start time in seconds.
 #' @param tmax End time in seconds.
 #' @param number_of_formants Number of formants to track. Default 10.
-#' @param initial_first_formant Initial frequency of the first formant, in Hz. Default 550.
-#' @param initial_formant_spacing Initial spacing between formants, in Hz. Default 1100.
-#' @param initial_first_bandwidth Initial bandwidth of the first formant, in Hz. Default 60.
-#' @param initial_bandwidth_spacing Initial spacing between formant bandwidths, in Hz. Default 50.
+#' @param initial_first_formant Initial frequency of the first formant, in Hz.
+#  Default 550.
+#' @param initial_formant_spacing Initial spacing between formants, in Hz.
+#  Default 1100.
+#' @param initial_first_bandwidth Initial bandwidth of the first formant, in Hz.
+#  Default 60.
+#' @param initial_bandwidth_spacing Initial spacing between formant bandwidths,
+#  in Hz. Default 50.
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #'   FormantGrid object; set internally when a method returns a new FormantGrid.
-#' @return A \code{FormantGrid} object with methods for formant frequency and bandwidth manipulation.
+#' @return A \code{FormantGrid} object with methods for formant frequency and
+#  bandwidth manipulation.
 #'
 #' @examples
 #' fg <- FormantGrid(0, 1, number_of_formants = 3)
@@ -35,43 +40,57 @@ NULL
 # Query - Time domain
 .formantgrid_methods$get_start_time <- function(.self) .self$.cpp$get_xmin()
 .formantgrid_methods$get_end_time <- function(.self) .self$.cpp$get_xmax()
-.formantgrid_methods$get_number_of_formants <- function(.self) .self$.cpp$get_number_of_formants()
+.formantgrid_methods$get_number_of_formants <- function(
+  .self) .self$.cpp$get_number_of_formants()
 
 # Query - Values
-.formantgrid_methods$get_formant_at_time <- function(.self, formant_number, time) {
+.formantgrid_methods$get_formant_at_time <- function(.self, formant_number,
+  time) {
   .self$.cpp$get_formant_at_time(as.integer(formant_number), as.numeric(time))
 }
-.formantgrid_methods$get_bandwidth_at_time <- function(.self, formant_number, time) {
+.formantgrid_methods$get_bandwidth_at_time <- function(.self, formant_number,
+  time) {
   .self$.cpp$get_bandwidth_at_time(as.integer(formant_number), as.numeric(time))
 }
 
 # Modification (self-returning)
-.formantgrid_methods$add_formant_point <- function(.self, formant_number, time, value) {
-  .self$.cpp$add_formant_point(as.integer(formant_number), as.numeric(time), as.numeric(value))
+.formantgrid_methods$add_formant_point <- function(.self, formant_number,
+  time, value) {
+  .self$.cpp$add_formant_point(as.integer(formant_number), as.numeric(time),
+    as.numeric(value))
   invisible(.self)
 }
-.formantgrid_methods$add_bandwidth_point <- function(.self, formant_number, time, value) {
-  .self$.cpp$add_bandwidth_point(as.integer(formant_number), as.numeric(time), as.numeric(value))
+.formantgrid_methods$add_bandwidth_point <- function(.self, formant_number,
+  time, value) {
+  .self$.cpp$add_bandwidth_point(as.integer(formant_number), as.numeric(time),
+    as.numeric(value))
   invisible(.self)
 }
-.formantgrid_methods$remove_formant_points_between <- function(.self, formant_number, tmin, tmax) {
-  .self$.cpp$remove_formant_points_between(as.integer(formant_number), as.numeric(tmin), as.numeric(tmax))
+.formantgrid_methods$remove_formant_points_between <- function(.self,
+  formant_number, tmin, tmax) {
+  .self$.cpp$remove_formant_points_between(as.integer(formant_number),
+    as.numeric(tmin), as.numeric(tmax))
   invisible(.self)
 }
-.formantgrid_methods$remove_bandwidth_points_between <- function(.self, formant_number, tmin, tmax) {
-  .self$.cpp$remove_bandwidth_points_between(as.integer(formant_number), as.numeric(tmin), as.numeric(tmax))
+.formantgrid_methods$remove_bandwidth_points_between <- function(.self,
+  formant_number, tmin, tmax) {
+  .self$.cpp$remove_bandwidth_points_between(as.integer(formant_number),
+    as.numeric(tmin), as.numeric(tmax))
   invisible(.self)
 }
 
 # Conversion
-.formantgrid_methods$to_formant <- function(.self, time_step = 0.005, intensity = 1.0) {
+.formantgrid_methods$to_formant <- function(.self, time_step = 0.005,
+  intensity = 1.0) {
   ptr_out <- .formantgrid_to_formant(.self$.xptr, time_step, intensity)
   Formant(.xptr = ptr_out)
 }
 .formantgrid_methods$to_sound <- function(.self, sampling_frequency = 44100,
                                           t_start = .self$get_start_time(),
                                           f0_start = 140,
-                                          t_mid = (.self$get_start_time() + .self$get_end_time()) / 2,
+                                          t_mid = (
+                                            .self$get_start_time(
+                                              ) + .self$get_end_time()) / 2,
                                           f0_mid = f0_start,
                                           t_end = .self$get_end_time(),
                                           f0_end = f0_mid,
@@ -110,8 +129,11 @@ NULL
 # Display
 .formantgrid_methods$print <- function(.self) {
   cat("<Praat FormantGrid>\n")
-  cat(sprintf("  Time domain: %.3f to %.3f s\n", .self$.cpp$get_xmin(), .self$.cpp$get_xmax()))
-  cat(sprintf("  Number of formants: %d\n", .self$.cpp$get_number_of_formants()))
+  cat(
+    sprintf("  Time domain: %.3f to %.3f s\n", .self$.cpp$get_xmin(),
+      .self$.cpp$get_xmax()))
+  cat(
+    sprintf("  Number of formants: %d\n", .self$.cpp$get_number_of_formants()))
   invisible(.self)
 }
 

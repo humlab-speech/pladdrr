@@ -1,7 +1,8 @@
 # TextGrid Batch Operations
 # Part of Phase 3 Performance Enhancements (v2.0.7)
 #
-# High-performance batch operations for TextGrid interval extraction and analysis
+# High-performance batch operations for TextGrid interval extraction and
+#  analysis
 
 
 # Resolve the interval text-comparison criterion to a type + target.
@@ -14,9 +15,12 @@
   })
 }
 
-.resolve_interval_criterion <- function(text_equals, text_contains, text_starts_with) {
-  if (!is.null(text_equals)) list(type = "equals", target = as.character(text_equals))
-  else if (!is.null(text_contains)) list(type = "contains", target = as.character(text_contains))
+.resolve_interval_criterion <- function(text_equals, text_contains,
+  text_starts_with) {
+  if (!is.null(text_equals)) list(type = "equals",
+    target = as.character(text_equals))
+  else if (!is.null(text_contains)) list(type = "contains",
+    target = as.character(text_contains))
   else list(type = "starts_with", target = as.character(text_starts_with))
 }
 
@@ -31,7 +35,8 @@
 #' @param text_equals Exact label match (e.g., "V" for voiced)
 #' @param text_contains Substring match (e.g., "vowel")
 #' @param text_starts_with Prefix match (e.g., "IPA_")
-#' @param extract_sounds Logical. If TRUE, extract Sound parts for matched intervals
+#' @param extract_sounds Logical. If TRUE, extract Sound parts for matched
+#  intervals
 #'
 #' @return List with components:
 #'   - `indices`: Integer vector of matching interval indices
@@ -54,7 +59,8 @@
 #'
 #' @examples
 #' # Create sound and a voiced/unvoiced TextGrid
-#' sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate =
+#  16000)
 #' pitch <- sound$to_pitch()
 #' tg <- pitch$to_textgrid_vuv(0.02, 0.01)
 #'
@@ -88,19 +94,23 @@ extract_textgrid_intervals <- function(textgrid, sound = NULL, tier,
                                        text_starts_with = NULL,
                                        extract_sounds = FALSE) {
   
-  tier <- .validate_textgrid_intervals_args(textgrid, sound, tier, extract_sounds)
+  tier <- .validate_textgrid_intervals_args(textgrid, sound, tier,
+    extract_sounds)
   
   
   # Determine comparison type
-  n_criteria <- sum(!is.null(text_equals), !is.null(text_contains), !is.null(text_starts_with))
+  n_criteria <- sum(!is.null(text_equals), !is.null(text_contains),
+    !is.null(text_starts_with))
   if (n_criteria == 0) {
-    stop("Must specify one comparison criterion: text_equals, text_contains, or text_starts_with")
+    stop(
+      "Must specify one comparison criterion: text_equals, text_contains, or text_starts_with")
   }
   if (n_criteria > 1) {
     stop("Specify only ONE comparison criterion")
   }
   
-  crit <- .resolve_interval_criterion(text_equals, text_contains, text_starts_with)
+  crit <- .resolve_interval_criterion(text_equals, text_contains,
+    text_starts_with)
   comp_type <- crit$type
   target <- crit$target
   
@@ -197,12 +207,17 @@ get_textgrid_interval_stats <- function(textgrid, tier) {
 
 
 # Validate extract_textgrid_intervals arguments; returns resolved tier.
-.validate_textgrid_intervals_args <- function(textgrid, sound, tier, extract_sounds) {
-  if (!inherits(textgrid, "TextGrid")) stop("textgrid must be a TextGrid object")
+.validate_textgrid_intervals_args <- function(textgrid, sound, tier,
+  extract_sounds) {
+  if (
+    !inherits(textgrid, "TextGrid")) stop("textgrid must be a TextGrid object")
   if (is.character(tier)) tier <- textgrid$get_tier_number(tier)
-  if (!is.numeric(tier) || tier < 1) stop("tier must be a positive integer or valid tier name")
+  if (
+    !is.numeric(
+      tier) || tier < 1) stop("tier must be a positive integer or valid tier name")
   if (extract_sounds) {
-    if (is.null(sound)) stop("sound argument required when extract_sounds = TRUE")
+    if (
+      is.null(sound)) stop("sound argument required when extract_sounds = TRUE")
     if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
   }
   tier

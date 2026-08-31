@@ -1,4 +1,5 @@
-# test-electroglottogram-r6.R - Tests for R/electroglottogram-wrapper.R (Electroglottogram object)
+# test-electroglottogram-r6.R - Tests for R/electroglottogram-wrapper.R
+#  (Electroglottogram object)
 #
 # Electroglottogram has no setter to fill in individual samples (no
 # `set_value_at_sample` exists on the Rcpp module -- confirmed via
@@ -28,8 +29,10 @@ make_test_egg <- function(sampling_rate = 16000, duration = 0.2, f0 = 120) {
   snd$extract_electroglottogram(channel = 1, invert = FALSE)
 }
 
-test_that("Electroglottogram constructs and reports basic Sound-like properties", {
-  egg <- electroglottogram_create(xmin = 0, xmax = 1, nx = 16000, dx = 1 / 16000, x1 = 0)
+test_that(
+  "Electroglottogram constructs and reports basic Sound-like properties", {
+  egg <- electroglottogram_create(xmin = 0, xmax = 1, nx = 16000,
+    dx = 1 / 16000, x1 = 0)
   expect_s3_class(egg, "Electroglottogram")
   expect_s3_class(egg, "Sound")
   expect_true(egg$is_valid())
@@ -43,14 +46,16 @@ test_that("Electroglottogram constructs and reports basic Sound-like properties"
 })
 
 test_that("Electroglottogram sample/time conversions and value access", {
-  egg <- electroglottogram_create(xmin = 0, xmax = 1, nx = 16000, dx = 1 / 16000, x1 = 0)
+  egg <- electroglottogram_create(xmin = 0, xmax = 1, nx = 16000,
+    dx = 1 / 16000, x1 = 0)
   expect_type(egg$get_value_at_sample(100), "double")
   expect_type(egg$get_value_at_time(0.5), "double")
   expect_type(egg$get_time_from_sample(100), "double")
   expect_type(egg$get_sample_from_time(0.5), "integer")
 })
 
-test_that("Electroglottogram derivative/filter/sound conversions work on real signal data", {
+test_that(
+  "Electroglottogram derivative/filter/sound conversions work on real signal data", {
   egg <- make_test_egg()
 
   d <- egg$derivative()
@@ -66,7 +71,8 @@ test_that("Electroglottogram derivative/filter/sound conversions work on real si
   expect_s3_class(snd, "Sound")
 })
 
-test_that("Electroglottogram to_amplitude_tier_levels returns levels/peaks/valleys AmplitudeTiers", {
+test_that(
+  "Electroglottogram to_amplitude_tier_levels returns levels/peaks/valleys AmplitudeTiers", {
   egg <- make_test_egg()
   at <- egg$to_amplitude_tier_levels(pitch_floor = 75)
   expect_type(at, "list")
@@ -76,12 +82,14 @@ test_that("Electroglottogram to_amplitude_tier_levels returns levels/peaks/valle
   expect_s3_class(at$valleys, "AmplitudeTier")
 })
 
-test_that("Electroglottogram to_textgrid_closed_glottis errors (Vector_getNearestLevelCrossing stub)", {
+test_that(
+  "Electroglottogram to_textgrid_closed_glottis errors (Vector_getNearestLevelCrossing stub)", {
   egg <- make_test_egg()
   # Vector_getNearestLevelCrossing is an unconditional stub in
   # src/melderthread_impl.cpp that always throws -- this always errors
   # regardless of input signal or parameters, in this build.
-  expect_error(egg$to_textgrid_closed_glottis(pitch_floor = 75), "Failed to extract closed glottis TextGrid")
+  expect_error(egg$to_textgrid_closed_glottis(pitch_floor = 75),
+    "Failed to extract closed glottis TextGrid")
 })
 
 test_that("Electroglottogram as_vector/as_data_frame/get_info/save/print", {
@@ -94,11 +102,13 @@ test_that("Electroglottogram as_vector/as_data_frame/get_info/save/print", {
   df <- egg$as_data_frame()
   expect_s3_class(df, "data.frame")
   expect_named(df, c("time", "amplitude"))
-  expect_equal(nrow(df), egg$get_number_of_samples(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(nrow(df), egg$get_number_of_samples(),
+    tolerance = sqrt(.Machine$double.eps))
 
   info <- egg$get_info()
   expect_type(info, "list")
-  expect_true(all(c("xmin", "xmax", "nx", "dx", "x1", "sample_rate") %in% names(info)))
+  expect_true(
+    all(c("xmin", "xmax", "nx", "dx", "x1", "sample_rate") %in% names(info)))
 
   tmp <- tempfile(fileext = ".Egg")
   on.exit(unlink(tmp), add = TRUE)

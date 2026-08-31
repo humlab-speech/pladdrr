@@ -10,7 +10,9 @@ test_that("SIMD autocorrelation is symmetric", {
   data <- rnorm(1000)
   
   # Check if SIMD autocorrelation function is exported
-  if (exists(".autocorrelation_simd", where = asNamespace("pladdrr"), inherits = FALSE)) {
+  if (
+    exists(".autocorrelation_simd", where = asNamespace("pladdrr"),
+      inherits = FALSE)) {
     acf_result <- pladdrr:::.autocorrelation_simd(data, max_lag = 50)
     
     # Lag-0 should be maximum (variance)
@@ -32,7 +34,9 @@ test_that("SIMD autocorrelation handles periodic signals", {
   freq <- 10  # 10 Hz
   data <- sin(2 * pi * freq * t)
   
-  if (exists(".autocorrelation_simd", where = asNamespace("pladdrr"), inherits = FALSE)) {
+  if (
+    exists(".autocorrelation_simd", where = asNamespace("pladdrr"),
+      inherits = FALSE)) {
     acf_result <- pladdrr:::.autocorrelation_simd(data, max_lag = 200)
     
     # For periodic signal, autocorrelation should also be periodic
@@ -56,7 +60,9 @@ test_that("SIMD normalized autocorrelation is in [-1, 1]", {
   set.seed(123)
   data <- rnorm(1000)
   
-  if (exists(".autocorrelation_normalized_simd", where = asNamespace("pladdrr"), inherits = FALSE)) {
+  if (
+    exists(".autocorrelation_normalized_simd", where = asNamespace("pladdrr"),
+      inherits = FALSE)) {
     acf_norm <- pladdrr:::.autocorrelation_normalized_simd(data, max_lag = 100)
     
     # All values should be in [-1, 1]
@@ -74,7 +80,9 @@ test_that("SIMD autocorrelation handles edge cases", {
   skip_if_not_installed("pladdrr")
   library(pladdrr)
   
-  if (exists(".autocorrelation_simd", where = asNamespace("pladdrr"), inherits = FALSE)) {
+  if (
+    exists(".autocorrelation_simd", where = asNamespace("pladdrr"),
+      inherits = FALSE)) {
     # Constant signal. This is the *raw* (unnormalized) autocorrelation, so
     # lag k = number of overlapping samples = N - k, i.e. 100, 99, ..., 90.
     data <- rep(1.0, 100)
@@ -100,8 +108,11 @@ test_that(".lpc_autocorrelation_simd matches .lpc_autocorrelation_scalar", {
   set.seed(42)
   x <- sin(2 * pi * 220 * (0:999) / 16000)
 
-  if (exists(".lpc_autocorrelation_simd", where = asNamespace("pladdrr"), inherits = FALSE) &&
-      exists(".lpc_autocorrelation_scalar", where = asNamespace("pladdrr"), inherits = FALSE)) {
+  if (
+    exists(".lpc_autocorrelation_simd", where = asNamespace("pladdrr"),
+      inherits = FALSE) &&
+      exists(".lpc_autocorrelation_scalar", where = asNamespace("pladdrr"),
+        inherits = FALSE)) {
     simd_result <- pladdrr:::.lpc_autocorrelation_simd(x, 12L)
     scalar_result <- pladdrr:::.lpc_autocorrelation_scalar(x, 12L)
 
@@ -113,19 +124,24 @@ test_that(".lpc_autocorrelation_simd matches .lpc_autocorrelation_scalar", {
   }
 })
 
-test_that(".autocorrelation_scalar and .autocorrelation_normalized_scalar match SIMD variants", {
+test_that(
+  ".autocorrelation_scalar and .autocorrelation_normalized_scalar match SIMD variants", {
   skip_if_not_installed("pladdrr")
   library(pladdrr)
 
   set.seed(43)
   x <- sin(2 * pi * 220 * (0:999) / 16000)
 
-  if (exists(".autocorrelation_scalar", where = asNamespace("pladdrr"), inherits = FALSE) &&
-      exists(".autocorrelation_normalized_scalar", where = asNamespace("pladdrr"), inherits = FALSE)) {
+  if (
+    exists(".autocorrelation_scalar", where = asNamespace("pladdrr"),
+      inherits = FALSE) &&
+      exists(".autocorrelation_normalized_scalar",
+        where = asNamespace("pladdrr"), inherits = FALSE)) {
     expect_equal(pladdrr:::.autocorrelation_scalar(x, 50L),
                  pladdrr:::.autocorrelation_simd(x, 50L), tolerance = 1e-10)
     expect_equal(pladdrr:::.autocorrelation_normalized_scalar(x, 50L),
-                 pladdrr:::.autocorrelation_normalized_simd(x, 50L), tolerance = 1e-10)
+                 pladdrr:::.autocorrelation_normalized_simd(x,
+                   50L), tolerance = 1e-10)
   } else {
     skip("Scalar autocorrelation functions not exported")
   }
@@ -135,7 +151,9 @@ test_that(".autocorrelation_scalar handles edge cases like the SIMD variant", {
   skip_if_not_installed("pladdrr")
   library(pladdrr)
 
-  if (exists(".autocorrelation_scalar", where = asNamespace("pladdrr"), inherits = FALSE)) {
+  if (
+    exists(".autocorrelation_scalar", where = asNamespace("pladdrr"),
+      inherits = FALSE)) {
     # Constant signal: lag k = number of overlapping samples = N - k.
     data <- rep(1.0, 100)
     acf_result <- pladdrr:::.autocorrelation_scalar(data, max_lag = 10)
@@ -156,7 +174,9 @@ test_that("SIMD autocorrelation performance scales reasonably", {
   skip_on_ci()
   library(pladdrr)
 
-  if (exists(".autocorrelation_simd", where = asNamespace("pladdrr"), inherits = FALSE)) {
+  if (
+    exists(".autocorrelation_simd", where = asNamespace("pladdrr"),
+      inherits = FALSE)) {
     set.seed(42)
     
     # Small data
@@ -171,7 +191,8 @@ test_that("SIMD autocorrelation performance scales reasonably", {
     data_medium <- rnorm(10000)
     time_medium <- system.time({
       for (i in 1:10) {
-        acf_medium <- pladdrr:::.autocorrelation_simd(data_medium, max_lag = 100)
+        acf_medium <- pladdrr:::.autocorrelation_simd(data_medium,
+          max_lag = 100)
       }
     })["elapsed"]
     

@@ -15,9 +15,11 @@ make_audio_dir <- function(n = 2) {
   list.files(dir, pattern = "\\.wav$", full.names = TRUE)
 }
 
-test_that(".pladdrr_worker_thread_budget divides cores and honors explicit override", {
+test_that(
+  ".pladdrr_worker_thread_budget divides cores and honors explicit override", {
   budget <- pladdrr:::.pladdrr_worker_thread_budget
-  expect_equal(budget(2, threads_per_worker = 3), 3, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(budget(2, threads_per_worker = 3), 3,
+    tolerance = sqrt(.Machine$double.eps))
   expect_equal(budget(2, threads_per_worker = 0), 1, tolerance = sqrt(.Machine$double.eps)) # clamps to >= 1
   auto <- budget(2, threads_per_worker = NULL)
   expect_gte(auto, 1)
@@ -33,7 +35,8 @@ test_that("analyze_files_parallel n_cores = 1 processes files sequentially", {
   expect_true(all(vapply(results, function(x) abs(x - 0.1) < 1e-6, logical(1))))
 })
 
-test_that("analyze_files_parallel n_cores = 2 runs on a real cluster and gets correct results", {
+test_that(
+  "analyze_files_parallel n_cores = 2 runs on a real cluster and gets correct results", {
   skip_parallel_on_cran()
   files <- make_audio_dir(2)
   results <- analyze_files_parallel(files, function(sound) {
@@ -44,7 +47,8 @@ test_that("analyze_files_parallel n_cores = 2 runs on a real cluster and gets co
   expect_true(all(vapply(results, is.numeric, logical(1))))
 })
 
-test_that("analyze_files_parallel passes ... through to analysis_func on a cluster", {
+test_that(
+  "analyze_files_parallel passes ... through to analysis_func on a cluster", {
   skip_parallel_on_cran()
   files <- make_audio_dir(2)
   results <- analyze_files_parallel(files, function(sound, multiplier) {
@@ -54,18 +58,21 @@ test_that("analyze_files_parallel passes ... through to analysis_func on a clust
   expect_true(all(vapply(results, function(x) abs(x - 1) < 1e-6, logical(1))))
 })
 
-test_that("process_sounds_parallel n_cores = 1 applies analysis_func directly", {
+test_that(
+  "process_sounds_parallel n_cores = 1 applies analysis_func directly", {
   sounds <- list(
     Sound$create_tone(frequency = 220, duration = 0.1, sampling_rate = 8000),
     Sound$create_tone(frequency = 440, duration = 0.1, sampling_rate = 8000)
   )
-  results <- process_sounds_parallel(sounds, function(s) s$get_duration(), n_cores = 1)
+  results <- process_sounds_parallel(sounds, function(s) s$get_duration(),
+    n_cores = 1)
 
   expect_length(results, 2)
   expect_true(all(vapply(results, function(x) abs(x - 0.1) < 1e-6, logical(1))))
 })
 
-test_that("process_sounds_parallel n_cores = 2 round-trips Sounds through a cluster", {
+test_that(
+  "process_sounds_parallel n_cores = 2 round-trips Sounds through a cluster", {
   skip_parallel_on_cran()
   sounds <- list(
     Sound$create_tone(frequency = 220, duration = 0.1, sampling_rate = 8000),
@@ -104,7 +111,8 @@ test_that("extract_intensity_parallel returns one Intensity object per file", {
   expect_s3_class(intensities[[1]], "Intensity")
 })
 
-test_that("benchmark_parallel returns timing rows for each requested core count", {
+test_that(
+  "benchmark_parallel returns timing rows for each requested core count", {
   skip_parallel_on_cran()
   files <- make_audio_dir(1)
   results <- benchmark_parallel(files, function(s) s$get_duration(),

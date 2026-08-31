@@ -3,8 +3,10 @@
 
 # --- validate_positive -------------------------------------------------------
 
-test_that("validate_positive accepts positive numbers and rejects everything else", {
-  expect_equal(pladdrr:::validate_positive(5), 5, tolerance = sqrt(.Machine$double.eps))
+test_that(
+  "validate_positive accepts positive numbers and rejects everything else", {
+  expect_equal(pladdrr:::validate_positive(5), 5,
+    tolerance = sqrt(.Machine$double.eps))
   expect_error(pladdrr:::validate_positive(0), "must be positive")
   expect_error(pladdrr:::validate_positive(-1), "must be positive")
   expect_error(pladdrr:::validate_positive(NA_real_), "cannot be NA")
@@ -15,27 +17,36 @@ test_that("validate_positive accepts positive numbers and rejects everything els
 # --- validate_non_negative ----------------------------------------------------
 
 test_that("validate_non_negative accepts zero and positive, rejects negative", {
-  expect_equal(pladdrr:::validate_non_negative(0), 0, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(pladdrr:::validate_non_negative(5), 5, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pladdrr:::validate_non_negative(0), 0,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pladdrr:::validate_non_negative(5), 5,
+    tolerance = sqrt(.Machine$double.eps))
   expect_error(pladdrr:::validate_non_negative(-0.1), "non-negative")
   expect_error(pladdrr:::validate_non_negative(NA_real_), "cannot be NA")
   expect_error(pladdrr:::validate_non_negative("x"), "single numeric value")
 })
 
-# --- validate_range ------------------------------------------------------------
+# --- validate_range
+#  ------------------------------------------------------------
 
-# --- validate_positive_int -----------------------------------------------------
+# --- validate_positive_int
+#  -----------------------------------------------------
 
-test_that("validate_positive_int accepts positive integers and rejects the rest", {
-  expect_equal(pladdrr:::validate_positive_int(5), 5L, tolerance = sqrt(.Machine$double.eps))
-  expect_error(pladdrr:::validate_positive_int(5.5), "must be a positive integer")
+test_that(
+  "validate_positive_int accepts positive integers and rejects the rest", {
+  expect_equal(pladdrr:::validate_positive_int(5), 5L,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_error(pladdrr:::validate_positive_int(5.5),
+    "must be a positive integer")
   expect_error(pladdrr:::validate_positive_int(0), "must be a positive integer")
-  expect_error(pladdrr:::validate_positive_int(-3), "must be a positive integer")
+  expect_error(pladdrr:::validate_positive_int(-3),
+    "must be a positive integer")
   expect_error(pladdrr:::validate_positive_int(NA_real_), "cannot be NA")
 })
 
 
-# --- validate_logical ------------------------------------------------------------
+# --- validate_logical
+#  ------------------------------------------------------------
 
 # --- is_praat_sound / validate_sound_object --------------------------------
 
@@ -55,15 +66,18 @@ legacy_praat_sound <- function(values, sampling_rate = 8000) {
   )
 }
 
-test_that("is_praat_sound recognizes R6 Sound and well-formed legacy praat_sound", {
-  sound <- Sound$create_tone(frequency = 150, duration = 0.1, sampling_rate = 8000)
+test_that(
+  "is_praat_sound recognizes R6 Sound and well-formed legacy praat_sound", {
+  sound <- Sound$create_tone(frequency = 150, duration = 0.1,
+    sampling_rate = 8000)
   expect_true(is_praat_sound(sound))
   expect_true(is_praat_sound(legacy_praat_sound(c(1, 2, 3))))
   expect_false(is_praat_sound(42))
   expect_false(is_praat_sound(list(class = "not a sound")))
 })
 
-test_that("is_praat_sound rejects legacy praat_sound objects missing required fields/types", {
+test_that(
+  "is_praat_sound rejects legacy praat_sound objects missing required fields/types", {
   bad <- structure(list(values = 1:3), class = "praat_sound")
   expect_false(is_praat_sound(bad))
 
@@ -76,16 +90,22 @@ test_that("is_praat_sound rejects legacy praat_sound objects missing required fi
   expect_false(is_praat_sound(bad3))
 })
 
-test_that("validate_sound_object passes through valid sounds and errors otherwise", {
-  sound <- Sound$create_tone(frequency = 150, duration = 0.1, sampling_rate = 8000)
-  expect_equal(pladdrr:::validate_sound_object(sound), sound, tolerance = sqrt(.Machine$double.eps))
-  expect_error(pladdrr:::validate_sound_object(42), "must be a praat_sound object")
+test_that(
+  "validate_sound_object passes through valid sounds and errors otherwise", {
+  sound <- Sound$create_tone(frequency = 150, duration = 0.1,
+    sampling_rate = 8000)
+  expect_equal(pladdrr:::validate_sound_object(sound), sound,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_error(pladdrr:::validate_sound_object(42),
+    "must be a praat_sound object")
 })
 
 # --- is_praat_pitch / validate_pitch_object ---------------------------------
 
-test_that("is_praat_pitch recognizes R6 Pitch and well-formed legacy praat_pitch data.frame", {
-  sound <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+test_that(
+  "is_praat_pitch recognizes R6 Pitch and well-formed legacy praat_pitch data.frame", {
+  sound <- Sound$create_tone(frequency = 150, duration = 0.3,
+    sampling_rate = 16000)
   pitch <- sound$to_pitch()
   expect_true(is_praat_pitch(pitch))
 
@@ -102,14 +122,17 @@ test_that("is_praat_pitch recognizes R6 Pitch and well-formed legacy praat_pitch
 
 # --- is_praat_formant / validate_formant_object ------------------------------
 
-test_that("is_praat_formant recognizes R6 Formant and well-formed legacy praat_formant", {
-  sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+test_that(
+  "is_praat_formant recognizes R6 Formant and well-formed legacy praat_formant", {
+  sound <- Sound$create_tone(frequency = 220, duration = 0.3,
+    sampling_rate = 16000)
   formant <- sound$to_formant_burg()
   expect_true(is_praat_formant(formant))
 
   legacy <- structure(
     list(
-      values = data.frame(time = 0.1, formant_number = 1, frequency = 500, bandwidth = 80),
+      values = data.frame(time = 0.1, formant_number = 1, frequency = 500,
+        bandwidth = 80),
       n_frames = 1,
       n_formants = 1
     ),
@@ -118,20 +141,27 @@ test_that("is_praat_formant recognizes R6 Formant and well-formed legacy praat_f
   expect_true(is_praat_formant(legacy))
 
   expect_false(is_praat_formant(42))
-  expect_false(is_praat_formant(structure(list(n_frames = 1), class = "praat_formant")))
+  expect_false(
+    is_praat_formant(structure(list(n_frames = 1), class = "praat_formant")))
 })
 
-test_that("validate_formant_object passes through valid formants and errors otherwise", {
-  sound <- Sound$create_tone(frequency = 220, duration = 0.2, sampling_rate = 16000)
+test_that(
+  "validate_formant_object passes through valid formants and errors otherwise", {
+  sound <- Sound$create_tone(frequency = 220, duration = 0.2,
+    sampling_rate = 16000)
   formant <- sound$to_formant_burg()
-  expect_equal(pladdrr:::validate_formant_object(formant), formant, tolerance = sqrt(.Machine$double.eps))
-  expect_error(pladdrr:::validate_formant_object(42), "must be a praat_formant object")
+  expect_equal(pladdrr:::validate_formant_object(formant), formant,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_error(pladdrr:::validate_formant_object(42),
+    "must be a praat_formant object")
 })
 
 # --- is_praat_intensity ---------------------------
 
-test_that("is_praat_intensity recognizes R6 Intensity and well-formed legacy praat_intensity", {
-  sound <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+test_that(
+  "is_praat_intensity recognizes R6 Intensity and well-formed legacy praat_intensity", {
+  sound <- Sound$create_tone(frequency = 150, duration = 0.3,
+    sampling_rate = 16000)
   intensity <- sound$to_intensity()
   expect_true(is_praat_intensity(intensity))
 
@@ -142,7 +172,9 @@ test_that("is_praat_intensity recognizes R6 Intensity and well-formed legacy pra
   expect_true(is_praat_intensity(legacy))
 
   expect_false(is_praat_intensity(42))
-  expect_false(is_praat_intensity(structure(list(n_frames = 1), class = "praat_intensity")))
+  expect_false(
+    is_praat_intensity(
+      structure(list(n_frames = 1), class = "praat_intensity")))
 })
 
 test_that("is_praat_formant returns FALSE for non-Formant input", {
@@ -152,7 +184,8 @@ test_that("is_praat_formant returns FALSE for non-Formant input", {
 })
 
 test_that("is_praat_pitch returns FALSE for non-Pitch input", {
-  expect_false(is_praat_pitch(Sound$create_tone(frequency = 200, duration = 0.2)))
+  expect_false(
+    is_praat_pitch(Sound$create_tone(frequency = 200, duration = 0.2)))
   expect_false(is_praat_pitch(list()))
 })
 

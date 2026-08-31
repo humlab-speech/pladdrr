@@ -1,17 +1,24 @@
-# test-pitch-module-wrapper.R - Tests for R/pitch-module.R (PitchModule S3 wrapper)
+# test-pitch-module-wrapper.R - Tests for R/pitch-module.R (PitchModule S3
+#  wrapper)
 
 pitch_module_ptr <- function() {
-  snd <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+  snd <- Sound$create_tone(frequency = 150, duration = 0.5,
+    sampling_rate = 16000)
   pitch <- snd$to_pitch()
   pitch$.xptr
 }
 
 test_that("pitch_unit_code maps known units and rejects unknown ones", {
-  expect_equal(pladdrr:::pitch_unit_code("hertz"), 0L, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(pladdrr:::pitch_unit_code("Hz"), 0L, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(pladdrr:::pitch_unit_code("semitones"), 1L, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(pladdrr:::pitch_unit_code("mel"), 2L, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(pladdrr:::pitch_unit_code("erb"), 3L, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pladdrr:::pitch_unit_code("hertz"), 0L,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pladdrr:::pitch_unit_code("Hz"), 0L,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pladdrr:::pitch_unit_code("semitones"), 1L,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pladdrr:::pitch_unit_code("mel"), 2L,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pladdrr:::pitch_unit_code("erb"), 3L,
+    tolerance = sqrt(.Machine$double.eps))
   expect_error(pladdrr:::pitch_unit_code("bogus"), "Unknown unit")
 })
 
@@ -19,7 +26,8 @@ test_that("PitchModule() requires a pointer", {
   expect_error(PitchModule(), "Sound\\$to_pitch")
 })
 
-test_that("PitchModule() constructs a valid wrapper from a Sound-derived pointer", {
+test_that(
+  "PitchModule() constructs a valid wrapper from a Sound-derived pointer", {
   pm <- PitchModule(pitch_module_ptr())
 
   expect_s3_class(pm, "PitchModule")

@@ -33,25 +33,32 @@ NULL
 .discriminant_methods <- new.env(hash = TRUE, parent = emptyenv())
 
 # Query - Properties
-.discriminant_methods$get_number_of_groups <- function(.self) .self$.cpp$get_number_of_groups()
-.discriminant_methods$get_number_of_functions <- function(.self) .self$.cpp$get_number_of_functions()
-.discriminant_methods$get_dimension <- function(.self) .self$.cpp$get_dimension()
+.discriminant_methods$get_number_of_groups <- function(
+  .self) .self$.cpp$get_number_of_groups()
+.discriminant_methods$get_number_of_functions <- function(
+  .self) .self$.cpp$get_number_of_functions()
+.discriminant_methods$get_dimension <- function(
+  .self) .self$.cpp$get_dimension()
 .discriminant_methods$get_number_of_observations <- function(.self, group) {
   .self$.cpp$get_number_of_observations(as.integer(group))
 }
-.discriminant_methods$get_total_observations <- function(.self) .self$.cpp$get_total_observations()
+.discriminant_methods$get_total_observations <- function(
+  .self) .self$.cpp$get_total_observations()
 
 # Eigenvalues
-.discriminant_methods$get_eigenvalues <- function(.self) .self$.cpp$get_eigenvalues()
+.discriminant_methods$get_eigenvalues <- function(
+  .self) .self$.cpp$get_eigenvalues()
 .discriminant_methods$get_eigenvalue <- function(.self, func) {
   .self$.cpp$get_eigenvalue(as.integer(func))
 }
 
 # Variance explained
-.discriminant_methods$get_fraction_variance <- function(.self, from = 1, to = 0) {
+.discriminant_methods$get_fraction_variance <- function(.self, from = 1,
+  to = 0) {
   .self$.cpp$get_fraction_variance(as.integer(from), as.integer(to))
 }
-.discriminant_methods$get_variance_explained <- function(.self, from = 1, to = 0) {
+.discriminant_methods$get_variance_explained <- function(.self, from = 1,
+  to = 0) {
   .self$.cpp$get_fraction_variance(as.integer(from), as.integer(to))
 }
 
@@ -59,32 +66,40 @@ NULL
 .discriminant_methods$get_wilks_lambda <- function(.self, from = 1) {
   .self$.cpp$get_wilks_lambda(as.integer(from))
 }
-.discriminant_methods$get_partial_discrimination_probability <- function(.self, num_dimensions) {
+.discriminant_methods$get_partial_discrimination_probability <- function(
+  .self, num_dimensions) {
   .self$.cpp$get_partial_discrimination_probability(as.integer(num_dimensions))
 }
 .discriminant_methods$get_ln_determinant_group <- function(.self, group) {
   .self$.cpp$get_ln_determinant_group(as.integer(group))
 }
-.discriminant_methods$get_ln_determinant_total <- function(.self) .self$.cpp$get_ln_determinant_total()
+.discriminant_methods$get_ln_determinant_total <- function(
+  .self) .self$.cpp$get_ln_determinant_total()
 
 # Eigenvectors
 .discriminant_methods$get_eigenvector <- function(.self, func) {
   .self$.cpp$get_eigenvector(as.integer(func))
 }
-.discriminant_methods$get_eigenvectors <- function(.self) .self$.cpp$get_eigenvectors()
-.discriminant_methods$get_coefficients <- function(.self) .self$.cpp$get_eigenvectors()
+.discriminant_methods$get_eigenvectors <- function(
+  .self) .self$.cpp$get_eigenvectors()
+.discriminant_methods$get_coefficients <- function(
+  .self) .self$.cpp$get_eigenvectors()
 
 # Group information
-.discriminant_methods$get_group_labels <- function(.self) .self$.cpp$get_group_labels()
-.discriminant_methods$get_group_centroids <- function(.self) .self$.cpp$get_group_centroids()
-.discriminant_methods$get_apriori_probabilities <- function(.self) .self$.cpp$get_apriori_probabilities()
+.discriminant_methods$get_group_labels <- function(
+  .self) .self$.cpp$get_group_labels()
+.discriminant_methods$get_group_centroids <- function(
+  .self) .self$.cpp$get_group_centroids()
+.discriminant_methods$get_apriori_probabilities <- function(
+  .self) .self$.cpp$get_apriori_probabilities()
 .discriminant_methods$set_apriori_probability <- function(.self, group, prob) {
   .self$.cpp$set_apriori_probability(as.integer(group), prob)
   invisible(.self)
 }
 
 # Export
-.discriminant_methods$as_data_frame <- function(.self) .self$.cpp$as_data_frame()
+.discriminant_methods$as_data_frame <- function(
+  .self) .self$.cpp$as_data_frame()
 .discriminant_methods$get_info <- function(.self) .self$.cpp$get_info()
 
 # Utility
@@ -142,7 +157,8 @@ lockEnvironment(.discriminant_methods, bindings = TRUE)
 #' @export
 Discriminant <- function(.xptr = NULL) {
   if (is.null(.xptr)) {
-    stop("Discriminant objects must be created using discriminant_from_matrix()")
+    stop(
+      "Discriminant objects must be created using discriminant_from_matrix()")
   }
 
   disc_mod <- get_module("discriminant_module")
@@ -158,7 +174,8 @@ Discriminant <- function(.xptr = NULL) {
 #'
 #' Performs Linear Discriminant Analysis on a labeled numeric matrix.
 #'
-#' @param data Numeric matrix where rows are observations and columns are variables
+#' @param data Numeric matrix where rows are observations and columns are
+#  variables
 #' @param labels Character vector of group labels (one per row in data)
 #' @return A Discriminant object
 #' @examples

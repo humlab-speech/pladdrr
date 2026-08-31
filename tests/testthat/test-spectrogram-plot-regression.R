@@ -10,7 +10,8 @@
 library(testthat)
 library(pladdrr)
 
-test_that("autoplot.Spectrogram renders the frequency axis correctly, not transposed", {
+test_that(
+  "autoplot.Spectrogram renders the frequency axis correctly, not transposed", {
   sound <- generate_sine_wave(220, 0.3, sampling_rate = 16000)
   spectrogram <- sound$to_spectrogram()
 
@@ -22,7 +23,8 @@ test_that("autoplot.Spectrogram renders the frequency axis correctly, not transp
   expect_lt(abs(peak_row$frequency - 220), 50)
 })
 
-test_that("autoplot.Spectrogram converts power to dB (dynamic_range is not a no-op)", {
+test_that(
+  "autoplot.Spectrogram converts power to dB (dynamic_range is not a no-op)", {
   sound <- generate_sine_wave(220, 0.3, sampling_rate = 16000)
   spectrogram <- sound$to_spectrogram()
 
@@ -46,7 +48,8 @@ test_that("autolayer.Spectrogram matches autoplot.Spectrogram's data", {
   expect_lt(abs(peak_row$frequency - 220), 50)
 })
 
-test_that("plot.Spectrogram renders the frequency axis correctly, not transposed", {
+test_that(
+  "plot.Spectrogram renders the frequency axis correctly, not transposed", {
   sound <- generate_sine_wave(220, 0.3, sampling_rate = 16000)
   spectrogram <- sound$to_spectrogram()
 
@@ -58,7 +61,8 @@ test_that("plot.Spectrogram renders the frequency axis correctly, not transposed
   expect_lt(abs(peak_row$frequency - 220), 50)
 })
 
-test_that("plot.Spectrogram converts power to dB (dynamic_range is not a no-op)", {
+test_that(
+  "plot.Spectrogram converts power to dB (dynamic_range is not a no-op)", {
   sound <- generate_sine_wave(220, 0.3, sampling_rate = 16000)
   spectrogram <- sound$to_spectrogram()
 

@@ -4,7 +4,8 @@
 # set_object validation branches.
 
 test_that(".praat_object_xptr extracts pointers from all object shapes", {
-  snd <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+  snd <- Sound$create_tone(frequency = 220, duration = 0.3,
+    sampling_rate = 16000)
   ptr <- snd$.xptr
   # direct .xptr field
   expect_identical(pladdrr:::.praat_object_xptr(list(.xptr = ptr)), ptr)
@@ -23,7 +24,8 @@ test_that("set_variable validates its name", {
   expect_error(interp$set_variable(42, 1), "single non-empty character")
   expect_error(interp$set_variable("", 1), "single non-empty character")
   interp$set_variable("ok_var", 7)
-  expect_equal(interp$get_variable("ok_var"), 7, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(interp$get_variable("ok_var"), 7,
+    tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("eval validates its expression", {

@@ -14,39 +14,49 @@
 #' \itemize{
 #'   \item \code{get_number_of_frames()} - number of analysis frames
 #'   \item \code{get_time_step()} - time step between frames, in seconds
-#'   \item \code{count_voiced_frames()} - number of frames with voiced (non-zero) pitch
+#' \item \code{count_voiced_frames()} - number of frames with voiced (non-zero)
+#  pitch
 #' }
 #'
 #' @section Point queries:
 #' \itemize{
-#'   \item \code{get_value_at_time(time, unit, interpolate)} - F0 at a time point
-#'   \item \code{get_values_at_times(times, unit, interpolate)} - F0 at a vector of times (batch)
-#'   \item \code{get_strength_at_time(time)} - strength (voicing likelihood) at a time
-#'   \item \code{get_strengths_at_times(times)} - strengths at a vector of times (batch)
+#' \item \code{get_value_at_time(time, unit, interpolate)} - F0 at a time point
+#' \item \code{get_values_at_times(times, unit, interpolate)} - F0 at a vector
+#  of times (batch)
+#' \item \code{get_strength_at_time(time)} - strength (voicing likelihood) at a
+#  time
+#' \item \code{get_strengths_at_times(times)} - strengths at a vector of times
+#  (batch)
 #' }
 #'
 #' @section Statistics:
 #' Computed over a time range.
 #' \itemize{
 #'   \item \code{get_mean(from_time, to_time, unit)} - mean F0
-#'   \item \code{get_standard_deviation(from_time, to_time, unit)} - standard deviation
-#'   \item \code{get_minimum(from_time, to_time, unit, interpolate)} - minimum F0
-#'   \item \code{get_maximum(from_time, to_time, unit, interpolate)} - maximum F0
-#'   \item \code{get_quantile(quantile, from_time, to_time, unit)} - quantile of F0
-#'   \item \code{get_time_of_minimum(...)}, \code{get_time_of_maximum(...)} - time of extremum
+#' \item \code{get_standard_deviation(from_time, to_time, unit)} - standard
+#  deviation
+#' \item \code{get_minimum(from_time, to_time, unit, interpolate)} - minimum F0
+#' \item \code{get_maximum(from_time, to_time, unit, interpolate)} - maximum F0
+#' \item \code{get_quantile(quantile, from_time, to_time, unit)} - quantile of
+#  F0
+#' \item \code{get_time_of_minimum(...)}, \code{get_time_of_maximum(...)} - time
+#  of extremum
 #' }
 #'
 #' @section Export:
 #' \itemize{
-#'   \item \code{as_vector()}, \code{as_data_frame()} - export as vector or data.frame
+#' \item \code{as_vector()}, \code{as_data_frame()} - export as vector or
+#  data.frame
 #'   \item \code{get_times_vector()} - frame time points
 #'   \item \code{as_matrix()} - F0 values as a matrix (frames by candidates)
 #' }
 #'
 #' @section Transform:
 #' \itemize{
-#'   \item \code{to_point_process(voicing_threshold, octave_cost, ...)} - convert to a PointProcess (glottal pulses)
-#'   \item \code{down_to_pitch_tier()} - convert to a PitchTier (editable pitch contour)
+#' \item \code{to_point_process(voicing_threshold, octave_cost, ...)} - convert
+#  to a PointProcess (glottal pulses)
+#' \item \code{down_to_pitch_tier()} - convert to a PitchTier (editable pitch
+#  contour)
 #' }
 #'
 #' @section Units:
@@ -55,22 +65,26 @@
 #' \code{"semitones re 440 Hz"} (4), \code{"mel"} (5), \code{"log hertz"} (6),
 #' \code{"erb"} (7). Default is \code{"hertz"}.
 #'
-#' @seealso \code{\link{Sound}}, \code{\link{PointProcess}}, \code{\link{PitchTier}}
+#' @seealso \code{\link{Sound}}, \code{\link{PointProcess}},
+#  \code{\link{PitchTier}}
 #'
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #'   Pitch object; set internally when a method returns a new Pitch.
 #' @return A Pitch object.
 #'
 #' @examples
-#' sound <- Sound$create_tone(duration = 1.0, frequency = 200, sampling_rate = 44100)
-#' pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
+#' sound <- Sound$create_tone(duration = 1.0, frequency = 200, sampling_rate =
+#  44100)
+#' pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling =
+#  600)
 #' mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
 #' min_f0 <- pitch$get_minimum(from_time = 0, to_time = 0, unit = "hertz")
 #' df <- as.data.frame(pitch)
 #'
 #' # The same analysis on a recording read from disk
 #' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
-#' pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
+#' pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling =
+#  600)
 #' n_voiced <- pitch$count_voiced_frames()
 #' 
 #' @name Pitch
@@ -119,47 +133,65 @@ NULL
 .pitch_methods$get_frame_from_time <- function(.self, time) {
   .self$.cpp$get_frame_from_time(as.numeric(time))
 }
-.pitch_methods$get_number_of_frames <- function(.self) .self$.cpp$get_number_of_frames()
+.pitch_methods$get_number_of_frames <- function(
+  .self) .self$.cpp$get_number_of_frames()
 .pitch_methods$get_time_step <- function(.self) .self$.cpp$get_time_step()
 
 # --- Pitch value queries ---
-.pitch_methods$get_value_at_time <- function(.self, time, unit = "hertz", interpolate = TRUE) {
-  .self$.cpp$get_value_at_time(as.numeric(time), .pitch_unit_code(unit), as.logical(interpolate))
+.pitch_methods$get_value_at_time <- function(.self, time, unit = "hertz",
+  interpolate = TRUE) {
+  .self$.cpp$get_value_at_time(as.numeric(time), .pitch_unit_code(unit),
+    as.logical(interpolate))
 }
-.pitch_methods$get_mean <- function(.self, from_time = 0, to_time = 0, unit = "hertz") {
-  .self$.cpp$get_mean(as.numeric(from_time), as.numeric(to_time), .pitch_unit_code(unit))
+.pitch_methods$get_mean <- function(.self, from_time = 0, to_time = 0,
+  unit = "hertz") {
+  .self$.cpp$get_mean(as.numeric(from_time), as.numeric(to_time),
+    .pitch_unit_code(unit))
 }
-.pitch_methods$get_standard_deviation <- function(.self, from_time = 0, to_time = 0, unit = "hertz") {
-  .self$.cpp$get_standard_deviation(as.numeric(from_time), as.numeric(to_time), .pitch_unit_code(unit))
+.pitch_methods$get_standard_deviation <- function(.self, from_time = 0,
+  to_time = 0, unit = "hertz") {
+  .self$.cpp$get_standard_deviation(as.numeric(from_time),
+    as.numeric(to_time), .pitch_unit_code(unit))
 }
-.pitch_methods$get_quantile <- function(.self, from_time = 0, to_time = 0, quantile = 0.5, unit = "hertz") {
+.pitch_methods$get_quantile <- function(.self, from_time = 0, to_time = 0,
+  quantile = 0.5, unit = "hertz") {
   .self$.cpp$get_quantile(as.numeric(from_time), as.numeric(to_time),
                           as.numeric(quantile), .pitch_unit_code(unit))
 }
-.pitch_methods$get_minimum <- function(.self, from_time = 0, to_time = 0, unit = "hertz", interpolate = TRUE) {
+.pitch_methods$get_minimum <- function(.self, from_time = 0, to_time = 0,
+  unit = "hertz", interpolate = TRUE) {
   .self$.cpp$get_minimum(as.numeric(from_time), as.numeric(to_time),
                          .pitch_unit_code(unit), as.logical(interpolate))
 }
-.pitch_methods$get_maximum <- function(.self, from_time = 0, to_time = 0, unit = "hertz", interpolate = TRUE) {
+.pitch_methods$get_maximum <- function(.self, from_time = 0, to_time = 0,
+  unit = "hertz", interpolate = TRUE) {
   .self$.cpp$get_maximum(as.numeric(from_time), as.numeric(to_time),
                          .pitch_unit_code(unit), as.logical(interpolate))
 }
-.pitch_methods$get_time_of_minimum <- function(.self, from_time = 0, to_time = 0, unit = "hertz", interpolate = TRUE) {
+.pitch_methods$get_time_of_minimum <- function(.self, from_time = 0,
+  to_time = 0, unit = "hertz", interpolate = TRUE) {
   .self$.cpp$get_time_of_minimum(as.numeric(from_time), as.numeric(to_time),
-                                 .pitch_unit_code(unit), as.logical(interpolate))
+                                 .pitch_unit_code(
+                                   unit), as.logical(interpolate))
 }
-.pitch_methods$get_time_of_maximum <- function(.self, from_time = 0, to_time = 0, unit = "hertz", interpolate = TRUE) {
+.pitch_methods$get_time_of_maximum <- function(.self, from_time = 0,
+  to_time = 0, unit = "hertz", interpolate = TRUE) {
   .self$.cpp$get_time_of_maximum(as.numeric(from_time), as.numeric(to_time),
-                                 .pitch_unit_code(unit), as.logical(interpolate))
+                                 .pitch_unit_code(
+                                   unit), as.logical(interpolate))
 }
-.pitch_methods$count_voiced_frames <- function(.self) .self$.cpp$count_voiced_frames()
+.pitch_methods$count_voiced_frames <- function(
+  .self) .self$.cpp$count_voiced_frames()
 
-.pitch_methods$get_statistics <- function(.self, from_time = 0, to_time = 0, unit = "hertz",
-                                          metrics = c("mean", "stdev", "min", "max", "median", "q1", "q3")) {
+.pitch_methods$get_statistics <- function(.self, from_time = 0, to_time = 0,
+  unit = "hertz",
+                                          metrics = c("mean", "stdev", "min",
+                                            "max", "median", "q1", "q3")) {
   .self$.cpp$get_statistics(as.numeric(from_time), as.numeric(to_time),
                             .pitch_unit_code(unit), as.character(metrics))
 }
-.pitch_methods$get_adaptive_range <- function(.self, q1_factor = 0.75, q3_factor = 1.5,
+.pitch_methods$get_adaptive_range <- function(.self, q1_factor = 0.75,
+  q3_factor = 1.5,
                                               from_time = 0, to_time = 0, unit = "hertz") {
   .self$.cpp$get_adaptive_range(as.numeric(q1_factor), as.numeric(q3_factor),
                                 as.numeric(from_time), as.numeric(to_time),
@@ -171,26 +203,34 @@ NULL
 .pitch_methods$get_values_vector <- function(.self, unit = "hertz") {
   .self$.cpp$get_values_vector(.pitch_unit_code(unit))
 }
-.pitch_methods$get_strength_at_time <- function(.self, time, unit = "hertz", interpolate = TRUE) {
-  .self$.cpp$get_strength_at_time(as.numeric(time), .pitch_unit_code(unit), as.logical(interpolate))
+.pitch_methods$get_strength_at_time <- function(.self, time, unit = "hertz",
+  interpolate = TRUE) {
+  .self$.cpp$get_strength_at_time(as.numeric(time), .pitch_unit_code(unit),
+    as.logical(interpolate))
 }
-.pitch_methods$get_mean_strength <- function(.self, from_time = 0, to_time = 0, unit = "hertz") {
-  .self$.cpp$get_mean_strength(as.numeric(from_time), as.numeric(to_time), .pitch_unit_code(unit))
+.pitch_methods$get_mean_strength <- function(.self, from_time = 0,
+  to_time = 0, unit = "hertz") {
+  .self$.cpp$get_mean_strength(as.numeric(from_time), as.numeric(to_time),
+    .pitch_unit_code(unit))
 }
 .pitch_methods$get_intensity_at_time <- function(.self, time) {
   .self$.cpp$get_intensity_at_time(as.numeric(time))
 }
-.pitch_methods$get_mean_intensity <- function(.self, from_time = 0, to_time = 0) {
+.pitch_methods$get_mean_intensity <- function(.self, from_time = 0,
+  to_time = 0) {
   .self$.cpp$get_mean_intensity(as.numeric(from_time), as.numeric(to_time))
 }
 .pitch_methods$get_voiced_mask <- function(.self) .self$.cpp$get_voiced_mask()
 .pitch_methods$get_strengths_vector <- function(.self, unit = "hertz") {
   .self$.cpp$get_strengths_vector(.pitch_unit_code(unit))
 }
-.pitch_methods$get_values_at_times <- function(.self, times, unit = "hertz", interpolate = TRUE) {
-  .self$.cpp$get_values_at_times(as.numeric(times), .pitch_unit_code(unit), as.logical(interpolate))
+.pitch_methods$get_values_at_times <- function(.self, times, unit = "hertz",
+  interpolate = TRUE) {
+  .self$.cpp$get_values_at_times(as.numeric(times), .pitch_unit_code(unit),
+    as.logical(interpolate))
 }
-.pitch_methods$get_intensities_vector <- function(.self) .self$.cpp$get_intensities_vector()
+.pitch_methods$get_intensities_vector <- function(
+  .self) .self$.cpp$get_intensities_vector()
 
 # --- Detrending ---
 .pitch_methods$subtract_linear_fit <- function(.self, unit = "hertz") {
@@ -229,24 +269,32 @@ NULL
   tier_ptr <- .self$.cpp$down_to_pitch_tier_ptr()
   PitchTier(.xptr = tier_ptr)
 }
-.pitch_methods$to_textgrid_vuv <- function(.self, max_period = 0.02, mean_period = 0.01) {
-  tg_ptr <- .self$.cpp$to_textgrid_vuv_ptr(as.numeric(max_period), as.numeric(mean_period))
+.pitch_methods$to_textgrid_vuv <- function(.self, max_period = 0.02,
+  mean_period = 0.01) {
+  tg_ptr <- .self$.cpp$to_textgrid_vuv_ptr(as.numeric(max_period),
+    as.numeric(mean_period))
   TextGrid(.xptr = tg_ptr)
 }
-.pitch_methods$to_textgrid_silences <- function(.self, min_silent_duration = 0.1, min_sounding_duration = 0.1) {
-  tg_ptr <- .self$.cpp$to_textgrid_silences_ptr(min_silent_duration, min_sounding_duration)
+.pitch_methods$to_textgrid_silences <- function(.self,
+  min_silent_duration = 0.1, min_sounding_duration = 0.1) {
+  tg_ptr <- .self$.cpp$to_textgrid_silences_ptr(min_silent_duration,
+    min_sounding_duration)
   TextGrid(.xptr = tg_ptr)
 }
-.pitch_methods$to_dtw <- function(.self, reference, vuv_costs = 24.0, time_weight = 10.0,
+.pitch_methods$to_dtw <- function(.self, reference, vuv_costs = 24.0,
+  time_weight = 10.0,
                                   match_start = TRUE, match_end = TRUE, slope = 1) {
   if (!inherits(reference, "Pitch")) stop("reference must be a Pitch object")
-  pitches_to_dtw(reference, .self, vuv_costs, time_weight, match_start, match_end, slope)
+  pitches_to_dtw(reference, .self, vuv_costs, time_weight, match_start,
+    match_end, slope)
 }
 
 # --- Export ---
 .pitch_methods$as_matrix <- function(.self) .self$.cpp$as_matrix()
-.pitch_methods$as_data_frame <- function(.self, include_strength = FALSE, include_intensity = FALSE) {
-  .self$.cpp$as_data_frame(as.logical(include_strength), as.logical(include_intensity))
+.pitch_methods$as_data_frame <- function(.self, include_strength = FALSE,
+  include_intensity = FALSE) {
+  .self$.cpp$as_data_frame(as.logical(include_strength),
+    as.logical(include_intensity))
 }
 .pitch_methods$save <- function(.self, path) {
   .self$.cpp$save(as.character(path))
@@ -290,14 +338,16 @@ lockEnvironment(.pitch_methods, bindings = TRUE)
 #' @export
 Pitch <- function(.xptr = NULL) {
   if (is.null(.xptr)) {
-    stop("Pitch objects must be created from a Sound object using sound$to_pitch()")
+    stop(
+      "Pitch objects must be created from a Sound object using sound$to_pitch()")
   }
   pitch_mod <- get_module("pitch_module")
   if (is.null(pitch_mod)) {
     stop("pitch_module not available - package installation may be incomplete")
   }
   cpp_obj <- pitch_mod$RPitch$new(.xptr)
-  structure(list(.xptr = .xptr, .cpp = cpp_obj), class = c("Pitch", "PraatObject"))
+  structure(list(.xptr = .xptr, .cpp = cpp_obj),
+    class = c("Pitch", "PraatObject"))
 }
 
 # ============================================================================

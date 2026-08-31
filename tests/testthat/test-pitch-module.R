@@ -58,8 +58,10 @@ test_that("RPitch property methods work", {
   expect_equal(rpitch$get_ceiling(), 600, tolerance = sqrt(.Machine$double.eps))  # default ceiling
 
   # Aliases
-  expect_equal(rpitch$get_number_of_frames(), rpitch$get_nx(), tolerance = sqrt(.Machine$double.eps))
-  expect_equal(rpitch$get_time_step(), rpitch$get_dx(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(rpitch$get_number_of_frames(), rpitch$get_nx(),
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(rpitch$get_time_step(), rpitch$get_dx(),
+    tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("RPitch frame/time conversion works", {
@@ -102,7 +104,8 @@ test_that("RPitch query methods return correct values for sine wave", {
   expect_equal(rpitch$get_quantile(0, 0, 0.5, 0), 440, tolerance = 1)
 
   # All frames should be voiced
-  expect_equal(rpitch$count_voiced_frames(), rpitch$get_nx(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(rpitch$count_voiced_frames(), rpitch$get_nx(),
+    tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("RPitch get_value_at_time works", {
@@ -166,7 +169,8 @@ test_that("RPitch as_matrix exports correctly", {
 
   mat <- rpitch$as_matrix()
   expect_true(is.matrix(mat))
-  expect_equal(nrow(mat), rpitch$get_nx(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(nrow(mat), rpitch$get_nx(),
+    tolerance = sqrt(.Machine$double.eps))
   expect_identical(ncol(mat), 2L)  # time, frequency
 })
 
@@ -211,8 +215,10 @@ test_that("RPitch matches R6 Pitch values", {
   rpitch <- get_rpitch(pitch_r6)
 
   # Compare key properties
-  expect_equal(rpitch$get_nx(), pitch_r6$get_number_of_frames(), tolerance = sqrt(.Machine$double.eps))
-  expect_equal(rpitch$count_voiced_frames(), pitch_r6$count_voiced_frames(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(rpitch$get_nx(), pitch_r6$get_number_of_frames(),
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(rpitch$count_voiced_frames(), pitch_r6$count_voiced_frames(),
+    tolerance = sqrt(.Machine$double.eps))
 
   # Compare query results
   r6_mean <- pitch_r6$get_mean(0, 0, "hertz")
@@ -220,7 +226,8 @@ test_that("RPitch matches R6 Pitch values", {
   expect_equal(mod_mean, r6_mean, tolerance = 1e-10)
 })
 
-test_that("RPitch default (no-arg) constructor fails safely rather than producing a usable object", {
+test_that(
+  "RPitch default (no-arg) constructor fails safely rather than producing a usable object", {
   skip_if_no_pitch_module()
   mod <- Rcpp::Module("pitch_module", PACKAGE = "pladdrr")
 
@@ -242,7 +249,10 @@ test_that("RPitch debug_candidates returns per-frame candidate detail", {
   expect_length(dc, 3)
 
   first <- dc[[1]]
-  expect_true(all(c("time", "nCandidates", "frequencies", "strengths", "ceiling") %in% names(first)))
+  expect_true(
+    all(
+      c("time", "nCandidates", "frequencies", "strengths",
+        "ceiling") %in% names(first)))
   expect_length(first$frequencies, first$nCandidates)
   expect_length(first$strengths, first$nCandidates)
 })

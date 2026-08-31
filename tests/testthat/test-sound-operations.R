@@ -45,10 +45,12 @@ test_that("sound_lengthen stretches duration by the given factor", {
   lengthened <- sound_lengthen(s, fmin = 75, fmax = 600, factor = 1.5)
 
   expect_s3_class(lengthened, "Sound")
-  expect_equal(lengthened$get_duration(), s$get_duration() * 1.5, tolerance = 1e-2)
+  expect_equal(lengthened$get_duration(), s$get_duration() * 1.5,
+    tolerance = 1e-2)
 })
 
-test_that("sound_deepen_band_modulation returns a modified Sound of the same duration", {
+test_that(
+  "sound_deepen_band_modulation returns a modified Sound of the same duration", {
   s <- tone(150, 0.2)
   deepened <- sound_deepen_band_modulation(s)
 
@@ -82,7 +84,8 @@ test_that("sound_auto_correlate returns a valid Sound", {
   expect_gt(ac$get_duration(), 0)
 })
 
-test_that("sound_filter_pass_hann_band and sound_filter_stop_hann_band preserve duration", {
+test_that(
+  "sound_filter_pass_hann_band and sound_filter_stop_hann_band preserve duration", {
   s <- tone(220, 0.2, sr = 16000)
 
   bp <- sound_filter_pass_hann_band(s, fmin = 100, fmax = 500, smooth = 50)

@@ -1,4 +1,5 @@
-# spectrogram-wrapper.R - Spectrogram object using shared dispatch table (pladdrr 4.8.33)
+# spectrogram-wrapper.R - Spectrogram object using shared dispatch table
+#  (pladdrr 4.8.33)
 # Architecture: minimal list + $.Spectrogram S3 dispatch → shared method env
 
 #' Spectrogram
@@ -12,7 +13,8 @@
 #'   \item \code{get_start_time()}, \code{get_end_time()} - time range (s)
 #'   \item \code{get_time_step()} - time between frames (s)
 #'   \item \code{get_number_of_time_bins()} - number of time frames
-#'   \item \code{get_lowest_frequency()}, \code{get_highest_frequency()} - frequency range (Hz)
+#' \item \code{get_lowest_frequency()}, \code{get_highest_frequency()} -
+#  frequency range (Hz)
 #'   \item \code{get_frequency_step()} - frequency resolution (Hz)
 #'   \item \code{get_number_of_frequency_bins()} - number of frequency bins
 #' }
@@ -27,13 +29,16 @@
 #'
 #' @section Power queries:
 #' \itemize{
-#'   \item \code{get_power_at(time, frequency)} - power at a time-frequency point
-#'   \item \code{get_power_at_points(times, frequencies)} - power at a vector of points (batch)
+#' \item \code{get_power_at(time, frequency)} - power at a time-frequency point
+#' \item \code{get_power_at_points(times, frequencies)} - power at a vector of
+#  points (batch)
 #'   \item \code{get_frame(time)} - full frequency spectrum at one time
 #'   \item \code{get_frequency_slice(frequency)} - time series at one frequency
 #'   \item \code{get_frames(times)} - matrix of frames at multiple times
-#'   \item \code{get_band_power(fmin, fmax)} - integrated power in a frequency band
-#'   \item \code{get_spectral_moments_batch(power)} - center of gravity, SD, skewness, and kurtosis per frame (single C++ call)
+#' \item \code{get_band_power(fmin, fmax)} - integrated power in a frequency
+#  band
+#' \item \code{get_spectral_moments_batch(power)} - center of gravity, SD,
+#  skewness, and kurtosis per frame (single C++ call)
 #' }
 #'
 #' @section Export:
@@ -48,12 +53,14 @@
 #'   \item \code{to_dtw(reference)} - dynamic time warping between spectrograms
 #' }
 #'
-#' @seealso \code{\link{Sound}}, \code{\link{Spectrum}}, \code{\link{DTW}}, \code{\link{ComplexSpectrogram}}
+#' @seealso \code{\link{Sound}}, \code{\link{Spectrum}}, \code{\link{DTW}},
+#  \code{\link{ComplexSpectrogram}}
 #'
 #' @return A Spectrogram object.
 #'
 #' @examples
-#' snd <- Sound$create_tone(duration = 0.5, frequency = 440, sampling_rate = 44100)
+#' snd <- Sound$create_tone(duration = 0.5, frequency = 440, sampling_rate =
+#  44100)
 #' spec <- snd$to_spectrogram(window_length = 0.005, max_frequency = 5000)
 #' power <- spec$get_power_at(time = 0.25, frequency = 440)
 #'
@@ -67,15 +74,22 @@ NULL
 .spectrogram_methods <- new.env(hash = TRUE, parent = emptyenv())
 
 # --- Time domain ---
-.spectrogram_methods$get_start_time <- function(.self) .spectrogram_get_start_time(.self$.xptr)
-.spectrogram_methods$get_end_time <- function(.self) .spectrogram_get_end_time(.self$.xptr)
-.spectrogram_methods$get_time_step <- function(.self) .spectrogram_get_time_step(.self$.xptr)
-.spectrogram_methods$get_number_of_time_bins <- function(.self) .spectrogram_get_number_of_time_bins(.self$.xptr)
+.spectrogram_methods$get_start_time <- function(
+  .self) .spectrogram_get_start_time(.self$.xptr)
+.spectrogram_methods$get_end_time <- function(
+  .self) .spectrogram_get_end_time(.self$.xptr)
+.spectrogram_methods$get_time_step <- function(
+  .self) .spectrogram_get_time_step(.self$.xptr)
+.spectrogram_methods$get_number_of_time_bins <- function(
+  .self) .spectrogram_get_number_of_time_bins(.self$.xptr)
 
 # --- Frequency domain ---
-.spectrogram_methods$get_lowest_frequency <- function(.self) .spectrogram_get_lowest_frequency(.self$.xptr)
-.spectrogram_methods$get_highest_frequency <- function(.self) .spectrogram_get_highest_frequency(.self$.xptr)
-.spectrogram_methods$get_frequency_step <- function(.self) .spectrogram_get_frequency_step(.self$.xptr)
+.spectrogram_methods$get_lowest_frequency <- function(
+  .self) .spectrogram_get_lowest_frequency(.self$.xptr)
+.spectrogram_methods$get_highest_frequency <- function(
+  .self) .spectrogram_get_highest_frequency(.self$.xptr)
+.spectrogram_methods$get_frequency_step <- function(
+  .self) .spectrogram_get_frequency_step(.self$.xptr)
 .spectrogram_methods$get_number_of_frequency_bins <- function(.self)
   .spectrogram_get_number_of_frequency_bins(.self$.xptr)
 
@@ -95,13 +109,17 @@ NULL
 
 # --- Query ---
 .spectrogram_methods$get_power_at <- function(.self, time, frequency) {
-  .spectrogram_get_power_at(.self$.xptr, as.numeric(time), as.numeric(frequency))
+  .spectrogram_get_power_at(.self$.xptr, as.numeric(time),
+    as.numeric(frequency))
 }
 
 # --- Batch/Vectorized ---
-.spectrogram_methods$get_times_vector <- function(.self) .self$.cpp$get_times_vector()
-.spectrogram_methods$get_frequencies_vector <- function(.self) .self$.cpp$get_frequencies_vector()
-.spectrogram_methods$get_power_at_points <- function(.self, times, frequencies) {
+.spectrogram_methods$get_times_vector <- function(
+  .self) .self$.cpp$get_times_vector()
+.spectrogram_methods$get_frequencies_vector <- function(
+  .self) .self$.cpp$get_frequencies_vector()
+.spectrogram_methods$get_power_at_points <- function(.self, times,
+  frequencies) {
   .self$.cpp$get_power_at_points(as.numeric(times), as.numeric(frequencies))
 }
 .spectrogram_methods$get_frame <- function(.self, time) {
@@ -116,7 +134,8 @@ NULL
 .spectrogram_methods$get_band_power <- function(.self, fmin, fmax) {
   .self$.cpp$get_band_power(as.numeric(fmin), as.numeric(fmax))
 }
-.spectrogram_methods$get_spectral_moments_batch <- function(.self, power = 2.0) {
+.spectrogram_methods$get_spectral_moments_batch <- function(.self,
+  power = 2.0) {
   get_spectral_moments_batch(.self, as.numeric(power))
 }
 
@@ -125,9 +144,12 @@ NULL
   spectrum_ptr <- .self$.cpp$to_spectrum_ptr(as.numeric(time))
   Spectrum(.xptr = spectrum_ptr)
 }
-.spectrogram_methods$to_dtw <- function(.self, reference, match_start = TRUE, match_end = TRUE,
+.spectrogram_methods$to_dtw <- function(.self, reference, match_start = TRUE,
+  match_end = TRUE,
                                         slope = 1, metric = 2.0) {
-  if (!inherits(reference, "Spectrogram")) stop("reference must be a Spectrogram object")
+  if (
+    !inherits(reference,
+      "Spectrogram")) stop("reference must be a Spectrogram object")
   spectrograms_to_dtw(reference, .self, match_start, match_end, slope, metric)
 }
 
@@ -144,8 +166,10 @@ NULL
   mat <- .spectrogram_as_matrix(.self$.xptr)
   n_time <- .self$.cpp$get_nx()
   n_freq <- .self$.cpp$get_ny()
-  times <- vapply(seq_len(n_time), function(i) .self$.cpp$get_time_from_frame(as.integer(i)), numeric(1))
-  freqs <- vapply(seq_len(n_freq), function(i) .self$.cpp$get_frequency_from_bin(as.integer(i)), numeric(1))
+  times <- vapply(seq_len(n_time),
+    function(i) .self$.cpp$get_time_from_frame(as.integer(i)), numeric(1))
+  freqs <- vapply(seq_len(n_freq),
+    function(i) .self$.cpp$get_frequency_from_bin(as.integer(i)), numeric(1))
   df <- expand.grid(time = times, frequency = freqs)
   df$power <- as.vector(t(mat))
   df
@@ -177,7 +201,8 @@ Spectrogram <- function(.xptr = NULL) {
   }
   spectrogram_mod <- get_module("spectrogram_module")
   cpp_obj <- spectrogram_mod$RSpectrogram$new(.xptr)
-  structure(list(.xptr = .xptr, .cpp = cpp_obj), class = c("Spectrogram", "PraatObject"))
+  structure(list(.xptr = .xptr, .cpp = cpp_obj),
+    class = c("Spectrogram", "PraatObject"))
 }
 
 # ============================================================================

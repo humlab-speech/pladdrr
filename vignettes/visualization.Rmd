@@ -23,15 +23,27 @@ library(ggplot2)
 
 # Introduction
 
-`pladdrr` returns data as data frames (`as_data_frame()` methods) and matrices (`as_matrix()` methods) that plot directly with `ggplot2`, and it also ships a few `ggplot2`-based helper functions (`plot_powercepstrum()`, `plot_powercepstrogram()`, `plot_cpp_timeseries()`, `create_cepstrum_report()`) and `autoplot`/`autolayer` methods for common object types (`Sound`, `Pitch`, `Intensity`, `Formant`, `Spectrum`, `Spectrogram`, `Ltas`, `TextGrid`, `Harmonicity`, `PointProcess`, `PowerCepstrum`).
+`pladdrr` returns data as data frames (
+  `as_data_frame(
+    )` methods) and matrices (`as_matrix()` methods) that plot directly with `ggplot2`, and it also ships a few `ggplot2`-based helper functions (`plot_powercepstrum()`, `plot_powercepstrogram()`, `plot_cpp_timeseries()`, `create_cepstrum_report()`) and `autoplot`/`autolayer` methods for common object types (`Sound`, `Pitch`, `Intensity`, `Formant`, `Spectrum`, `Spectrogram`, `Ltas`, `TextGrid`, `Harmonicity`, `PointProcess`, `PowerCepstrum`).
 
-Plots produced this way are ordinary `ggplot2` objects: they can be saved as PDF/SVG/PNG with `ggsave()`, themed and recolored with standard `ggplot2` calls, and combined with `gridExtra::grid.arrange()` or `patchwork`.
+Plots produced this way are ordinary `ggplot2` objects: they can be saved as PDF/SVG/PNG with `ggsave(
+  
+  
+  
+  
+  )`, themed and recolored with standard `ggplot2` calls, and combined with `gridExtra::grid.arrange()` or `patchwork`.
 
 This vignette demonstrates the plotting functions available in `pladdrr`, organized by analysis type.
 
 # Cepstral Analysis Visualization
 
-Cepstral analysis is essential for voice quality assessment, particularly for measuring periodicity (CPP - Cepstral Peak Prominence).
+Cepstral analysis is essential for voice quality assessment, particularly for measuring periodicity (
+  
+  
+  
+  
+  CPP - Cepstral Peak Prominence).
 
 ## Power Cepstrum
 
@@ -113,10 +125,12 @@ plot_cpp_timeseries(
 Multi-panel diagnostic figure combining all cepstral visualizations:
 
 ```{r cepstrum-report}
-# Complete cepstral analysis report (power cepstrum + cepstrogram + CPP time series)
+# Complete cepstral analysis report (power cepstrum + cepstrogram + CPP time
+#  series)
 report_plot <- create_cepstrum_report(cepstrogram = cepstrogram)
 
-ggsave(file.path(tempdir(), "cepstrum_report.pdf"), report_plot, width = 12, height = 10)
+ggsave(file.path(tempdir(), "cepstrum_report.pdf"), report_plot, width = 12,
+  height = 10)
 ```
 
 **Report panels** (stacked with `gridExtra::grid.arrange()`):
@@ -135,7 +149,8 @@ bundled `test.TextGrid` has phone labels, not exclusively vowels):
 ```{r vowel-space}
 # Extract formants at the midpoint of each labeled interval on the "phones" tier
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
-textgrid <- TextGrid$new(system.file("extdata", "test.TextGrid", package = "pladdrr"))
+textgrid <- TextGrid$new(
+  system.file("extdata", "test.TextGrid", package = "pladdrr"))
 
 formant_data <- data.frame(
   vowel = character(),
@@ -198,7 +213,8 @@ formant <- sound$to_formant_burg(
 # Keep F1-F3 and reshape to wide for a multi-line plot.
 formant_df <- formant$as_data_frame()
 formant_df <- formant_df[formant_df$formant <= 3, ]
-formant_wide <- data.table::dcast(formant_df, time ~ formant, value.var = "frequency")
+formant_wide <- data.table::dcast(formant_df, time ~ formant,
+  value.var = "frequency")
 data.table::setnames(formant_wide, c("1", "2", "3"), c("F1", "F2", "F3"))
 
 # Plot F1-F3 over time
@@ -513,7 +529,8 @@ ggsave("figure1.png", plot = p1, width = 8, height = 6, dpi = 300)
 ggsave("figure1.svg", plot = p1, width = 8, height = 6)
 
 # Save as TIFF (for journals)
-ggsave("figure1.tiff", plot = p1, width = 8, height = 6, dpi = 300, compression = "lzw")
+ggsave("figure1.tiff", plot = p1, width = 8, height = 6, dpi = 300,
+  compression = "lzw")
 ```
 
 ## Batch Saving
@@ -537,17 +554,36 @@ for (name in names(plots)) {
 
 This vignette covered:
 
-- **Cepstral analysis**: `plot_powercepstrum()`, `plot_powercepstrogram()`, `plot_cpp_timeseries()`, `create_cepstrum_report()`
-- **Formant analysis**: F1-F2 formant space and F1-F3 trajectories from `Formant$as_data_frame()`
-- **Prosodic features**: pitch and intensity contours from `Pitch$as_data_frame()` and `Intensity$as_data_frame()`
-- **Annotation**: TextGrid tier display via `autoplot.TextGrid()` and `autolayer.TextGrid()`
-- **Spectral analysis**: spectrograms, spectra, and LTAS from the corresponding `as_matrix()`/`as_data_frame()` methods
+- **Cepstral analysis**: `plot_powercepstrum(
+  )`, `plot_powercepstrogram()`, `plot_cpp_timeseries()`, `create_cepstrum_report()`
+- **Formant analysis**: F1-F2 formant space and F1-F3 trajectories from `Formant$as_data_frame(
+  
+  
+  
+  
+  )`
+- **Prosodic features**: pitch and intensity contours from `Pitch$as_data_frame(
+  )` and `Intensity$as_data_frame()`
+- **Annotation**: TextGrid tier display via `autoplot.TextGrid(
+  )` and `autolayer.TextGrid()`
+- **Spectral analysis**: spectrograms, spectra, and LTAS from the corresponding `as_matrix(
+  
+  
+  
+  
+  )`/`as_data_frame()` methods
 
-All examples produce ordinary `ggplot2` objects that can be themed, combined with `gridExtra::grid.arrange()`, and saved with `ggsave()`.
+All examples produce ordinary `ggplot2` objects that can be themed, combined with `gridExtra::grid.arrange(
+  
+  
+  
+  
+  )`, and saved with `ggsave()`.
 
 For more information on specific acoustic analyses, see:
 
 - `vignette("getting-started")` - Basic workflow
 - `vignette("integrated-phonetic-analysis")` - Multi-parameter analysis
 - `vignette("textgrid-workflows")` - Annotation-based analysis
-- `vignette("autoplot-autolayer")` - Full reference for the `autoplot`/`autolayer` methods
+- `vignette(
+  "autoplot-autolayer")` - Full reference for the `autoplot`/`autolayer` methods

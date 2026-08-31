@@ -115,7 +115,8 @@ test_that("Cochleagram difference can be computed", {
 
 test_that("Cochleagram handles edge cases", {
   # Silence
-  sound_silence <- Sound$from_values(rep(0, round(0.1 * 16000)), sampling_rate = 16000)
+  sound_silence <- Sound$from_values(rep(0, round(0.1 * 16000)),
+    sampling_rate = 16000)
   cochlea_silence <- sound_silence$to_cochleagram()
   expect_s3_class(cochlea_silence, "Cochleagram")
   

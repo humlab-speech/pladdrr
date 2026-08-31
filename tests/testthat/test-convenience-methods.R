@@ -1,6 +1,7 @@
 # Tests for convenience methods: get_spectral_slope(), get_all_values_at_time()
 
-test_that("get_spectral_slope returns numeric scalar matching report_spectral_trend", {
+test_that(
+  "get_spectral_slope returns numeric scalar matching report_spectral_trend", {
   sound <- Sound$create_tone(frequency = 440, duration = 1.0)
   spectrum <- sound$to_spectrum()
   ltas <- spectrum$to_ltas(100)

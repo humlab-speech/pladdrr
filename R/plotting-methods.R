@@ -161,7 +161,8 @@ plot.Pitch <- function(x, from_time = NULL, to_time = NULL,
                                     name = "Voicing")
   } else {
     # Single color
-    p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$time, y = .data$frequency)) +
+    p <- ggplot2::ggplot(df,
+      ggplot2::aes(x = .data$time, y = .data$frequency)) +
       ggplot2::geom_line(color = color, linewidth = 0.8)
   }
   
@@ -254,7 +255,8 @@ plot.Formant <- function(x, from_time = NULL, to_time = NULL,
 
   # Default colors
   if (is.null(colors)) {
-    colors <- c("red", "green4", "blue", "purple", "orange")[seq_len(max_formant)]
+    colors <- c("red", "green4", "blue", "purple",
+      "orange")[seq_len(max_formant)]
   }
 
   # Create formant label
@@ -315,7 +317,8 @@ plot.Intensity <- function(x, from_time = NULL, to_time = NULL,
   }
   
   # Create plot
-  p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$time, y = .data$intensity_db)) +
+  p <- ggplot2::ggplot(df,
+    ggplot2::aes(x = .data$time, y = .data$intensity_db)) +
     ggplot2::geom_line(color = color, linewidth = 0.8)
   
   # Add garnish
@@ -377,13 +380,15 @@ plot.Spectrogram <- function(x, from_time = NULL, to_time = NULL,
   
   # Apply dynamic range
   max_power <- max(df$power_db, na.rm = TRUE)
-  df$power_db[df$power_db < (max_power - dynamic_range)] <- max_power - dynamic_range
+  df$power_db[df$power_db < (
+    max_power - dynamic_range)] <- max_power - dynamic_range
   
   # Create plot
   p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$time, y = .data$frequency, 
                                         fill = .data$power_db)) +
     ggplot2::geom_raster() +
-    ggplot2::scale_fill_gradient(low = "white", high = "black", name = "Power (dB)")
+    ggplot2::scale_fill_gradient(low = "white", high = "black",
+      name = "Power (dB)")
   
   # Add garnish
   if (garnish) {
@@ -455,7 +460,8 @@ plot.Spectrum <- function(x, from_freq = NULL, to_freq = NULL,
   }
   
   # Create plot
-  p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$frequency, y = .data$power_db)) +
+  p <- ggplot2::ggplot(df,
+    ggplot2::aes(x = .data$frequency, y = .data$power_db)) +
     ggplot2::geom_line(color = color, linewidth = 0.8)
   
   # Log frequency scale
@@ -528,7 +534,8 @@ plot.Ltas <- function(x, from_freq = NULL, to_freq = NULL,
   }
   
   # Create plot
-  p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$frequency, y = .data$power_db)) +
+  p <- ggplot2::ggplot(df,
+    ggplot2::aes(x = .data$frequency, y = .data$power_db)) +
     ggplot2::geom_line(color = color, linewidth = 0.8)
   
   # Log frequency scale
@@ -706,7 +713,8 @@ plot.PointProcess <- function(x, from_time = NULL, to_time = NULL,
   ny <- x$get_number_of_rows()
   xs <- x$get_xmin() + (seq_len(nx) - 0.5) * x$get_dx()
   ys <- x$get_ymin() + (seq_len(ny) - 0.5) * x$get_dy()
-  df <- data.frame(x = rep(xs, each = ny), y = rep(ys, times = nx), value = as.vector(mat))
+  df <- data.frame(x = rep(xs, each = ny), y = rep(ys, times = nx),
+    value = as.vector(mat))
   if (!is.null(from_x) && "x" %in% names(df)) df <- df[df$x >= from_x, ]
   if (!is.null(to_x) && "x" %in% names(df)) df <- df[df$x <= to_x, ]
   if (!is.null(from_y) && "y" %in% names(df)) df <- df[df$y >= from_y, ]
@@ -717,7 +725,8 @@ plot.PointProcess <- function(x, from_time = NULL, to_time = NULL,
 #' @title Plot Matrix as Heatmap
 #'
 #' @description
-#' Creates a heatmap visualization of a Matrix object. Supports any Matrix-derived
+#' Creates a heatmap visualization of a Matrix object. Supports any
+#  Matrix-derived
 #' objects including generic matrices, spectrograms, etc.
 #'
 #' @param x Matrix object
@@ -729,7 +738,8 @@ plot.PointProcess <- function(x, from_time = NULL, to_time = NULL,
 #' @param title Character. Plot title (default: "Matrix")
 #' @param x_label Character. X-axis label (default: "X")
 #' @param y_label Character. Y-axis label (default: "Y")
-#' @param color_scale Character. Color scale to use: "viridis", "magma", "plasma", 
+#' @param color_scale Character. Color scale to use: "viridis", "magma",
+#  "plasma",
 #'   "inferno", "cividis", or "greyscale" (default: "viridis")
 #' @param ... Additional arguments (currently unused)
 #'
@@ -764,9 +774,15 @@ plot.Matrix <- function(x, from_x = NULL, to_x = NULL,
   df <- .matrix_plot_data(x, from_x, to_x, from_y, to_y)
   
   # Determine column names (flexible for different matrix types)
-  x_col <- if ("time" %in% names(df)) "time" else if ("x" %in% names(df)) "x" else names(df)[1]
-  y_col <- if ("frequency" %in% names(df)) "frequency" else if ("y" %in% names(df)) "y" else names(df)[2]
-  val_col <- if ("value" %in% names(df)) "value" else if ("amplitude" %in% names(df)) "amplitude" else names(df)[3]
+  x_col <- if (
+    "time" %in% names(
+      df)) "time" else if ("x" %in% names(df)) "x" else names(df)[1]
+  y_col <- if (
+    "frequency" %in% names(
+      df)) "frequency" else if ("y" %in% names(df)) "y" else names(df)[2]
+  val_col <- if (
+    "value" %in% names(
+      df)) "value" else if ("amplitude" %in% names(df)) "amplitude" else names(df)[3]
   
   # Create base plot
   p <- ggplot2::ggplot(df, ggplot2::aes(x = .data[[x_col]], y = .data[[y_col]], 
@@ -780,7 +796,8 @@ plot.Matrix <- function(x, from_x = NULL, to_x = NULL,
     "plasma" = p + ggplot2::scale_fill_viridis_c(option = "plasma"),
     "inferno" = p + ggplot2::scale_fill_viridis_c(option = "inferno"),
     "cividis" = p + ggplot2::scale_fill_viridis_c(option = "cividis"),
-    "greyscale" = p + ggplot2::scale_fill_gradient(low = "white", high = "black"),
+    "greyscale" = p + ggplot2::scale_fill_gradient(low = "white",
+      high = "black"),
     p + ggplot2::scale_fill_viridis_c()  # default
   )
   
@@ -811,7 +828,8 @@ plot.Matrix <- function(x, from_x = NULL, to_x = NULL,
   p + ggplot2::geom_vline(xintercept = peak_q, linetype = "dashed",
                           color = "red", alpha = 0.5) +
     ggplot2::annotate("text", x = peak_q, y = peak_v,
-                      label = sprintf("Peak\n%.4f s\n(%.0f Hz)", peak_q, 1/peak_q),
+                      label = sprintf("Peak\n%.4f s\n(%.0f Hz)", peak_q,
+                        1/peak_q),
                       hjust = -0.1, size = 3, color = "red")
 }
 
@@ -828,7 +846,8 @@ plot.Matrix <- function(x, from_x = NULL, to_x = NULL,
 #' @inheritParams pladdrr_shared_params garnish
 #' @param title Character. Plot title (default: "Power Cepstrum")
 #' @param color Character. Line color (default: "darkblue")
-#' @param mark_peak Logical. Mark the peak prominence if available (default: TRUE)
+#' @param mark_peak Logical. Mark the peak prominence if available (default:
+#  TRUE)
 #' @param ... Additional arguments (currently unused)
 #'
 #' @return A ggplot2 object
@@ -881,7 +900,8 @@ plot.PowerCepstrum <- function(x, from_quefrency = NULL, to_quefrency = NULL,
   }
   
   # Create plot
-  p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$quefrency, y = .data$power_db)) +
+  p <- ggplot2::ggplot(df,
+    ggplot2::aes(x = .data$quefrency, y = .data$power_db)) +
     ggplot2::geom_line(color = color, linewidth = 0.8)
 
   # Optionally mark peak
@@ -937,7 +957,8 @@ plot.PowerCepstrum <- function(x, from_quefrency = NULL, to_quefrency = NULL,
 #' Visualize tier labels and boundaries as a standalone plot.
 #'
 #' @param x A TextGrid object
-#' @param tier Integer or character specifying which tier to plot (default: all tiers)
+#' @param tier Integer or character specifying which tier to plot (default: all
+#  tiers)
 #' @param from_time Start time in seconds (NULL = beginning)
 #' @param to_time End time in seconds (NULL = end)
 #' @param ... Additional arguments (ignored)
@@ -953,7 +974,8 @@ plot.PowerCepstrum <- function(x, from_quefrency = NULL, to_quefrency = NULL,
 #' @export
 #' @method plot TextGrid
 
-plot.TextGrid <- function(x, tier = NULL, from_time = NULL, to_time = NULL, ...) {
+plot.TextGrid <- function(x, tier = NULL, from_time = NULL, to_time = NULL,
+  ...) {
 
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
     stop("Package 'ggplot2' is required for plotting. Please install it.")
@@ -1004,7 +1026,8 @@ plot.TextGrid <- function(x, tier = NULL, from_time = NULL, to_time = NULL, ...)
       ggplot2::aes(xmin = .data$start, xmax = .data$end,
                    ymin = .data$tier_y - 0.4, ymax = .data$tier_y + 0.4),
       fill = "grey90", color = "grey50", linewidth = 0.3) +
-    ggplot2::geom_text(ggplot2::aes(x = .data$mid, y = .data$tier_y, label = .data$text),
+    ggplot2::geom_text(
+      ggplot2::aes(x = .data$mid, y = .data$tier_y, label = .data$text),
                        size = 3, na.rm = TRUE) +
     ggplot2::scale_y_continuous(breaks = seq_along(tier_indices),
                                 labels = tier_names[tier_indices]) +

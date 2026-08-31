@@ -1,7 +1,8 @@
 # test-manipulation-wrapper.R - Tests for R/manipulation-wrapper.R
 
 manip_from_tone <- function() {
-  snd <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+  snd <- Sound$create_tone(frequency = 150, duration = 0.5,
+    sampling_rate = 16000)
   snd$to_manipulation(pitch_floor = 75, pitch_ceiling = 300)
 }
 
@@ -17,7 +18,8 @@ test_that("Manipulation constructed from Sound$to_manipulation() is valid", {
   expect_s3_class(manip, "PraatObject")
   expect_true(manip$is_valid())
   expect_gt(manip$get_end_time(), manip$get_start_time())
-  expect_equal(manip$get_duration(), manip$get_end_time() - manip$get_start_time(),
+  expect_equal(manip$get_duration(),
+    manip$get_end_time() - manip$get_start_time(),
                tolerance = 1e-9)
 })
 
@@ -58,7 +60,8 @@ test_that("Manipulation can replace pitch tier, duration tier, and pulses", {
   pp <- manip$extract_pulses()
 
   expect_error(manip$replace_pitch_tier("not a pitch tier"), "PitchTier")
-  expect_error(manip$replace_duration_tier("not a duration tier"), "DurationTier")
+  expect_error(manip$replace_duration_tier("not a duration tier"),
+    "DurationTier")
   expect_error(manip$replace_pulses("not a point process"), "PointProcess")
 
   expect_invisible(manip$replace_pitch_tier(pt))

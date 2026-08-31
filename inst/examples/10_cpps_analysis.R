@@ -1,7 +1,8 @@
 #!/usr/bin/env Rscript
 # CPPS (Cepstral Peak Prominence Smoothed) Analysis Example
 # 
-# This example demonstrates correct usage of PowerCepstrogram and CPPS calculation
+# This example demonstrates correct usage of PowerCepstrogram and CPPS
+#  calculation
 # in pladdrr. CPPS is a robust measure of voice quality, particularly useful for
 # assessing dysphonia and voice disorders.
 #
@@ -114,7 +115,9 @@ cpps_with_tilt <- cepstrogram$get_cpps(
 )
 
 cat(sprintf("CPPS (with tilt): %.2f dB\n\n", cpps_with_tilt))
-cat(sprintf("Difference (tilt effect): %.2f dB\n\n", cpps_with_tilt - cpps_no_tilt))
+cat(
+  sprintf("Difference (tilt effect): %.2f dB\n\n",
+    cpps_with_tilt - cpps_no_tilt))
 
 # ============================================================================
 # Analysis 3: Effect of pitch range
@@ -170,7 +173,9 @@ cpps_no_preemph <- cepstrogram_no_preemph$get_cpps(
 
 cat(sprintf("CPPS with pre-emphasis (50 Hz):    %.2f dB\n", cpps_no_tilt))
 cat(sprintf("CPPS without pre-emphasis (0 Hz):  %.2f dB\n", cpps_no_preemph))
-cat(sprintf("Pre-emphasis effect:                %.2f dB\n\n", cpps_no_preemph - cpps_no_tilt))
+cat(
+  sprintf("Pre-emphasis effect:                %.2f dB\n\n",
+    cpps_no_preemph - cpps_no_tilt))
 
 # ============================================================================
 # Interpretation Guide
@@ -190,7 +195,9 @@ cat("Your results:\n")
 if (cpps_no_tilt > 12) {
   cat(sprintf("  CPPS = %.2f dB → Likely normal voice quality\n", cpps_no_tilt))
 } else if (cpps_no_tilt > 10) {
-  cat(sprintf("  CPPS = %.2f dB → Borderline/mild quality issues\n", cpps_no_tilt))
+  cat(
+    sprintf("  CPPS = %.2f dB → Borderline/mild quality issues\n",
+      cpps_no_tilt))
 } else if (cpps_no_tilt > 8) {
   cat(sprintf("  CPPS = %.2f dB → Moderate quality issues\n", cpps_no_tilt))
 } else {

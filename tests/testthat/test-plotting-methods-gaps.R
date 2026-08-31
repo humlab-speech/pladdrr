@@ -12,24 +12,32 @@
 library(testthat)
 library(pladdrr)
 
-sound_fixture <- function() Sound$create_tone(frequency = 440, duration = 0.3, sampling_rate = 16000)
+sound_fixture <- function() Sound$create_tone(frequency = 440, duration = 0.3,
+  sampling_rate = 16000)
 
-test_that("plot.* type-check stop()s fire for every S3 method with a wrong-class input", {
+test_that(
+  "plot.* type-check stop()s fire for every S3 method with a wrong-class input", {
   expect_error(pladdrr:::plot.Sound("nope"), "x must be a Sound object")
   expect_error(pladdrr:::plot.Pitch("nope"), "x must be a Pitch object")
   expect_error(pladdrr:::plot.Formant("nope"), "x must be a Formant object")
-  expect_error(pladdrr:::plot.Intensity("nope"), "x must be an Intensity object")
-  expect_error(pladdrr:::plot.Spectrogram("nope"), "x must be a Spectrogram object")
+  expect_error(pladdrr:::plot.Intensity("nope"),
+    "x must be an Intensity object")
+  expect_error(pladdrr:::plot.Spectrogram("nope"),
+    "x must be a Spectrogram object")
   expect_error(pladdrr:::plot.Spectrum("nope"), "x must be a Spectrum object")
   expect_error(pladdrr:::plot.Ltas("nope"), "x must be an Ltas object")
-  expect_error(pladdrr:::plot.Harmonicity("nope"), "x must be a Harmonicity object")
-  expect_error(pladdrr:::plot.PointProcess("nope"), "x must be a PointProcess object")
+  expect_error(pladdrr:::plot.Harmonicity("nope"),
+    "x must be a Harmonicity object")
+  expect_error(pladdrr:::plot.PointProcess("nope"),
+    "x must be a PointProcess object")
   expect_error(pladdrr:::plot.Matrix("nope"), "x must be a Matrix object")
-  expect_error(pladdrr:::plot.PowerCepstrum("nope"), "x must be a PowerCepstrum object")
+  expect_error(pladdrr:::plot.PowerCepstrum("nope"),
+    "x must be a PowerCepstrum object")
   expect_error(pladdrr:::plot.TextGrid("nope"), "x must be a TextGrid object")
 })
 
-test_that("plot.Formant warns and returns a placeholder plot once from_time/to_time filters everything out", {
+test_that(
+  "plot.Formant warns and returns a placeholder plot once from_time/to_time filters everything out", {
   formant <- sound_fixture()$to_formant_burg()
   p <- plot(formant, max_formant = 3)
   expect_s3_class(p, "ggplot")
@@ -39,7 +47,8 @@ test_that("plot.Formant warns and returns a placeholder plot once from_time/to_t
   expect_s3_class(p2, "ggplot")
 })
 
-test_that("plot.Spectrogram respects from_freq (only to_freq was exercised elsewhere)", {
+test_that(
+  "plot.Spectrogram respects from_freq (only to_freq was exercised elsewhere)", {
   spectrogram <- sound_fixture()$to_spectrogram()
   p <- plot(spectrogram, from_freq = 500, to_freq = 3000)
   expect_s3_class(p, "ggplot")
@@ -60,7 +69,8 @@ test_that("plot.Ltas respects from_freq/to_freq and log_freq", {
   expect_true(all(p$data$frequency >= 500 & p$data$frequency <= 3000))
 })
 
-test_that("plot.PointProcess respects from_time/to_time and warns/returns theme_void when empty", {
+test_that(
+  "plot.PointProcess respects from_time/to_time and warns/returns theme_void when empty", {
   pp <- sound_fixture()$to_point_process_periodic_cc()
   p <- plot(pp, from_time = 0.05, to_time = 0.2)
   expect_s3_class(p, "ggplot")
@@ -71,14 +81,18 @@ test_that("plot.PointProcess respects from_time/to_time and warns/returns theme_
   expect_s3_class(p2, "ggplot")
 })
 
-test_that("plot.PowerCepstrum respects from_quefrency/to_quefrency and warns when empty", {
+test_that(
+  "plot.PowerCepstrum respects from_quefrency/to_quefrency and warns when empty", {
   pcep <- sound_fixture()$to_spectrum()$to_power_cepstrum()
-  p <- pladdrr:::plot.PowerCepstrum(pcep, from_quefrency = 0.001, to_quefrency = 0.01)
+  p <- pladdrr:::plot.PowerCepstrum(pcep, from_quefrency = 0.001,
+    to_quefrency = 0.01)
   expect_s3_class(p, "ggplot")
   expect_true(all(p$data$quefrency >= 0.001 & p$data$quefrency <= 0.01))
 
   fake <- structure(
-    list(as_data_frame = function() data.frame(quefrency = numeric(0), power = numeric(0))),
+    list(
+      as_data_frame = function() data.frame(quefrency = numeric(0),
+        power = numeric(0))),
     class = "PowerCepstrum"
   )
   expect_warning(p2 <- pladdrr:::plot.PowerCepstrum(fake),
@@ -86,7 +100,8 @@ test_that("plot.PowerCepstrum respects from_quefrency/to_quefrency and warns whe
   expect_s3_class(p2, "ggplot")
 })
 
-test_that("plot.Matrix renders, respects from_x/to_x/from_y/to_y, and covers every color_scale branch", {
+test_that(
+  "plot.Matrix renders, respects from_x/to_x/from_y/to_y, and covers every color_scale branch", {
   mat <- Matrix(xmin = 0, xmax = 1, nx = 10, dx = 0.1, x1 = 0.05,
                 ymin = 0, ymax = 2, ny = 20, dy = 0.1, y1 = 0.05)
   p <- plot(mat)
@@ -108,7 +123,8 @@ test_that("plot.Matrix renders, respects from_x/to_x/from_y/to_y, and covers eve
   expect_s3_class(p_no_garnish, "ggplot")
 })
 
-test_that("plot.TextGrid resolves tiers by name/index, filters by from_time/to_time, warns on unmatched tier and on a point-only tier with no interval data", {
+test_that(
+  "plot.TextGrid resolves tiers by name/index, filters by from_time/to_time, warns on unmatched tier and on a point-only tier with no interval data", {
   tg <- TextGrid$create(tmin = 0, tmax = 1.0, tier_names = "words phones")
   tg$insert_boundary("words", 0.5)
   tg$set_interval_text("words", 1, "hello")

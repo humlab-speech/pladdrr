@@ -2,7 +2,8 @@ test_that("Benchmark TextGrid 60min loads successfully", {
 library(data.table)
   skip_on_cran()  # Large file, skip on CRAN
   
-  tg_path <- system.file("extdata", "benchmarkdata60min.TextGrid", package = "speaker")
+  tg_path <- system.file("extdata", "benchmarkdata60min.TextGrid",
+    package = "speaker")
   skip_if(tg_path == "", "Benchmark TextGrid not found")
   
   tg <- TextGrid$new(tg_path)
@@ -23,7 +24,8 @@ library(data.table)
 test_that("Benchmark TextGrid 90min loads successfully", {
   skip_on_cran()  # Large file, skip on CRAN
   
-  tg_path <- system.file("extdata", "benchmarkdata90min.TextGrid", package = "speaker")
+  tg_path <- system.file("extdata", "benchmarkdata90min.TextGrid",
+    package = "speaker")
   skip_if(tg_path == "", "Benchmark TextGrid not found")
   
   tg <- TextGrid$new(tg_path)
@@ -44,7 +46,8 @@ test_that("Benchmark TextGrid 90min loads successfully", {
 test_that("Benchmark TextGrid query performance is acceptable", {
   skip_on_cran()
   
-  tg_path <- system.file("extdata", "benchmarkdata60min.TextGrid", package = "speaker")
+  tg_path <- system.file("extdata", "benchmarkdata60min.TextGrid",
+    package = "speaker")
   skip_if(tg_path == "", "Benchmark TextGrid not found")
   
   # Time the loading
@@ -68,7 +71,8 @@ test_that("Benchmark TextGrid query performance is acceptable", {
 test_that("Benchmark TextGrid interval queries work", {
   skip_on_cran()
   
-  tg_path <- system.file("extdata", "benchmarkdata60min.TextGrid", package = "speaker")
+  tg_path <- system.file("extdata", "benchmarkdata60min.TextGrid",
+    package = "speaker")
   skip_if(tg_path == "", "Benchmark TextGrid not found")
   
   tg <- TextGrid$new(tg_path)
@@ -95,7 +99,8 @@ test_that("Benchmark TextGrid interval queries work", {
 test_that("Benchmark TextGrid data frame export works", {
   skip_on_cran()
   
-  tg_path <- system.file("extdata", "benchmarkdata60min.TextGrid", package = "speaker")
+  tg_path <- system.file("extdata", "benchmarkdata60min.TextGrid",
+    package = "speaker")
   skip_if(tg_path == "", "Benchmark TextGrid not found")
   
   tg <- TextGrid$new(tg_path)

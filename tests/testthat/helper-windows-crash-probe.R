@@ -31,7 +31,8 @@ probe_test <- function(desc, code, preamble = NULL) {
   })
 }
 
-windows_crash_probe <- function(desc, code_expr, preamble = NULL, env = parent.frame()) {
+windows_crash_probe <- function(desc, code_expr, preamble = NULL,
+  env = parent.frame()) {
   force(desc)
   if (!isTRUE(as.logical(Sys.getenv("PLADDRR_FORCE_WINDOWS_PROBE", "false"))) &&
       .Platform$OS.type != "windows") {
@@ -54,7 +55,8 @@ windows_crash_probe <- function(desc, code_expr, preamble = NULL, env = parent.f
   # or fails its expectations exits non-zero; system2 surfaces that as the
   # 'status' attribute.
   rscript <- file.path(R.home("bin"), "Rscript")
-  out <- suppressWarnings(system2(rscript, shQuote(script), stdout = TRUE, stderr = TRUE))
+  out <- suppressWarnings(
+    system2(rscript, shQuote(script), stdout = TRUE, stderr = TRUE))
   status <- attr(out, "status")
   if (is.null(status)) status <- 0L
   detail <- paste(out, collapse = "\n")

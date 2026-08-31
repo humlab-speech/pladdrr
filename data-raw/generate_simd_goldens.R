@@ -52,7 +52,8 @@ mono_fixtures <- list(
     sr <- 16000
     t <- seq(0, 1, length.out = sr)
     f0 <- 120
-    values <- Reduce(`+`, lapply(1:30, function(k) sin(2 * pi * k * f0 * t) / k))
+    values <- Reduce(`+`,
+      lapply(1:30, function(k) sin(2 * pi * k * f0 * t) / k))
     Sound$from_values(values / max(abs(values)) * 0.5, sr)
   }
 )
@@ -71,7 +72,8 @@ if (requireNamespace("tuneR", quietly = TRUE)) {
   t <- seq(0, 1, length.out = sr)
   left <- sin(2 * pi * 200 * t) * 0.5
   right <- sin(2 * pi * 300 * t) * 0.5
-  w <- tuneR::Wave(left = as.integer(left * 32767), right = as.integer(right * 32767),
+  w <- tuneR::Wave(left = as.integer(left * 32767),
+    right = as.integer(right * 32767),
                     samp.rate = sr, bit = 16)
   stereo_wav <- file.path(fixture_dir, "stereo_test.wav")
   tuneR::writeWave(w, stereo_wav)
@@ -84,5 +86,6 @@ if (requireNamespace("tuneR", quietly = TRUE)) {
 }
 
 # --- KlattGrid synthesis (standalone, no input wav needed) -------------
-praat_run(klattgrid_script, file.path(fixture_dir, "klattgrid_vowel_golden.csv"))
+praat_run(klattgrid_script,
+  file.path(fixture_dir, "klattgrid_vowel_golden.csv"))
 cat("klattgrid golden generated\n")

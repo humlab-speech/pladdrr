@@ -57,7 +57,8 @@ test_that("Split-Levinson method produces valid formant values", {
   # Voiced signal, not silence: on a silent input every formant query is NA
   # and the conditional assertions never ran, silently producing an
   # "empty test" skip.
-  sound <- Sound$create_tone(duration = 0.2, sampling_rate = 22050, frequency = 200)
+  sound <- Sound$create_tone(duration = 0.2, sampling_rate = 22050,
+    frequency = 200)
   
   formant <- sound$to_formant_sl(
     time_step = 0.01,
@@ -124,7 +125,8 @@ test_that("Formant methods handle edge cases", {
   expect_s3_class(formant_short, "Formant")
   
   # Silence
-  sound_silence <- Sound$from_values(rep(0, round(0.1 * 16000)), sampling_rate = 16000)
+  sound_silence <- Sound$from_values(rep(0, round(0.1 * 16000)),
+    sampling_rate = 16000)
   formant_silence <- sound_silence$to_formant_sl()
   expect_s3_class(formant_silence, "Formant")
 })

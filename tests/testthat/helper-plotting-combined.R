@@ -17,7 +17,8 @@ expect_combined_plot <- function(p) {
     info = "Object should be a patchwork, ggplot, gtable, or grob"
   )
 
-  if (requireNamespace("patchwork", quietly = TRUE) && inherits(p, "patchwork")) {
+  if (
+    requireNamespace("patchwork", quietly = TRUE) && inherits(p, "patchwork")) {
     testthat::expect_true(
       length(p$patches$plots) >= 1,
       info = "patchwork object should have stacked multiple panels"

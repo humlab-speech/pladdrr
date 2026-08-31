@@ -1,12 +1,15 @@
 # Example 7: Comprehensive Phonetic Analysis Workflow
-# Demonstrates integrated use of TextGrid, Sound manipulation, and acoustic analysis
+# Demonstrates integrated use of TextGrid, Sound manipulation, and acoustic
+#  analysis
 # This example shows how to use speaker for real-world phonetic research
 
 library(speaker)
 
-cat("================================================================================\n")
+cat(
+  "================================================================================\n")
 cat("Example 7: Comprehensive Phonetic Analysis Workflow\n")
-cat("================================================================================\n\n")
+cat(
+  "================================================================================\n\n")
 
 cat("This example demonstrates:\n")
 cat("  • TextGrid-based segmentation and analysis\n")
@@ -98,7 +101,9 @@ for (i in 1:tg$get_number_of_tiers()) {
   } else {
     tg$get_number_of_points(i)
   }
-  cat(sprintf("  Tier %d: '%s' (%s) - %d items\n", i, tier_names[i], tier_type, n_items))
+  cat(
+    sprintf("  Tier %d: '%s' (%s) - %d items\n", i, tier_names[i], tier_type,
+      n_items))
 }
 cat("\n")
 
@@ -130,7 +135,9 @@ hello_sound <- sound$extract_part(
   end_time = end_time,
   preserve_times = FALSE
 )
-cat(sprintf("  ✓ Extracted segment [%.2f - %.2f] seconds\n", start_time, end_time))
+cat(
+  sprintf("  ✓ Extracted segment [%.2f - %.2f] seconds\n", start_time,
+    end_time))
 cat("  Segment duration:", hello_sound$get_total_duration(), "seconds\n\n")
 
 # Resample to different rate
@@ -139,7 +146,8 @@ original_sr <- hello_sound$get_sampling_frequency()
 new_sr <- 8000
 resampled_sound <- hello_sound$resample(new_frequency = new_sr, precision = 50)
 cat(sprintf("  ✓ Resampled from %d Hz to %d Hz\n", original_sr, new_sr))
-cat("  Duration preserved:", resampled_sound$get_total_duration(), "seconds\n\n")
+cat("  Duration preserved:", resampled_sound$get_total_duration(),
+  "seconds\n\n")
 
 # Normalize intensity
 cat("3c. Normalizing intensity\n")
@@ -148,7 +156,9 @@ target_db <- 70.0
 sound_copy <- sound$copy()
 sound_copy$scale_intensity(new_intensity_db = target_db)
 new_intensity <- sound_copy$get_intensity_db()
-cat(sprintf("  ✓ Scaled intensity: %.2f dB → %.2f dB\n", original_intensity, new_intensity))
+cat(
+  sprintf("  ✓ Scaled intensity: %.2f dB → %.2f dB\n", original_intensity,
+    new_intensity))
 cat("\n")
 
 # Apply pre-emphasis (high-pass filter for formant analysis)
@@ -204,8 +214,10 @@ for (i in 1:n_phones) {
       window_length = 0.025,
       pre_emphasis_from = 50
     )
-    f1 <- formants$get_mean(formant_number = 1, from_time = 0, to_time = 0, unit = "Hertz")
-    f2 <- formants$get_mean(formant_number = 2, from_time = 0, to_time = 0, unit = "Hertz")
+    f1 <- formants$get_mean(formant_number = 1, from_time = 0, to_time = 0,
+      unit = "Hertz")
+    f2 <- formants$get_mean(formant_number = 2, from_time = 0, to_time = 0,
+      unit = "Hertz")
   } else {
     f1 <- NA
     f2 <- NA
@@ -217,7 +229,8 @@ for (i in 1:n_phones) {
     time_step = 0.0,
     subtract_mean = TRUE
   )
-  mean_intensity <- intensity$get_mean(from_time = 0, to_time = 0, averaging_method = "energy")
+  mean_intensity <- intensity$get_mean(from_time = 0, to_time = 0,
+    averaging_method = "energy")
   
   # 4. Harmonicity (voice quality)
   harmonicity <- segment$to_harmonicity_ac(
@@ -334,9 +347,12 @@ vowel_interval <- which(tg_df$tier_name == "phones" & tg_df$label == "E")[1]
 if (!is.na(vowel_interval)) {
   vowel_start <- tg_df$start_time[vowel_interval]
   vowel_end <- tg_df$end_time[vowel_interval]
-  vowel_sound <- sound$extract_part(vowel_start, vowel_end, preserve_times = TRUE)
+  vowel_sound <- sound$extract_part(vowel_start, vowel_end,
+    preserve_times = TRUE)
   
-  cat(sprintf("  ✓ Extracted vowel [%.2f - %.2f] seconds\n", vowel_start, vowel_end))
+  cat(
+    sprintf("  ✓ Extracted vowel [%.2f - %.2f] seconds\n", vowel_start,
+      vowel_end))
   
   # Track formants with different settings
   cat("\nComparing formant tracking methods:\n\n")
@@ -365,7 +381,9 @@ if (!is.na(vowel_interval)) {
   f1_keepall <- formants_keepall$get_mean(1, 0, 0, "Hertz")
   f2_keepall <- formants_keepall$get_mean(2, 0, 0, "Hertz")
   
-  cat(sprintf("  Keep-all method: F1=%.0f Hz, F2=%.0f Hz\n", f1_keepall, f2_keepall))
+  cat(
+    sprintf("  Keep-all method: F1=%.0f Hz, F2=%.0f Hz\n", f1_keepall,
+      f2_keepall))
   
   # Method 3: Optimized tracking with formant ceiling
   formants_tracked <- formants_keepall$track(
@@ -382,7 +400,9 @@ if (!is.na(vowel_interval)) {
   f1_tracked <- formants_tracked$get_mean(1, 0, 0, "Hertz")
   f2_tracked <- formants_tracked$get_mean(2, 0, 0, "Hertz")
   
-  cat(sprintf("  Tracked (optimized): F1=%.0f Hz, F2=%.0f Hz\n", f1_tracked, f2_tracked))
+  cat(
+    sprintf("  Tracked (optimized): F1=%.0f Hz, F2=%.0f Hz\n", f1_tracked,
+      f2_tracked))
   cat("\n")
 }
 

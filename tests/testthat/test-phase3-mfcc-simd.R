@@ -55,15 +55,18 @@ test_that("MFCC SIMD matches scalar implementation", {
   )
 
   # Check structure
-  expect_equal(mfcc_scalar$get_number_of_frames(), mfcc_simd$get_number_of_frames(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(mfcc_scalar$get_number_of_frames(),
+    mfcc_simd$get_number_of_frames(), tolerance = sqrt(.Machine$double.eps))
   expect_equal(mfcc_scalar$get_max_num_coefficients(),
-               mfcc_simd$get_max_num_coefficients(), tolerance = sqrt(.Machine$double.eps))
+               mfcc_simd$get_max_num_coefficients(
+                 ), tolerance = sqrt(.Machine$double.eps))
 
   # Check coefficient values (allowing small numerical differences)
   scalar_coeffs <- mfcc_scalar$get_all_coefficients()
   simd_coeffs <- mfcc_simd$get_all_coefficients()
 
-  expect_equal(dim(scalar_coeffs), dim(simd_coeffs), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(dim(scalar_coeffs), dim(simd_coeffs),
+    tolerance = sqrt(.Machine$double.eps))
   expect_equal(scalar_coeffs, simd_coeffs, tolerance = 1e-10)
 })
 
@@ -80,7 +83,8 @@ test_that("MFCC SIMD works with various signal lengths", {
     snd <- Sound$from_values(signal, 16000)
 
     pladdrr_simd(TRUE)
-    mfcc <- snd$to_mfcc(num_coefficients = 12, analysis_width = 0.015, time_step = 0.005)
+    mfcc <- snd$to_mfcc(num_coefficients = 12, analysis_width = 0.015,
+      time_step = 0.005)
 
     expect_gt(mfcc$get_number_of_frames(), 0)
     expect_identical(mfcc$get_num_coefficients_at_frame(1), 12L)
@@ -100,7 +104,8 @@ test_that("MFCC SIMD works with different coefficient counts", {
 
   for (n_coeff in test_n_coeffs) {
     pladdrr_simd(TRUE)
-    mfcc <- snd$to_mfcc(num_coefficients = n_coeff, analysis_width = 0.015, time_step = 0.005)
+    mfcc <- snd$to_mfcc(num_coefficients = n_coeff, analysis_width = 0.015,
+      time_step = 0.005)
 
     expect_gte(mfcc$get_max_num_coefficients(), n_coeff)
     expect_gt(mfcc$get_number_of_frames(), 0)
@@ -120,7 +125,8 @@ test_that("MFCC SIMD works with different analysis widths", {
 
   for (width in test_widths) {
     pladdrr_simd(TRUE)
-    mfcc <- snd$to_mfcc(num_coefficients = 12, analysis_width = width, time_step = 0.005)
+    mfcc <- snd$to_mfcc(num_coefficients = 12, analysis_width = width,
+      time_step = 0.005)
 
     expect_gt(mfcc$get_number_of_frames(), 0)
     expect_identical(mfcc$get_num_coefficients_at_frame(1), 12L)
@@ -138,16 +144,19 @@ test_that("MFCC SIMD can be toggled on/off", {
 
   # Disable SIMD
   pladdrr_simd(FALSE)
-  mfcc1 <- snd$to_mfcc(num_coefficients = 12, analysis_width = 0.015, time_step = 0.005)
+  mfcc1 <- snd$to_mfcc(num_coefficients = 12, analysis_width = 0.015,
+    time_step = 0.005)
   expect_gt(mfcc1$get_number_of_frames(), 0)
 
   # Enable SIMD
   pladdrr_simd(TRUE)
-  mfcc2 <- snd$to_mfcc(num_coefficients = 12, analysis_width = 0.015, time_step = 0.005)
+  mfcc2 <- snd$to_mfcc(num_coefficients = 12, analysis_width = 0.015,
+    time_step = 0.005)
   expect_gt(mfcc2$get_number_of_frames(), 0)
 
   # Both should produce valid results
-  expect_equal(mfcc1$get_number_of_frames(), mfcc2$get_number_of_frames(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(mfcc1$get_number_of_frames(), mfcc2$get_number_of_frames(),
+    tolerance = sqrt(.Machine$double.eps))
 })
 
 # ============================================================================
@@ -163,7 +172,8 @@ test_that("MFCC SIMD works with different sampling rates", {
     snd <- Sound$from_values(signal, sr)
 
     pladdrr_simd(TRUE)
-    mfcc <- snd$to_mfcc(num_coefficients = 12, analysis_width = 0.015, time_step = 0.005)
+    mfcc <- snd$to_mfcc(num_coefficients = 12, analysis_width = 0.015,
+      time_step = 0.005)
 
     expect_gt(mfcc$get_number_of_frames(), 0)
     expect_identical(mfcc$get_num_coefficients_at_frame(1), 12L)
@@ -180,7 +190,8 @@ test_that("MFCC coefficients are in reasonable range", {
   snd <- Sound$from_values(signal, 16000)
 
   pladdrr_simd(TRUE)
-  mfcc <- snd$to_mfcc(num_coefficients = 13, analysis_width = 0.015, time_step = 0.005)
+  mfcc <- snd$to_mfcc(num_coefficients = 13, analysis_width = 0.015,
+    time_step = 0.005)
 
   # Get coefficient matrix
   coeffs <- mfcc$get_all_coefficients()
@@ -250,18 +261,22 @@ test_that("MFCC frames are consistent across SIMD/scalar", {
 
   # Scalar
   pladdrr_simd(FALSE)
-  mfcc_scalar <- snd$to_mfcc(num_coefficients = 12, analysis_width = 0.015, time_step = 0.005)
+  mfcc_scalar <- snd$to_mfcc(num_coefficients = 12, analysis_width = 0.015,
+    time_step = 0.005)
 
   # SIMD
   pladdrr_simd(TRUE)
-  mfcc_simd <- snd$to_mfcc(num_coefficients = 12, analysis_width = 0.015, time_step = 0.005)
+  mfcc_simd <- snd$to_mfcc(num_coefficients = 12, analysis_width = 0.015,
+    time_step = 0.005)
 
   # Check frame-by-frame
   n_frames <- mfcc_scalar$get_number_of_frames()
 
   for (iframe in seq_len(min(10, n_frames))) {
-    scalar_frame <- mfcc_scalar$get_value_in_frame(frame_number = iframe, coeff_number = 1)
-    simd_frame <- mfcc_simd$get_value_in_frame(frame_number = iframe, coeff_number = 1)
+    scalar_frame <- mfcc_scalar$get_value_in_frame(frame_number = iframe,
+      coeff_number = 1)
+    simd_frame <- mfcc_simd$get_value_in_frame(frame_number = iframe,
+      coeff_number = 1)
 
     expect_equal(scalar_frame, simd_frame, tolerance = 1e-10)
   }
@@ -280,7 +295,8 @@ test_that("MFCC SIMD works with real audio (if available)", {
     snd <- Sound$new(test_file)
 
     pladdrr_simd(TRUE)
-    mfcc <- snd$to_mfcc(num_coefficients = 13, analysis_width = 0.015, time_step = 0.005)
+    mfcc <- snd$to_mfcc(num_coefficients = 13, analysis_width = 0.015,
+      time_step = 0.005)
 
     expect_gt(mfcc$get_number_of_frames(), 0)
     expect_identical(mfcc$get_num_coefficients_at_frame(1), 13L)
@@ -308,7 +324,8 @@ test_that("MFCC full pipeline works end-to-end with SIMD", {
   f1 <- 700  # First formant
   f2 <- 1220 # Second formant
   f3 <- 2600 # Third formant
-  signal <- sin(2 * pi * f1 * t) + 0.7 * sin(2 * pi * f2 * t) + 0.5 * sin(2 * pi * f3 * t)
+  signal <- sin(
+    2 * pi * f1 * t) + 0.7 * sin(2 * pi * f2 * t) + 0.5 * sin(2 * pi * f3 * t)
   signal <- signal / max(abs(signal))
 
   snd <- Sound$from_values(signal, sr)

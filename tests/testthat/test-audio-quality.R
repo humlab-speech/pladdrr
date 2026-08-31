@@ -1,7 +1,9 @@
-# test-audio-quality.R - Tests for check_audio_quality() / format_quality_report()
+# test-audio-quality.R - Tests for check_audio_quality() /
+#  format_quality_report()
 
 test_that("check_audio_quality returns expected metrics for a clean tone", {
-  snd <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+  snd <- Sound$create_tone(frequency = 220, duration = 0.5,
+    sampling_rate = 16000)
   q <- check_audio_quality(snd)
 
   expect_type(q, "list")
@@ -15,14 +17,16 @@ test_that("check_audio_quality returns expected metrics for a clean tone", {
   expect_equal(q$n_clipping_samples, 0, tolerance = sqrt(.Machine$double.eps))
   expect_equal(q$clipping_percentage, 0, tolerance = sqrt(.Machine$double.eps))
   expect_equal(q$duration, 0.5, tolerance = 1e-6)
-  expect_equal(q$sampling_frequency, 16000, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(q$sampling_frequency, 16000,
+    tolerance = sqrt(.Machine$double.eps))
   expect_gt(q$rms_amplitude, 0)
   expect_gt(q$max_amplitude, 0); expect_lte(q$max_amplitude, 1)
   expect_gte(q$intensity_range_db, 0)
 })
 
 test_that("check_audio_quality detects clipping", {
-  snd <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000,
+  snd <- Sound$create_tone(frequency = 220, duration = 0.5,
+    sampling_rate = 16000,
                             amplitude = 0.999)
   q <- check_audio_quality(snd, clipping_threshold = 0.5)
 
@@ -31,8 +35,10 @@ test_that("check_audio_quality detects clipping", {
   expect_gt(q$clipping_percentage, 0)
 })
 
-test_that("check_audio_quality respects clipping_threshold and intensity_floor args", {
-  snd <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+test_that(
+  "check_audio_quality respects clipping_threshold and intensity_floor args", {
+  snd <- Sound$create_tone(frequency = 220, duration = 0.5,
+    sampling_rate = 16000)
 
   q_strict <- check_audio_quality(snd, clipping_threshold = 1e-9)
   expect_true(q_strict$is_clipped)
@@ -41,8 +47,10 @@ test_that("check_audio_quality respects clipping_threshold and intensity_floor a
   expect_type(q_floor$mean_intensity_db, "double")
 })
 
-test_that("format_quality_report produces a character report with expected sections", {
-  snd <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+test_that(
+  "format_quality_report produces a character report with expected sections", {
+  snd <- Sound$create_tone(frequency = 220, duration = 0.5,
+    sampling_rate = 16000)
   q <- check_audio_quality(snd)
   report <- format_quality_report(q)
 
@@ -56,7 +64,8 @@ test_that("format_quality_report produces a character report with expected secti
 })
 
 test_that("format_quality_report flags clipping and quiet recordings", {
-  loud <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000,
+  loud <- Sound$create_tone(frequency = 220, duration = 0.5,
+    sampling_rate = 16000,
                              amplitude = 0.999)
   q_clip <- check_audio_quality(loud, clipping_threshold = 0.5)
   report_clip <- format_quality_report(q_clip)
@@ -64,7 +73,8 @@ test_that("format_quality_report flags clipping and quiet recordings", {
   expect_true(grepl("Clipping: YES", report_clip, fixed = TRUE))
   expect_true(grepl("BAD|Re-record", report_clip))
 
-  quiet <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000,
+  quiet <- Sound$create_tone(frequency = 220, duration = 0.5,
+    sampling_rate = 16000,
                               amplitude = 0.001)
   q_quiet <- check_audio_quality(quiet)
   report_quiet <- format_quality_report(q_quiet)
@@ -72,7 +82,8 @@ test_that("format_quality_report flags clipping and quiet recordings", {
 })
 
 test_that("format_quality_report(detailed = FALSE) omits detail sections", {
-  snd <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+  snd <- Sound$create_tone(frequency = 220, duration = 0.5,
+    sampling_rate = 16000)
   q <- check_audio_quality(snd)
   report <- format_quality_report(q, detailed = FALSE)
 

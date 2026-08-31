@@ -82,7 +82,9 @@ test_that("Sound$to_textgrid_silences() threshold affects detection", {
   # Count silent intervals
   count_silent <- function(tg) {
     n <- tg$get_number_of_intervals(1)
-    sum(vapply(1:n, function(i) tg$get_interval_text(1, i) == "silent", logical(1)))
+    sum(
+      vapply(1:n, function(i) tg$get_interval_text(1, i) == "silent",
+        logical(1)))
   }
   
   n_silent_strict <- count_silent(tg_strict)
@@ -180,7 +182,8 @@ test_that("New methods integrate in DSI workflow", {
   pp <- pitch$to_point_process()
   
   # Step 3: Create VUV intervals
-  tg_vuv <- pp$to_textgrid_vuv(max_voiced_period = 0.02, max_unvoiced_period = 0.01)
+  tg_vuv <- pp$to_textgrid_vuv(max_voiced_period = 0.02,
+    max_unvoiced_period = 0.01)
   expect_s3_class(tg_vuv, "TextGrid")
   
   # All steps completed successfully - DSI workflow possible

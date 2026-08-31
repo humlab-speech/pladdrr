@@ -75,7 +75,8 @@ test_that("get_durations_batch handles single file", {
 # data chunk at all. These are constructed by hand below (not via
 # Sound$save()) specifically to hit those chunk-walking branches.
 test_that("get_durations_batch_cpp handles WAV chunk-layout edge cases", {
-  wu32 <- function(con, x) writeBin(as.integer(x), con, size = 4, endian = "little")
+  wu32 <- function(con, x) writeBin(as.integer(x), con, size = 4,
+    endian = "little")
   wchunk_id <- function(con, id) writeBin(charToRaw(id), con)
   fmt_chunk_bytes <- function(extra_bytes = 0) {
     body <- c(
@@ -184,14 +185,17 @@ test_that("get_durations_batch is faster than LongSound loop", {
   result <- tryCatch(
     bench::mark(
       tier4 = get_durations_batch(files),
-      longsound = vapply(files, function(f) LongSound$open(f)$get_duration(), numeric(1)),
+      longsound = vapply(files, function(f) LongSound$open(f)$get_duration(),
+        numeric(1)),
       check = FALSE,
       min_iterations = 3
     ),
     error = function(e) e
   )
   if (inherits(result, "error")) {
-    skip(paste("LongSound$open() failed during benchmark:", conditionMessage(result)))
+    skip(
+      paste("LongSound$open() failed during benchmark:",
+        conditionMessage(result)))
   }
 
   # Tier 4 should be significantly faster (target: 77x)
@@ -206,13 +210,15 @@ test_that("get_durations_batch is faster than LongSound loop", {
 # =============================================================================
 
 test_that("calculate_f0_stats_ultra returns correct max F0", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
+    package = "pladdrr")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
 
   sound <- Sound(sound_path)
 
   # Get max F0 via Tier 4 Ultra
-  max_f0 <- calculate_f0_stats_ultra(sound, stat = "max", min_pitch = 75, max_pitch = 600)
+  max_f0 <- calculate_f0_stats_ultra(sound, stat = "max", min_pitch = 75,
+    max_pitch = 600)
 
   expect_type(max_f0, "double")
   expect_false(is.na(max_f0))
@@ -220,14 +226,17 @@ test_that("calculate_f0_stats_ultra returns correct max F0", {
 })
 
 test_that("calculate_f0_stats_ultra matches existing pitch methods", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
+    package = "pladdrr")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
 
   sound <- Sound(sound_path)
 
   # Get stats via Tier 4 Ultra
-  max_f0 <- calculate_f0_stats_ultra(sound, stat = "max", min_pitch = 75, max_pitch = 600)
-  mean_f0 <- calculate_f0_stats_ultra(sound, stat = "mean", min_pitch = 75, max_pitch = 600)
+  max_f0 <- calculate_f0_stats_ultra(sound, stat = "max", min_pitch = 75,
+    max_pitch = 600)
+  mean_f0 <- calculate_f0_stats_ultra(sound, stat = "mean", min_pitch = 75,
+    max_pitch = 600)
 
   # Get stats via existing method
   pitch <- sound$to_pitch_cc(pitch_floor = 75, pitch_ceiling = 600)
@@ -240,7 +249,8 @@ test_that("calculate_f0_stats_ultra matches existing pitch methods", {
 })
 
 test_that("calculate_f0_stats_ultra supports all stat types", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
+    package = "pladdrr")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
 
   sound <- Sound(sound_path)
@@ -248,13 +258,15 @@ test_that("calculate_f0_stats_ultra supports all stat types", {
   # Test all supported stats
   stats <- c("max", "min", "mean", "median", "sd")
   for (stat in stats) {
-    result <- calculate_f0_stats_ultra(sound, stat = stat, min_pitch = 75, max_pitch = 600)
+    result <- calculate_f0_stats_ultra(sound, stat = stat, min_pitch = 75,
+      max_pitch = 600)
     expect_type(result, "double")
   }
 })
 
 test_that("calculate_f0_stats_ultra validates input", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
+    package = "pladdrr")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
 
   sound <- Sound(sound_path)
@@ -272,7 +284,8 @@ test_that("calculate_f0_stats_ultra validates input", {
     "Sound"
   )
   expect_error(
-    pladdrr:::calculate_f0_stats_ultra_cpp(sound$.xptr, "not_a_real_stat", 0, 75, 600, 0.45),
+    pladdrr:::calculate_f0_stats_ultra_cpp(sound$.xptr, "not_a_real_stat", 0,
+      75, 600, 0.45),
     "Unknown stat"
   )
 })
@@ -283,7 +296,8 @@ test_that("calculate_f0_stats_ultra validates input", {
 # =============================================================================
 
 test_that("calculate_minimum_intensity_ultra returns valid intensity", {
-  sound_path <- system.file("signalfiles/DSI/input/im1.wav", package = "pladdrr")
+  sound_path <- system.file("signalfiles/DSI/input/im1.wav",
+    package = "pladdrr")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
 
   sound <- Sound(sound_path)
@@ -298,7 +312,8 @@ test_that("calculate_minimum_intensity_ultra returns valid intensity", {
 test_that("calculate_minimum_intensity_ultra matches DSI reference value", {
   # Bug fix verification: must match DSI algorithm result (~66.21 dB)
   # Previously returned ~43 dB due to incorrect algorithm
-  sound_path <- system.file("signalfiles/DSI/input/im1.wav", package = "pladdrr")
+  sound_path <- system.file("signalfiles/DSI/input/im1.wav",
+    package = "pladdrr")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
 
   sound <- Sound(sound_path)
@@ -321,7 +336,8 @@ test_that("calculate_minimum_intensity_ultra validates input", {
   expect_error(calculate_minimum_intensity_ultra("not_a_sound"))
 })
 
-test_that("calculate_minimum_intensity_ultra_cpp handles null pointer, single-voiced-region, and no-voiced-region cases", {
+test_that(
+  "calculate_minimum_intensity_ultra_cpp handles null pointer, single-voiced-region, and no-voiced-region cases", {
   # The R wrapper's inherits(sound, "Sound") check means the "not_a_sound"
   # test above never reaches the C++ null-pointer guard; call the internal
   # export directly.
@@ -335,7 +351,8 @@ test_that("calculate_minimum_intensity_ultra_cpp handles null pointer, single-vo
   # interval, exercising the "single voiced region, no concatenation
   # needed" branch (as opposed to the multi-region Sounds_concatenate()
   # path already exercised by the DSI reference-value test above).
-  tone <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+  tone <- Sound$create_tone(frequency = 150, duration = 0.5,
+    sampling_rate = 16000)
   single_region_result <- pladdrr:::calculate_minimum_intensity_ultra_cpp(
     tone$.xptr, 75, 600, 0, TRUE
   )
@@ -345,7 +362,8 @@ test_that("calculate_minimum_intensity_ultra_cpp handles null pointer, single-vo
   # A zero-amplitude "tone" (frequency = 0) has no detectable pitch, so
   # pitch-based voiced/unvoiced segmentation should find zero voiced
   # intervals, exercising the "no voiced regions found -> NA" branch.
-  silence <- Sound$create_tone(frequency = 0, duration = 0.3, sampling_rate = 16000)
+  silence <- Sound$create_tone(frequency = 0, duration = 0.3,
+    sampling_rate = 16000)
   no_voiced_result <- pladdrr:::calculate_minimum_intensity_ultra_cpp(
     silence$.xptr, 75, 600, 0, TRUE
   )
@@ -358,7 +376,8 @@ test_that("calculate_minimum_intensity_ultra_cpp handles null pointer, single-vo
 # =============================================================================
 
 test_that("get_voice_quality_ultra returns all metrics with 'all'", {
-  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav", package = "pladdrr")
+  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav",
+    package = "pladdrr")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
 
   sound <- Sound(sound_path)
@@ -379,8 +398,10 @@ test_that("get_voice_quality_ultra returns all metrics with 'all'", {
   expect_true("hnr_mean" %in% names(vq))
 })
 
-test_that("get_voice_quality_ultra defaults match the CC + very accurate pipeline", {
-  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav", package = "pladdrr")
+test_that(
+  "get_voice_quality_ultra defaults match the CC + very accurate pipeline", {
+  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav",
+    package = "pladdrr")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
 
   sound <- Sound(sound_path)
@@ -389,7 +410,8 @@ test_that("get_voice_quality_ultra defaults match the CC + very accurate pipelin
   vq <- get_voice_quality_ultra(sound, metrics = "jitter", min_pitch = 75)
 
   # Get via matching Tier 2/3 API
-  pitch <- sound$to_pitch_cc(time_step = 0, pitch_floor = 75, pitch_ceiling = 600, very_accurate = TRUE)
+  pitch <- sound$to_pitch_cc(time_step = 0, pitch_floor = 75,
+    pitch_ceiling = 600, very_accurate = TRUE)
   pp <- to_point_process_from_sound_and_pitch(sound, pitch)
   existing <- get_jitter_shimmer_batch(pp, sound)
 
@@ -398,7 +420,8 @@ test_that("get_voice_quality_ultra defaults match the CC + very accurate pipelin
 })
 
 test_that("get_voice_quality_ultra can match Praat plain To Pitch for jitter", {
-  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav", package = "pladdrr")
+  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav",
+    package = "pladdrr")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
 
   sound <- Sound(sound_path)
@@ -419,17 +442,20 @@ test_that("get_voice_quality_ultra can match Praat plain To Pitch for jitter", {
 })
 
 test_that("get_voice_quality_ultra supports selective metrics", {
-  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav", package = "pladdrr")
+  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav",
+    package = "pladdrr")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
 
   sound <- Sound(sound_path)
 
   # Request only jitter
-  vq_jitter <- get_voice_quality_ultra(sound, metrics = "jitter", min_pitch = 75)
+  vq_jitter <- get_voice_quality_ultra(sound, metrics = "jitter",
+    min_pitch = 75)
   expect_true("jitter_local" %in% names(vq_jitter))
 
   # Request only shimmer
-  vq_shimmer <- get_voice_quality_ultra(sound, metrics = "shimmer", min_pitch = 75)
+  vq_shimmer <- get_voice_quality_ultra(sound, metrics = "shimmer",
+    min_pitch = 75)
   expect_true("shimmer_local" %in% names(vq_shimmer))
 
   # Request only HNR
@@ -439,7 +465,8 @@ test_that("get_voice_quality_ultra supports selective metrics", {
 
 test_that("get_voice_quality_ultra validates input", {
   expect_error(get_voice_quality_ultra("not_a_sound"))
-  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav", package = "pladdrr")
+  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav",
+    package = "pladdrr")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
   expect_error(get_voice_quality_ultra(Sound(sound_path), pitch_method = "bad"))
 
@@ -448,18 +475,22 @@ test_that("get_voice_quality_ultra validates input", {
   # export directly to cover its own null-pointer and pitch_method guards.
   null_ptr <- methods::new("externalptr")
   expect_error(
-    pladdrr:::get_voice_quality_ultra_cpp(null_ptr, "all", 75, 600, 0, "cc", TRUE),
+    pladdrr:::get_voice_quality_ultra_cpp(null_ptr, "all", 75, 600, 0, "cc",
+      TRUE),
     "Sound"
   )
   sound <- Sound(sound_path)
   expect_error(
-    pladdrr:::get_voice_quality_ultra_cpp(sound$.xptr, "all", 75, 600, 0, "not_cc_or_ac", TRUE),
+    pladdrr:::get_voice_quality_ultra_cpp(sound$.xptr, "all", 75, 600, 0,
+      "not_cc_or_ac", TRUE),
     "pitch_method"
   )
 })
 
-test_that("get_voice_quality_ultra HNR output does not depend on pitch settings", {
-  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav", package = "pladdrr")
+test_that(
+  "get_voice_quality_ultra HNR output does not depend on pitch settings", {
+  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav",
+    package = "pladdrr")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
 
   sound <- Sound(sound_path)
@@ -505,11 +536,13 @@ test_that("Tier 4 Ultra provides significant DSI speedup", {
   # Tier 4 Ultra workflow
   tier4_dsi <- function() {
     max_mpt <- max(get_durations_batch(mpt_file))
-    max_f0 <- calculate_f0_stats_ultra(sound_fh, "max", min_pitch = 75, max_pitch = 600)
+    max_f0 <- calculate_f0_stats_ultra(sound_fh, "max", min_pitch = 75,
+      max_pitch = 600)
     min_int <- calculate_minimum_intensity_ultra(sound_im, min_pitch = 75)
     vq <- get_voice_quality_ultra(sound_ppq, "jitter", min_pitch = 75)
     jitter_ppq5 <- vq$jitter_ppq5
-    c(max_mpt = max_mpt, max_f0 = max_f0, min_int = min_int, jitter_ppq5 = jitter_ppq5)
+    c(max_mpt = max_mpt, max_f0 = max_f0, min_int = min_int,
+      jitter_ppq5 = jitter_ppq5)
   }
 
   # Verify it runs successfully
@@ -517,7 +550,8 @@ test_that("Tier 4 Ultra provides significant DSI speedup", {
   expect_length(result, 4)
   expect_false(anyNA(result))
 
-  message(sprintf("DSI Tier 4 result: MPT=%.2fs, F0=%.1fHz, Int=%.1fdB, PPQ5=%.4f",
+  message(
+    sprintf("DSI Tier 4 result: MPT=%.2fs, F0=%.1fHz, Int=%.1fdB, PPQ5=%.4f",
                   result["max_mpt"], result["max_f0"], result["min_int"], result["jitter_ppq5"]))
 })
 
@@ -557,7 +591,8 @@ test_that("to_pitch_cc_direct works with concatenated sounds", {
 })
 
 test_that("Tier 4 functions work with extracted and concatenated parts", {
-  sound_path <- system.file("signalfiles/DSI/input/im1.wav", package = "pladdrr")
+  sound_path <- system.file("signalfiles/DSI/input/im1.wav",
+    package = "pladdrr")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
 
   sound <- Sound(sound_path)
@@ -569,7 +604,8 @@ test_that("Tier 4 functions work with extracted and concatenated parts", {
 
   # Test Tier 4 functions on concatenated sound
   expect_no_error({
-    max_f0 <- calculate_f0_stats_ultra(concatenated, "max", min_pitch = 75, max_pitch = 600)
+    max_f0 <- calculate_f0_stats_ultra(concatenated, "max", min_pitch = 75,
+      max_pitch = 600)
   })
 
   expect_no_error({
@@ -586,7 +622,8 @@ test_that("Tier 4 functions work with extracted and concatenated parts", {
 # =============================================================================
 
 test_that("build_multiband_harmonicity returns named Harmonicity objects", {
-  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav", package = "pladdrr")
+  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav",
+    package = "pladdrr")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
 
   sound <- Sound(sound_path)
@@ -597,7 +634,8 @@ test_that("build_multiband_harmonicity returns named Harmonicity objects", {
 })
 
 test_that("multiband_hnr_stats matches the one-shot API", {
-  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav", package = "pladdrr")
+  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav",
+    package = "pladdrr")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
 
   sound <- Sound(sound_path)
@@ -610,7 +648,8 @@ test_that("multiband_hnr_stats matches the one-shot API", {
 })
 
 test_that("reusable multiband HNR objects work across intervals", {
-  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav", package = "pladdrr")
+  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav",
+    package = "pladdrr")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
 
   sound <- Sound(sound_path)
@@ -627,13 +666,15 @@ test_that("reusable multiband HNR objects work across intervals", {
   )
   expect_equal(
     second_half,
-    calculate_multiband_hnr_ultra(sound, from_time = midpoint, to_time = sound$get_xmax()),
+    calculate_multiband_hnr_ultra(sound, from_time = midpoint,
+      to_time = sound$get_xmax()),
     tolerance = 1e-10
   )
 })
 
 test_that("reusable multiband HNR helpers validate input", {
-  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav", package = "pladdrr")
+  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav",
+    package = "pladdrr")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
 
   sound <- Sound(sound_path)

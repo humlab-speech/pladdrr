@@ -30,11 +30,13 @@ library(ggplot2)
 ### Available Methods
 
 1. **Burg** (`to_formant_burg`) - LPC-based, recommended for general use
-2. **Keep All** (`to_formant_keepall`) - Retains all LPC formants without filtering
+2. **Keep All** (
+  `to_formant_keepall`) - Retains all LPC formants without filtering
 3. **Robust** (`to_formant_robust`) - Outlier-resistant iterative refit of Burg
 4. **Willems** (`to_formant_willems`) - Alternative LPC formant tracker
 5. **Split-Levinson** (`to_formant_sl`) - LPC via split-Levinson recursion
-6. **From Excitation** (`excitation$to_formant`) - Perceptual-based extraction, via `Spectrum$to_excitation()` or `Cochleagram$to_excitation()`
+6. **From Excitation** (
+  `excitation$to_formant`) - Perceptual-based extraction, via `Spectrum$to_excitation()` or `Cochleagram$to_excitation()`
 
 ### Method Comparison
 
@@ -80,7 +82,8 @@ if (!is.null(kg)) {
     )
   }, error = function(e) {
     message("Formant extraction failed: ", e$message)
-    message("Note: This requires completed polynomial root finding implementation")
+    message(
+      "Note: This requires completed polynomial root finding implementation")
     NULL
   })
   
@@ -156,8 +159,12 @@ f2_keep <- formant_k$get_value_at_time(2, time, unit = "hertz")
 # Comparison
 if (!anyNA(c(f1_burg, f1_keep, f2_burg, f2_keep))) {
   cat("Method Comparison:\n")
-  cat(sprintf("  Burg:     F1 = %d Hz, F2 = %d Hz\n", round(f1_burg), round(f2_burg)))
-  cat(sprintf("  Keep All: F1 = %d Hz, F2 = %d Hz\n", round(f1_keep), round(f2_keep)))
+  cat(
+    sprintf("  Burg:     F1 = %d Hz, F2 = %d Hz\n", round(f1_burg),
+      round(f2_burg)))
+  cat(
+    sprintf("  Keep All: F1 = %d Hz, F2 = %d Hz\n", round(f1_keep),
+      round(f2_keep)))
   cat(sprintf("  Diff:     F1 = %d Hz, F2 = %d Hz\n",
               round(abs(f1_burg - f1_keep)),
               round(abs(f2_burg - f2_keep))))
@@ -166,9 +173,12 @@ if (!anyNA(c(f1_burg, f1_keep, f2_burg, f2_keep))) {
 
 ## 3. Alternative Methods (Advanced)
 
-`to_formant_willems()` and `to_formant_sl()` (split-Levinson) provide alternative
-LPC-based extraction. `to_formant_robust()` iteratively refits Burg while down-weighting
-outlier frames (`num_std_dev`, `max_iterations`). Burg (recommended) or Keep All cover
+`to_formant_willems(
+  )` and `to_formant_sl()` (split-Levinson) provide alternative
+LPC-based extraction. `to_formant_robust(
+  )` iteratively refits Burg while down-weighting
+outlier frames (`num_std_dev`,
+  `max_iterations`). Burg (recommended) or Keep All cover
 most use cases; these are for comparison or specific research needs.
 
 ```{r robust-basic}
@@ -224,8 +234,10 @@ if (exists("sound") && !is.null(sound)) {
   # Report results
   cat("Formant extraction results:\n")
   cat("  Male (5000 Hz):", if (!is.null(formant_male)) "OK" else "failed", "\n")
-  cat("  Female (5500 Hz):", if (!is.null(formant_female)) "OK" else "failed", "\n")
-  cat("  Child (8000 Hz):", if (!is.null(formant_child)) "OK" else "failed", "\n")
+  cat("  Female (5500 Hz):", if (!is.null(formant_female)) "OK" else "failed",
+    "\n")
+  cat("  Child (8000 Hz):", if (!is.null(formant_child)) "OK" else "failed",
+    "\n")
 } else {
   message("Skipping ceiling demo - sound not available")
 }

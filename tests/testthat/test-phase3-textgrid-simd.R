@@ -11,12 +11,18 @@ library(pladdrr)
 .calc_dur <- function(s, e) pladdrr:::calculate_durations_simd_bridge(s, e)
 .calc_mid <- function(s, e) pladdrr:::calculate_midpoints_simd_bridge(s, e)
 .dur_stats <- function(d) pladdrr:::duration_statistics_simd_bridge(d)
-.filter_dur <- function(d, min, max) pladdrr:::filter_by_duration_simd_bridge(d, min, max)
-.tg_stats <- function(tg, tier) pladdrr:::textgrid_interval_statistics_batch(tg, tier)
-.tg_pitch <- function(tg, p, tier, unit) pladdrr:::textgrid_interval_pitch_batch(tg, p, tier, unit)
-.tg_formant <- function(tg, f, tier, fn) pladdrr:::textgrid_interval_formant_batch(tg, f, tier, fn)
-.tg_intensity <- function(tg, i, tier) pladdrr:::textgrid_interval_intensity_batch(tg, i, tier)
-.tg_all <- function(tg, p, f, i, tier) pladdrr:::textgrid_interval_all_features_batch(tg, p, f, i, tier)
+.filter_dur <- function(d, min,
+  max) pladdrr:::filter_by_duration_simd_bridge(d, min, max)
+.tg_stats <- function(tg,
+  tier) pladdrr:::textgrid_interval_statistics_batch(tg, tier)
+.tg_pitch <- function(tg, p, tier,
+  unit) pladdrr:::textgrid_interval_pitch_batch(tg, p, tier, unit)
+.tg_formant <- function(tg, f, tier,
+  fn) pladdrr:::textgrid_interval_formant_batch(tg, f, tier, fn)
+.tg_intensity <- function(tg, i,
+  tier) pladdrr:::textgrid_interval_intensity_batch(tg, i, tier)
+.tg_all <- function(tg, p, f, i,
+  tier) pladdrr:::textgrid_interval_all_features_batch(tg, p, f, i, tier)
 
 test_that("SIMD duration calculation matches scalar", {
   skip_if_not_installed("pladdrr")
@@ -104,7 +110,8 @@ test_that("textgrid_interval_statistics_batch uses SIMD for duration", {
     point_tiers = FALSE
   )
 
-  # Insert boundaries to create intervals: [0,0.3], [0.3,0.5], [0.5,0.8], [0.8,2.0]
+  # Insert boundaries to create intervals: [0,0.3], [0.3,0.5], [0.5,0.8],
+  #  [0.8,2.0]
   tg$insert_boundary(1, 0.3)
   tg$insert_boundary(1, 0.5)
   tg$insert_boundary(1, 0.8)
@@ -127,10 +134,12 @@ test_that("textgrid_interval_pitch_batch returns valid statistics", {
   skip_if_not_installed("pladdrr")
 
   # Create tone with known pitch using exported function
-  sound <- sound_create_tone(frequency = 440, duration = 1.0, sampling_rate = 16000)
+  sound <- sound_create_tone(frequency = 440, duration = 1.0,
+    sampling_rate = 16000)
   pitch <- sound$to_pitch()
 
-  tg <- textgrid_create(tmin = 0, tmax = 1.0, tier_names = "seg", point_tiers = FALSE)
+  tg <- textgrid_create(tmin = 0, tmax = 1.0, tier_names = "seg",
+    point_tiers = FALSE)
   tg$insert_boundary(1, 0.3)
   tg$insert_boundary(1, 0.6)
   tg$set_interval_text(1, 1, "seg1")
@@ -156,10 +165,12 @@ test_that("textgrid_interval_formant_batch returns valid statistics", {
   skip_if_not_installed("pladdrr")
 
   # Create speech-like sound with formants
-  sound <- sound_create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+  sound <- sound_create_tone(frequency = 150, duration = 0.5,
+    sampling_rate = 16000)
   formant <- sound$to_formant_burg()
 
-  tg <- textgrid_create(tmin = 0, tmax = 0.5, tier_names = "word", point_tiers = FALSE)
+  tg <- textgrid_create(tmin = 0, tmax = 0.5, tier_names = "word",
+    point_tiers = FALSE)
   tg$insert_boundary(1, 0.2)
   tg$set_interval_text(1, 1, "w1")
   tg$set_interval_text(1, 2, "w2")
@@ -174,10 +185,12 @@ test_that("textgrid_interval_formant_batch returns valid statistics", {
 test_that("textgrid_interval_intensity_batch returns valid statistics", {
   skip_if_not_installed("pladdrr")
 
-  sound <- sound_create_tone(frequency = 440, duration = 0.5, sampling_rate = 16000)
+  sound <- sound_create_tone(frequency = 440, duration = 0.5,
+    sampling_rate = 16000)
   intensity <- sound$to_intensity()
 
-  tg <- textgrid_create(tmin = 0, tmax = 0.5, tier_names = "seg", point_tiers = FALSE)
+  tg <- textgrid_create(tmin = 0, tmax = 0.5, tier_names = "seg",
+    point_tiers = FALSE)
   tg$insert_boundary(1, 0.25)
   tg$set_interval_text(1, 1, "s1")
   tg$set_interval_text(1, 2, "s2")
@@ -199,12 +212,14 @@ test_that("textgrid_interval_intensity_batch returns valid statistics", {
 test_that("textgrid_interval_all_features_batch returns combined statistics", {
   skip_if_not_installed("pladdrr")
 
-  sound <- sound_create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+  sound <- sound_create_tone(frequency = 220, duration = 0.5,
+    sampling_rate = 16000)
   pitch <- sound$to_pitch()
   formant <- sound$to_formant_burg()
   intensity <- sound$to_intensity()
 
-  tg <- textgrid_create(tmin = 0, tmax = 0.5, tier_names = "phone", point_tiers = FALSE)
+  tg <- textgrid_create(tmin = 0, tmax = 0.5, tier_names = "phone",
+    point_tiers = FALSE)
   tg$insert_boundary(1, 0.25)
   tg$set_interval_text(1, 1, "p1")
   tg$set_interval_text(1, 2, "p2")

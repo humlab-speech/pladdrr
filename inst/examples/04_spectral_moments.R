@@ -13,7 +13,8 @@
 #' ```python
 #' import parselmouth as pm
 #' sound = pm.Sound("audio.wav")
-#' spectrogram = pm.praat.call(sound, "To Spectrogram", 0.005, 5000, 0.005, 20, "Gaussian")
+#' spectrogram = pm.praat.call(sound, "To Spectrogram", 0.005, 5000, 0.005, 20,
+#  "Gaussian")
 #' spectrum = pm.praat.call(spectrogram, "To Spectrum (slice)", time)
 #' cog = pm.praat.call(spectrum, "Get centre of gravity", 2.0)
 #' ```
@@ -22,7 +23,8 @@
 #' ```r
 #' library(speaker)
 #' sound <- Sound$new("audio.wav")
-#' spectrogram <- sound$to_spectrogram(window_length = 0.005, max_frequency = 5000,
+#' spectrogram <- sound$to_spectrogram(window_length = 0.005, max_frequency =
+#  5000,
 #'                                      time_step = 0.005, frequency_step = 20)
 #' spectrum <- spectrogram$to_spectrum(time = 0.5)
 #' cog <- spectrum$get_centre_of_gravity(power = 2.0)
@@ -43,12 +45,14 @@ library(speaker)
 #' @param begin_time Start time for analysis (0.0 for full file)
 #' @param end_time End time for analysis (0.0 for full file)
 #' @param window_length Analysis window length (in seconds)
-#' @param maximum_frequency Maximum frequency to analyze (Hz). If 0.0, uses Nyquist frequency
+#' @param maximum_frequency Maximum frequency to analyze (Hz). If 0.0, uses
+#  Nyquist frequency
 #' @param time_step Time step between frames (in seconds)
 #' @param frequency_step Frequency resolution (in Hz)
 #' @param power Power for moment calculation (typically 2)
 #'
-#' @return data.frame with columns: time, centre_of_gravity, standard_deviation, skewness, kurtosis
+#' @return data.frame with columns: time, centre_of_gravity, standard_deviation,
+#  skewness, kurtosis
 #'
 #' @export
 #' @examples
@@ -321,7 +325,8 @@ if (interactive()) {
 #'    R:      obj$method_name(params)
 #'
 #' 3. Spectrogram creation:
-#'    Python: pm.praat.call(sound, "To Spectrogram", 0.005, 5000, 0.005, 20, "Gaussian")
+#' Python: pm.praat.call(sound, "To Spectrogram", 0.005, 5000, 0.005, 20,
+#  "Gaussian")
 #'    R:      sound$to_spectrogram(window_length = 0.005, max_frequency = 5000,
 #'                                   time_step = 0.005, frequency_step = 20,
 #'                                   window_shape = "Gaussian")

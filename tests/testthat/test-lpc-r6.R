@@ -1,6 +1,7 @@
 # test-lpc-r6.R - Tests for R/lpc-wrapper.R (LPC object)
 
-test_that("LPC constructs from Sound via Burg method and reports basic properties", {
+test_that(
+  "LPC constructs from Sound via Burg method and reports basic properties", {
   sound <- generate_sine_wave(150, 0.3, sampling_rate = 16000)
   lpc <- sound$to_lpc_burg()
 
@@ -22,14 +23,19 @@ test_that("LPC per-frame coefficient/gain queries work", {
   expect_true(is.matrix(lpc$get_all_coefficients()))
 
   # get_all_gains()/get_all_coefficients() and their per-frame counterparts read
-  # the same underlying LPC_Frame data (src/modules/lpc_module.cpp) -- cross-check
+  # the same underlying LPC_Frame data (src/modules/lpc_module.cpp) --
+  #  cross-check
   # they agree rather than just type-checking each independently.
   n_frames <- lpc$get_number_of_frames()
   expect_length(lpc$get_all_gains(), n_frames)
-  expect_equal(lpc$get_all_gains()[1], lpc$get_gain_at_frame(1), tolerance = sqrt(.Machine$double.eps))
-  expect_equal(lpc$get_all_gains()[n_frames], lpc$get_gain_at_frame(n_frames), tolerance = sqrt(.Machine$double.eps))
-  expect_equal(ncol(lpc$get_all_coefficients()), n_frames, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(lpc$get_all_coefficients()[, 1], lpc$get_coefficients_at_frame(1), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(lpc$get_all_gains()[1], lpc$get_gain_at_frame(1),
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(lpc$get_all_gains()[n_frames], lpc$get_gain_at_frame(n_frames),
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(ncol(lpc$get_all_coefficients()), n_frames,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(lpc$get_all_coefficients()[, 1],
+    lpc$get_coefficients_at_frame(1), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("LPC conversions: to_spectrum, to_matrix, to_spectrogram, to_lfcc", {
@@ -59,7 +65,8 @@ test_that("LPC filter_inverse_at_time performs inverse filtering", {
   expect_output(print(lpc), "Praat LPC")
 })
 
-test_that("LPC filter_inverse (whole-sound) is broken for the real Sound implementation", {
+test_that(
+  "LPC filter_inverse (whole-sound) is broken for the real Sound implementation", {
   # `.lpc_sound_filter_inverse_r6()` (src/lpc_wrappers.cpp) extracts the
   # external pointer assuming an R6-style object (`.__enclos_env__`,
   # `private$ptr`), but pladdrr's Sound() constructor (R/sound-wrapper.R)
@@ -77,7 +84,8 @@ test_that("LPC filter_inverse (whole-sound) is broken for the real Sound impleme
   expect_error(lpc$filter_inverse(sound))
 })
 
-test_that("LPC to_formant is unavailable in this build (hard-coded stop, no CLAPACK probe)", {
+test_that(
+  "LPC to_formant is unavailable in this build (hard-coded stop, no CLAPACK probe)", {
   # R/lpc-wrapper.R's to_formant() unconditionally stop()s regardless of
   # actual CLAPACK availability -- it's not a runtime capability check.
   sound <- generate_sine_wave(150, 0.3, sampling_rate = 16000)

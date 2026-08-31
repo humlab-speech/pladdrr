@@ -1,6 +1,7 @@
 #' @title Praat Table Object
 #' @description
-#' Praat Table object with direct C++ module binding for tabular data operations.
+#' Praat Table object with direct C++ module binding for tabular data
+#  operations.
 #'
 #' @details
 #' Table objects store tabular data with named columns and support various
@@ -13,7 +14,8 @@
 #'   \code{numberOfColumns} to name columns as they are created.
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #'   Table object; set internally when a method returns a new Table.
-#' @return A \code{Table} object with methods for tabular data access and statistics.
+#' @return A \code{Table} object with methods for tabular data access and
+#  statistics.
 #'
 #' @examples
 #' tbl <- Table(numberOfRows = 3, columnNames = c("word", "duration"))
@@ -71,10 +73,14 @@ NULL
 .table_methods <- new.env(hash = TRUE, parent = emptyenv())
 
 # Query - Structure
-.table_methods$get_number_of_rows <- function(.self) .self$.cpp$get_number_of_rows()
-.table_methods$get_number_of_columns <- function(.self) .self$.cpp$get_number_of_columns()
-.table_methods$get_column_label <- function(.self, col) .self$.cpp$get_column_label(as.integer(col))
-.table_methods$get_column_index <- function(.self, label) .self$.cpp$get_column_index(as.character(label))
+.table_methods$get_number_of_rows <- function(
+  .self) .self$.cpp$get_number_of_rows()
+.table_methods$get_number_of_columns <- function(
+  .self) .self$.cpp$get_number_of_columns()
+.table_methods$get_column_label <- function(.self,
+  col) .self$.cpp$get_column_label(as.integer(col))
+.table_methods$get_column_index <- function(.self,
+  label) .self$.cpp$get_column_index(as.character(label))
 .table_methods$get_column_names <- function(.self) .self$.cpp$get_column_names()
 
 # Modification - Structure
@@ -101,36 +107,49 @@ NULL
 
 # Query/Set - Values
 .table_methods$get_numeric_value <- function(.self, row, column) {
-  col_idx <- if (is.character(column)) .self$.cpp$get_column_index(column) else as.integer(column)
+  col_idx <- if (
+    is.character(
+      column)) .self$.cpp$get_column_index(column) else as.integer(column)
   .self$.cpp$get_numeric_value(as.integer(row), col_idx)
 }
 .table_methods$get_string_value <- function(.self, row, column) {
-  col_idx <- if (is.character(column)) .self$.cpp$get_column_index(column) else as.integer(column)
+  col_idx <- if (
+    is.character(
+      column)) .self$.cpp$get_column_index(column) else as.integer(column)
   .self$.cpp$get_string_value(as.integer(row), col_idx)
 }
 .table_methods$set_numeric_value <- function(.self, row, column, value) {
-  col_idx <- if (is.character(column)) .self$.cpp$get_column_index(column) else as.integer(column)
+  col_idx <- if (
+    is.character(
+      column)) .self$.cpp$get_column_index(column) else as.integer(column)
   .self$.cpp$set_numeric_value(as.integer(row), col_idx, as.numeric(value))
   invisible(.self)
 }
 .table_methods$set_string_value <- function(.self, row, column, value) {
-  col_idx <- if (is.character(column)) .self$.cpp$get_column_index(column) else as.integer(column)
+  col_idx <- if (
+    is.character(
+      column)) .self$.cpp$get_column_index(column) else as.integer(column)
   .self$.cpp$set_string_value(as.integer(row), col_idx, as.character(value))
   invisible(.self)
 }
 
 # Statistics
 .table_methods$get_mean <- function(.self, column) {
-  col_idx <- if (is.character(column)) .self$.cpp$get_column_index(column) else as.integer(column)
+  col_idx <- if (
+    is.character(
+      column)) .self$.cpp$get_column_index(column) else as.integer(column)
   .table_get_mean(.self$.xptr, col_idx)
 }
 .table_methods$get_standard_deviation <- function(.self, column) {
-  col_idx <- if (is.character(column)) .self$.cpp$get_column_index(column) else as.integer(column)
+  col_idx <- if (
+    is.character(
+      column)) .self$.cpp$get_column_index(column) else as.integer(column)
   .table_get_stdev(.self$.xptr, col_idx)
 }
 
 # Export
-.table_methods$as_data_frame <- function(.self) .table_to_data_frame(.self$.xptr)
+.table_methods$as_data_frame <- function(
+  .self) .table_to_data_frame(.self$.xptr)
 .table_methods$save <- function(.self, path) {
   .self$.cpp$save(as.character(path))
   invisible(.self)
@@ -143,7 +162,8 @@ NULL
 }
 
 # Row extraction
-.table_methods$extract_rows_where_number <- function(.self, column, which, criterion) {
+.table_methods$extract_rows_where_number <- function(.self, column, which,
+  criterion) {
   if (is.character(column)) {
     column <- .self$.cpp$get_column_index(column)
   }
@@ -153,7 +173,8 @@ NULL
   Table(.xptr = tbl_ptr)
 }
 
-.table_methods$extract_rows_where_string <- function(.self, column, which, criterion) {
+.table_methods$extract_rows_where_string <- function(.self, column, which,
+  criterion) {
   if (is.character(column)) {
     column <- .self$.cpp$get_column_index(column)
   }
@@ -170,7 +191,8 @@ NULL
 .table_methods$print <- function(.self) {
   cat("<Praat Table>\n")
   cat(sprintf("  Dimensions: %d rows x %d columns\n",
-              .self$.cpp$get_number_of_rows(), .self$.cpp$get_number_of_columns()))
+              .self$.cpp$get_number_of_rows(
+                ), .self$.cpp$get_number_of_columns()))
   col_names <- .self$.cpp$get_column_names()
   if (length(col_names) > 0) {
     cat(sprintf("  Columns: %s\n", toString(col_names)))
@@ -208,7 +230,8 @@ Table <- function(numberOfRows = NULL, numberOfColumns = NULL,
   } else {
     stopifnot(
       "numberOfRows must be specified" = !is.null(numberOfRows),
-      "numberOfRows must be positive" = is.numeric(numberOfRows) && numberOfRows > 0,
+      "numberOfRows must be positive" = is.numeric(
+        numberOfRows) && numberOfRows > 0,
       "Either numberOfColumns or columnNames must be specified" = 
         !is.null(numberOfColumns) || !is.null(columnNames)
     )
@@ -247,7 +270,8 @@ as.data.frame.Table <- function(x, ...) x$as_data_frame()
 #' tbl <- table_create(numberOfRows = 3, columnNames = c("speaker", "f0"))
 #' tbl2 <- table_create(numberOfRows = 3, numberOfColumns = 2)
 #' @export
-table_create <- function(numberOfRows, numberOfColumns = NULL, columnNames = NULL) {
+table_create <- function(numberOfRows, numberOfColumns = NULL,
+  columnNames = NULL) {
   Table(numberOfRows = numberOfRows,
         numberOfColumns = numberOfColumns,
         columnNames = columnNames)

@@ -18,7 +18,9 @@
 
 interp_fixture <- function(tag) {
   interp <- PraatInterpreter$new()
-  interp$run(sprintf('Create Sound as pure tone: "tone%s", 1, 0, 0.25, 44100, 440, 0.2, 0.01, 0.01', tag))
+  interp$run(
+    sprintf(
+      'Create Sound as pure tone: "tone%s", 1, 0, 0.25, 44100, 440, 0.2, 0.01, 0.01', tag))
   interp
 }
 
@@ -73,14 +75,16 @@ test_that("wrap_praat_object maps Manipulation and TextGrid", {
   expect_s3_class(last_object(interp), "TextGrid")
 })
 
-test_that("To Matrix on a Spectrogram dispatches to the right class (regression: segfault)", {
+test_that(
+  "To Matrix on a Spectrogram dispatches to the right class (regression: segfault)", {
   interp <- interp_fixture("matrix")
   interp$run("To Spectrogram: 0.005, 5000, 0.002, 20, \"Gaussian\"")
   interp$run("To Matrix")
   expect_s3_class(last_object(interp), "Matrix")
 })
 
-test_that("mis-classed conversions fail cleanly instead of crashing (regression: segfault)", {
+test_that(
+  "mis-classed conversions fail cleanly instead of crashing (regression: segfault)", {
   interp <- interp_fixture("nocrashtier")
   interp$run("To Pitch: 0, 75, 600")
   expect_error(interp$run("To PitchTier"), "not available")

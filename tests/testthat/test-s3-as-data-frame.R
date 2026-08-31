@@ -21,14 +21,16 @@ test_that("as.data.frame.Formant delegates to Formant$as_data_frame()", {
   formant <- tone_sound(freq = 220)$to_formant_burg()
   df <- as.data.frame(formant)
 
-  expect_equal(df, formant$as_data_frame(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(df, formant$as_data_frame(),
+    tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("as.data.frame.Intensity delegates to Intensity$as_data_frame()", {
   intensity <- tone_sound()$to_intensity()
   df <- as.data.frame(intensity)
 
-  expect_equal(df, intensity$as_data_frame(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(df, intensity$as_data_frame(),
+    tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("as.data.frame.Pitch delegates to Pitch$as_data_frame()", {
@@ -38,7 +40,8 @@ test_that("as.data.frame.Pitch delegates to Pitch$as_data_frame()", {
   expect_equal(df, pitch$as_data_frame(), tolerance = sqrt(.Machine$double.eps))
 })
 
-test_that("as.data.frame.PointProcess delegates to PointProcess$as_data_frame()", {
+test_that(
+  "as.data.frame.PointProcess delegates to PointProcess$as_data_frame()", {
   pp <- tone_sound()$to_point_process_periodic_cc(75, 600)
   df <- as.data.frame(pp)
 

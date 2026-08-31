@@ -3,7 +3,8 @@
 
 test_that("interpreter can receive and return Sound objects", {
   # Create sound in R
-  sound <- Sound$create_tone(frequency = 440, duration = 0.5, sampling_rate = 22050)
+  sound <- Sound$create_tone(frequency = 440, duration = 0.5,
+    sampling_rate = 22050)
   expect_s3_class(sound, "Sound")
 
   # Create interpreter and inject sound
@@ -20,13 +21,16 @@ test_that("interpreter can receive and return Sound objects", {
   # Retrieve the sound
   retrieved <- interp$get_object("testSound", "Sound")
   expect_s3_class(retrieved, "Sound")
-  expect_equal(retrieved$get_duration(), sound$get_duration(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(retrieved$get_duration(), sound$get_duration(),
+    tolerance = sqrt(.Machine$double.eps))
 
   # Verify data integrity (zero difference)
   orig_data <- sound$as_matrix()
   retr_data <- retrieved$as_matrix()
-  expect_equal(dim(orig_data), dim(retr_data), tolerance = sqrt(.Machine$double.eps))
-  expect_equal(max(abs(orig_data - retr_data)), 0, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(dim(orig_data), dim(retr_data),
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(max(abs(orig_data - retr_data)), 0,
+    tolerance = sqrt(.Machine$double.eps))
 
   # Cleanup
   interp$remove_object("testSound")
@@ -35,7 +39,8 @@ test_that("interpreter can receive and return Sound objects", {
 
 test_that("interpreter can receive and return Pitch objects", {
   # Create sound and extract pitch
-  sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 22050)
+  sound <- Sound$create_tone(frequency = 220, duration = 0.5,
+    sampling_rate = 22050)
   pitch <- sound$to_pitch()
   expect_s3_class(pitch, "Pitch")
 
@@ -49,9 +54,12 @@ test_that("interpreter can receive and return Pitch objects", {
   expect_s3_class(retrieved, "Pitch")
 
   # Verify same properties (use available methods)
-  expect_equal(retrieved$get_number_of_frames(), pitch$get_number_of_frames(), tolerance = sqrt(.Machine$double.eps))
-  expect_equal(retrieved$get_time_step(), pitch$get_time_step(), tolerance = sqrt(.Machine$double.eps))
-  expect_equal(retrieved$get_mean(0, 0, "Hertz"), pitch$get_mean(0, 0, "Hertz"), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(retrieved$get_number_of_frames(), pitch$get_number_of_frames(),
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(retrieved$get_time_step(), pitch$get_time_step(),
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(retrieved$get_mean(0, 0, "Hertz"),
+    pitch$get_mean(0, 0, "Hertz"), tolerance = sqrt(.Machine$double.eps))
 
   interp$clear_objects()
   expect_identical(interp$object_count(), 0L)
@@ -73,8 +81,10 @@ test_that("interpreter can receive and return TextGrid objects", {
   expect_s3_class(retrieved, "TextGrid")
 
   # Verify structure preserved
-  expect_equal(retrieved$get_number_of_tiers(), tg$get_number_of_tiers(), tolerance = sqrt(.Machine$double.eps))
-  expect_equal(retrieved$get_number_of_intervals(1), tg$get_number_of_intervals(1), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(retrieved$get_number_of_tiers(), tg$get_number_of_tiers(),
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(retrieved$get_number_of_intervals(1),
+    tg$get_number_of_intervals(1), tolerance = sqrt(.Machine$double.eps))
   expect_identical(retrieved$get_interval_text(1, 1), "hello")
   expect_identical(retrieved$get_interval_text(1, 2), "world")
 

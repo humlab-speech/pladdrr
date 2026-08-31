@@ -3,7 +3,8 @@
 # geometry getters, amplitude/phase queries, and conversions.
 
 cs_fixture <- function() {
-  Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)$to_complex_spectrogram()
+  Sound$create_tone(frequency = 220, duration = 0.3,
+    sampling_rate = 16000)$to_complex_spectrogram()
 }
 
 test_that("ComplexSpectrogram geometry getters", {

@@ -20,7 +20,8 @@ test_that("DTW self-alignment has near-zero distance", {
   sound <- Sound(test_path("fixtures/speech_sample.wav"))
   dtw <- sounds_to_dtw(sound, sound)
 
-  # Self-alignment distance should be very small (not exactly 0 due to MFCC quantization)
+  # Self-alignment distance should be very small (not exactly 0 due to MFCC
+  #  quantization)
   dist <- dtw$get_weighted_distance()
   expect_true(is.finite(dist))
   expect_gte(dist, 0)
@@ -50,7 +51,8 @@ test_that("DTW get_path returns valid data.frame", {
   path <- dtw$get_path()
 
   expect_s3_class(path, "data.frame")
-  expect_equal(nrow(path), dtw$get_path_length(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(nrow(path), dtw$get_path_length(),
+    tolerance = sqrt(.Machine$double.eps))
   expect_true(all(c("x_index", "y_index", "x_time", "y_time") %in% names(path)))
 })
 
@@ -115,8 +117,10 @@ test_that("DTW swap_axes works", {
 
   expect_s3_class(swapped, "DTW")
   # Swapped dimensions should be reversed
-  expect_equal(swapped$get_nx(), dtw$get_ny(), tolerance = sqrt(.Machine$double.eps))
-  expect_equal(swapped$get_ny(), dtw$get_nx(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(swapped$get_nx(), dtw$get_ny(),
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(swapped$get_ny(), dtw$get_nx(),
+    tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("DTW to_matrix_distances works", {

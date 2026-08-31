@@ -80,7 +80,7 @@ library(pladdrr)
 #     shimmer_local <- point_process$get_shimmer_local(sound,
 #                                        from_time = from_time,
 #                                        to_time = to_time,
-#                                        max_amplitude_factor = max_amplitude_factor)
+# max_amplitude_factor = max_amplitude_factor)
 #     
 #     shimmer_local_db <- point_process$get_shimmer_local_db(sound,
 #                                              from_time = from_time,
@@ -108,7 +108,7 @@ library(pladdrr)
 #                                      to_time = to_time)
 #     
 #     mean_nhr <- -mean_hnr  # NHR = -HNR (dB)
-#     mean_autocorr <- 10^(-mean_hnr / 20)  # amplitude autocorrelation from HNR (dB)
+# mean_autocorr <- 10^(-mean_hnr / 20) # amplitude autocorrelation from HNR (dB)
 #     
 #     # Voice breaks
 #     num_breaks <- point_process$get_voice_breaks(
@@ -245,7 +245,8 @@ compare_speakers <- function(audio_files,
   results_df$speaker <- speaker_labels
   
   # Reorder columns
-  results_df <- results_df[, c("speaker", setdiff(names(results_df), "speaker"))]
+  results_df <- results_df[, c("speaker",
+    setdiff(names(results_df), "speaker"))]
   
   results_df
 }
@@ -261,7 +262,8 @@ plot_voice_profile <- function(audio_file,
   sound <- read_sound(audio_file)
   
   # Extract all measures
-  pitch <- extract_pitch(sound, pitch_floor = pitch_floor, pitch_ceiling = pitch_ceiling)
+  pitch <- extract_pitch(sound, pitch_floor = pitch_floor,
+    pitch_ceiling = pitch_ceiling)
   formants <- extract_formants(sound, max_formant = max_formant, n_formants = 5)
   intensity <- extract_intensity(sound, minimum_pitch = pitch_floor)
   
@@ -309,7 +311,8 @@ plot_voice_profile <- function(audio_file,
   
   par(mfrow = c(1, 1))  # Reset
   
-  invisible(list(pitch = pitch_df, formants = formant_df, intensity = intensity_df))
+  invisible(
+    list(pitch = pitch_df, formants = formant_df, intensity = intensity_df))
 }
 
 # Usage Examples ==============================================================
@@ -317,13 +320,15 @@ plot_voice_profile <- function(audio_file,
 # if (FALSE) {  # Don't run automatically
 #   
 #   # Basic voice quality
-#   quality <- basic_voice_quality("speech.wav", pitch_floor = 75, pitch_ceiling = 600)
+# quality <- basic_voice_quality("speech.wav", pitch_floor = 75, pitch_ceiling =
+#  600)
 #   print(quality)
 #   
 #   # Compare multiple speakers
 #   files <- c("speaker1.wav", "speaker2.wav", "speaker3.wav")
 #   labels <- c("Speaker A", "Speaker B", "Speaker C")
-#   comparison <- compare_speakers(files, labels, pitch_floor = 75, pitch_ceiling = 600)
+# comparison <- compare_speakers(files, labels, pitch_floor = 75, pitch_ceiling
+#  = 600)
 #   print(comparison)
 #   
 #   # Voice profile visualization

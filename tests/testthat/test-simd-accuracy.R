@@ -46,14 +46,16 @@ test_that("SIMD mono conversion is accurate for stereo", {
   expected_mono <- (ch1_samples + ch2_samples) / 2
   
   # Skip if method not available  
-  skip_if(is.null(stereo$convert_to_mono), "Sound$convert_to_mono not available")
+  skip_if(is.null(stereo$convert_to_mono),
+    "Sound$convert_to_mono not available")
   
   # Convert to mono
   mono <- stereo$convert_to_mono()
   
   # Validate
   expect_equal(mono$n_channels, 1, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(mono$n_samples, stereo$n_samples, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(mono$n_samples, stereo$n_samples,
+    tolerance = sqrt(.Machine$double.eps))
   
   # Check samples match expected (within floating point tolerance)
   mono_samples <- mono$get_samples(1)
@@ -77,17 +79,20 @@ test_that("SIMD mono conversion is accurate for multi-channel", {
   )
   
   # Expected mono result
-  expected_mono <- (samples[[1]] + samples[[2]] + samples[[3]] + samples[[4]]) / 4
+  expected_mono <- (
+    samples[[1]] + samples[[2]] + samples[[3]] + samples[[4]]) / 4
   
   # Skip if method not available
-  skip_if(is.null(multichannel$convert_to_mono), "Sound$convert_to_mono not available")
+  skip_if(is.null(multichannel$convert_to_mono),
+    "Sound$convert_to_mono not available")
   
   # Convert to mono
   mono <- multichannel$convert_to_mono()
   
   # Validate
   expect_equal(mono$n_channels, 1, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(mono$n_samples, multichannel$n_samples, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(mono$n_samples, multichannel$n_samples,
+    tolerance = sqrt(.Machine$double.eps))
   
   # Check samples match expected
   mono_samples <- mono$get_samples(1)

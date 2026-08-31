@@ -15,9 +15,12 @@
 #'   \item Convex hull computation
 #' }
 #'
-#' @param x Numeric vector of x coordinates. Required unless \code{.xptr} is given.
-#' @param y Numeric vector of y coordinates. Required unless \code{.xptr} is given.
-#' @param .xptr Not for direct use. External pointer to the underlying C++ Polygon
+#' @param x Numeric vector of x coordinates. Required unless \code{.xptr} is
+#  given.
+#' @param y Numeric vector of y coordinates. Required unless \code{.xptr} is
+#  given.
+#' @param .xptr Not for direct use. External pointer to the underlying C++
+#  Polygon
 #'   object; set internally when a method returns a new Polygon.
 #' @return A Polygon object with methods for geometry operations.
 #'
@@ -127,7 +130,8 @@ lockEnvironment(.polygon_methods, bindings = TRUE)
 Polygon <- function(x, y, .xptr = NULL) {
   poly_mod <- get_module("polygon_module")
   if (is.null(poly_mod)) {
-    stop("polygon_module not available - package installation may be incomplete")
+    stop(
+      "polygon_module not available - package installation may be incomplete")
   }
 
   if (!is.null(.xptr)) {

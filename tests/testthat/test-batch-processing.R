@@ -39,7 +39,8 @@ test_that("create_file_list respects full_names = FALSE", {
 
 # --- pair_sound_textgrid -----------------------------------------------------
 
-test_that("pair_sound_textgrid matches by basename and requires both by default", {
+test_that(
+  "pair_sound_textgrid matches by basename and requires both by default", {
   dir <- make_wav_dir(2, with_textgrid = TRUE)
   pairs <- pair_sound_textgrid(sound_dir = dir)
 
@@ -49,7 +50,8 @@ test_that("pair_sound_textgrid matches by basename and requires both by default"
   expect_false(anyNA(pairs$textgrid_file))
 })
 
-test_that("pair_sound_textgrid with require_both = FALSE keeps unmatched sound files", {
+test_that(
+  "pair_sound_textgrid with require_both = FALSE keeps unmatched sound files", {
   dir <- make_wav_dir(2, with_textgrid = FALSE)
   pairs <- pair_sound_textgrid(sound_dir = dir, require_both = FALSE)
 
@@ -59,7 +61,8 @@ test_that("pair_sound_textgrid with require_both = FALSE keeps unmatched sound f
 
 test_that("pair_sound_textgrid rejects an unknown matching strategy", {
   dir <- make_wav_dir(1, with_textgrid = TRUE)
-  expect_error(pair_sound_textgrid(sound_dir = dir, by = "nonsense"), "Unknown matching strategy")
+  expect_error(pair_sound_textgrid(sound_dir = dir, by = "nonsense"),
+    "Unknown matching strategy")
 })
 
 # --- pair_files (data.table-backed) -----------------------------------------
@@ -79,7 +82,8 @@ test_that("pair_files rejects non-basename matching strategies", {
 
 # --- batch_process -----------------------------------------------------------
 
-test_that("batch_process applies func to every matching file and tags file/path", {
+test_that(
+  "batch_process applies func to every matching file and tags file/path", {
   dir <- make_wav_dir(2)
   results <- batch_process(
     directory = dir, pattern = "\\.wav$", progress = FALSE,
@@ -92,16 +96,19 @@ test_that("batch_process applies func to every matching file and tags file/path"
   expect_true(all(c("file", "path") %in% names(results)))
 })
 
-test_that("batch_process warns and returns an empty data frame when nothing matches", {
+test_that(
+  "batch_process warns and returns an empty data frame when nothing matches", {
   dir <- tempfile("pladdrr_empty_")
   dir.create(dir)
-  expect_warning(result <- batch_process(dir, pattern = "\\.wav$", progress = FALSE,
+  expect_warning(
+    result <- batch_process(dir, pattern = "\\.wav$", progress = FALSE,
                                           func = function(sound) list()),
                   "No files found")
   expect_identical(nrow(result), 0L)
 })
 
-test_that("batch_process captures per-file errors instead of aborting the batch", {
+test_that(
+  "batch_process captures per-file errors instead of aborting the batch", {
   dir <- make_wav_dir(2)
   expect_warning(
     results <- batch_process(
@@ -117,8 +124,10 @@ test_that("batch_process captures per-file errors instead of aborting the batch"
 
 # --- extract_measurements_custom --------------------------------------------
 
-test_that("extract_measurements_custom returns one row per interval with measures applied", {
-  sound <- Sound$create_tone(frequency = 150, duration = 0.6, sampling_rate = 16000)
+test_that(
+  "extract_measurements_custom returns one row per interval with measures applied", {
+  sound <- Sound$create_tone(frequency = 150, duration = 0.6,
+    sampling_rate = 16000)
   tg <- textgrid_create(0, 0.6, "phones")
   tg$insert_boundary("phones", 0.3)
   tg$set_interval_text("phones", 1, "a")
@@ -133,12 +142,14 @@ test_that("extract_measurements_custom returns one row per interval with measure
 
   expect_s3_class(measurements, "data.frame")
   expect_identical(nrow(measurements), 2L)
-  expect_equal(measurements$label, c("a", "e"), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(measurements$label, c("a", "e"),
+    tolerance = sqrt(.Machine$double.eps))
   expect_true(all(abs(measurements$dur_check - 0.3) < 1e-6))
 })
 
 test_that("extract_measurements_custom applies interval_filter", {
-  sound <- Sound$create_tone(frequency = 150, duration = 0.6, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 150, duration = 0.6,
+    sampling_rate = 16000)
   tg <- textgrid_create(0, 0.6, "phones")
   tg$insert_boundary("phones", 0.3)
   tg$set_interval_text("phones", 1, "a")
@@ -169,8 +180,10 @@ test_that("extract_measurements_custom loads sound/textgrid from file paths", {
 
 # --- extract_measurements (batch C++ path) ----------------------------------
 
-test_that("extract_measurements returns pitch/formant/intensity columns at interval midpoints", {
-  sound <- Sound$create_tone(frequency = 150, duration = 0.6, sampling_rate = 16000)
+test_that(
+  "extract_measurements returns pitch/formant/intensity columns at interval midpoints", {
+  sound <- Sound$create_tone(frequency = 150, duration = 0.6,
+    sampling_rate = 16000)
   tg <- textgrid_create(0, 0.6, "phones")
   tg$insert_boundary("phones", 0.3)
   tg$set_interval_text("phones", 1, "a")
@@ -189,7 +202,8 @@ test_that("extract_measurements returns pitch/formant/intensity columns at inter
 })
 
 test_that("extract_measurements returns NULL when no intervals have text", {
-  sound <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 150, duration = 0.3,
+    sampling_rate = 16000)
   tg <- textgrid_create(0, 0.3, "phones")
 
   measurements <- extract_measurements(sound = sound, textgrid = tg, tier = 1,
@@ -205,14 +219,16 @@ test_that("aggregate_measurements computes mean/sd/n grouped by label", {
     f0 = c(150, 155, 210, 205)
   )
 
-  agg <- aggregate_measurements(measurements, by = "label", stats = c("mean", "sd", "n"))
+  agg <- aggregate_measurements(measurements, by = "label",
+    stats = c("mean", "sd", "n"))
 
   expect_s3_class(agg, "data.frame")
   expect_identical(nrow(agg), 2L)
   expect_true(all(c("f0_mean", "f0_sd", "n") %in% names(agg)))
 
   a_row <- agg[agg$label == "a", ]
-  expect_equal(a_row$f0_mean, mean(c(150, 155)), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(a_row$f0_mean, mean(c(150, 155)),
+    tolerance = sqrt(.Machine$double.eps))
   expect_equal(a_row$n, 2, tolerance = sqrt(.Machine$double.eps))
 })
 
@@ -221,7 +237,8 @@ test_that("aggregate_measurements errors on an unknown grouping column", {
   expect_error(aggregate_measurements(measurements, by = "bogus"), "not found")
 })
 
-test_that("pair_sound_textgrid matches by basename, full, and custom function", {
+test_that(
+  "pair_sound_textgrid matches by basename, full, and custom function", {
   sd <- tempfile("snd"); td <- tempfile("tg")
   dir.create(sd); dir.create(td)
   on.exit(unlink(c(sd, td), recursive = TRUE), add = TRUE)
@@ -238,6 +255,7 @@ test_that("pair_sound_textgrid matches by basename, full, and custom function", 
   p3 <- pair_sound_textgrid(sd, td, by = "full")
   expect_s3_class(p3, "data.frame")
 
-  p4 <- pair_sound_textgrid(sd, td, by = function(s, t) data.frame(sound_file = s))
+  p4 <- pair_sound_textgrid(sd, td,
+    by = function(s, t) data.frame(sound_file = s))
   expect_s3_class(p4, "data.frame")
 })

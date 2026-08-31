@@ -41,7 +41,8 @@ create_sound <- function(values, sampling_rate = 44100, start_time = 0.0) {
 #' **DEPRECATED:** This S3 function is deprecated. Use the R6 interface instead:
 #' \code{Sound$new(file_path)}
 #'
-#' @param file_path Path to audio file (WAV/AIFF/FLAC/MP3 via Praat, others via av fallback)
+#' @param file_path Path to audio file (WAV/AIFF/FLAC/MP3 via Praat, others via
+#  av fallback)
 #' @param channel Channel to read (0 = left, 1 = right) - ignored in R6
 #'
 #' @return Sound R6 object
@@ -86,7 +87,8 @@ read_sound <- function(file_path, channel = 0) {
 #' @inheritParams pladdrr_shared_sound_r6 sound
 #' @return Duration in seconds
 #' @examples
-#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+#  16000)
 #' suppressWarnings(get_duration(sound))
 #' @export
 get_duration <- function(sound) {
@@ -101,7 +103,8 @@ get_duration <- function(sound) {
 #' @inheritParams pladdrr_shared_sound_r6 sound
 #' @return Sampling rate in Hz
 #' @examples
-#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+#  16000)
 #' get_sampling_rate(sound)
 #' @export
 get_sampling_rate <- function(sound) {
@@ -116,7 +119,8 @@ get_sampling_rate <- function(sound) {
 #' @inheritParams pladdrr_shared_sound_r6 sound
 #' @return Number of channels
 #' @examples
-#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+#  16000)
 #' suppressWarnings(get_n_channels(sound))
 #' @export
 get_n_channels <- function(sound) {
@@ -131,7 +135,8 @@ get_n_channels <- function(sound) {
 #' @inheritParams pladdrr_shared_sound_r6 sound
 #' @return Number of samples
 #' @examples
-#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+#  16000)
 #' suppressWarnings(get_n_samples(sound))
 #' @export
 get_n_samples <- function(sound) {

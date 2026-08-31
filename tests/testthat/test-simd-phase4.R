@@ -134,7 +134,8 @@ test_that("SIMD bandwidth estimation works", {
   # Voiced signal, not silence: on silence every bandwidth query is NA and
   # the old conditional assertions never ran, silently producing an
   # "empty test" skip.
-  sound <- Sound$create_tone(duration = 0.2, sampling_rate = 22050, frequency = 200)
+  sound <- Sound$create_tone(duration = 0.2, sampling_rate = 22050,
+    frequency = 200)
   formant <- sound$to_formant_burg()
   
   # Query bandwidth
@@ -180,9 +181,12 @@ test_that("SIMD FFT handles power-of-2 sizes efficiently", {
   skip_if_not(simd_info()$available, "SIMD not available")
   
   # Create sounds with power-of-2 sample counts
-  sound_256 <- Sound$create_tone(frequency = 440, duration = 256/16000, sampling_rate = 16000)
-  sound_512 <- Sound$create_tone(frequency = 440, duration = 512/16000, sampling_rate = 16000)
-  sound_1024 <- Sound$create_tone(frequency = 440, duration = 1024/16000, sampling_rate = 16000)
+  sound_256 <- Sound$create_tone(frequency = 440, duration = 256/16000,
+    sampling_rate = 16000)
+  sound_512 <- Sound$create_tone(frequency = 440, duration = 512/16000,
+    sampling_rate = 16000)
+  sound_1024 <- Sound$create_tone(frequency = 440, duration = 1024/16000,
+    sampling_rate = 16000)
   
   # All should work efficiently
   spectrum_256 <- sound_256$to_spectrum()
@@ -218,7 +222,8 @@ test_that("SIMD formant extraction handles edge cases", {
   expect_s3_class(formant_short, "Formant")
   
   # Silence
-  sound_silence <- Sound$from_values(rep(0, round(0.1 * 16000)), sampling_rate = 16000)
+  sound_silence <- Sound$from_values(rep(0, round(0.1 * 16000)),
+    sampling_rate = 16000)
   formant_silence <- sound_silence$to_formant_burg()
   expect_s3_class(formant_silence, "Formant")
   
@@ -234,7 +239,8 @@ test_that("SIMD operations maintain numerical stability", {
   # Test with very quiet sound (numerical stability test)
   # Make a very quiet signal via the generator's amplitude (there is no
   # in-place scalar multiply on Sound).
-  sound_quiet <- generate_sine_wave(440, 0.1, sampling_rate = 16000, amplitude = 0.001)
+  sound_quiet <- generate_sine_wave(440, 0.1, sampling_rate = 16000,
+    amplitude = 0.001)
   
   spectrum <- sound_quiet$to_spectrum()
   expect_s3_class(spectrum, "Spectrum")

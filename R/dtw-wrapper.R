@@ -75,7 +75,8 @@
       if (!inherits(textgrid, "TextGrid")) {
         stop("textgrid must be a TextGrid object")
       }
-      warped_ptr <- cpp_obj$warp_textgrid_ptr(textgrid$.xptr, as.numeric(precision))
+      warped_ptr <- cpp_obj$warp_textgrid_ptr(textgrid$.xptr,
+        as.numeric(precision))
       TextGrid(.xptr = warped_ptr)
     }
   },
@@ -124,7 +125,8 @@
 #'
 #' DTW objects are created by aligning two acoustic objects:
 #' \itemize{
-#'   \item \code{sounds_to_dtw(reference, candidate)} - align two sounds (most common)
+#' \item \code{sounds_to_dtw(reference, candidate)} - align two sounds (most
+#  common)
 #'   \item \code{mfccs_to_dtw(mfcc1, mfcc2)} - align MFCCs (speech recognition)
 #'   \item \code{spectrograms_to_dtw(spec1, spec2)} - align spectrograms
 #'   \item \code{pitches_to_dtw(pitch1, pitch2)} - align pitch contours
@@ -133,8 +135,10 @@
 #' @section Time mapping:
 #'
 #' \itemize{
-#'   \item \code{$get_y_time_from_x_time(tx)} - map candidate time to reference time
-#'   \item \code{$get_x_time_from_y_time(ty)} - map reference time to candidate time
+#' \item \code{$get_y_time_from_x_time(tx)} - map candidate time to reference
+#  time
+#' \item \code{$get_x_time_from_y_time(ty)} - map reference time to candidate
+#  time
 #'   \item \code{$map_times(times, direction)} - vectorized time mapping
 #' }
 #'
@@ -185,12 +189,14 @@
 #'
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #'   DTW object; set internally when wrapping an existing alignment.
-#' @seealso \code{\link{Sound}}, \code{\link{Pitch}}, \code{\link{Spectrogram}}, \code{\link{MFCC}}
+#' @seealso \code{\link{Sound}}, \code{\link{Pitch}}, \code{\link{Spectrogram}},
+#  \code{\link{MFCC}}
 #' @export
 
 DTW <- function(.xptr = NULL) {
   if (is.null(.xptr)) {
-    stop("DTW objects must be created via sounds_to_dtw(), mfccs_to_dtw(), etc.")
+    stop(
+      "DTW objects must be created via sounds_to_dtw(), mfccs_to_dtw(), etc.")
   }
 
   dtw_mod <- get_module("dtw_module")
@@ -234,8 +240,10 @@ DTW <- function(.xptr = NULL) {
 #' @return A DTW object
 #'
 #' @examples
-#' ref <- Sound$create_tone(frequency = 200, duration = 0.3, sampling_rate = 16000)
-#' test <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+#' ref <- Sound$create_tone(frequency = 200, duration = 0.3, sampling_rate =
+#  16000)
+#' test <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate =
+#  16000)
 #' dtw <- sounds_to_dtw(ref, test)
 #' print(dtw$get_weighted_distance())
 #'
@@ -266,14 +274,19 @@ sounds_to_dtw <- function(reference, candidate,
 #' @param mfcc2 Second MFCC object (reference, y-axis)
 #' @param coefficient_weight Weight for cepstral coefficients (default: 1.0)
 #' @param log_energy_weight Weight for log energy (c0) (default: 0.0)
-#' @param coefficient_regression_weight Weight for coefficient regression (default: 0.0)
-#' @param log_energy_regression_weight Weight for energy regression (default: 0.0)
-#' @param regression_window_length Window for regression calculation (default: 0.0)
+#' @param coefficient_regression_weight Weight for coefficient regression
+#  (default: 0.0)
+#' @param log_energy_regression_weight Weight for energy regression (default:
+#  0.0)
+#' @param regression_window_length Window for regression calculation (default:
+#  0.0)
 #' @return A DTW object
 #'
 #' @examples
-#' s1 <- Sound$create_tone(frequency = 200, duration = 0.3, sampling_rate = 16000)
-#' s2 <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+#' s1 <- Sound$create_tone(frequency = 200, duration = 0.3, sampling_rate =
+#  16000)
+#' s2 <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate =
+#  16000)
 #' dtw <- mfccs_to_dtw(s1$to_mfcc(), s2$to_mfcc())
 #'
 #' @export
@@ -309,8 +322,10 @@ mfccs_to_dtw <- function(mfcc1, mfcc2,
 #' @return A DTW object
 #'
 #' @examples
-#' s1 <- Sound$create_tone(frequency = 200, duration = 0.3, sampling_rate = 16000)
-#' s2 <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+#' s1 <- Sound$create_tone(frequency = 200, duration = 0.3, sampling_rate =
+#  16000)
+#' s2 <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate =
+#  16000)
 #' dtw <- spectrograms_to_dtw(s1$to_spectrogram(), s2$to_spectrogram())
 #'
 #' @export
@@ -319,8 +334,12 @@ spectrograms_to_dtw <- function(spectrogram1, spectrogram2,
                                 match_end = TRUE,
                                 slope = 1,
                                 metric = 2.0) {
-  if (!inherits(spectrogram1, "Spectrogram")) stop("spectrogram1 must be a Spectrogram")
-  if (!inherits(spectrogram2, "Spectrogram")) stop("spectrogram2 must be a Spectrogram")
+  if (
+    !inherits(spectrogram1,
+      "Spectrogram")) stop("spectrogram1 must be a Spectrogram")
+  if (
+    !inherits(spectrogram2,
+      "Spectrogram")) stop("spectrogram2 must be a Spectrogram")
 
   dtw_mod <- get_module("dtw_module")
   dtw_ptr <- dtw_mod$Spectrograms_to_DTW(

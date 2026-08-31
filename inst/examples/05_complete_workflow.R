@@ -132,7 +132,10 @@ analyze_speaker <- function(audio_file,
     dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
     
     # 4-panel plot
-    pdf(file.path(output_dir, paste0(tools::file_path_sans_ext(basename(audio_file)), "_analysis.pdf")),
+    pdf(
+      file.path(output_dir,
+        paste0(tools::file_path_sans_ext(basename(audio_file)),
+          "_analysis.pdf")),
         width = 10, height = 8)
   } else {
     # Display plots
@@ -182,7 +185,9 @@ analyze_speaker <- function(audio_file,
   if (!is.null(output_dir)) {
     dev.off()
     cat("  Saved plot to:", file.path(output_dir, 
-                                      paste0(tools::file_path_sans_ext(basename(audio_file)), 
+                                      paste0(
+                                        tools::file_path_sans_ext(
+                                          basename(audio_file)), 
                                              "_analysis.pdf")), "\n")
   }
   
@@ -252,7 +257,8 @@ batch_analyze_speakers <- function(audio_files,
   all_summaries <- list()
   
   for (i in seq_along(audio_files)) {
-    cat("\n[", i, "/", length(audio_files), "] ", audio_files[i], "\n", sep = "")
+    cat("\n[", i, "/", length(audio_files), "] ", audio_files[i], "\n",
+      sep = "")
     
     # Create speaker-specific output directory
     speaker_dir <- file.path(output_dir, speaker_labels[i])
@@ -273,7 +279,8 @@ batch_analyze_speakers <- function(audio_files,
   
   # Reorder columns
   combined_summary <- combined_summary[, c("speaker_label", 
-                                          setdiff(names(combined_summary), "speaker_label"))]
+                                          setdiff(names(combined_summary),
+                                            "speaker_label"))]
   
   # Save combined summary
   write.csv(combined_summary,
@@ -331,7 +338,8 @@ analyze_vowel_space <- function(audio_files,
     
     # Get F1 and F2 at each vowel timepoint
     vowel_times <- vowel_times_list[[i]]
-    vowel_labels <- if (!is.null(vowel_labels_list)) vowel_labels_list[[i]] else NULL
+    vowel_labels <- if (
+      !is.null(vowel_labels_list)) vowel_labels_list[[i]] else NULL
     
     f1_values <- vapply(vowel_times, function(t) {
       get_formant_at_time(formants, formant_number = 1, time = t)

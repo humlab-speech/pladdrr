@@ -9,22 +9,26 @@
 #' @section Query methods:
 #' \itemize{
 #'   \item \code{get_loudness()} - total loudness in sones
-#'   \item \code{get_value_at_frequency(freq_bark)} - excitation level at a given Bark frequency
+#' \item \code{get_value_at_frequency(freq_bark)} - excitation level at a given
+#  Bark frequency
 #'   \item \code{get_distance(other)} - distance to another Excitation object
 #' }
 #'
 #' @section Conversion:
 #' \itemize{
-#'   \item \code{to_formant(max_formants = 20)} - estimate formants from the excitation pattern
+#' \item \code{to_formant(max_formants = 20)} - estimate formants from the
+#  excitation pattern
 #' }
 #'
 #' @section Export:
 #' \itemize{
-#'   \item \code{as_vector()} - export as a numeric vector, one value per Bark bin
-#'   \item \code{as_data_frame()} - export as a data.frame of frequency (Bark) and excitation
+#' \item \code{as_vector()} - export as a numeric vector, one value per Bark bin
+#' \item \code{as_data_frame()} - export as a data.frame of frequency (Bark) and
+#  excitation
 #' }
 #'
-#' @param .xptr Not for direct use. External pointer to the underlying C++ Excitation
+#' @param .xptr Not for direct use. External pointer to the underlying C++
+#  Excitation
 #'   object; set internally when a method returns a new Excitation.
 #' @return An Excitation object.
 #'
@@ -109,7 +113,8 @@ lockEnvironment(.excitation_methods, bindings = TRUE)
 #' @export
 Excitation <- function(.xptr) {
   if (missing(.xptr) || is.null(.xptr)) {
-    stop("Excitation objects should be created via Spectrum$to_excitation() or Cochleagram$to_excitation()")
+    stop(
+      "Excitation objects should be created via Spectrum$to_excitation() or Cochleagram$to_excitation()")
   }
   
   exc_mod <- get_module("excitation_module")

@@ -3,7 +3,8 @@
 # Pitch R6 getters, the unit-code helper, and the analysis methods.
 
 pitch_fixture <- function() {
-  sound_fixture <- function() Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+  sound_fixture <- function() Sound$create_tone(frequency = 220,
+    duration = 0.3, sampling_rate = 16000)
   sound_fixture()$to_pitch()
 }
 
@@ -22,14 +23,19 @@ test_that("Pitch time/duration/geometry getters", {
   p <- pitch_fixture()
   expect_true(p$is_valid())
   expect_gte(p$get_duration(), 0)
-  expect_equal(p$get_total_duration(), p$get_duration(), tolerance = sqrt(.Machine$double.eps))
-  expect_equal(p$duration(), p$get_duration(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(p$get_total_duration(), p$get_duration(),
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(p$duration(), p$get_duration(),
+    tolerance = sqrt(.Machine$double.eps))
   expect_lte(p$xmin(), p$xmax())
-  expect_equal(p$get_start_time(), p$xmin(), tolerance = sqrt(.Machine$double.eps))
-  expect_equal(p$get_end_time(), p$xmax(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(p$get_start_time(), p$xmin(),
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(p$get_end_time(), p$xmax(),
+    tolerance = sqrt(.Machine$double.eps))
   expect_gte(p$nx(), 1)
   expect_gt(p$dx(), 0)
-  expect_equal(p$get_number_of_frames(), p$nx(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(p$get_number_of_frames(), p$nx(),
+    tolerance = sqrt(.Machine$double.eps))
   expect_gte(p$get_time_step(), 0)
 })
 

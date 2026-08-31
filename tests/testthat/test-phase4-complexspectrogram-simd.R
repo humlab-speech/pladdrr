@@ -19,7 +19,8 @@ if (!requireNamespace("pladdrr", quietly = TRUE)) {
 
 test_that("Sound_to_ComplexSpectrogram works", {
     # Create test sound
-    sound <- Sound$create_tone(duration = 1.0, sampling_rate = 22050, frequency = 200)
+    sound <- Sound$create_tone(duration = 1.0, sampling_rate = 22050,
+      frequency = 200)
 
     # Convert to ComplexSpectrogram
     cs <- sound$to_complex_spectrogram()
@@ -30,7 +31,8 @@ test_that("Sound_to_ComplexSpectrogram works", {
 })
 
 test_that("ComplexSpectrogram works with different window lengths", {
-    sound <- Sound$create_tone(duration = 1.0, sampling_rate = 22050, frequency = 200)
+    sound <- Sound$create_tone(duration = 1.0, sampling_rate = 22050,
+      frequency = 200)
 
     # Test different window lengths
     cs_short <- sound$to_complex_spectrogram(window_length = 0.020)
@@ -49,7 +51,8 @@ test_that("ComplexSpectrogram works with various signal lengths", {
     durations <- c(0.25, 0.5, 0.75, 1.0)
 
     for (dur in durations) {
-        sound <- Sound$create_tone(duration = dur, sampling_rate = 22050, frequency = 200)
+        sound <- Sound$create_tone(duration = dur, sampling_rate = 22050,
+          frequency = 200)
 
         # Should not error
         cs <- tryCatch(
@@ -66,7 +69,8 @@ test_that("ComplexSpectrogram works with various signal lengths", {
 
 test_that("ComplexSpectrogram to Sound roundtrip", {
     # Create test sound
-    sound <- Sound$create_tone(duration = 0.5, sampling_rate = 22050, frequency = 200)
+    sound <- Sound$create_tone(duration = 0.5, sampling_rate = 22050,
+      frequency = 200)
 
     # Convert to ComplexSpectrogram
     cs <- sound$to_complex_spectrogram()
@@ -80,7 +84,8 @@ test_that("ComplexSpectrogram to Sound roundtrip", {
 })
 
 test_that("ComplexSpectrogram to Spectrum conversion", {
-    sound <- Sound$create_tone(duration = 0.5, sampling_rate = 22050, frequency = 200)
+    sound <- Sound$create_tone(duration = 0.5, sampling_rate = 22050,
+      frequency = 200)
 
     cs <- sound$to_complex_spectrogram()
 
@@ -93,7 +98,8 @@ test_that("ComplexSpectrogram to Spectrum conversion", {
 })
 
 test_that("ComplexSpectrogram amplitude and phase retrieval", {
-    sound <- Sound$create_tone(duration = 0.5, sampling_rate = 22050, frequency = 200)
+    sound <- Sound$create_tone(duration = 0.5, sampling_rate = 22050,
+      frequency = 200)
 
     cs <- sound$to_complex_spectrogram()
 

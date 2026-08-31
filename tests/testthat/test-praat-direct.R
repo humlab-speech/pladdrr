@@ -5,18 +5,22 @@ tone_sound <- function(freq = 150, dur = 0.5, sr = 16000) {
   Sound$create_tone(frequency = freq, duration = dur, sampling_rate = sr)
 }
 
-test_that("get_pitch_stats_direct returns full stats and accepts R6 or xptr input", {
+test_that(
+  "get_pitch_stats_direct returns full stats and accepts R6 or xptr input", {
   sound <- tone_sound()
   pitch <- sound$to_pitch_cc()
 
   stats <- get_pitch_stats_direct(pitch)
-  expect_named(stats, c("min", "max", "mean", "stdev", "median", "q25", "q75", "count_voiced"))
+  expect_named(stats,
+    c("min", "max", "mean", "stdev", "median", "q25", "q75", "count_voiced"))
   expect_gt(stats$count_voiced, 0)
 
   stats_xptr <- get_pitch_stats_direct(pitch$.xptr)
-  expect_equal(stats_xptr$mean, stats$mean, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(stats_xptr$mean, stats$mean,
+    tolerance = sqrt(.Machine$double.eps))
 
-  expect_error(get_pitch_stats_direct(list()), "Pitch object or external pointer")
+  expect_error(get_pitch_stats_direct(list()),
+    "Pitch object or external pointer")
 })
 
 test_that("get_formants_direct returns F1-F4 and accepts R6 or xptr input", {
@@ -29,7 +33,8 @@ test_that("get_formants_direct returns F1-F4 and accepts R6 or xptr input", {
   f_xptr <- get_formants_direct(formant$.xptr, time = 0.25)
   expect_equal(f_xptr, f, tolerance = sqrt(.Machine$double.eps))
 
-  expect_error(get_formants_direct(list(), time = 0.25), "Formant object or external pointer")
+  expect_error(get_formants_direct(list(), time = 0.25),
+    "Formant object or external pointer")
 })
 
 test_that("to_pitch_direct returns a usable Pitch xptr", {
@@ -46,7 +51,8 @@ test_that("to_pitch_direct returns a usable Pitch xptr", {
   expect_error(to_pitch_direct(list()), "Sound object or external pointer")
 })
 
-test_that("to_pitch_ac_direct and to_pitch_cc_direct accept full voicing parameters", {
+test_that(
+  "to_pitch_ac_direct and to_pitch_cc_direct accept full voicing parameters", {
   sound <- tone_sound()
 
   ptr_ac <- to_pitch_ac_direct(sound, pitch_floor = 75, pitch_ceiling = 600,
@@ -58,11 +64,14 @@ test_that("to_pitch_ac_direct and to_pitch_cc_direct accept full voicing paramet
   expect_gt(get_pitch_mean_direct(ptr_cc), 0)
 })
 
-test_that("to_formant_direct/to_intensity_direct/to_harmonicity_direct return usable xptrs", {
+test_that(
+  "to_formant_direct/to_intensity_direct/to_harmonicity_direct return usable xptrs", {
   sound <- tone_sound(freq = 220)
 
   fptr <- to_formant_direct(sound)
-  expect_true(get_formant_value_direct(fptr, 1, 0.25) >= 0 || is.na(get_formant_value_direct(fptr, 1, 0.25)))
+  expect_true(
+    get_formant_value_direct(fptr, 1,
+      0.25) >= 0 || is.na(get_formant_value_direct(fptr, 1, 0.25)))
 
   iptr <- to_intensity_direct(sound)
   expect_gt(get_intensity_value_direct(iptr, 0.25), 0)
@@ -71,7 +80,8 @@ test_that("to_formant_direct/to_intensity_direct/to_harmonicity_direct return us
   expect_type(hptr, "externalptr")
 })
 
-test_that("get_pitch_value_direct/get_pitch_quantile_direct/get_pitch_mean_direct/get_pitch_stdev_direct agree with R6",
+test_that(
+  "get_pitch_value_direct/get_pitch_quantile_direct/get_pitch_mean_direct/get_pitch_stdev_direct agree with R6",
   {
   sound <- tone_sound()
   pitch <- sound$to_pitch_cc()
@@ -101,11 +111,13 @@ test_that("to_spectrum_direct and to_ltas_direct produce usable results", {
   expect_s3_class(ltas, "Ltas")
 })
 
-test_that("to_point_process_direct and to_point_process_from_sound_and_pitch produce usable PointProcess pointers", {
+test_that(
+  "to_point_process_direct and to_point_process_from_sound_and_pitch produce usable PointProcess pointers", {
   sound <- tone_sound(dur = 1.0)
   pitch <- sound$to_pitch()
 
-  pp_ptr1 <- to_point_process_direct(sound, pitch_floor = 75, pitch_ceiling = 600)
+  pp_ptr1 <- to_point_process_direct(sound, pitch_floor = 75,
+    pitch_ceiling = 600)
   expect_type(pp_ptr1, "externalptr")
   expect_gt(pp_get_mean_period_direct(pp_ptr1), 0)
 

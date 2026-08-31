@@ -9,7 +9,8 @@
 library(testthat)
 library(pladdrr)
 
-test_that("plot_powercepstrogram uses the cepstrogram's real time range, not a hardcoded placeholder", {
+test_that(
+  "plot_powercepstrogram uses the cepstrogram's real time range, not a hardcoded placeholder", {
   sound <- generate_sine_wave(220, 0.3, sampling_rate = 16000)
   cepstrogram <- sound$to_powercepstrogram(pitch_floor = 60, time_step = 0.002)
 
@@ -31,12 +32,15 @@ test_that("plot_powercepstrogram is not quefrency/time-transposed", {
   # Cross-check against the known-correct accessor directly.
   reference <- as.data.frame(cepstrogram)
   reference <- reference[reference$quefrency >= 0 & reference$quefrency <= 0.05, ]
-  expect_equal(nrow(p$data), nrow(reference), tolerance = sqrt(.Machine$double.eps))
-  expect_equal(sort(unique(p$data$time)), sort(unique(reference$time)), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(nrow(p$data), nrow(reference),
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(sort(unique(p$data$time)), sort(unique(reference$time)),
+    tolerance = sqrt(.Machine$double.eps))
 
   p_ordered <- p$data[order(p$data$time, p$data$quefrency), ]
   ref_ordered <- reference[order(reference$time, reference$quefrency), ]
-  expect_equal(p_ordered$power_db, 10 * log10(pmax(ref_ordered$power, 1e-20)), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(p_ordered$power_db, 10 * log10(pmax(ref_ordered$power, 1e-20)),
+    tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("plot_powercepstrogram converts power to dB", {
@@ -49,7 +53,8 @@ test_that("plot_powercepstrogram converts power to dB", {
   expect_true(all(p$data$power_db > -200 & p$data$power_db < 200))
 })
 
-test_that("plot_cpp_timeseries uses the cepstrogram's real time range, not a hardcoded placeholder", {
+test_that(
+  "plot_cpp_timeseries uses the cepstrogram's real time range, not a hardcoded placeholder", {
   sound <- generate_sine_wave(220, 0.3, sampling_rate = 16000)
   cepstrogram <- sound$to_powercepstrogram(pitch_floor = 60, time_step = 0.002)
 
@@ -71,11 +76,13 @@ test_that("plot_cpp_timeseries drops failed samples as NA, not silent zeros", {
   # keeps its numeric(n_samples) default of 0 for every sample, and the
   # NA-filter downstream never removes them — 5 rows all showing cpp = 0
   # instead of 0 rows.
-  p <- plot_cpp_timeseries(cepstrogram, time_range = c(0, 0.2), qmin = -1, n_samples = 5)
+  p <- plot_cpp_timeseries(cepstrogram, time_range = c(0, 0.2), qmin = -1,
+    n_samples = 5)
   expect_identical(nrow(p$data), 0L)
 })
 
-test_that("plot_powercepstrum uses the cepstrum's real quefrency range, not a hardcoded placeholder", {
+test_that(
+  "plot_powercepstrum uses the cepstrum's real quefrency range, not a hardcoded placeholder", {
   sound <- generate_sine_wave(220, 0.3, sampling_rate = 16000)
   cepstrum <- sound$to_cepstrum()$to_power_cepstrum()
 
@@ -85,7 +92,8 @@ test_that("plot_powercepstrum uses the cepstrum's real quefrency range, not a ha
   expect_gt(max(p$data$quefrency), 0.1)
 })
 
-test_that("plot_powercepstrum converts power to dB, matching the peak marker's own dB scale", {
+test_that(
+  "plot_powercepstrum converts power to dB, matching the peak marker's own dB scale", {
   sound <- generate_sine_wave(220, 0.3, sampling_rate = 16000)
   cepstrum <- sound$to_cepstrum()$to_power_cepstrum()
 
@@ -97,12 +105,14 @@ test_that("plot_powercepstrum converts power to dB, matching the peak marker's o
   expect_true(all(p$data$power_db > -200 & p$data$power_db < 200))
 })
 
-test_that("create_cepstrum_report defaults time_slice to mid-signal, not a 5.0 s placeholder", {
+test_that(
+  "create_cepstrum_report defaults time_slice to mid-signal, not a 5.0 s placeholder", {
   skip_if_not_installed("gridExtra")
   # 0.6 s signal: the old `max_time <- 5.0` placeholder set time_slice = 2.5 s,
   # beyond the cepstrogram's real duration, so get_power_cepstrum_at_time()
   # failed. Mid-signal is 0.3 s, which is valid.
-  sound <- Sound$create_tone(frequency = 150, duration = 0.6, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 150, duration = 0.6,
+    sampling_rate = 16000)
   cepstrogram <- sound$to_powercepstrogram(pitch_floor = 60)
 
   expect_no_error(create_cepstrum_report(cepstrogram))

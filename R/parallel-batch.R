@@ -34,7 +34,8 @@
 #' @param files Character vector. Paths to audio files
 #' @param analysis_func Function. Analysis function to apply to each file.
 #'   Should accept a Sound object and return results.
-#' @param n_cores Integer. Number of CPU cores to use (default: parallel::detectCores() - 1)
+#' @param n_cores Integer. Number of CPU cores to use (default:
+#  parallel::detectCores() - 1)
 #' @param threads_per_worker Integer or `NULL`. C++ threads each worker may use
 #'   for Praat kernels. `NULL` (default) auto-divides cores among workers so
 #'   total concurrency stays near the machine's core count, preventing
@@ -53,7 +54,8 @@
 #' @examples
 #' audio_dir <- tempfile("audio_")
 #' dir.create(audio_dir)
-#' tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+#' tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate =
+#  16000)
 #' tone$save(file.path(audio_dir, "tone1.wav"))
 #' files <- list.files(audio_dir, pattern = "\\.wav$", full.names = TRUE)
 #'
@@ -80,7 +82,8 @@ analyze_files_parallel <- function(files, analysis_func, n_cores = NULL,
   force(analysis_func)
 
   if (!requireNamespace("parallel", quietly = TRUE)) {
-    stop("parallel package required. Install with: install.packages('parallel')")
+    stop(
+      "parallel package required. Install with: install.packages('parallel')")
   }
 
   # Default to n-1 cores
@@ -107,12 +110,16 @@ analyze_files_parallel <- function(files, analysis_func, n_cores = NULL,
   # macOS fork has known issues with R's event loop; PSOCK is safer
   is_macos <- Sys.info()[["sysname"]] == "Darwin"
   if (.Platform$OS.type == "unix" && !is_macos) {
-    results <- parallel::mclapply(files, function(f) .analyze_one_file(f, tpw, analysis_func, ...), mc.cores = n_cores)
+    results <- parallel::mclapply(files,
+      function(f) .analyze_one_file(f, tpw, analysis_func,
+        ...), mc.cores = n_cores)
   } else {
     # Windows: use PSOCK cluster
-    cl <- .make_worker_cluster(n_cores, c("analysis_func", "tpw", ".analyze_one_file"))
+    cl <- .make_worker_cluster(n_cores,
+      c("analysis_func", "tpw", ".analyze_one_file"))
 
-    results <- parallel::parLapply(cl, files, function(f) .analyze_one_file(f, tpw, analysis_func, ...))
+    results <- parallel::parLapply(cl, files,
+      function(f) .analyze_one_file(f, tpw, analysis_func, ...))
   }
 
   results
@@ -189,7 +196,8 @@ process_sounds_parallel <- function(sounds, analysis_func, n_cores = NULL,
     # rebuild the Sound inside each worker.
     sound_data <- lapply(sounds, .sound_to_worker_data)
 
-    cl <- .make_worker_cluster(n_cores, c("analysis_func", "tpw", ".analyze_one_file"))
+    cl <- .make_worker_cluster(n_cores,
+      c("analysis_func", "tpw", ".analyze_one_file"))
     parallel::parLapply(cl, sound_data, function(d) {
       pladdrr_threads(tpw)
       analysis_func(sound_from_values(d$values, d$sr, d$start), ...)
@@ -215,7 +223,8 @@ process_sounds_parallel <- function(sounds, analysis_func, n_cores = NULL,
 #' @examples
 #' audio_dir <- tempfile("audio_")
 #' dir.create(audio_dir)
-#' tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+#' tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate =
+#  16000)
 #' tone$save(file.path(audio_dir, "tone1.wav"))
 #' files <- list.files(audio_dir, pattern = "\\.wav$", full.names = TRUE)
 #'
@@ -250,7 +259,8 @@ extract_pitch_parallel <- function(files, n_cores = NULL,
 #' @examples
 #' audio_dir <- tempfile("audio_")
 #' dir.create(audio_dir)
-#' tone <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+#' tone <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate =
+#  16000)
 #' tone$save(file.path(audio_dir, "tone1.wav"))
 #' files <- list.files(audio_dir, pattern = "\\.wav$", full.names = TRUE)
 #'
@@ -285,7 +295,8 @@ extract_formant_parallel <- function(files, n_cores = NULL,
 #' @examples
 #' audio_dir <- tempfile("audio_")
 #' dir.create(audio_dir)
-#' tone <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+#' tone <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate =
+#  16000)
 #' tone$save(file.path(audio_dir, "tone1.wav"))
 #' files <- list.files(audio_dir, pattern = "\\.wav$", full.names = TRUE)
 #'
@@ -319,7 +330,8 @@ extract_intensity_parallel <- function(files, n_cores = NULL,
 #' \donttest{
 #' audio_dir <- tempfile("audio_")
 #' dir.create(audio_dir)
-#' tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+#' tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate =
+#  16000)
 #' tone$save(file.path(audio_dir, "tone1.wav"))
 #' files <- list.files(audio_dir, pattern = "\\.wav$", full.names = TRUE)
 #'
@@ -372,8 +384,10 @@ benchmark_parallel <- function(files, analysis_func,
 # Serialize a Sound to worker-safe data (raw samples + metadata).
 .sound_to_worker_data <- function(s) {
   nch <- s$get_number_of_channels()
-  values <- t(vapply(seq_len(nch), s$get_values, numeric(s$get_number_of_samples())))
-  list(values = values, sr = s$get_sampling_frequency(), start = s$get_start_time())
+  values <- t(
+    vapply(seq_len(nch), s$get_values, numeric(s$get_number_of_samples())))
+  list(values = values, sr = s$get_sampling_frequency(),
+    start = s$get_start_time())
 }
 
 # Build a PSOCK worker cluster with pladdrr attached and vars exported.

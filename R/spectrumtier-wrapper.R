@@ -1,4 +1,5 @@
-# spectrumtier-wrapper.R - SpectrumTier object using shared dispatch table (pladdrr 5.0.3)
+# spectrumtier-wrapper.R - SpectrumTier object using shared dispatch table
+#  (pladdrr 5.0.3)
 # Architecture: minimal list + $.SpectrumTier S3 dispatch -> shared method env
 
 #' SpectrumTier
@@ -18,7 +19,8 @@
 #'
 #' @section Query methods:
 #' \itemize{
-#'   \item \code{get_lowest_frequency()}, \code{get_highest_frequency()} - the frequency range the peaks were picked from, in Hz
+#' \item \code{get_lowest_frequency()}, \code{get_highest_frequency()} - the
+#  frequency range the peaks were picked from, in Hz
 #'   \item \code{get_number_of_points()} - number of peaks found
 #'   \item \code{get_frequency_from_index(index)} - frequency of one peak
 #'   \item \code{get_value_at_index(index)} - power of one peak, in dB
@@ -26,7 +28,8 @@
 #'
 #' @section Export:
 #' \itemize{
-#'   \item \code{as_data_frame()} - all peaks as a data frame, with \code{frequency} and \code{power_db} columns
+#' \item \code{as_data_frame()} - all peaks as a data frame, with
+#  \code{frequency} and \code{power_db} columns
 #'   \item \code{as_matrix()} - the same data as a plain matrix
 #'   \item \code{save(path)} - write to a Praat text file
 #' }
@@ -54,11 +57,14 @@ NULL
 .spectrumtier_methods <- new.env(hash = TRUE, parent = emptyenv())
 
 # --- Frequency domain ---
-.spectrumtier_methods$get_lowest_frequency <- function(.self) .self$.cpp$get_fmin()
-.spectrumtier_methods$get_highest_frequency <- function(.self) .self$.cpp$get_fmax()
+.spectrumtier_methods$get_lowest_frequency <- function(
+  .self) .self$.cpp$get_fmin()
+.spectrumtier_methods$get_highest_frequency <- function(
+  .self) .self$.cpp$get_fmax()
 
 # --- Point access ---
-.spectrumtier_methods$get_number_of_points <- function(.self) .self$.cpp$get_number_of_points()
+.spectrumtier_methods$get_number_of_points <- function(
+  .self) .self$.cpp$get_number_of_points()
 .spectrumtier_methods$get_frequency_from_index <- function(.self, index) {
   .self$.cpp$get_frequency(as.integer(index))
 }
@@ -84,7 +90,9 @@ NULL
 # --- Print ---
 .spectrumtier_methods$print <- function(.self) {
   cat("<Praat SpectrumTier>\n")
-  cat(sprintf("  Frequency range: %.2f - %.2f Hz\n", .self$.cpp$get_fmin(), .self$.cpp$get_fmax()))
+  cat(
+    sprintf("  Frequency range: %.2f - %.2f Hz\n", .self$.cpp$get_fmin(),
+      .self$.cpp$get_fmax()))
   cat(sprintf("  Number of peaks: %d\n", .self$.cpp$get_number_of_points()))
   invisible(.self)
 }
@@ -99,11 +107,13 @@ lockEnvironment(.spectrumtier_methods, bindings = TRUE)
 #' @export
 SpectrumTier <- function(.xptr = NULL) {
   if (is.null(.xptr)) {
-    stop("SpectrumTier objects must be created from an Ltas object, e.g. ltas$to_spectrum_tier_peaks()")
+    stop(
+      "SpectrumTier objects must be created from an Ltas object, e.g. ltas$to_spectrum_tier_peaks()")
   }
   tier_mod <- get_module("spectrumtier_module")
   cpp_obj <- tier_mod$RSpectrumTier$new(.xptr)
-  structure(list(.xptr = .xptr, .cpp = cpp_obj), class = c("SpectrumTier", "PraatObject"))
+  structure(list(.xptr = .xptr, .cpp = cpp_obj),
+    class = c("SpectrumTier", "PraatObject"))
 }
 
 # ============================================================================

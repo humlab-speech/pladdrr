@@ -7,7 +7,8 @@ test_that("report_spectral_trend returns correct structure", {
   spectrum <- sound$to_spectrum()
   ltas <- spectrum$to_ltas(100)
   
-  result <- ltas$report_spectral_trend(100, 5000, "logarithmic", "least squares")
+  result <- ltas$report_spectral_trend(100, 5000, "logarithmic",
+    "least squares")
   
   expect_type(result, "list")
   expect_s3_class(result, "ltas_spectral_trend")
@@ -31,7 +32,8 @@ test_that("logarithmic scale produces correct slope units", {
   spectrum <- sound$to_spectrum()
   ltas <- spectrum$to_ltas(100)
   
-  result <- ltas$report_spectral_trend(100, 5000, "logarithmic", "least squares")
+  result <- ltas$report_spectral_trend(100, 5000, "logarithmic",
+    "least squares")
   
   expect_identical(result$slope_units, "dB/decade")
   expect_identical(result$frequency_scale, "logarithmic")
@@ -53,7 +55,8 @@ test_that("R-squared is between 0 and 1", {
   spectrum <- sound$to_spectrum()
   ltas <- spectrum$to_ltas(100)
   
-  result <- ltas$report_spectral_trend(100, 5000, "logarithmic", "least squares")
+  result <- ltas$report_spectral_trend(100, 5000, "logarithmic",
+    "least squares")
   
   expect_gte(result$r_squared, 0.0)
   expect_lte(result$r_squared, 1.0)
@@ -64,9 +67,11 @@ test_that("fitted_values has correct number of rows", {
   spectrum <- sound$to_spectrum()
   ltas <- spectrum$to_ltas(100)
   
-  result <- ltas$report_spectral_trend(100, 5000, "logarithmic", "least squares")
+  result <- ltas$report_spectral_trend(100, 5000, "logarithmic",
+    "least squares")
   
-  expect_equal(nrow(result$fitted_values), result$n_points, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(nrow(result$fitted_values), result$n_points,
+    tolerance = sqrt(.Machine$double.eps))
   expect_gt(result$n_points, 1)  # Should have at least 2 points
 })
 
@@ -75,7 +80,8 @@ test_that("residuals sum to approximately zero", {
   spectrum <- sound$to_spectrum()
   ltas <- spectrum$to_ltas(100)
   
-  result <- ltas$report_spectral_trend(100, 5000, "logarithmic", "least squares")
+  result <- ltas$report_spectral_trend(100, 5000, "logarithmic",
+    "least squares")
   
   # Sum of residuals should be near zero (within numerical precision)
   expect_lt(abs(sum(result$fitted_values$residual)), 1e-10)
@@ -87,7 +93,8 @@ test_that("logarithmic scale matches lm() workaround approximately", {
   ltas <- spectrum$to_ltas(100)
   
   # pladdrr method
-  result <- ltas$report_spectral_trend(100, 5000, "logarithmic", "least squares")
+  result <- ltas$report_spectral_trend(100, 5000, "logarithmic",
+    "least squares")
   
   # Workaround method
   ltas_df <- ltas$as_data_frame()
@@ -95,8 +102,10 @@ test_that("logarithmic scale matches lm() workaround approximately", {
   lm_result <- lm(power_db ~ log10(frequency), data = ltas_sub)
   
   # Should be close but not exact (Praat uses specific bin selection)
-  expect_equal(unname(result$slope), unname(coef(lm_result)[2]), tolerance = 0.1)
-  expect_equal(unname(result$intercept), unname(coef(lm_result)[1]), tolerance = 1.0)
+  expect_equal(unname(result$slope), unname(coef(lm_result)[2]),
+    tolerance = 0.1)
+  expect_equal(unname(result$intercept), unname(coef(lm_result)[1]),
+    tolerance = 1.0)
   
   # Check R² matches
   lm_r_squared <- summary(lm_result)$r.squared
@@ -134,7 +143,8 @@ test_that("print method works without error", {
   spectrum <- sound$to_spectrum()
   ltas <- spectrum$to_ltas(100)
   
-  result <- ltas$report_spectral_trend(100, 5000, "logarithmic", "least squares")
+  result <- ltas$report_spectral_trend(100, 5000, "logarithmic",
+    "least squares")
   
   # Should print without error
   expect_output(print(result), "Spectral Trend Analysis")
@@ -147,7 +157,8 @@ test_that("fitted values can be used for plotting", {
   spectrum <- sound$to_spectrum()
   ltas <- spectrum$to_ltas(100)
   
-  result <- ltas$report_spectral_trend(100, 5000, "logarithmic", "least squares")
+  result <- ltas$report_spectral_trend(100, 5000, "logarithmic",
+    "least squares")
   
   # Check fitted_values structure allows plotting
   expect_true(all(result$fitted_values$frequency >= 100))
@@ -166,6 +177,8 @@ test_that("fmin=0 and fmax=0 use full frequency range", {
   result <- ltas$report_spectral_trend(0, 0, "logarithmic", "least squares")
   
   # Should use full LTAS range
-  expect_equal(result$fmin, ltas$get_lowest_frequency(), tolerance = sqrt(.Machine$double.eps))
-  expect_equal(result$fmax, ltas$get_highest_frequency(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(result$fmin, ltas$get_lowest_frequency(),
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(result$fmax, ltas$get_highest_frequency(),
+    tolerance = sqrt(.Machine$double.eps))
 })

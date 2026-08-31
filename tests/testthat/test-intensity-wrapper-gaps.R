@@ -3,7 +3,8 @@
 # frame/geometry getters, and conversions.
 
 intensity_fixture <- function() {
-  Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)$to_intensity()
+  Sound$create_tone(frequency = 220, duration = 0.3,
+    sampling_rate = 16000)$to_intensity()
 }
 
 test_that("Intensity value queries return numerics", {
@@ -32,8 +33,10 @@ test_that("Intensity frame/geometry getters", {
   expect_gt(it$get_sampling_period(), 0)
   expect_gte(it$get_start_time(), 0)
   expect_gt(it$get_end_time(), it$get_start_time())
-  expect_equal(it$get_xmin(), it$get_start_time(), tolerance = sqrt(.Machine$double.eps))
-  expect_equal(it$get_xmax(), it$get_end_time(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(it$get_xmin(), it$get_start_time(),
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(it$get_xmax(), it$get_end_time(),
+    tolerance = sqrt(.Machine$double.eps))
   n <- it$get_number_of_frames()
   t1 <- it$get_time_from_frame(1)
   f1 <- it$get_frame_from_time(t1)

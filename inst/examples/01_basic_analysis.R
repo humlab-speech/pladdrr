@@ -1,5 +1,6 @@
 # Basic Phonetic Analysis with speaker
-# R implementation replacing praat_pitch.py, praat_formant_burg.py, praat_intensity.py
+# R implementation replacing praat_pitch.py, praat_formant_burg.py,
+#  praat_intensity.py
 
 library(pladdrr)
 
@@ -30,10 +31,14 @@ analyze_pitch <- function(audio_file,
   
   # Get statistics
   mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
-  median_f0 <- pitch$get_quantile(from_time = 0, to_time = 0, quantile = 0.5, unit = "hertz")
-  sd_f0 <- pitch$get_standard_deviation(from_time = 0, to_time = 0, unit = "hertz")
-  min_f0 <- pitch$get_minimum(from_time = 0, to_time = 0, unit = "hertz", interpolate = FALSE)
-  max_f0 <- pitch$get_maximum(from_time = 0, to_time = 0, unit = "hertz", interpolate = FALSE)
+  median_f0 <- pitch$get_quantile(from_time = 0, to_time = 0, quantile = 0.5,
+    unit = "hertz")
+  sd_f0 <- pitch$get_standard_deviation(from_time = 0, to_time = 0,
+    unit = "hertz")
+  min_f0 <- pitch$get_minimum(from_time = 0, to_time = 0, unit = "hertz",
+    interpolate = FALSE)
+  max_f0 <- pitch$get_maximum(from_time = 0, to_time = 0, unit = "hertz",
+    interpolate = FALSE)
   
   # Return summary
   list(
@@ -94,9 +99,12 @@ analyze_formants <- function(audio_file,
   }
   
   # Get statistics across time
-  f1_mean <- get_mean_formant(formants, formant_number = 1, from_time = 0, to_time = 0)
-  f2_mean <- get_mean_formant(formants, formant_number = 2, from_time = 0, to_time = 0)
-  f3_mean <- get_mean_formant(formants, formant_number = 3, from_time = 0, to_time = 0)
+  f1_mean <- get_mean_formant(formants, formant_number = 1, from_time = 0,
+    to_time = 0)
+  f2_mean <- get_mean_formant(formants, formant_number = 2, from_time = 0,
+    to_time = 0)
+  f3_mean <- get_mean_formant(formants, formant_number = 3, from_time = 0,
+    to_time = 0)
   
   # Convert to data frame for time series
   formant_df <- as.data.frame(formants)
@@ -134,10 +142,13 @@ analyze_intensity <- function(audio_file,
   
   # Get statistics
   mean_db <- intensity$get_mean(from_time = 0, to_time = 0)
-  median_db <- intensity$get_quantile(from_time = 0, to_time = 0, quantile = 0.5)
+  median_db <- intensity$get_quantile(from_time = 0, to_time = 0,
+    quantile = 0.5)
   sd_db <- intensity$get_standard_deviation(from_time = 0, to_time = 0)
-  min_db <- intensity$get_minimum(from_time = 0, to_time = 0, interpolation = "none")
-  max_db <- intensity$get_maximum(from_time = 0, to_time = 0, interpolation = "none")
+  min_db <- intensity$get_minimum(from_time = 0, to_time = 0,
+    interpolation = "none")
+  max_db <- intensity$get_maximum(from_time = 0, to_time = 0,
+    interpolation = "none")
   
   # Convert to data frame
   intensity_df <- as.data.frame(intensity)
@@ -169,7 +180,8 @@ complete_phonetic_analysis <- function(audio_file,
   # All analyses
   pitch_results <- analyze_pitch(audio_file, pitch_floor, pitch_ceiling)
   formant_results <- analyze_formants(audio_file, max_formant, gender = gender)
-  intensity_results <- analyze_intensity(audio_file, minimum_pitch = pitch_floor)
+  intensity_results <- analyze_intensity(audio_file,
+    minimum_pitch = pitch_floor)
   
   # Combine results
   results <- list(
@@ -248,7 +260,8 @@ vowel_space_analysis <- function(audio_file,
 # if (FALSE) {  # Don't run automatically
 #   
 #   # Basic pitch analysis
-#   pitch_results <- analyze_pitch("speech.wav", pitch_floor = 75, pitch_ceiling = 600)
+# pitch_results <- analyze_pitch("speech.wav", pitch_floor = 75, pitch_ceiling =
+#  600)
 #   
 #   # Formant analysis
 #   formant_results <- analyze_formants("speech.wav", gender = "female")

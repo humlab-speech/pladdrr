@@ -19,7 +19,8 @@ test_that(".wrap_praat_object maps known classes", {
   m <- pladdrr:::.wrap_praat_object(m_ptr)
   expect_s3_class(m, "Matrix")
 
-  lt_ptr <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)$
+  lt_ptr <- Sound$create_tone(frequency = 220, duration = 0.3,
+    sampling_rate = 16000)$
     to_ltas()$.xptr
   attr(lt_ptr, "praat_class") <- "Ltas"
   lt <- pladdrr:::.wrap_praat_object(lt_ptr)
@@ -29,6 +30,7 @@ test_that(".wrap_praat_object maps known classes", {
 test_that(".wrap_praat_object warns on unknown classes", {
   ptr <- Matrix(numberOfRows = 2, numberOfColumns = 2)$.xptr
   attr(ptr, "praat_class") <- "BogusClass"
-  expect_warning(out <- pladdrr:::.wrap_praat_object(ptr), "Unknown Praat class")
+  expect_warning(out <- pladdrr:::.wrap_praat_object(ptr),
+    "Unknown Praat class")
   expect_identical(out, ptr)
 })

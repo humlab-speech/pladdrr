@@ -3,10 +3,12 @@
 #' Praat Cepstrum object with direct C++ module binding.
 #'
 #' @details
-#' The cepstrum is the inverse Fourier transform of the logarithm of the spectrum.
+#' The cepstrum is the inverse Fourier transform of the logarithm of the
+#  spectrum.
 #' Unlike PowerCepstrum, it preserves phase information.
 #'
-#' @return A \code{Cepstrum} object with methods for cepstral analysis and quefrency-domain processing.
+#' @return A \code{Cepstrum} object with methods for cepstral analysis and
+#  quefrency-domain processing.
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.3)
@@ -49,7 +51,9 @@ NULL
   cat("<Praat Cepstrum>\n")
   cat(sprintf("  Quefrency range: %.4f to %.4f s\n",
               .self$.cpp$get_qmin(), .self$.cpp$get_qmax()))
-  cat(sprintf("  Number of coefficients: %d\n", .self$.cpp$get_number_of_coefficients()))
+  cat(
+    sprintf("  Number of coefficients: %d\n",
+      .self$.cpp$get_number_of_coefficients()))
   invisible(.self)
 }
 

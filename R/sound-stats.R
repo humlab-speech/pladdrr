@@ -1,6 +1,7 @@
 # sound-stats.R - Statistical functions for sound objects
 #
-# This file provides functions to compute basic statistics on sound amplitude values.
+# This file provides functions to compute basic statistics on sound amplitude
+#  values.
 
 #' Compute mean amplitude
 #'

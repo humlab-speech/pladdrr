@@ -1,4 +1,5 @@
-test_that("calculate_cpps_fast and calculate_cpps_ultra produce matching results", {
+test_that(
+  "calculate_cpps_fast and calculate_cpps_ultra produce matching results", {
 
   wav <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
   skip_if(!file.exists(wav), "Test audio not found")
@@ -34,7 +35,8 @@ test_that("calculate_cpps_fast and calculate_cpps_ultra produce matching results
   expect_equal(cpps_fast, cpps_ultra, tolerance = 0.1)
 })
 
-test_that("PowerCepstrum get_peak_prominence accepts Praat-style trend fit without warning", {
+test_that(
+  "PowerCepstrum get_peak_prominence accepts Praat-style trend fit without warning", {
   wav <- system.file("signalfiles/DSI/input/ppq1.wav", package = "pladdrr")
   skip_if(!file.exists(wav), "Test audio not found")
 
@@ -51,7 +53,8 @@ test_that("PowerCepstrum get_peak_prominence accepts Praat-style trend fit witho
   expect_true(is.finite(cpp))
 })
 
-test_that("calculate_cpps_ultra exercises the time-smoothing pass when time_averaging_window spans multiple cepstrogram frames", {
+test_that(
+  "calculate_cpps_ultra exercises the time-smoothing pass when time_averaging_window spans multiple cepstrogram frames", {
   # PowerCepstrogram_smooth_fast()'s time-averaging pass is a no-op whenever
   # floor(time_averaging_window / time_step) <= 1. Every other CPPS test in
   # this suite uses the R6-matching default (time_averaging_window = 0.001,
@@ -62,8 +65,10 @@ test_that("calculate_cpps_ultra exercises the time-smoothing pass when time_aver
   skip_if(!file.exists(wav), "Test audio not found")
   sound <- Sound(wav)
 
-  cpps_no_smoothing <- calculate_cpps_ultra(sound, time_averaging_window = 0.001, time_step = 0.002)
-  cpps_with_smoothing <- calculate_cpps_ultra(sound, time_averaging_window = 0.01, time_step = 0.002)
+  cpps_no_smoothing <- calculate_cpps_ultra(sound,
+    time_averaging_window = 0.001, time_step = 0.002)
+  cpps_with_smoothing <- calculate_cpps_ultra(sound,
+    time_averaging_window = 0.01, time_step = 0.002)
 
   expect_true(is.numeric(cpps_with_smoothing))
   expect_true(is.finite(cpps_with_smoothing))

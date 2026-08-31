@@ -3,7 +3,8 @@
 
 test_that("Ltas NaN guards return NA instead of crashing", {
 
-  sound <- Sound$create_tone(frequency = 440, duration = 0.5, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 440, duration = 0.5,
+    sampling_rate = 16000)
   ltas <- sound$to_ltas(bandwidth = 100)
 
   # Scalar queries
@@ -25,7 +26,8 @@ test_that("Ltas NaN guards return NA instead of crashing", {
 
 test_that("Intensity NaN guards return NA instead of crashing", {
 
-  sound <- Sound$create_tone(frequency = 440, duration = 0.5, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 440, duration = 0.5,
+    sampling_rate = 16000)
   intensity <- sound$to_intensity(minimum_pitch = 100)
 
   expect_true(is.na(intensity$get_value_at_time(NaN)))
@@ -37,7 +39,8 @@ test_that("Intensity NaN guards return NA instead of crashing", {
 
 test_that("Formant NaN guards return NA instead of crashing", {
 
-  sound <- Sound$create_tone(frequency = 440, duration = 0.5, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 440, duration = 0.5,
+    sampling_rate = 16000)
   formant <- sound$to_formant_burg()
 
   expect_true(is.na(formant$get_value_at_time(1, NaN)))
@@ -50,7 +53,8 @@ test_that("Formant NaN guards return NA instead of crashing", {
 
 test_that("Pitch NaN guard returns NA", {
 
-  sound <- Sound$create_tone(frequency = 200, duration = 0.5, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 200, duration = 0.5,
+    sampling_rate = 16000)
   pitch <- sound$to_pitch()
 
   expect_true(is.na(pitch$get_value_at_time(NaN)))
@@ -58,7 +62,8 @@ test_that("Pitch NaN guard returns NA", {
 
 test_that("Harmonicity NaN guards return NA", {
 
-  sound <- Sound$create_tone(frequency = 200, duration = 0.5, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 200, duration = 0.5,
+    sampling_rate = 16000)
   hnr <- sound$to_harmonicity_cc()
 
   expect_true(is.na(hnr$get_value_at_time(NaN)))
@@ -76,7 +81,8 @@ test_that("Harmonicity NaN guards return NA", {
 
 test_that("Intensity$get_values_at_times works correctly", {
 
-  sound <- Sound$create_tone(frequency = 440, duration = 0.5, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 440, duration = 0.5,
+    sampling_rate = 16000)
   intensity <- sound$to_intensity(minimum_pitch = 100)
 
   times <- c(0.1, 0.2, 0.3)
@@ -87,7 +93,8 @@ test_that("Intensity$get_values_at_times works correctly", {
 
   # Should match individual calls
   for (i in seq_along(times)) {
-    expect_equal(vals[i], intensity$get_value_at_time(times[i]), tolerance = 1e-10)
+    expect_equal(vals[i], intensity$get_value_at_time(times[i]),
+      tolerance = 1e-10)
   }
 
   # NaN handling
@@ -102,14 +109,16 @@ test_that("Intensity$get_values_at_times works correctly", {
 
 test_that("Formant$get_values_at_times accepts interpolation param", {
 
-  sound <- Sound$create_tone(frequency = 440, duration = 0.5, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 440, duration = 0.5,
+    sampling_rate = 16000)
   formant <- sound$to_formant_burg()
 
   times <- c(0.1, 0.2, 0.3)
 
   # Should work with both interpolation values (API compat only)
   vals_linear <- formant$get_values_at_times(1, times, interpolation = "linear")
-  vals_nearest <- formant$get_values_at_times(1, times, interpolation = "nearest")
+  vals_nearest <- formant$get_values_at_times(1, times,
+    interpolation = "nearest")
 
   expect_length(vals_linear, 3)
   expect_length(vals_nearest, 3)
@@ -121,7 +130,8 @@ test_that("Formant$get_values_at_times accepts interpolation param", {
 
 test_that("Spectrogram$as_matrix includes dimnames by default", {
 
-  sound <- Sound$create_tone(frequency = 440, duration = 0.5, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 440, duration = 0.5,
+    sampling_rate = 16000)
   spec <- sound$to_spectrogram()
 
   mat <- spec$as_matrix()
@@ -132,14 +142,16 @@ test_that("Spectrogram$as_matrix includes dimnames by default", {
   expect_length(rownames(mat), nrow(mat))
   expect_length(colnames(mat), ncol(mat))
 
-  # Dimnames should be numeric frequency and time values (no NAs from conversion)
+  # Dimnames should be numeric frequency and time values (no NAs from
+  #  conversion)
   expect_false(anyNA(as.numeric(rownames(mat))))
   expect_false(anyNA(as.numeric(colnames(mat))))
 })
 
 test_that("Spectrogram$as_matrix(include_dimnames=FALSE) omits names", {
 
-  sound <- Sound$create_tone(frequency = 440, duration = 0.5, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 440, duration = 0.5,
+    sampling_rate = 16000)
   spec <- sound$to_spectrogram()
 
   mat <- spec$as_matrix(include_dimnames = FALSE)

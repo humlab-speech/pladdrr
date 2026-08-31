@@ -3,7 +3,7 @@
 #  shallow expect_no_error()/expect_length() checks; this version covers all
 #  11 exported functions -- sound_concatenate_all, sound_to_pitch_batch,
 #  sound_to_pitch_ac_batch, sound_to_pitch_cc_batch, sound_to_pitch_shs_batch,
-#  sound_to_pitch_spinet_batch, sound_to_formant_batch, sound_to_intensity_batch,
+# sound_to_pitch_spinet_batch, sound_to_formant_batch, sound_to_intensity_batch,
 #  sound_extract_and_pitch, sound_extract_and_formant, sound_load_window --
 #  with type/shape/validity assertions, batch-vs-individual numeric parity,
 #  and xptr-as-input acceptance)
@@ -43,7 +43,8 @@ test_that("sound_concatenate_all validates its arguments", {
                "sounds must be a list of Sound objects or external pointers")
 })
 
-test_that("sound_to_pitch_batch, sound_to_pitch_ac_batch, sound_to_pitch_cc_batch return per-sound Pitch results", {
+test_that(
+  "sound_to_pitch_batch, sound_to_pitch_ac_batch, sound_to_pitch_cc_batch return per-sound Pitch results", {
   sounds <- make_test_sounds(2)
 
   pitches <- sound_to_pitch_batch(sounds)
@@ -69,7 +70,8 @@ test_that("sound_to_pitch_batch, sound_to_pitch_ac_batch, sound_to_pitch_cc_batc
   expect_true(all(vapply(raw_ptrs, inherits, logical(1), what = "externalptr")))
 })
 
-test_that("sound_to_pitch_batch accepts a list of raw external pointers as input", {
+test_that(
+  "sound_to_pitch_batch accepts a list of raw external pointers as input", {
   sounds <- make_test_sounds(2)
   xptrs <- lapply(sounds, function(s) s$.xptr)
   expect_true(all(vapply(xptrs, inherits, logical(1), what = "externalptr")))
@@ -85,11 +87,13 @@ test_that("sound_to_pitch_batch accepts a list of raw external pointers as input
   expect_gte(wrapped$get_number_of_frames(), 1)
 })
 
-test_that("sound_to_pitch_batch and sound_to_formant_batch match individual per-sound computation", {
+test_that(
+  "sound_to_pitch_batch and sound_to_formant_batch match individual per-sound computation", {
   sound <- generate_sine_wave(150, 0.5, sampling_rate = 16000)
   sounds <- list(sound, sound)
 
-  batch_pitches <- sound_to_pitch_batch(sounds, pitch_floor = 75, pitch_ceiling = 300)
+  batch_pitches <- sound_to_pitch_batch(sounds, pitch_floor = 75,
+    pitch_ceiling = 300)
   individual_pitch <- sound$to_pitch(pitch_floor = 75, pitch_ceiling = 300)
   expect_equal(
     batch_pitches[[1]]$get_mean(0, 0, "hertz"),
@@ -97,7 +101,8 @@ test_that("sound_to_pitch_batch and sound_to_formant_batch match individual per-
     tolerance = 1e-10
   )
 
-  batch_formants <- sound_to_formant_batch(sounds, time_step = 0.005, max_formants = 5)
+  batch_formants <- sound_to_formant_batch(sounds, time_step = 0.005,
+    max_formants = 5)
   individual_formant <- sound$to_formant(time_step = 0.005, max_formants = 5)
   time_point <- individual_formant$get_times_vector()[1]
   expect_equal(
@@ -107,10 +112,12 @@ test_that("sound_to_pitch_batch and sound_to_formant_batch match individual per-
   )
 })
 
-test_that("sound_to_pitch_shs_batch and sound_to_pitch_spinet_batch return per-sound Pitch results", {
+test_that(
+  "sound_to_pitch_shs_batch and sound_to_pitch_spinet_batch return per-sound Pitch results", {
   sounds <- make_test_sounds(2)
 
-  pitches_shs <- sound_to_pitch_shs_batch(sounds, time_step = 0.01, pitch_floor = 50,
+  pitches_shs <- sound_to_pitch_shs_batch(sounds, time_step = 0.01,
+    pitch_floor = 50,
                                            max_frequency = 1250, pitch_ceiling = 500)
   expect_length(pitches_shs, 2)
   expect_s3_class(pitches_shs[[1]], "Pitch")
@@ -127,7 +134,8 @@ test_that("sound_to_pitch_shs_batch and sound_to_pitch_spinet_batch return per-s
   expect_true(pitches_spinet[[2]]$is_valid())
 })
 
-test_that("sound_to_formant_batch and sound_to_intensity_batch return per-sound results", {
+test_that(
+  "sound_to_formant_batch and sound_to_intensity_batch return per-sound results", {
   sounds <- make_test_sounds(3)
 
   formants <- sound_to_formant_batch(sounds)
@@ -144,12 +152,15 @@ test_that("sound_to_formant_batch and sound_to_intensity_batch return per-sound 
 
   # return_r6 = FALSE gives raw externalptrs for both
   formant_ptrs <- sound_to_formant_batch(sounds, return_r6 = FALSE)
-  expect_true(all(vapply(formant_ptrs, inherits, logical(1), what = "externalptr")))
+  expect_true(
+    all(vapply(formant_ptrs, inherits, logical(1), what = "externalptr")))
   intensity_ptrs <- sound_to_intensity_batch(sounds, return_r6 = FALSE)
-  expect_true(all(vapply(intensity_ptrs, inherits, logical(1), what = "externalptr")))
+  expect_true(
+    all(vapply(intensity_ptrs, inherits, logical(1), what = "externalptr")))
 })
 
-test_that("sound_extract_and_pitch and sound_extract_and_formant work on a single Sound", {
+test_that(
+  "sound_extract_and_pitch and sound_extract_and_formant work on a single Sound", {
   sound <- generate_sine_wave(150, 2.0, sampling_rate = 16000)
   from_times <- c(0.2, 1.0)
   to_times <- c(0.6, 1.4)
@@ -179,11 +190,14 @@ test_that("sound_load_window loads a windowed segment from a WAV file", {
   # Default preserve_times = FALSE shifts window to start at 0
   expect_equal(window$get_start_time(), 0, tolerance = 1e-6)
 
-  window_resampled <- sound_load_window(path, start = 0.5, end = 0.6, resample_to = 8000)
+  window_resampled <- sound_load_window(path, start = 0.5, end = 0.6,
+    resample_to = 8000)
   expect_s3_class(window_resampled, "Sound")
-  expect_equal(window_resampled$get_sampling_frequency(), 8000, tolerance = 1e-6)
+  expect_equal(window_resampled$get_sampling_frequency(), 8000,
+    tolerance = 1e-6)
 
-  window_timed <- sound_load_window(path, start = 0.5, end = 0.6, preserve_times = TRUE)
+  window_timed <- sound_load_window(path, start = 0.5, end = 0.6,
+    preserve_times = TRUE)
   expect_equal(window_timed$get_start_time(), 0.5, tolerance = 1e-3)
 })
 
@@ -193,13 +207,18 @@ test_that("sound_load_window validates its arguments", {
   sound$save(path)
   on.exit(unlink(path))
 
-  expect_error(sound_load_window(123, 0, 0.5), "path must be a single character string")
+  expect_error(sound_load_window(123, 0, 0.5),
+    "path must be a single character string")
   expect_error(sound_load_window("/no/such/file.wav", 0, 0.5), "File not found")
-  expect_error(sound_load_window(path, -1, 0.5), "start must be a non-negative number")
+  expect_error(sound_load_window(path, -1, 0.5),
+    "start must be a non-negative number")
   expect_error(sound_load_window(path, 0, "x"), "end must be a number")
-  expect_error(sound_load_window(path, 0.5, 0.2), "end must be greater than start")
-  expect_error(sound_load_window(path, 0, 0.5, resample_to = -100), "resample_to must be a positive number or NULL")
-  expect_error(sound_load_window(path, 0, 0.5, preserve_times = "yes"), "preserve_times must be TRUE or FALSE")
+  expect_error(sound_load_window(path, 0.5, 0.2),
+    "end must be greater than start")
+  expect_error(sound_load_window(path, 0, 0.5, resample_to = -100),
+    "resample_to must be a positive number or NULL")
+  expect_error(sound_load_window(path, 0, 0.5, preserve_times = "yes"),
+    "preserve_times must be TRUE or FALSE")
 })
 
 test_that("sound_to_pitch_ac_batch / cc_batch accept raw external pointers", {
@@ -224,7 +243,8 @@ test_that("pitch/formant/intensity batch functions accept external pointers", {
                          inherits, logical(1), what = "externalptr")))
 })
 
-test_that("sound_extract_and_pitch / _and_formant accept external-pointer input", {
+test_that(
+  "sound_extract_and_pitch / _and_formant accept external-pointer input", {
   snd <- make_test_sounds(1)[[1]]
   xptr <- snd$.xptr
   p <- sound_extract_and_pitch(xptr, 0, 0.1, return_r6 = FALSE)

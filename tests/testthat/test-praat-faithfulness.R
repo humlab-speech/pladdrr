@@ -15,7 +15,8 @@
 
 library(testthat)
 
-PRAAT_EXEC <- Sys.getenv("PLADDRR_PRAAT_EXEC", unset = "/Applications/Praat.app/Contents/MacOS/Praat")
+PRAAT_EXEC <- Sys.getenv("PLADDRR_PRAAT_EXEC",
+  unset = "/Applications/Praat.app/Contents/MacOS/Praat")
 
 skip_if_no_praat <- function() {
   testthat::skip_if_not(file.exists(PRAAT_EXEC),
@@ -25,7 +26,8 @@ skip_if_no_praat <- function() {
 }
 
 resolve_fixture <- function(rel) {
-  # Try package-internal extdata first (works installed and during devtools::test()),
+  # Try package-internal extdata first (works installed and during
+  #  devtools::test()),
   # fall back to the in-tree inst/ path.
   candidate <- system.file(rel, package = "pladdrr")
   if (nzchar(candidate) && file.exists(candidate)) return(candidate)
@@ -72,7 +74,9 @@ audit_routine <- function(r) {
   praat_lines <- tryCatch(run_praat(r$praat_script, path),
                           error = function(e) e)
   if (inherits(praat_lines, "error")) {
-    return(list(name = r$name, status = paste0("praat-error: ", conditionMessage(praat_lines)),
+    return(
+      list(name = r$name,
+        status = paste0("praat-error: ", conditionMessage(praat_lines)),
                 praat = NA_real_, pladdrr = NA_real_,
                 diff = NA_real_, tolerance = r$tolerance))
   }
@@ -80,7 +84,8 @@ audit_routine <- function(r) {
                         error = function(e) NA_real_)
   pladdrr_val <- tryCatch(r$pladdrr(path),
                           error = function(e) {
-                            message("pladdrr error in ", r$name, ": ", conditionMessage(e))
+                            message("pladdrr error in ", r$name, ": ",
+                              conditionMessage(e))
                             NA_real_
                           })
   diff <- abs_max_diff(as.numeric(praat_val), as.numeric(pladdrr_val))

@@ -20,7 +20,8 @@
 #' @export
 MelSpectrogram <- function(.xptr = NULL) {
   if (is.null(.xptr)) {
-    stop("MelSpectrogram objects must be created from Sound$to_mel_spectrogram()")
+    stop(
+      "MelSpectrogram objects must be created from Sound$to_mel_spectrogram()")
   }
 
   ptr <- .xptr
@@ -29,7 +30,8 @@ MelSpectrogram <- function(.xptr = NULL) {
     .xptr = .xptr,
 
     to_mfcc = function(number_of_coefficients = 12L) {
-      mfcc_ptr <- .mel_spectrogram_to_mfcc(ptr, as.integer(number_of_coefficients))
+      mfcc_ptr <- .mel_spectrogram_to_mfcc(ptr,
+        as.integer(number_of_coefficients))
       MFCC(.xptr = mfcc_ptr)
     },
 

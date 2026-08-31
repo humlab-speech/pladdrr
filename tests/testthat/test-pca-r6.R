@@ -38,14 +38,18 @@ test_that("PCA eigen/variance/projection queries work", {
   expect_length(ev, 3)
   # eigenvalues are sorted descending
   expect_true(all(diff(ev) <= 0))
-  expect_equal(pca$get_eigenvalue(1), ev[1], tolerance = sqrt(.Machine$double.eps))
-  expect_equal(pca$get_eigenvalue(3), ev[3], tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pca$get_eigenvalue(1), ev[1],
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pca$get_eigenvalue(3), ev[3],
+    tolerance = sqrt(.Machine$double.eps))
 
   expect_type(pca$get_fraction_variance(1, 1), "double")
   # get_variance_explained() is a documented alias for get_fraction_variance()
-  expect_equal(pca$get_variance_explained(1, 1), pca$get_fraction_variance(1, 1), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pca$get_variance_explained(1, 1),
+    pca$get_fraction_variance(1, 1), tolerance = sqrt(.Machine$double.eps))
   # fraction over the full range (default to = 0 -> all components) is 1
-  expect_equal(pca$get_fraction_variance(1, 0), 1, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pca$get_fraction_variance(1, 0), 1,
+    tolerance = sqrt(.Machine$double.eps))
   expect_gte(pca$get_dimension_of_fraction(0.9), 1)
   expect_lte(pca$get_dimension_of_fraction(0.9), 3)
 
@@ -58,7 +62,8 @@ test_that("PCA eigen/variance/projection queries work", {
   expect_equal(dim(eigvecs), c(3, 3), tolerance = sqrt(.Machine$double.eps))
   expect_equal(eigvecs[, 1], eigvec1, tolerance = sqrt(.Machine$double.eps))
   # get_loadings() is a documented alias for get_eigenvectors()
-  expect_equal(pca$get_loadings(), eigvecs, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pca$get_loadings(), eigvecs,
+    tolerance = sqrt(.Machine$double.eps))
 
   centroid <- pca$get_centroid()
   expect_type(centroid, "double")
@@ -78,13 +83,15 @@ test_that("PCA project/transform, as_data_frame, get_info, save, labels", {
 
   proj_all <- pca$project(data)
   expect_true(is.matrix(proj_all))
-  expect_equal(dim(proj_all), c(15, pca$get_number_of_components()), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(dim(proj_all), c(15, pca$get_number_of_components()),
+    tolerance = sqrt(.Machine$double.eps))
 
   proj1 <- pca$project(data, num_dimensions = 1)
   expect_equal(dim(proj1), c(15, 1), tolerance = sqrt(.Machine$double.eps))
 
   # transform() is a documented alias for project()
-  expect_equal(pca$transform(data), proj_all, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pca$transform(data), proj_all,
+    tolerance = sqrt(.Machine$double.eps))
 
   # data.frame input is coerced to a matrix internally
   proj_df <- pca$project(as.data.frame(data))
@@ -95,19 +102,27 @@ test_that("PCA project/transform, as_data_frame, get_info, save, labels", {
 
   df <- pca$as_data_frame()
   expect_s3_class(df, "data.frame")
-  expect_equal(nrow(df), pca$get_number_of_components(), tolerance = sqrt(.Machine$double.eps))
-  expect_named(df, c("component", "eigenvalue", "variance_fraction", "cumulative_variance"))
-  expect_equal(df$eigenvalue, pca$get_eigenvalues(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(nrow(df), pca$get_number_of_components(),
+    tolerance = sqrt(.Machine$double.eps))
+  expect_named(df,
+    c("component", "eigenvalue", "variance_fraction", "cumulative_variance"))
+  expect_equal(df$eigenvalue, pca$get_eigenvalues(),
+    tolerance = sqrt(.Machine$double.eps))
   # cumulative_variance sums to 1 for the last component
-  expect_equal(df$cumulative_variance[nrow(df)], 1, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(df$cumulative_variance[nrow(df)], 1,
+    tolerance = sqrt(.Machine$double.eps))
 
   info <- pca$get_info()
   expect_type(info, "list")
-  expect_equal(info$n_components, pca$get_number_of_components(), tolerance = sqrt(.Machine$double.eps))
-  expect_equal(info$dimension, pca$get_dimension(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(info$n_components, pca$get_number_of_components(),
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(info$dimension, pca$get_dimension(),
+    tolerance = sqrt(.Machine$double.eps))
   expect_equal(info$n_observations, 15, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(info$eigenvalues, pca$get_eigenvalues(), tolerance = sqrt(.Machine$double.eps))
-  expect_equal(info$centroid, pca$get_centroid(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(info$eigenvalues, pca$get_eigenvalues(),
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(info$centroid, pca$get_centroid(),
+    tolerance = sqrt(.Machine$double.eps))
 
   # `data` has no column names carried through to Matrix_to_PCA_byRows, so
   # labels (length == dimension, i.e. number of variables) are all NA

@@ -4,7 +4,8 @@
 # Validate a single non-empty character string argument.
 .check_character1 <- function(x, arg = "expression") {
   if (!is.character(x) || length(x) != 1L || !nzchar(x)) {
-    stop(sprintf("'%s' must be a single non-empty character string", arg), call. = FALSE)
+    stop(sprintf("'%s' must be a single non-empty character string", arg),
+      call. = FALSE)
   }
   invisible(x)
 }
@@ -12,7 +13,8 @@
 #' Execute a Praat script
 #'
 #' Executes a Praat script with automatic interpreter initialization.
-#' Objects created during script execution remain in Praat's internal object list.
+#' Objects created during script execution remain in Praat's internal object
+#  list.
 #'
 #' @param script Character string containing Praat script code
 #' @return Invisibly returns NULL

@@ -8,13 +8,15 @@ test_that("sound_concatenate_all works with Sound objects", {
   
   # Create test sounds using synthetic tones
   s1 <- tryCatch({
-    pladdrr::sound_create_tone(duration = 0.1, sampling_rate = 44100, frequency = 440)
+    pladdrr::sound_create_tone(duration = 0.1, sampling_rate = 44100,
+      frequency = 440)
   }, error = function(e) {
     skip("Could not create test sound")
   })
   
   s2 <- tryCatch({
-    pladdrr::sound_create_tone(duration = 0.1, sampling_rate = 44100, frequency = 880)
+    pladdrr::sound_create_tone(duration = 0.1, sampling_rate = 44100,
+      frequency = 880)
   }, error = function(e) {
     skip("Could not create test sound")
   })
@@ -36,7 +38,8 @@ test_that("Sound$get_values returns correct data", {
   
   # Create test sound
   sound <- tryCatch({
-    pladdrr::sound_create_tone(duration = 0.01, sampling_rate = 44100, frequency = 440)
+    pladdrr::sound_create_tone(duration = 0.01, sampling_rate = 44100,
+      frequency = 440)
   }, error = function(e) {
     skip("Could not create test sound")
   })
@@ -51,7 +54,8 @@ test_that("Sound$get_values returns correct data", {
   times <- tryCatch({
     sound$get_sample_times()
   }, error = function(e) {
-    skip("get_sample_times method not available yet - package may need recompilation")
+    skip(
+      "get_sample_times method not available yet - package may need recompilation")
   })
   
   # Compare with data frame method
@@ -69,7 +73,8 @@ test_that("Sound$get_values is faster than as_data_frame", {
   
   # Create larger test sound for meaningful benchmark
   sound <- tryCatch({
-    pladdrr::sound_create_tone(duration = 1.0, sampling_rate = 44100, frequency = 440)
+    pladdrr::sound_create_tone(duration = 1.0, sampling_rate = 44100,
+      frequency = 440)
   }, error = function(e) {
     skip("Could not create test sound")
   })
@@ -105,7 +110,8 @@ test_that("Pitch$get_statistics returns all metrics", {
   
   # Create test sound and pitch
   sound <- tryCatch({
-    pladdrr::sound_create_tone(duration = 0.5, sampling_rate = 44100, frequency = 200)
+    pladdrr::sound_create_tone(duration = 0.5, sampling_rate = 44100,
+      frequency = 200)
   }, error = function(e) {
     skip("Could not create test sound")
   })
@@ -147,7 +153,8 @@ test_that("Intensity$get_statistics returns all metrics", {
   
   # Create test sound and intensity
   sound <- tryCatch({
-    pladdrr::sound_create_tone(duration = 0.5, sampling_rate = 44100, frequency = 440)
+    pladdrr::sound_create_tone(duration = 0.5, sampling_rate = 44100,
+      frequency = 440)
   }, error = function(e) {
     skip("Could not create test sound")
   })
@@ -198,16 +205,20 @@ test_that("TextGrid$get_all_intervals works correctly", {
   
   intervals <- tryCatch({
     tg$get_all_intervals("words")
-  }, error = function(e) skip("get_all_intervals not available - needs recompilation"))
+  }, error = function(
+    e) skip("get_all_intervals not available - needs recompilation"))
   
   expect_s3_class(intervals, "data.frame")
   expect_named(intervals, c("start", "end", "text"))
   expect_identical(nrow(intervals), 3L)
   
   for (i in 1:3) {
-    expect_equal(intervals$start[i], tg$get_interval_start_time("words", i), tolerance = sqrt(.Machine$double.eps))
-    expect_equal(intervals$end[i], tg$get_interval_end_time("words", i), tolerance = sqrt(.Machine$double.eps))
-    expect_equal(intervals$text[i], tg$get_interval_text("words", i), tolerance = sqrt(.Machine$double.eps))
+    expect_equal(intervals$start[i], tg$get_interval_start_time("words", i),
+      tolerance = sqrt(.Machine$double.eps))
+    expect_equal(intervals$end[i], tg$get_interval_end_time("words", i),
+      tolerance = sqrt(.Machine$double.eps))
+    expect_equal(intervals$text[i], tg$get_interval_text("words", i),
+      tolerance = sqrt(.Machine$double.eps))
   }
 })
 
@@ -224,7 +235,8 @@ test_that("TextGrid$get_all_points works correctly", {
   
   points <- tryCatch({
     tg$get_all_points("events")
-  }, error = function(e) skip("get_all_points not available - needs recompilation"))
+  }, error = function(
+    e) skip("get_all_points not available - needs recompilation"))
   
   expect_s3_class(points, "data.frame")
   expect_named(points, c("time", "text"))
@@ -257,7 +269,8 @@ test_that("TextGrid$extract_intervals_batch works correctly", {
       target_value = "V",
       extract_sounds = FALSE
     )
-  }, error = function(e) skip("extract_intervals_batch not available - needs recompilation"))
+  }, error = function(
+    e) skip("extract_intervals_batch not available - needs recompilation"))
   
   expect_type(result, "list")
   expect_true("indices" %in% names(result))
@@ -267,10 +280,14 @@ test_that("TextGrid$extract_intervals_batch works correctly", {
   
   # Should extract 3 "V" intervals
   expect_length(result$indices, 3)
-  expect_equal(result$indices, c(1, 3, 5), tolerance = sqrt(.Machine$double.eps))
-  expect_equal(result$labels, c("V", "V", "V"), tolerance = sqrt(.Machine$double.eps))
-  expect_equal(result$start_times, c(0, 2, 4), tolerance = sqrt(.Machine$double.eps))
-  expect_equal(result$end_times, c(1, 3, 5), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(result$indices, c(1, 3, 5),
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(result$labels, c("V", "V", "V"),
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(result$start_times, c(0, 2, 4),
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(result$end_times, c(1, 3, 5),
+    tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("TextGrid$extract_intervals_batch with sounds works correctly", {
@@ -301,7 +318,8 @@ test_that("TextGrid$extract_intervals_batch with sounds works correctly", {
       sound = sound,
       extract_sounds = TRUE
     )
-  }, error = function(e) skip("extract_intervals_batch with sounds not available"))
+  }, error = function(
+    e) skip("extract_intervals_batch with sounds not available"))
   
   expect_type(result, "list")
   expect_true("sounds" %in% names(result))
@@ -331,7 +349,8 @@ test_that("Pitch$get_adaptive_range works correctly", {
   # Test adaptive range calculation
   result <- tryCatch({
     pitch$get_adaptive_range(q1_factor = 0.75, q3_factor = 1.5)
-  }, error = function(e) skip("get_adaptive_range not available - needs recompilation"))
+  }, error = function(
+    e) skip("get_adaptive_range not available - needs recompilation"))
   
   # Verify structure
   expect_type(result, "list")
@@ -407,7 +426,8 @@ test_that("apply_window_xptr works with RcppXPtrUtils", {
   # Apply window
   result <- tryCatch({
     apply_window_xptr(sound, hanning_xptr)
-  }, error = function(e) skip("apply_window_xptr not available - needs recompilation"))
+  }, error = function(
+    e) skip("apply_window_xptr not available - needs recompilation"))
 
   # Verify result
   expect_s3_class(result, "Sound")
@@ -444,7 +464,8 @@ test_that("apply_transform_xptr works with RcppXPtrUtils", {
   # Apply transform
   result <- tryCatch({
     apply_transform_xptr(sound, rectifier_xptr)
-  }, error = function(e) skip("apply_transform_xptr not available - needs recompilation"))
+  }, error = function(
+    e) skip("apply_transform_xptr not available - needs recompilation"))
 
   # Verify result
   expect_s3_class(result, "Sound")
@@ -460,7 +481,8 @@ test_that("create_window_xptr creates valid window functions", {
   skip_if_not_installed("RcppXPtrUtils")
 
   # Test that create_window_xptr works for all window types
-  window_types <- c("hamming", "hanning", "gaussian", "triangular", "blackman", "rectangular")
+  window_types <- c("hamming", "hanning", "gaussian", "triangular",
+    "blackman", "rectangular")
 
   for (wtype in window_types) {
     window_xptr <- tryCatch({
@@ -473,7 +495,8 @@ test_that("create_window_xptr creates valid window functions", {
       # Compiling 6 xptrs in one test can hit CI-only resource limits
       # (disk/tmp) without cppXPtr() raising an error; treat like the
       # tryCatch above rather than failing the whole suite.
-      skip(paste("create_window_xptr did not return a valid pointer for", wtype))
+      skip(
+        paste("create_window_xptr did not return a valid pointer for", wtype))
     }
     expect_true(inherits(window_xptr, "externalptr"),
                 info = paste("Window type:", wtype))
@@ -510,7 +533,8 @@ test_that("pitch_get_statistics_batch returns correct matrix", {
       metrics,
       unit = 0L
     )
-  }, error = function(e) skip("pitch_get_statistics_batch not available - needs recompilation"))
+  }, error = function(
+    e) skip("pitch_get_statistics_batch not available - needs recompilation"))
 
   # Verify structure
   expect_true(is.matrix(result))
@@ -552,7 +576,8 @@ test_that("intensity_get_statistics_batch returns correct matrix", {
       metrics,
       averaging_method = 0L
     )
-  }, error = function(e) skip("intensity_get_statistics_batch not available - needs recompilation"))
+  }, error = function(
+    e) skip("intensity_get_statistics_batch not available - needs recompilation"))
 
   # Verify structure
   expect_true(is.matrix(result))
@@ -590,7 +615,8 @@ test_that("batch statistics are faster than individual calls", {
 
   # Test if batch function exists
   batch_works <- tryCatch({
-    pitch_get_statistics_batch(pitch$.xptr, from_times[1:2], to_times[1:2], metrics[1:2], 0L)
+    pitch_get_statistics_batch(pitch$.xptr, from_times[1:2], to_times[1:2],
+      metrics[1:2], 0L)
     TRUE
   }, error = function(e) FALSE)
 
@@ -600,7 +626,8 @@ test_that("batch statistics are faster than individual calls", {
 
   # Benchmark batch vs individual
   bench <- microbenchmark::microbenchmark(
-    batch = pitch_get_statistics_batch(pitch$.xptr, from_times, to_times, metrics, 0L),
+    batch = pitch_get_statistics_batch(pitch$.xptr, from_times, to_times,
+      metrics, 0L),
     individual = {
       for (i in 1:n_intervals) {
         pitch$get_minimum(from_times[i], to_times[i], "hertz")

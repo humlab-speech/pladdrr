@@ -18,7 +18,8 @@ if (!requireNamespace("pladdrr", quietly = TRUE)) {
 
 test_that("Harmonicity AC method works", {
     # Longer duration for reliable analysis
-    sound <- Sound$create_tone(duration = 1.0, sampling_rate = 44100, frequency = 150)
+    sound <- Sound$create_tone(duration = 1.0, sampling_rate = 44100,
+      frequency = 150)
 
     harm <- sound$to_harmonicity_ac()
 
@@ -28,7 +29,8 @@ test_that("Harmonicity AC method works", {
 })
 
 test_that("Harmonicity CC method works", {
-    sound <- Sound$create_tone(duration = 1.0, sampling_rate = 44100, frequency = 120)
+    sound <- Sound$create_tone(duration = 1.0, sampling_rate = 44100,
+      frequency = 120)
 
     harm <- sound$to_harmonicity_cc()
 
@@ -38,7 +40,8 @@ test_that("Harmonicity CC method works", {
 })
 
 test_that("Harmonicity works with different pitch floors", {
-    sound <- Sound$create_tone(duration = 1.0, sampling_rate = 44100, frequency = 150)
+    sound <- Sound$create_tone(duration = 1.0, sampling_rate = 44100,
+      frequency = 150)
 
     # Test different pitch floors
     harm_75 <- sound$to_harmonicity_ac(min_pitch = 75)
@@ -54,7 +57,8 @@ test_that("Harmonicity works with different pitch floors", {
 })
 
 test_that("Harmonicity works with different time steps", {
-    sound <- Sound$create_tone(duration = 2.0, sampling_rate = 44100, frequency = 150)
+    sound <- Sound$create_tone(duration = 2.0, sampling_rate = 44100,
+      frequency = 150)
 
     # Test different time steps
     harm_default <- sound$to_harmonicity_ac()
@@ -62,7 +66,8 @@ test_that("Harmonicity works with different time steps", {
     harm_coarse <- sound$to_harmonicity_ac(time_step = 0.02)
 
     # Finer time step should produce more frames
-    expect_gt(harm_fine$get_number_of_frames(), harm_coarse$get_number_of_frames())
+    expect_gt(harm_fine$get_number_of_frames(),
+      harm_coarse$get_number_of_frames())
 
     # All should produce numeric results
     expect_true(is.numeric(harm_default$get_mean()))
@@ -75,7 +80,8 @@ test_that("Harmonicity CC method with various signal lengths", {
     durations <- c(0.5, 1.0, 2.0, 3.0)
 
     for (dur in durations) {
-        sound <- Sound$create_tone(duration = dur, sampling_rate = 44100, frequency = 150)
+        sound <- Sound$create_tone(duration = dur, sampling_rate = 44100,
+          frequency = 150)
 
         # Should not error
         harm <- tryCatch(
@@ -91,7 +97,8 @@ test_that("Harmonicity CC method with various signal lengths", {
 })
 
 test_that("Harmonicity at specific time points", {
-    sound <- Sound$create_tone(duration = 2.0, sampling_rate = 44100, frequency = 150)
+    sound <- Sound$create_tone(duration = 2.0, sampling_rate = 44100,
+      frequency = 150)
 
     harm <- sound$to_harmonicity_ac()
 

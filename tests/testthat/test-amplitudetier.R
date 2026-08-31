@@ -6,7 +6,8 @@
 # resolved silently to NULL and only surfaced as a NILSXP error deep in the
 # C++ layer (caught by `R CMD check`'s example run, not by unit tests).
 
-test_that("intensity_tier_to_amplitude_tier converts a populated IntensityTier", {
+test_that(
+  "intensity_tier_to_amplitude_tier converts a populated IntensityTier", {
   it <- IntensityTier(0, 1)
   it$add_point(0.25, 70)
   it$add_point(0.75, 60)
@@ -17,8 +18,10 @@ test_that("intensity_tier_to_amplitude_tier converts a populated IntensityTier",
   expect_identical(at$get_number_of_points(), 2L)
 })
 
-test_that("amplitude_tier_from_point_process converts a Sound/PointProcess pair", {
-  sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+test_that(
+  "amplitude_tier_from_point_process converts a Sound/PointProcess pair", {
+  sound <- Sound$create_tone(frequency = 150, duration = 0.5,
+    sampling_rate = 16000)
   pp <- sound$to_point_process_periodic_cc(75, 600)
 
   tier <- amplitude_tier_from_point_process(pp, sound)
@@ -27,7 +30,8 @@ test_that("amplitude_tier_from_point_process converts a Sound/PointProcess pair"
   expect_gt(tier$get_number_of_points(), 0)
 })
 
-test_that("to_intensity_tier and save use the module methods, not missing wrappers", {
+test_that(
+  "to_intensity_tier and save use the module methods, not missing wrappers", {
   at <- amplitude_tier_create(0, 1)
   at$add_point(0.25, 0.5)
   at$add_point(0.75, 0.8)

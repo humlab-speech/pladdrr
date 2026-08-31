@@ -4,7 +4,8 @@ library(pladdrr)
 
 sound_fixture <- function() generate_sine_wave(440, 0.2, sampling_rate = 16000)
 
-test_that("Cepstrum default view is raw (has negative values), power=TRUE view is dB (Task 7 regression guard)", {
+test_that(
+  "Cepstrum default view is raw (has negative values), power=TRUE view is dB (Task 7 regression guard)", {
   cep <- sound_fixture()$to_cepstrum()
   df_raw <- as.data.frame(cep)
   expect_true(any(df_raw$value < 0))
@@ -29,11 +30,13 @@ test_that("Cepstrum default view is raw (has negative values), power=TRUE view i
   expect_lt(max(p_power$data$power_dB) - min(p_power$data$power_dB), 300)
   expect_lt(max(p_power$data$power_dB), 1000)
   expect_s3_class(ggplot2::ggplot() + ggplot2::autolayer(cep), "ggplot")
-  expect_s3_class(ggplot2::ggplot() + ggplot2::autolayer(cep, power = TRUE), "ggplot")
+  expect_s3_class(ggplot2::ggplot() + ggplot2::autolayer(cep, power = TRUE),
+    "ggplot")
 })
 
 test_that("Cochleagram as.data.frame/autoplot work after Task 3's fix", {
-  cochlea <- sound_fixture()$to_cochleagram(dt = 0.02, df = 1, window_length = 0.025,
+  cochlea <- sound_fixture()$to_cochleagram(dt = 0.02, df = 1,
+    window_length = 0.025,
                                              forward_masking_time = 0.03)
   df <- as.data.frame(cochlea)
   # Column is "frequency" (Bark scale), not "frequency_bark" -- Task 3
@@ -52,7 +55,8 @@ test_that("LPC autoplot/autolayer render after Task 4's power_dB fix", {
   expect_true(inherits(layer, "Layer") || inherits(layer, "list"))
 })
 
-test_that("as.data.frame.LPC returns one row per (frame, coefficient), not one per frame", {
+test_that(
+  "as.data.frame.LPC returns one row per (frame, coefficient), not one per frame", {
   lpc <- sound_fixture()$to_lpc_burg(prediction_order = 8)
   df <- as.data.frame(lpc)
   expect_true(all(c("frame", "coefficient", "value", "gain") %in% names(df)))
@@ -64,18 +68,24 @@ test_that("as.data.frame.LPC returns one row per (frame, coefficient), not one p
 
   # One row per (frame, coefficient); the old bug emitted one row per frame
   # and dropped (n_coeffs - 1) * n_frames coefficients.
-  expect_equal(nrow(df), n_coeffs * n_frames, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(sort(unique(df$frame)), seq_len(n_frames), tolerance = sqrt(.Machine$double.eps))
-  expect_equal(sort(unique(df$coefficient)), seq_len(n_coeffs), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(nrow(df), n_coeffs * n_frames,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(sort(unique(df$frame)), seq_len(n_frames),
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(sort(unique(df$coefficient)), seq_len(n_coeffs),
+    tolerance = sqrt(.Machine$double.eps))
 
   # Each frame's values are exactly that frame's coefficient column.
   for (i in seq_len(min(n_frames, 3L))) {
-    expect_equal(df$value[df$frame == i], as.numeric(coeffs[, i]), tolerance = sqrt(.Machine$double.eps))
-    expect_equal(unique(df$gain[df$frame == i]), gains[i], tolerance = sqrt(.Machine$double.eps))
+    expect_equal(df$value[df$frame == i], as.numeric(coeffs[, i]),
+      tolerance = sqrt(.Machine$double.eps))
+    expect_equal(unique(df$gain[df$frame == i]), gains[i],
+      tolerance = sqrt(.Machine$double.eps))
   }
 })
 
-test_that("ComplexSpectrogram autoplot converts to dB and respects dynamic_range (Task 8 regression guard)", {
+test_that(
+  "ComplexSpectrogram autoplot converts to dB and respects dynamic_range (Task 8 regression guard)", {
   cs <- sound_fixture()$to_complex_spectrogram()  # R/sound-wrapper.R:550
   p <- ggplot2::autoplot(cs, dynamic_range = 40)
   expect_lte(max(p$data$amplitude_dB), 0)
@@ -84,10 +94,12 @@ test_that("ComplexSpectrogram autoplot converts to dB and respects dynamic_range
   expect_s3_class(p2, "ggplot")
 })
 
-test_that("BarkSpectrogram/MelSpectrogram as.data.frame use real axis values, not bin indices (Task 6 regression guard)", {
+test_that(
+  "BarkSpectrogram/MelSpectrogram as.data.frame use real axis values, not bin indices (Task 6 regression guard)", {
   bark <- sound_fixture()$to_bark_spectrogram()
   df <- as.data.frame(bark)
-  expect_false(isTRUE(all.equal(sort(unique(df$col)), seq_along(unique(df$col)))))
+  expect_false(
+    isTRUE(all.equal(sort(unique(df$col)), seq_along(unique(df$col)))))
   expect_s3_class(ggplot2::autoplot(bark), "ggplot")
 
   mel <- sound_fixture()$to_mel_spectrogram()
@@ -95,7 +107,8 @@ test_that("BarkSpectrogram/MelSpectrogram as.data.frame use real axis values, no
   expect_s3_class(ggplot2::autoplot(mel), "ggplot")
 })
 
-test_that("PowerCepstrogram, MFCC, LFCC, Excitation autoplot/autolayer all render", {
+test_that(
+  "PowerCepstrogram, MFCC, LFCC, Excitation autoplot/autolayer all render", {
   pcg <- sound_fixture()$to_powercepstrogram()
   p_pcg <- ggplot2::autoplot(pcg)
   expect_s3_class(p_pcg, "ggplot")

@@ -3,13 +3,15 @@
 # ============================================================================
 
 # Extract a Hamming-windowed, pre-emphasised frame centered at time t.
-.extract_windowed_frame <- function(signal, sr, t, window_samples, pre_emphasis_from) {
+.extract_windowed_frame <- function(signal, sr, t, window_samples,
+  pre_emphasis_from) {
   n_samples <- length(signal)
   center_sample <- round(t * sr)
   start_sample <- max(1, center_sample - window_samples %/% 2)
   end_sample <- min(n_samples, center_sample + window_samples %/% 2)
   frame <- signal[start_sample:end_sample]
-  hamming <- 0.54 - 0.46 * cos(2 * pi * seq(0, length(frame) - 1) / (length(frame) - 1))
+  hamming <- 0.54 - 0.46 * cos(
+    2 * pi * seq(0, length(frame) - 1) / (length(frame) - 1))
   frame <- frame * hamming
   if (pre_emphasis_from > 0) {
     alpha <- exp(-2 * pi * pre_emphasis_from / sr)
@@ -25,7 +27,8 @@
       list(time = t, formant_number = f,
            frequency = formants$frequency[f], bandwidth = formants$bandwidth[f])
     } else {
-      list(time = t, formant_number = f, frequency = NA_real_, bandwidth = NA_real_)
+      list(time = t, formant_number = f, frequency = NA_real_,
+        bandwidth = NA_real_)
     }
   })
 }
@@ -40,8 +43,10 @@
 #'
 #' @param sound A praat_sound object created by \code{\link{read_sound}} or
 #'   \code{\link{create_sound}}
-#' @param time_step Time step in seconds for formant analysis (0 = auto: 4x Nyquist)
-#' @param max_formant Maximum formant frequency in Hz (default: 5500 for adult female,
+#' @param time_step Time step in seconds for formant analysis (0 = auto: 4x
+#  Nyquist)
+#' @param max_formant Maximum formant frequency in Hz (default: 5500 for adult
+#  female,
 #'   use 5000 for adult male, 8000 for child)
 #' @param n_formants Number of formants to track (default: 5)
 #' @param window_length Analysis window length in seconds (default: 0.025)
@@ -71,7 +76,8 @@
 #' @examples
 #' # sound is an R6 Sound object here, so this delegates to to_formant_burg()
 #' # and returns an R6 Formant object (see the second value's \\value above).
-#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+#  16000)
 #' formants <- extract_formants(sound, max_formant = 5500)
 #' f1_mean <- formants$get_mean(formant_number = 1)
 #'
@@ -107,7 +113,8 @@ extract_formants <- function(sound,
   }
   
   # S3 object - old implementation
-  .validate_formant_args(sound, max_formant, n_formants, time_step, window_length, pre_emphasis_from)
+  .validate_formant_args(sound, max_formant, n_formants, time_step,
+    window_length, pre_emphasis_from)
   
   # Extract signal and metadata
   signal <- sound$values
@@ -142,10 +149,11 @@ extract_formants <- function(sound,
 #' @keywords internal
 #' @examples
 #' set.seed(1)
-#' signal <- sin(2 * pi * 500 * seq(0, 0.5, by = 1 / 16000)) + rnorm(8001, sd = 0.01)
+#' signal <- sin(2 * pi * 500 * seq(0, 0.5, by = 1 / 16000)) + rnorm(8001, sd =
+#  0.01)
 #' pladdrr:::.detect_formants_burg(signal, sr = 16000, time_step = 0.05,
 #'                                  max_formant = 5500, n_formants = 4,
-#'                                  window_length = 0.025, pre_emphasis_from = 50)
+#' window_length = 0.025, pre_emphasis_from = 50)
 #' @noRd
 .detect_formants_burg <- function(signal, sr, time_step, max_formant,
                                   n_formants, window_length, pre_emphasis_from) {
@@ -170,7 +178,8 @@ extract_formants <- function(sound,
     t <- frame_times[i]
     
     # Extract windowed frame (Hamming + pre-emphasis)
-    frame <- .extract_windowed_frame(signal, sr, t, window_samples, pre_emphasis_from)
+    frame <- .extract_windowed_frame(signal, sr, t, window_samples,
+      pre_emphasis_from)
 
     # LPC analysis using Burg's method
     lpc_order <- 2 * n_formants + 2
@@ -204,7 +213,8 @@ extract_formants <- function(sound,
 #' @keywords internal
 #' @examples
 #' set.seed(1)
-#' frame <- sin(2 * pi * 500 * seq(0, 0.025, length.out = 400)) + rnorm(400, sd = 0.01)
+#' frame <- sin(2 * pi * 500 * seq(0, 0.025, length.out = 400)) + rnorm(400, sd
+#  = 0.01)
 #' pladdrr:::.lpc_to_formants(frame, sr = 16000, lpc_order = 12,
 #'                             n_formants = 4, max_formant = 5500)
 #' @noRd
@@ -263,7 +273,8 @@ extract_formants <- function(sound,
 .burg_error_valid <- function(p) !is.na(p) && is.finite(p) && p > 0
 
 # Are the Burg coefficients a usable filter?
-.burg_coefficients_valid <- function(a) length(a) >= 2 && !anyNA(a) && all(is.finite(a))
+.burg_coefficients_valid <- function(
+  a) length(a) >= 2 && !anyNA(a) && all(is.finite(a))
 .burg_algorithm <- function(x, order) {
   
   init <- .burg_initialize(x, order)
@@ -317,7 +328,8 @@ extract_formants <- function(sound,
 #' @param formant A legacy \code{praat_formant}-shaped list: a plain list
 #'   with a \code{values} element (a data.frame with columns \code{time},
 #'   \code{formant_number}, \code{frequency}, \code{bandwidth}) and a
-#'   \code{class} attribute of \code{"praat_formant"}. \code{\link{extract_formants}()}
+#' \code{class} attribute of \code{"praat_formant"}.
+#  \code{\link{extract_formants}()}
 #'   no longer produces this (it now returns an R6 \code{Formant} object
 #'   instead — see its \code{\link{extract_formants}} documentation); build
 #'   one by hand for this legacy function, or use
@@ -346,13 +358,15 @@ extract_formants <- function(sound,
 #' )
 #' get_formant_at_time(formant, formant_number = 1, time = 0.15)
 #' @export
-get_formant_at_time <- function(formant, formant_number, time, interpolate = FALSE) {
+get_formant_at_time <- function(formant, formant_number, time,
+  interpolate = FALSE) {
   
   .Deprecated(
     "formant$get_value_at_time()",
     package = "pladdrr",
     msg =
-      paste0("get_formant_at_time() is deprecated and will be removed in v6.0.0. ",
+      paste0(
+        "get_formant_at_time() is deprecated and will be removed in v6.0.0. ",
              "Use the R6 interface: formant$get_value_at_time(formant_number, time)")
   )
   
@@ -397,7 +411,8 @@ get_formant_at_time <- function(formant, formant_number, time, interpolate = FAL
 #' @param formant A legacy \code{praat_formant}-shaped list: a plain list
 #'   with a \code{values} element (a data.frame with columns \code{time},
 #'   \code{formant_number}, \code{frequency}, \code{bandwidth}) and a
-#'   \code{class} attribute of \code{"praat_formant"}. \code{\link{extract_formants}()}
+#' \code{class} attribute of \code{"praat_formant"}.
+#  \code{\link{extract_formants}()}
 #'   no longer produces this (it now returns an R6 \code{Formant} object
 #'   instead — see its \code{\link{extract_formants}} documentation); build
 #'   one by hand for this legacy function, or use
@@ -458,7 +473,8 @@ get_mean_formant <- function(formant, formant_number, time_range = NULL) {
 # Compute the frame times for formant detection.
 .frame_times_for_detection <- function(duration, window_length, time_step) {
   if (duration <= window_length) return(duration / 2)
-  frame_times <- seq(window_length / 2, duration - window_length / 2, by = time_step)
+  frame_times <- seq(window_length / 2, duration - window_length / 2,
+    by = time_step)
   if (length(frame_times) == 0 || anyNA(frame_times)) return(duration / 2)
   frame_times
 }
@@ -515,7 +531,8 @@ get_mean_formant <- function(formant, formant_number, time_range = NULL) {
   den <- sum(f[idx]^2) + sum(b[idx - 1]^2)
   if (is.na(den) || !is.finite(den) || den == 0) return(list(status = "abort"))
   rc <- -2 * num / den
-  if (is.na(rc) || !is.finite(rc) || abs(rc) >= 1) return(list(status = "break"))
+  if (
+    is.na(rc) || !is.finite(rc) || abs(rc) >= 1) return(list(status = "break"))
   list(status = "ok", rc = rc)
 }
 

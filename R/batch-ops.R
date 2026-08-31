@@ -4,7 +4,8 @@
 #' Concatenate Multiple Sounds in Single C++ Call
 #'
 #' Concatenates a list of Sound objects at the C++ level, avoiding the O(n)
-#' R→C boundary crossings that occur with `Reduce(function(a,b) a$concatenate(b), sounds)`.
+#' R→C boundary crossings that occur with `Reduce(function(a,b)
+#  a$concatenate(b), sounds)`.
 #'
 #' @inheritParams pladdrr_shared_params sounds
 #' @param overlap Numeric. Overlap duration in seconds (default: 0)
@@ -28,7 +29,8 @@ sound_concatenate_all <- function(sounds, overlap = 0, return_r6 = TRUE) {
   # Extract xptrs from R6 objects if needed
   xptrs <- lapply(sounds, function(s) {
     if (inherits(s, "Sound")) {
-      # Try multiple extraction methods (Sound objects store xptr in different ways)
+      # Try multiple extraction methods (Sound objects store xptr in different
+      #  ways)
       ptr <- s$.xptr  # Primary method for function-based Sound objects
       if (is.null(ptr)) ptr <- s$get_xptr()  # Fallback 1: method call
       if (is.null(ptr) && !is.null(s$.pointer)) ptr <- s$.pointer  # Fallback 2: alternative name
@@ -59,7 +61,8 @@ sound_concatenate_all <- function(sounds, overlap = 0, return_r6 = TRUE) {
 }
 
 
-# Note: sound_extract_parts is now defined in vad.R with the efficient C++ backend
+# Note: sound_extract_parts is now defined in vad.R with the efficient C++
+#  backend
 
 
 #' Extract Pitch from Multiple Sounds in Single C++ Call
@@ -102,7 +105,8 @@ sound_to_pitch_batch <- function(sounds,
     }
   })
 
-  result_ptrs <- .sound_to_pitch_batch(xptrs, time_step, pitch_floor, pitch_ceiling)
+  result_ptrs <- .sound_to_pitch_batch(xptrs, time_step, pitch_floor,
+    pitch_ceiling)
 
   if (return_r6) {
     lapply(result_ptrs, function(ptr) Pitch(.xptr = ptr))
@@ -337,7 +341,8 @@ sound_to_pitch_shs_batch <- function(sounds,
 #'   Sound$create_tone(frequency = 150, duration = 0.5),
 #'   Sound$create_tone(frequency = 200, duration = 0.5)
 #' )
-#' pitches <- tryCatch(sound_to_pitch_spinet_batch(sounds), error = function(e) NULL)
+#' pitches <- tryCatch(sound_to_pitch_spinet_batch(sounds), error = function(e)
+#  NULL)
 #'
 #' @export
 sound_to_pitch_spinet_batch <- function(sounds,
@@ -385,7 +390,8 @@ sound_to_pitch_spinet_batch <- function(sounds,
 #' @param max_frequency Numeric. Maximum frequency in Hz (default: 5500)
 #' @param window_length Numeric. Window length in seconds (default: 0.025)
 #' @param pre_emphasis_from Numeric. Pre-emphasis from frequency (default: 50)
-#' @param return_r6 Logical. Return R6 Formant objects (TRUE) or raw xptrs (FALSE)
+#' @param return_r6 Logical. Return R6 Formant objects (TRUE) or raw xptrs
+#  (FALSE)
 #'
 #' @return List of Formant objects (R6 or xptr depending on return_r6)
 #'
@@ -436,7 +442,8 @@ sound_to_formant_batch <- function(sounds,
 #' @param minimum_pitch Numeric. Minimum pitch for analysis (default: 100)
 #' @inheritParams pladdrr_shared_params time_step
 #' @param subtract_mean Logical. Subtract mean pressure (default: TRUE)
-#' @param return_r6 Logical. Return R6 Intensity objects (TRUE) or raw xptrs (FALSE)
+#' @param return_r6 Logical. Return R6 Intensity objects (TRUE) or raw xptrs
+#  (FALSE)
 #'
 #' @return List of Intensity objects (R6 or xptr depending on return_r6)
 #'
@@ -466,7 +473,8 @@ sound_to_intensity_batch <- function(sounds,
     }
   })
 
-  result_ptrs <- .sound_to_intensity_batch(xptrs, minimum_pitch, time_step, subtract_mean)
+  result_ptrs <- .sound_to_intensity_batch(xptrs, minimum_pitch, time_step,
+    subtract_mean)
 
   if (return_r6) {
     lapply(result_ptrs, function(ptr) Intensity(.xptr = ptr))
@@ -538,7 +546,8 @@ sound_extract_and_pitch <- function(sound, from_times, to_times,
 #' @param max_frequency Numeric. Maximum frequency (default: 5500)
 #' @param window_length Numeric. Window length (default: 0.025)
 #' @param pre_emphasis_from Numeric. Pre-emphasis frequency (default: 50)
-#' @param return_r6 Logical. Return R6 Formant objects (TRUE) or raw xptrs (FALSE)
+#' @param return_r6 Logical. Return R6 Formant objects (TRUE) or raw xptrs
+#  (FALSE)
 #'
 #' @return List of Formant objects (R6 or xptr depending on return_r6)
 #'
@@ -583,12 +592,16 @@ sound_extract_and_formant <- function(sound, from_times, to_times,
 
 #' Merge Multiple TextGrid Objects
 #'
-#' Batch merging using Praat's O(n) algorithm instead of O(n²) manual tier copying.
-#' Manual merge requires save/reload + insert_boundary for each interval (each insert shifts
+#' Batch merging using Praat's O(n) algorithm instead of O(n²) manual tier
+#  copying.
+#' Manual merge requires save/reload + insert_boundary for each interval (each
+#  insert shifts
 #' all later intervals). Batch merge is single-pass.
 #'
-#' @param textgrids List of TextGrid objects (external pointers or R6 objects with .xptr)
-#' @param equalize_domains If TRUE, all tiers extended to same domain with empty intervals
+#' @param textgrids List of TextGrid objects (external pointers or R6 objects
+#  with .xptr)
+#' @param equalize_domains If TRUE, all tiers extended to same domain with empty
+#  intervals
 #'   at edges if needed (default: FALSE)
 #'
 #' @return TextGrid object (external pointer)
@@ -650,16 +663,23 @@ textgrid_merge <- function(textgrids, equalize_domains = FALSE) {
 
 
 # Validate sound_load_window arguments.
-.validate_sound_load_window <- function(path, start, end, resample_to, preserve_times) {
+.validate_sound_load_window <- function(path, start, end, resample_to,
+  preserve_times) {
   if (!.is_string_scalar(path)) stop("path must be a single character string")
   if (!file.exists(path)) stop("File not found: ", path)
-  if (!.is_numeric_scalar(start) || start < 0) stop("start must be a non-negative number")
+  if (
+    !.is_numeric_scalar(
+      start) || start < 0) stop("start must be a non-negative number")
   if (!.is_numeric_scalar(end)) stop("end must be a number")
   if (end <= start) stop("end must be greater than start")
   if (!is.null(resample_to)) {
-    if (!.is_numeric_scalar(resample_to) || resample_to <= 0) stop("resample_to must be a positive number or NULL")
+    if (
+      !.is_numeric_scalar(
+        resample_to) || resample_to <= 0) stop("resample_to must be a positive number or NULL")
   }
-  if (!.is_logical_scalar(preserve_times)) stop("preserve_times must be TRUE or FALSE")
+  if (
+    !.is_logical_scalar(
+      preserve_times)) stop("preserve_times must be TRUE or FALSE")
   invisible(NULL)
 }
 
@@ -667,13 +687,16 @@ textgrid_merge <- function(textgrids, equalize_domains = FALSE) {
 #'
 #' Extracts a time window from a sound file without loading the entire file.
 #' Optionally resamples the window to a target sampling rate.
-#' Uses LongSound for lazy loading - only the requested window is loaded from disk.
+#' Uses LongSound for lazy loading - only the requested window is loaded from
+#  disk.
 #'
 #' @param path Path to sound file (WAV, AIFF, FLAC, MP3, etc.)
 #' @param start Start time of window in seconds
 #' @param end End time of window in seconds
-#' @param resample_to Target sampling rate in Hz (optional). If NULL, no resampling.
-#' @param preserve_times If TRUE, keep original time domain. If FALSE, shift to start at 0 (default: FALSE)
+#' @param resample_to Target sampling rate in Hz (optional). If NULL, no
+#  resampling.
+#' @param preserve_times If TRUE, keep original time domain. If FALSE, shift to
+#  start at 0 (default: FALSE)
 #'
 #' @return Sound object containing the windowed (and optionally resampled) audio
 #'
@@ -699,21 +722,25 @@ textgrid_merge <- function(textgrids, equalize_domains = FALSE) {
 #' window <- sound_load_window(path, start = 0.5, end = 0.6)
 #'
 #' # Extract and resample (for spectral analysis)
-#' window_10k <- sound_load_window(path, start = 0.5, end = 0.6, resample_to = 10000)
+#' window_10k <- sound_load_window(path, start = 0.5, end = 0.6, resample_to =
+#  10000)
 #'
 #' # Preserve original time domain (window starts at 0.5, not 0.0)
-#' window_timed <- sound_load_window(path, start = 0.5, end = 0.6, preserve_times = TRUE)
+#' window_timed <- sound_load_window(path, start = 0.5, end = 0.6,
+#  preserve_times = TRUE)
 #'
 #' unlink(path)
 #'
 #' @family batch-ops
 #' @seealso \code{\link{Sound}}, \code{\link{LongSound}}
 #' @export
-sound_load_window <- function(path, start, end, resample_to = NULL, preserve_times = FALSE) {
+sound_load_window <- function(path, start, end, resample_to = NULL,
+  preserve_times = FALSE) {
   .validate_sound_load_window(path, start, end, resample_to, preserve_times)
   
   # Call C++ wrapper (returns external pointer)
-  result_xptr <- .sound_load_window(path, start, end, resample_to, preserve_times)
+  result_xptr <- .sound_load_window(path, start, end, resample_to,
+    preserve_times)
   
   # Wrap in R6 Sound object
   Sound(.xptr = result_xptr)

@@ -5,7 +5,8 @@
 #'
 #' Frequency runs along the Bark scale (0-25.6 Bark) rather than Hertz,
 #' matching the perceptual frequency resolution of the ear. Create one from a
-#' Sound with \code{sound$to_cochleagram()} or \code{sound$to_cochleagram_edb()};
+#' Sound with \code{sound$to_cochleagram()} or
+#  \code{sound$to_cochleagram_edb()};
 #' slice it at a time point to get an Excitation pattern, from which loudness
 #' can be read off.
 #'
@@ -16,21 +17,28 @@
 #'
 #' @section Query methods:
 #' \itemize{
-#'   \item \code{get_start_time()}, \code{get_end_time()}, \code{get_duration()} - time domain in seconds
+#' \item \code{get_start_time()}, \code{get_end_time()}, \code{get_duration()} -
+#  time domain in seconds
 #'   \item \code{get_number_of_frames()}, \code{get_time_step()} - time sampling
 #'   \item \code{get_time_from_column(i_col)} - time at a 1-based frame index
-#'   \item \code{get_lowest_frequency()}, \code{get_highest_frequency()} - frequency range in Bark
-#'   \item \code{get_number_of_frequency_bands()}, \code{get_frequency_step()} - frequency sampling
+#' \item \code{get_lowest_frequency()}, \code{get_highest_frequency()} -
+#  frequency range in Bark
+#' \item \code{get_number_of_frequency_bands()}, \code{get_frequency_step()} -
+#  frequency sampling
 #'   \item \code{get_frequency_from_row()} - frequency at a 1-based band index
-#'   \item \code{get_value_at_time_and_frequency(time, freq_bark)} - excitation level at a point
+#' \item \code{get_value_at_time_and_frequency(time, freq_bark)} - excitation
+#  level at a point
 #'   \item \code{get_loudness_at_time(time)} - loudness (sone) at a time
 #' }
 #'
 #' @section Transformation and export:
 #' \itemize{
-#'   \item \code{to_excitation(time)} - excitation pattern (Excitation object) at a time
-#'   \item \code{get_difference(other, tmin, tmax)} - distance between two cochleagrams
-#'   \item \code{as_matrix()} - values as a numeric matrix (frequency bands x frames)
+#' \item \code{to_excitation(time)} - excitation pattern (Excitation object) at
+#  a time
+#' \item \code{get_difference(other, tmin, tmax)} - distance between two
+#  cochleagrams
+#' \item \code{as_matrix()} - values as a numeric matrix (frequency bands x
+#  frames)
 #' }
 #'
 #' @param .xptr Not for direct use. External pointer to the underlying C++
@@ -39,7 +47,8 @@
 #' @return A \code{Cochleagram} object.
 #'
 #' @examples
-#' sound <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 44100)
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate =
+#  44100)
 #' cochleagram <- sound$to_cochleagram()
 #' cochleagram$get_duration()
 #' cochleagram$get_loudness_at_time(0.15)
@@ -58,26 +67,32 @@ NULL
 .cochleagram_methods$get_start_time <- function(.self) .self$.cpp$get_xmin()
 .cochleagram_methods$get_end_time <- function(.self) .self$.cpp$get_xmax()
 .cochleagram_methods$get_duration <- function(.self) .self$.cpp$get_duration()
-.cochleagram_methods$get_number_of_frames <- function(.self) .self$.cpp$get_number_of_frames()
+.cochleagram_methods$get_number_of_frames <- function(
+  .self) .self$.cpp$get_number_of_frames()
 .cochleagram_methods$get_time_step <- function(.self) .self$.cpp$get_time_step()
 .cochleagram_methods$get_time_from_column <- function(.self, i_col) {
   .self$.cpp$get_time_from_column(as.integer(i_col))
 }
 
 # Query - Frequency domain
-.cochleagram_methods$get_lowest_frequency <- function(.self) .self$.cpp$get_ymin()
-.cochleagram_methods$get_highest_frequency <- function(.self) .self$.cpp$get_ymax()
+.cochleagram_methods$get_lowest_frequency <- function(
+  .self) .self$.cpp$get_ymin()
+.cochleagram_methods$get_highest_frequency <- function(
+  .self) .self$.cpp$get_ymax()
 .cochleagram_methods$get_number_of_frequency_bands <- function(.self) {
   .self$.cpp$get_number_of_frequency_bands()
 }
-.cochleagram_methods$get_frequency_step <- function(.self) .self$.cpp$get_frequency_step()
+.cochleagram_methods$get_frequency_step <- function(
+  .self) .self$.cpp$get_frequency_step()
 .cochleagram_methods$get_frequency_from_row <- function(.self, i_row) {
   .self$.cpp$get_frequency_from_row(as.integer(i_row))
 }
 
 # Query - Values
-.cochleagram_methods$get_value_at_time_and_frequency <- function(.self, time, freq_bark) {
-  .self$.cpp$get_value_at_time_and_frequency(as.numeric(time), as.numeric(freq_bark))
+.cochleagram_methods$get_value_at_time_and_frequency <- function(.self, time,
+  freq_bark) {
+  .self$.cpp$get_value_at_time_and_frequency(as.numeric(time),
+    as.numeric(freq_bark))
 }
 .cochleagram_methods$get_loudness_at_time <- function(.self, time) {
   .self$to_excitation(as.numeric(time))$get_loudness()
@@ -89,8 +104,10 @@ NULL
   Excitation(.xptr = xptr)
 }
 
-.cochleagram_methods$get_difference <- function(.self, other, tmin = 0, tmax = 0) {
-  if (!inherits(other, "Cochleagram")) stop("other must be a Cochleagram object")
+.cochleagram_methods$get_difference <- function(.self, other, tmin = 0,
+  tmax = 0) {
+  if (
+    !inherits(other, "Cochleagram")) stop("other must be a Cochleagram object")
   .self$.cpp$get_difference(other$.xptr, as.numeric(tmin), as.numeric(tmax))
 }
 
@@ -105,10 +122,15 @@ NULL
 # Print
 .cochleagram_methods$print <- function(.self) {
   cat("<Praat Cochleagram>\n")
-  cat(sprintf("  Time domain: %.3f to %.3f s\n", .self$.cpp$get_xmin(), .self$.cpp$get_xmax()))
-  cat(sprintf("  Frequency range: %.2f to %.2f Bark\n", .self$.cpp$get_ymin(), .self$.cpp$get_ymax()))
+  cat(
+    sprintf("  Time domain: %.3f to %.3f s\n", .self$.cpp$get_xmin(),
+      .self$.cpp$get_xmax()))
+  cat(
+    sprintf("  Frequency range: %.2f to %.2f Bark\n", .self$.cpp$get_ymin(),
+      .self$.cpp$get_ymax()))
   cat(sprintf("  %d frames x %d frequency bands\n",
-              .self$.cpp$get_number_of_frames(), .self$.cpp$get_number_of_frequency_bands()))
+              .self$.cpp$get_number_of_frames(
+                ), .self$.cpp$get_number_of_frequency_bands()))
   invisible(.self)
 }
 
@@ -136,7 +158,8 @@ lockEnvironment(.cochleagram_methods, bindings = TRUE)
 #' @export
 Cochleagram <- function(.xptr) {
   if (missing(.xptr) || is.null(.xptr)) {
-    stop("Cochleagram objects should be created via Sound$to_cochleagram() or Sound$to_cochleagram_edb()")
+    stop(
+      "Cochleagram objects should be created via Sound$to_cochleagram() or Sound$to_cochleagram_edb()")
   }
   
   coch_mod <- get_module("cochleagram_module")

@@ -1,16 +1,26 @@
-test_that("calculate_cpps_fast() formals match the r6 profile in .cpps_profiles", {
+test_that(
+  "calculate_cpps_fast() formals match the r6 profile in .cpps_profiles", {
   p <- pladdrr:::.cpps_profiles$r6
   f <- formals(calculate_cpps_fast)
-  expect_equal(f$subtract_tilt, p$subtract_tilt, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(f$time_averaging_window, p$time_averaging_window, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(f$quefrency_averaging_window, p$quefrency_averaging_window, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(f$pitch_floor, p$pitch_floor, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(f$pitch_ceiling, p$pitch_ceiling, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(f$qstart_fit, p$qstart_fit, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(f$subtract_tilt, p$subtract_tilt,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(f$time_averaging_window, p$time_averaging_window,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(f$quefrency_averaging_window, p$quefrency_averaging_window,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(f$pitch_floor, p$pitch_floor,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(f$pitch_ceiling, p$pitch_ceiling,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(f$qstart_fit, p$qstart_fit,
+    tolerance = sqrt(.Machine$double.eps))
   expect_equal(f$qend_fit, p$qend_fit, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(f$trend_line_type, p$trend_line_type, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(f$fit_method, p$fit_method, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(f$interpolation, p$interpolation, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(f$trend_line_type, p$trend_line_type,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(f$fit_method, p$fit_method,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(f$interpolation, p$interpolation,
+    tolerance = sqrt(.Machine$double.eps))
   expect_equal(f$delta_f0, p$delta_f0, tolerance = sqrt(.Machine$double.eps))
   expect_equal(f$time_step, 0.002)
   expect_equal(f$max_frequency, 5000, tolerance = sqrt(.Machine$double.eps))
@@ -20,33 +30,52 @@ test_that("calculate_cpps_fast() formals match the r6 profile in .cpps_profiles"
 test_that("PowerCepstrogram$get_cpps defaults match the r6 profile", {
   p <- pladdrr:::.cpps_profiles$r6
   f <- formals(pladdrr:::.powercepstrogram_methods$get_cpps)
-  expect_equal(f$subtract_tilt, p$subtract_tilt, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(f$time_averaging_window, p$time_averaging_window, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(f$quefrency_averaging_window, p$quefrency_averaging_window, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(f$pitch_floor, p$pitch_floor, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(f$pitch_ceiling, p$pitch_ceiling, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(f$subtract_tilt, p$subtract_tilt,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(f$time_averaging_window, p$time_averaging_window,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(f$quefrency_averaging_window, p$quefrency_averaging_window,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(f$pitch_floor, p$pitch_floor,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(f$pitch_ceiling, p$pitch_ceiling,
+    tolerance = sqrt(.Machine$double.eps))
   expect_equal(f$delta_f0, p$delta_f0, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(f$quefrency_range_start, p$qstart_fit, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(f$quefrency_range_end, p$qend_fit, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(eval(f$interpolation)[1], p$interpolation, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(eval(f$trend_line_type)[1], p$trend_line_type, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(eval(f$fit_method)[1], p$fit_method, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(f$quefrency_range_start, p$qstart_fit,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(f$quefrency_range_end, p$qend_fit,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(eval(f$interpolation)[1], p$interpolation,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(eval(f$trend_line_type)[1], p$trend_line_type,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(eval(f$fit_method)[1], p$fit_method,
+    tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("get_cpps_fast() formals match the avqi profile", {
   p <- pladdrr:::.cpps_profiles$avqi
   f <- formals(get_cpps_fast)
-  expect_equal(f$subtract_tilt, p$subtract_tilt, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(f$time_averaging_window, p$time_averaging_window, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(f$quefrency_averaging_window, p$quefrency_averaging_window, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(f$pitch_floor, p$pitch_floor, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(f$pitch_ceiling, p$pitch_ceiling, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(f$subtract_tilt, p$subtract_tilt,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(f$time_averaging_window, p$time_averaging_window,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(f$quefrency_averaging_window, p$quefrency_averaging_window,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(f$pitch_floor, p$pitch_floor,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(f$pitch_ceiling, p$pitch_ceiling,
+    tolerance = sqrt(.Machine$double.eps))
   expect_equal(f$delta_f0, p$delta_f0, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(f$qstart_fit, p$qstart_fit, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(f$qstart_fit, p$qstart_fit,
+    tolerance = sqrt(.Machine$double.eps))
   expect_equal(f$qend_fit, p$qend_fit, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(f$interpolation, p$interpolation, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(f$trend_line_type, p$trend_line_type, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(f$fit_method, p$fit_method, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(f$interpolation, p$interpolation,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(f$trend_line_type, p$trend_line_type,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(f$fit_method, p$fit_method,
+    tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("calculate_cpps_ultra() formals match documented defaults", {
@@ -67,7 +96,8 @@ test_that("calculate_cpps_ultra() formals match documented defaults", {
   expect_equal(f$max_frequency, 5000, tolerance = sqrt(.Machine$double.eps))
 })
 
-test_that("calculate_cpps_fast and calculate_cpps_ultra share matching defaults", {
+test_that(
+  "calculate_cpps_fast and calculate_cpps_ultra share matching defaults", {
   fast <- formals(calculate_cpps_fast)
   ultra <- formals(calculate_cpps_ultra)
 

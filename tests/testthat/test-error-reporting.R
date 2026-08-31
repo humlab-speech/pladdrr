@@ -49,7 +49,8 @@ test_that("with_pladdrr_errors passes through untagged errors", {
   )
 })
 
-test_that("with_pladdrr_errors attaches data-loss attribute on tagged warning", {
+test_that(
+  "with_pladdrr_errors attaches data-loss attribute on tagged warning", {
   res <- suppressWarnings(with_pladdrr_errors({
     warning("[pladdrr_data_loss:probe:-] 3 of 5 values undefined")
     c(1, 2, 3, NA, NA)
@@ -60,7 +61,8 @@ test_that("with_pladdrr_errors attaches data-loss attribute on tagged warning", 
   expect_match(loss[[1]]$message, "3 of 5")
 })
 
-test_that("retrofitted formant wrapper raises classed input error on null xptr", {
+test_that(
+  "retrofitted formant wrapper raises classed input error on null xptr", {
   skip_if_not("formant_get_multiple_formants_at_times" %in% retrofitted)
   skip_if_not(exists("formant_get_multiple_formants_at_times",
                      envir = asNamespace("pladdrr"), inherits = FALSE),

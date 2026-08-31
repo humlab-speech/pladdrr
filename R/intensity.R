@@ -11,10 +11,12 @@
 #' @return Intensity R6 object
 #' @export
 #' @examples
-#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+#  16000)
 #' intensity <- suppressWarnings(extract_intensity(sound))
 #' intensity$get_mean(from_time = 0, to_time = 0)
-extract_intensity <- function(sound, time_step = 0.0, minimum_pitch = 100, subtract_mean = TRUE) {
+extract_intensity <- function(sound, time_step = 0.0, minimum_pitch = 100,
+  subtract_mean = TRUE) {
   .Deprecated(
     "sound$to_intensity()",
     package = "pladdrr",
@@ -24,7 +26,8 @@ extract_intensity <- function(sound, time_step = 0.0, minimum_pitch = 100, subtr
     )
   )
   
-  sound$to_intensity(minimum_pitch = minimum_pitch, time_step = time_step, subtract_mean = subtract_mean)
+  sound$to_intensity(minimum_pitch = minimum_pitch, time_step = time_step,
+    subtract_mean = subtract_mean)
 }
 
 #' Get intensity at a specific time (DEPRECATED)
@@ -36,13 +39,15 @@ extract_intensity <- function(sound, time_step = 0.0, minimum_pitch = 100, subtr
 #' @inheritParams pladdrr_shared_params interpolate
 #' @return Intensity in dB
 #' @examples
-#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+#  16000)
 #' intensity <- sound$to_intensity()
 #' suppressWarnings(get_intensity_at_time(intensity, 0.25))
 #' @export
 get_intensity_at_time <- function(intensity, time, interpolate = FALSE) {
   .Deprecated("intensity$get_value_at_time()", package = "pladdrr")
-  intensity$get_value_at_time(time, interpolation = if (interpolate) "cubic" else "none")
+  intensity$get_value_at_time(time,
+    interpolation = if (interpolate) "cubic" else "none")
 }
 
 #' Get mean intensity (DEPRECATED)
@@ -53,7 +58,8 @@ get_intensity_at_time <- function(intensity, time, interpolate = FALSE) {
 #' @param time_range Optional time range c(start, end)
 #' @return Mean intensity in dB
 #' @examples
-#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+#  16000)
 #' intensity <- sound$to_intensity()
 #' suppressWarnings(get_mean_intensity(intensity))
 #' @export
@@ -74,7 +80,8 @@ get_mean_intensity <- function(intensity, time_range = NULL) {
 #' @inheritParams pladdrr_shared_params time_range
 #' @return Minimum intensity in dB
 #' @examples
-#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+#  16000)
 #' intensity <- sound$to_intensity()
 #' suppressWarnings(get_min_intensity(intensity))
 #' @export
@@ -95,7 +102,8 @@ get_min_intensity <- function(intensity, time_range = NULL) {
 #' @inheritParams pladdrr_shared_params time_range
 #' @return Maximum intensity in dB
 #' @examples
-#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+#  16000)
 #' intensity <- sound$to_intensity()
 #' suppressWarnings(get_max_intensity(intensity))
 #' @export
@@ -116,7 +124,8 @@ get_max_intensity <- function(intensity, time_range = NULL) {
 #' @inheritParams pladdrr_shared_params time_range
 #' @return Standard deviation in dB
 #' @examples
-#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+#  16000)
 #' intensity <- sound$to_intensity()
 #' suppressWarnings(get_sd_intensity(intensity))
 #' @export

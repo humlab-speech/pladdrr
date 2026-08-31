@@ -86,7 +86,8 @@ lockEnvironment(.complexspectrogram_methods, bindings = TRUE)
 # ============================================================================
 
 #' @export
-ComplexSpectrogram <- function(sound, window_length = 0.005, maximum_frequency = 5000.0) {
+ComplexSpectrogram <- function(sound, window_length = 0.005,
+  maximum_frequency = 5000.0) {
   if (!inherits(sound, "Sound")) {
     stop("First argument must be a Sound object")
   }

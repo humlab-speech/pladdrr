@@ -1,4 +1,5 @@
-# test-discriminant-r6.R - Tests for R/discriminant-wrapper.R (Discriminant object)
+# test-discriminant-r6.R - Tests for R/discriminant-wrapper.R (Discriminant
+#  object)
 #
 # NOTE: discriminant_from_matrix() with more than one predictor column is
 # currently unreliable (documented in R/discriminant-wrapper.R and confirmed
@@ -6,7 +7,8 @@
 # fails inside LAPACK with a BLAS/LAPACK error). All tests below therefore
 # use single-column (ncol = 1) input, matching the package's own example.
 
-test_that("Discriminant constructs from a matrix and reports basic properties", {
+test_that(
+  "Discriminant constructs from a matrix and reports basic properties", {
   set.seed(1)
   data <- matrix(c(rnorm(10, 500), rnorm(10, 700)), ncol = 1,
                   dimnames = list(NULL, "f1"))
@@ -20,7 +22,8 @@ test_that("Discriminant constructs from a matrix and reports basic properties", 
   expect_gte(disc$get_number_of_functions(), 1)
   expect_identical(disc$get_dimension(), 1L)
   expect_identical(disc$get_number_of_observations(1), 10L)
-  expect_equal(disc$get_total_observations(), 20, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(disc$get_total_observations(), 20,
+    tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("Discriminant eigen/variance/probability queries work", {
@@ -36,7 +39,8 @@ test_that("Discriminant eigen/variance/probability queries work", {
   ev <- disc$get_eigenvalues()
   expect_type(ev, "double")
   expect_length(ev, 1)
-  expect_equal(disc$get_eigenvalue(1), ev[1], tolerance = sqrt(.Machine$double.eps))
+  expect_equal(disc$get_eigenvalue(1), ev[1],
+    tolerance = sqrt(.Machine$double.eps))
   expect_type(disc$get_fraction_variance(1, 1), "double")
   expect_equal(disc$get_fraction_variance(1, 1), 1, tolerance = sqrt(.Machine$double.eps))  # only function explains 100%
   expect_type(disc$get_variance_explained(1, 1), "double")
@@ -62,22 +66,26 @@ test_that("Discriminant eigen/variance/probability queries work", {
   vec <- disc$get_eigenvector(1)
   expect_type(vec, "double")
   expect_length(vec, disc$get_dimension())
-  expect_equal(disc$get_eigenvectors(), disc$get_coefficients(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(disc$get_eigenvectors(), disc$get_coefficients(),
+    tolerance = sqrt(.Machine$double.eps))
   expect_true(is.matrix(disc$get_eigenvectors()))
-  expect_equal(disc$get_group_labels(), c("a", "e", "i"), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(disc$get_group_labels(), c("a", "e", "i"),
+    tolerance = sqrt(.Machine$double.eps))
 
   # get_group_centroids() returns a numeric matrix: one row per group,
   # one column per variable, row-named by group label.
   centroids <- disc$get_group_centroids()
   expect_true(is.matrix(centroids))
   expect_equal(dim(centroids), c(3, 1), tolerance = sqrt(.Machine$double.eps))
-  expect_equal(rownames(centroids), c("a", "e", "i"), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(rownames(centroids), c("a", "e", "i"),
+    tolerance = sqrt(.Machine$double.eps))
 
   expect_type(disc$get_apriori_probabilities(), "double")
   expect_length(disc$get_apriori_probabilities(), 3)
 })
 
-test_that("Discriminant set_apriori_probability, as_data_frame, get_info, save round-trip", {
+test_that(
+  "Discriminant set_apriori_probability, as_data_frame, get_info, save round-trip", {
   set.seed(3)
   data <- matrix(c(rnorm(10, 500, 30), rnorm(10, 900, 30)), ncol = 1,
                   dimnames = list(NULL, "f1"))
@@ -96,7 +104,8 @@ test_that("Discriminant set_apriori_probability, as_data_frame, get_info, save r
   # to "function." on the R side.
   expect_named(df, c("function.", "eigenvalue", "variance_fraction",
                              "cumulative_variance", "wilks_lambda"))
-  expect_equal(nrow(df), disc$get_number_of_functions(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(nrow(df), disc$get_number_of_functions(),
+    tolerance = sqrt(.Machine$double.eps))
 
   # get_info() returns a structured list summary, not a character string.
   info <- disc$get_info()
@@ -105,7 +114,8 @@ test_that("Discriminant set_apriori_probability, as_data_frame, get_info, save r
                         "eigenvalues", "group_labels", "apriori_probabilities"))
   expect_equal(info$n_groups, 2, tolerance = sqrt(.Machine$double.eps))
   expect_equal(info$n_observations, 20, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(info$group_labels, c("a", "i"), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(info$group_labels, c("a", "i"),
+    tolerance = sqrt(.Machine$double.eps))
 
   tmp <- tempfile(fileext = ".Discriminant")
   on.exit(unlink(tmp), add = TRUE)
@@ -138,5 +148,6 @@ test_that("Discriminant rejects out-of-range group and function indices", {
 
   expect_error(disc$get_number_of_observations(3), "Group index out of range")
   expect_error(disc$get_ln_determinant_group(0), "Group index out of range")
-  expect_error(disc$set_apriori_probability(1, 1.5), "Probability must be between 0 and 1")
+  expect_error(disc$set_apriori_probability(1, 1.5),
+    "Probability must be between 0 and 1")
 })

@@ -14,7 +14,8 @@
 #' @param numberOfNasalFormants Number of nasal formants (typically 1)
 #' @param numberOfNasalAntiFormants Number of nasal antiformants (typically 1)
 #' @param numberOfTrachealFormants Number of tracheal formants (typically 1)
-#' @param numberOfTrachealAntiFormants Number of tracheal antiformants (typically 1)
+#' @param numberOfTrachealAntiFormants Number of tracheal antiformants
+#  (typically 1)
 #' @param numberOfFricationFormants Number of frication formants (typically 6)
 #' @param numberOfDeltaFormants Number of delta formants (typically 1)
 #'
@@ -67,7 +68,8 @@ NULL
 }
 
 # Pitch manipulation
-.klattgrid_methods$get_pitch_at_time <- function(.self, t) .self$.cpp$get_pitch_at_time(t)
+.klattgrid_methods$get_pitch_at_time <- function(.self,
+  t) .self$.cpp$get_pitch_at_time(t)
 
 .klattgrid_methods$add_pitch_point <- function(.self, t, value) {
   .self$.cpp$add_pitch_point(t, value)
@@ -90,28 +92,39 @@ NULL
 }
 
 # Formant manipulation
-# formantType: 1=oral, 2=nasal, 3=frication, 4=tracheal, 5=nasal_anti, 6=tracheal_anti, 7=delta
-.klattgrid_methods$get_formant_at_time <- function(.self, formantType, iformant, t) {
-  .self$.cpp$get_formant_at_time(as.integer(formantType), as.integer(iformant), t)
+# formantType: 1=oral, 2=nasal, 3=frication, 4=tracheal, 5=nasal_anti,
+#  6=tracheal_anti, 7=delta
+.klattgrid_methods$get_formant_at_time <- function(.self, formantType,
+  iformant, t) {
+  .self$.cpp$get_formant_at_time(as.integer(formantType),
+    as.integer(iformant), t)
 }
 
-.klattgrid_methods$add_formant_point <- function(.self, formantType, iformant, t, value) {
-  .self$.cpp$add_formant_point(as.integer(formantType), as.integer(iformant), t, value)
+.klattgrid_methods$add_formant_point <- function(.self, formantType, iformant,
+  t, value) {
+  .self$.cpp$add_formant_point(as.integer(formantType), as.integer(iformant),
+    t, value)
   invisible(.self)
 }
 
-.klattgrid_methods$remove_formant_points <- function(.self, formantType, iformant, t1, t2) {
-  .self$.cpp$remove_formant_points(as.integer(formantType), as.integer(iformant), t1, t2)
+.klattgrid_methods$remove_formant_points <- function(.self, formantType,
+  iformant, t1, t2) {
+  .self$.cpp$remove_formant_points(as.integer(formantType),
+    as.integer(iformant), t1, t2)
   invisible(.self)
 }
 
 # Bandwidth manipulation
-.klattgrid_methods$get_bandwidth_at_time <- function(.self, formantType, iformant, t) {
-  .self$.cpp$get_bandwidth_at_time(as.integer(formantType), as.integer(iformant), t)
+.klattgrid_methods$get_bandwidth_at_time <- function(.self, formantType,
+  iformant, t) {
+  .self$.cpp$get_bandwidth_at_time(as.integer(formantType),
+    as.integer(iformant), t)
 }
 
-.klattgrid_methods$add_bandwidth_point <- function(.self, formantType, iformant, t, value) {
-  .self$.cpp$add_bandwidth_point(as.integer(formantType), as.integer(iformant), t, value)
+.klattgrid_methods$add_bandwidth_point <- function(.self, formantType,
+  iformant, t, value) {
+  .self$.cpp$add_bandwidth_point(as.integer(formantType),
+    as.integer(iformant), t, value)
   invisible(.self)
 }
 
@@ -125,7 +138,8 @@ NULL
 .klattgrid_methods$print <- function(.self) {
   cat("KlattGrid object\n")
   cat("  Duration:", .self$.cpp$get_duration(), "s\n")
-  cat("  Time range: [", .self$.cpp$get_xmin(), ",", .self$.cpp$get_xmax(), "]\n")
+  cat("  Time range: [", .self$.cpp$get_xmin(), ",", .self$.cpp$get_xmax(),
+    "]\n")
   invisible(.self)
 }
 

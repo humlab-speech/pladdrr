@@ -7,7 +7,8 @@ library(testthat)
 library(pladdrr)
 
 # Helper: Create a test tone with correct API
-create_test_tone <- function(frequency, duration, sample_rate = 44100, amplitude = 0.5) {
+create_test_tone <- function(frequency, duration, sample_rate = 44100,
+  amplitude = 0.5) {
   n_samples <- as.integer(duration * sample_rate)
   t <- seq(0, duration, length.out = n_samples)
   samples <- amplitude * sin(2 * pi * frequency * t)
@@ -60,12 +61,15 @@ test_that("SIMD pitch extraction matches scalar (AC method)", {
 
   # Force scalar
   pladdrr_simd(FALSE)
-  pitch_scalar <- sound$to_pitch_ac(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
-  mean_scalar <- pitch_scalar$get_mean(from_time = 0, to_time = 0, unit = "hertz")
+  pitch_scalar <- sound$to_pitch_ac(time_step = 0.01, pitch_floor = 75,
+    pitch_ceiling = 600)
+  mean_scalar <- pitch_scalar$get_mean(from_time = 0, to_time = 0,
+    unit = "hertz")
 
   # Force SIMD
   pladdrr_simd(TRUE)
-  pitch_simd <- sound$to_pitch_ac(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
+  pitch_simd <- sound$to_pitch_ac(time_step = 0.01, pitch_floor = 75,
+    pitch_ceiling = 600)
   mean_simd <- pitch_simd$get_mean(from_time = 0, to_time = 0, unit = "hertz")
 
   # Compare
@@ -97,7 +101,8 @@ test_that("SIMD pitch extraction matches scalar (CC method)", {
   )
 
   if (!is.null(pitch_scalar) && !is.null(pitch_simd)) {
-    mean_scalar <- pitch_scalar$get_mean(from_time = 0, to_time = 0, unit = "hertz")
+    mean_scalar <- pitch_scalar$get_mean(from_time = 0, to_time = 0,
+      unit = "hertz")
     mean_simd <- pitch_simd$get_mean(from_time = 0, to_time = 0, unit = "hertz")
 
     expect_equal(mean_simd, mean_scalar, tolerance = 1e-6,
@@ -125,7 +130,8 @@ test_that("SIMD pitch extraction accuracy on various frequencies", {
     if (!is.null(pitch)) {
       mean_pitch <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
 
-      # Should be within 5% of target frequency (relaxed tolerance for synthetic tones)
+      # Should be within 5% of target frequency (relaxed tolerance for synthetic
+      #  tones)
       if (!is.na(mean_pitch)) {
         expect_equal(mean_pitch, freq, tolerance = freq * 0.05,
                      label = sprintf("SIMD pitch should detect %d Hz", freq))
@@ -172,8 +178,10 @@ test_that("SIMD intensity RMS calculation accuracy", {
   mean_db <- intensity$get_mean(from_time = 0, to_time = 0)
   std_db <- intensity$get_standard_deviation(from_time = 0, to_time = 0)
 
-  # Relaxed tolerance: std_db < 3.0 for pure tone (edge effects can increase variance)
-  expect_lt(std_db, 3.0, label = "SIMD intensity should have reasonable variance for pure tone")
+  # Relaxed tolerance: std_db < 3.0 for pure tone (edge effects can increase
+  #  variance)
+  expect_lt(std_db, 3.0,
+    label = "SIMD intensity should have reasonable variance for pure tone")
 })
 
 # ============================================================================
@@ -252,8 +260,10 @@ test_that("SIMD windowing is applied consistently", {
   )
 
   # Both should succeed (not NULL)
-  expect_false(is.null(spec_hamming), label = "Hamming window should work with SIMD")
-  expect_false(is.null(spec_hanning), label = "Hanning window should work with SIMD")
+  expect_false(is.null(spec_hamming),
+    label = "Hamming window should work with SIMD")
+  expect_false(is.null(spec_hanning),
+    label = "Hanning window should work with SIMD")
 })
 
 # ============================================================================
@@ -269,7 +279,8 @@ test_that("SIMD operations complete without errors", {
 
   # All major SIMD operations should complete without error
   expect_error(sound$to_pitch(), NA, label = "SIMD pitch should not error")
-  expect_error(sound$to_intensity(), NA, label = "SIMD intensity should not error")
+  expect_error(sound$to_intensity(), NA,
+    label = "SIMD intensity should not error")
   expect_error(
     sound$to_formant_burg(time_step = 0.01, max_formants = 5,
                           max_frequency = 5500),
@@ -296,7 +307,8 @@ test_that("SIMD can be disabled and re-enabled", {
   # Disable SIMD
   pladdrr_simd(FALSE)
   pitch_scalar <- sound$to_pitch()
-  mean_scalar <- pitch_scalar$get_mean(from_time = 0, to_time = 0, unit = "hertz")
+  mean_scalar <- pitch_scalar$get_mean(from_time = 0, to_time = 0,
+    unit = "hertz")
 
   # Re-enable SIMD
   pladdrr_simd(TRUE)
@@ -336,14 +348,17 @@ test_that("SIMD spectrogram generation matches scalar", {
   )
 
   # Both should succeed
-  expect_false(is.null(spec_scalar), label = "Scalar spectrogram should be created")
+  expect_false(is.null(spec_scalar),
+    label = "Scalar spectrogram should be created")
   expect_false(is.null(spec_simd), label = "SIMD spectrogram should be created")
 
   # Compare dimensions
   if (!is.null(spec_scalar) && !is.null(spec_simd)) {
-    expect_equal(spec_simd$get_number_of_time_bins(), spec_scalar$get_number_of_time_bins(),
+    expect_equal(spec_simd$get_number_of_time_bins(),
+      spec_scalar$get_number_of_time_bins(),
                  label = "SIMD spectrogram should have same time frames as scalar")
-    expect_equal(spec_simd$get_number_of_frequency_bins(), spec_scalar$get_number_of_frequency_bins(),
+    expect_equal(spec_simd$get_number_of_frequency_bins(),
+      spec_scalar$get_number_of_frequency_bins(),
                  label = "SIMD spectrogram should have same frequency bins as scalar")
 
     # Get matrix representation and compare values
@@ -376,7 +391,8 @@ test_that("SIMD spectrogram works with different window shapes", {
   sound <- create_test_tone(880, duration = 1.0)
 
   # Test multiple window shapes
-  window_shapes <- c("Hamming", "Hanning", "Gaussian", "Square", "Bartlett", "Welch")
+  window_shapes <- c("Hamming", "Hanning", "Gaussian", "Square", "Bartlett",
+    "Welch")
 
   for (shape in window_shapes) {
     spec <- tryCatch(
@@ -387,7 +403,8 @@ test_that("SIMD spectrogram works with different window shapes", {
     )
 
     expect_false(is.null(spec),
-                 label = paste("SIMD spectrogram should work with", shape, "window"))
+                 label = paste("SIMD spectrogram should work with", shape,
+                   "window"))
   }
 
   pladdrr_simd(TRUE)
@@ -401,11 +418,15 @@ test_that("SIMD info is reported correctly", {
   info <- simd_info()
 
   expect_type(info, "list")
-  expect_true("enabled" %in% names(info), label = "Should report 'enabled' status")
-  expect_true("architecture" %in% names(info), label = "Should report architecture")
+  expect_true("enabled" %in% names(info),
+    label = "Should report 'enabled' status")
+  expect_true("architecture" %in% names(info),
+    label = "Should report architecture")
 
   if (info$enabled) {
-    expect_true(info$architecture %in% c("AVX2", "SSE4.2", "NEON", "AVX512", "SSE2", "SSE3", "SSE4.1", "AVX",
+    expect_true(
+      info$architecture %in% c("AVX2", "SSE4.2", "NEON", "AVX512", "SSE2",
+        "SSE3", "SSE4.1", "AVX",
       "Generic"),
                 label = "Architecture should be recognized")
   }

@@ -26,14 +26,16 @@ make_wav_dir <- function(n = 2, with_textgrid = FALSE) {
 test_that("batch_process reports progress and passes data frames through", {
   dir <- make_wav_dir(2)
   expect_message(
-    res <- batch_process(dir, pattern = "\\.wav$", func = function(snd) snd$get_duration(),
+    res <- batch_process(dir, pattern = "\\.wav$",
+      func = function(snd) snd$get_duration(),
                          progress = TRUE),
     "Processing 2 files"
   )
   expect_identical(nrow(res), 2L)
   # func returning a data.frame directly (line 124 branch)
   res2 <- batch_process(dir, pattern = "\\.wav$",
-                        func = function(snd) data.frame(dur = snd$get_duration()))
+                        func = function(
+                          snd) data.frame(dur = snd$get_duration()))
   expect_s3_class(res2, "data.frame")
   expect_identical(nrow(res2), 2L)
 })
@@ -44,7 +46,8 @@ test_that("pair_sound_textgrid warns on an empty directory", {
   expect_warning(pair_sound_textgrid(dir), "No sound files found")
 })
 
-test_that("extract_measurements_custom warns and returns NA for a failing measure", {
+test_that(
+  "extract_measurements_custom warns and returns NA for a failing measure", {
   dir <- make_wav_dir(1, with_textgrid = TRUE)
   wav <- list.files(dir, pattern = "\\.wav$", full.names = TRUE)[1]
   tg <- list.files(dir, pattern = "\\.TextGrid$", full.names = TRUE)[1]
@@ -61,7 +64,8 @@ test_that("extract_measurements_custom warns and returns NA for a failing measur
 test_that("extract_measurements_custom extracts from point tiers", {
   dir <- tempfile("pladdrr_batch_pts_")
   dir.create(dir)
-  tone <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+  tone <- Sound$create_tone(frequency = 220, duration = 0.3,
+    sampling_rate = 16000)
   tone$save(file.path(dir, "pts.wav"))
   tg <- textgrid_create(0, 0.3, "points", point_tiers = "points")
   tg$insert_point("points", 0.15, "p")
@@ -75,7 +79,8 @@ test_that("extract_measurements_custom extracts from point tiers", {
   expect_identical(df$label[1], "p")
 })
 
-test_that("extract_measurements returns formant columns at interval midpoints", {
+test_that(
+  "extract_measurements returns formant columns at interval midpoints", {
   dir <- make_wav_dir(1, with_textgrid = TRUE)
   wav <- list.files(dir, pattern = "\\.wav$", full.names = TRUE)[1]
   tg <- list.files(dir, pattern = "\\.TextGrid$", full.names = TRUE)[1]

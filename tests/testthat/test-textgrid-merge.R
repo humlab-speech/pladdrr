@@ -6,7 +6,8 @@ test_that("textgrid_merge validates its arguments", {
   expect_error(textgrid_merge("not a list"), "non-empty list")
 
   tg <- textgrid_create(0, 1, "words")
-  expect_error(textgrid_merge(list(tg), equalize_domains = "yes"), "TRUE or FALSE")
+  expect_error(textgrid_merge(list(tg), equalize_domains = "yes"),
+    "TRUE or FALSE")
 })
 
 test_that("textgrid_merge combines tiers from multiple TextGrids", {

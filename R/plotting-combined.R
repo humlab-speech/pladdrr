@@ -27,7 +27,8 @@ NULL
   tg_df <- textgrid$as_data_frame()
   obj_df <- obj$as_data_frame()
   if (is.null(from_time)) {
-    from_time <- max(min(tg_df$start, na.rm = TRUE), min(obj_df$time, na.rm = TRUE))
+    from_time <- max(min(tg_df$start, na.rm = TRUE),
+      min(obj_df$time, na.rm = TRUE))
   }
   if (is.null(to_time)) {
     to_time <- min(max(tg_df$end, na.rm = TRUE), max(obj_df$time, na.rm = TRUE))
@@ -47,7 +48,8 @@ NULL
 }
 
 # Build a single tier's ggplot (interval rectangles or point segments).
-.build_tier_plot <- function(textgrid, tier_idx, tier_color, from_time, to_time) {
+.build_tier_plot <- function(textgrid, tier_idx, tier_color, from_time,
+  to_time) {
   tier_name <- textgrid$get_tier_name(tier_idx)
   if (textgrid$tier_is_interval_tier(tier_idx)) {
     n <- textgrid$get_number_of_intervals(tier_idx)
@@ -63,7 +65,8 @@ NULL
       ggplot2::geom_rect(ggplot2::aes(xmin = .data$start, xmax = .data$end,
                                      ymin = 0, ymax = 1),
                          fill = tier_color, alpha = 0.3, color = "black") +
-      ggplot2::geom_text(ggplot2::aes(x = (.data$start + .data$end) / 2, y = 0.5,
+      ggplot2::geom_text(
+        ggplot2::aes(x = (.data$start + .data$end) / 2, y = 0.5,
                                      label = .data$label), size = 3) +
       ggplot2::xlim(from_time, to_time) +
       ggplot2::labs(x = NULL, y = tier_name) +
@@ -72,7 +75,8 @@ NULL
                      axis.ticks.y = ggplot2::element_blank())
   } else {
     n <- textgrid$get_number_of_points(tier_idx)
-    d <- data.frame(time = numeric(n), label = character(n), stringsAsFactors = FALSE)
+    d <- data.frame(time = numeric(n), label = character(n),
+      stringsAsFactors = FALSE)
     for (j in seq_len(n)) {
       d$time[j] <- textgrid$get_point_time(tier_idx, j)
       d$label[j] <- textgrid$get_point_text(tier_idx, j)
@@ -91,12 +95,14 @@ NULL
   }
 }
 
-# Combine the main plot with tier plots (patchwork preferred, gridExtra fallback).
+# Combine the main plot with tier plots (patchwork preferred, gridExtra
+#  fallback).
 .combine_tier_plots <- function(main, tier_plots) {
   if (requireNamespace("patchwork", quietly = TRUE)) {
     combined <- main
     for (p in tier_plots) combined <- combined / p
-    combined + patchwork::plot_layout(heights = c(2, rep(1, length(tier_plots))))
+    combined + patchwork::plot_layout(
+      heights = c(2, rep(1, length(tier_plots))))
   } else {
     if (!requireNamespace("gridExtra", quietly = TRUE)) {
       stop("Either 'patchwork' or 'gridExtra' is required for combined plots")
@@ -136,7 +142,8 @@ NULL
 #'
 #' @inheritParams pladdrr_shared_params textgrid
 #' @inheritParams pladdrr_shared_sound sound
-#' @param tier Integer or character. Tier number or name to display (default: all)
+#' @param tier Integer or character. Tier number or name to display (default:
+#  all)
 #' @inheritParams pladdrr_shared_params from_time
 #' @inheritParams pladdrr_shared_params to_time
 #' @param waveform_color Character. Waveform color (default: "steelblue")
@@ -173,7 +180,8 @@ plot_textgrid_sound <- function(textgrid, sound, tier = NULL,
   }
   
   if (!requireNamespace("patchwork", quietly = TRUE)) {
-    warning("Package 'patchwork' recommended for better layout. Installing it is recommended.")
+    warning(
+      "Package 'patchwork' recommended for better layout. Installing it is recommended.")
   }
   
   if (!inherits(textgrid, "TextGrid")) {
@@ -203,7 +211,8 @@ plot_textgrid_sound <- function(textgrid, sound, tier = NULL,
   
   # Create tier plots (shared builder)
   tier_plots <- lapply(seq_along(tiers_to_plot), function(i) {
-    .build_tier_plot(textgrid, tiers_to_plot[i], tier_colors[i], from_time, to_time)
+    .build_tier_plot(textgrid, tiers_to_plot[i], tier_colors[i], from_time,
+      to_time)
   })
   
   # Combine plots
@@ -218,7 +227,8 @@ plot_textgrid_sound <- function(textgrid, sound, tier = NULL,
 #'
 #' @inheritParams pladdrr_shared_params textgrid
 #' @inheritParams pladdrr_shared_pitch pitch
-#' @param tier Integer or character. Tier number or name to display (default: all)
+#' @param tier Integer or character. Tier number or name to display (default:
+#  all)
 #' @inheritParams pladdrr_shared_params from_time
 #' @inheritParams pladdrr_shared_params to_time
 #' @param pitch_color Character. Pitch line color (default: "darkgreen")
@@ -279,7 +289,8 @@ plot_textgrid_pitch <- function(textgrid, pitch, tier = NULL,
   
   # Create tier plots (shared builder)
   tier_plots <- lapply(seq_along(tiers_to_plot), function(i) {
-    .build_tier_plot(textgrid, tiers_to_plot[i], tier_colors[i], from_time, to_time)
+    .build_tier_plot(textgrid, tiers_to_plot[i], tier_colors[i], from_time,
+      to_time)
   })
   # Combine plots
   .combine_tier_plots(p_pitch, tier_plots)
@@ -288,7 +299,8 @@ plot_textgrid_pitch <- function(textgrid, pitch, tier = NULL,
 #' @title Plot Pitch and Intensity Together
 #'
 #' @description
-#' Creates a dual-axis visualization showing pitch and intensity contours together.
+#' Creates a dual-axis visualization showing pitch and intensity contours
+#  together.
 #' This replicates Praat's Pitch_Intensity_draw() function.
 #'
 #' @inheritParams pladdrr_shared_pitch pitch
@@ -296,7 +308,8 @@ plot_textgrid_pitch <- function(textgrid, pitch, tier = NULL,
 #' @inheritParams pladdrr_shared_params from_time
 #' @inheritParams pladdrr_shared_params to_time
 #' @param pitch_color Character. Pitch line color (default: "darkgreen")
-#' @param intensity_color Character. Intensity line color (default: "darkorange")
+#' @param intensity_color Character. Intensity line color (default:
+#  "darkorange")
 #' @param title Character. Plot title (default: "Pitch and Intensity")
 #' @param ... Additional arguments (currently unused)
 #'
@@ -412,7 +425,8 @@ plot_spectrogram_formants <- function(spectrogram, formant,
   
   # Get formant data. Long format: one row per (frame, formant number),
   # columns time/formant/frequency/bandwidth.
-  formant_df <- .filter_formant_df(formant$as_data_frame(max_formants = max_formant),
+  formant_df <- .filter_formant_df(
+    formant$as_data_frame(max_formants = max_formant),
                                  from_time, to_time, max_formant)
 
   # Check if we have formant data
@@ -426,7 +440,8 @@ plot_spectrogram_formants <- function(spectrogram, formant,
 
   # Default formant colors
   if (is.null(formant_colors)) {
-    formant_colors <- c("red", "yellow", "cyan", "magenta", "white")[seq_len(max_formant)]
+    formant_colors <- c("red", "yellow", "cyan", "magenta",
+      "white")[seq_len(max_formant)]
   }
 
   # Overlay formant tracks
@@ -438,7 +453,8 @@ plot_spectrogram_formants <- function(spectrogram, formant,
 #'
 #' @description
 #' Creates a combined visualization showing a spectrogram with pitch contour
-#' overlaid. This is one of the most common Praat visualizations for voice analysis.
+#' overlaid. This is one of the most common Praat visualizations for voice
+#  analysis.
 #'
 #' @param spectrogram Spectrogram object
 #' @inheritParams pladdrr_shared_pitch pitch
@@ -494,7 +510,8 @@ plot_spectrogram_pitch <- function(spectrogram, pitch,
   pitch_df <- pitch$as_data_frame()
   
   # Filter pitch track to ranges and voiced frames
-  pitch_df <- .filter_pitch_track(pitch_df, from_time, to_time, pitch_floor, pitch_ceiling)
+  pitch_df <- .filter_pitch_track(pitch_df, from_time, to_time, pitch_floor,
+    pitch_ceiling)
   
   if (nrow(pitch_df) == 0) {
     warning("No pitch data available in the specified range")
@@ -586,7 +603,8 @@ plot_sound_pitch <- function(sound, pitch,
     return(combined)
   } else if (requireNamespace("gridExtra", quietly = TRUE)) {
     if (!is.null(title)) {
-      title_grob <- grid::textGrob(title, gp = grid::gpar(fontsize = 14, fontface = "bold"))
+      title_grob <- grid::textGrob(title,
+        gp = grid::gpar(fontsize = 14, fontface = "bold"))
       combined <- gridExtra::grid.arrange(
         title_grob,
         p_sound, p_pitch,
@@ -598,7 +616,8 @@ plot_sound_pitch <- function(sound, pitch,
     }
     return(combined)
   } else {
-    stop("Either 'patchwork' or 'gridExtra' package is required for combined plots. Please install one.")
+    stop(
+      "Either 'patchwork' or 'gridExtra' package is required for combined plots. Please install one.")
   }
 }
 
@@ -627,11 +646,16 @@ plot_sound_pitch <- function(sound, pitch,
 
 
 # Filter a pitch-track data frame to time/pitch ranges and voiced frames.
-.filter_pitch_track <- function(pitch_df, from_time, to_time, pitch_floor, pitch_ceiling) {
+.filter_pitch_track <- function(pitch_df, from_time, to_time, pitch_floor,
+  pitch_ceiling) {
   if (!is.null(from_time)) pitch_df <- pitch_df[pitch_df$time >= from_time, ]
   if (!is.null(to_time)) pitch_df <- pitch_df[pitch_df$time <= to_time, ]
-  if (!is.null(pitch_floor)) pitch_df <- pitch_df[pitch_df$frequency >= pitch_floor, ]
-  if (!is.null(pitch_ceiling)) pitch_df <- pitch_df[pitch_df$frequency <= pitch_ceiling, ]
+  if (
+    !is.null(
+      pitch_floor)) pitch_df <- pitch_df[pitch_df$frequency >= pitch_floor, ]
+  if (
+    !is.null(
+      pitch_ceiling)) pitch_df <- pitch_df[pitch_df$frequency <= pitch_ceiling, ]
   pitch_df[!is.na(pitch_df$frequency) & pitch_df$frequency > 0, ]
 }
 

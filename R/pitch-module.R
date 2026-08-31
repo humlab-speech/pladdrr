@@ -11,7 +11,8 @@
 #' @noRd
 .load_pitch_module <- function() {
   if (is.null(.pitch_module_env$module)) {
-    .pitch_module_env$module <- Rcpp::Module("pitch_module", PACKAGE = "pladdrr")
+    .pitch_module_env$module <- Rcpp::Module("pitch_module",
+      PACKAGE = "pladdrr")
   }
   .pitch_module_env$module
 }
@@ -79,7 +80,8 @@ pitch_unit_code <- function(unit) {
 #'   \item{`get_minimum(from_time, to_time, unit, interpolate)`}{Get min pitch}
 #'   \item{`get_maximum(from_time, to_time, unit, interpolate)`}{Get max pitch}
 #'   \item{`count_voiced_frames()`}{Count voiced frames}
-#'   \item{`as_data_frame(include_strength, include_intensity)`}{Convert to data.frame}
+#' \item{`as_data_frame(include_strength, include_intensity)`}{Convert to
+#  data.frame}
 #' }
 #'
 #' @section Properties:
@@ -175,17 +177,20 @@ as.data.frame.PitchModule <- function(x, row.names = NULL, optional = FALSE,
 .pitch_module_methods <- list(
   get_value_at_time = function(obj) {
     function(time, unit = "hertz", interpolate = TRUE) {
-      obj$get_value_at_time(as.numeric(time), pitch_unit_code(unit), as.logical(interpolate))
+      obj$get_value_at_time(as.numeric(time), pitch_unit_code(unit),
+        as.logical(interpolate))
     }
   },
   get_mean = function(obj) {
     function(from_time = 0, to_time = 0, unit = "hertz") {
-      obj$get_mean(as.numeric(from_time), as.numeric(to_time), pitch_unit_code(unit))
+      obj$get_mean(as.numeric(from_time), as.numeric(to_time),
+        pitch_unit_code(unit))
     }
   },
   get_standard_deviation = function(obj) {
     function(from_time = 0, to_time = 0, unit = "hertz") {
-      obj$get_standard_deviation(as.numeric(from_time), as.numeric(to_time), pitch_unit_code(unit))
+      obj$get_standard_deviation(as.numeric(from_time), as.numeric(to_time),
+        pitch_unit_code(unit))
     }
   },
   get_quantile = function(obj) {
@@ -220,17 +225,20 @@ as.data.frame.PitchModule <- function(x, row.names = NULL, optional = FALSE,
   },
   get_strength_at_time = function(obj) {
     function(time, unit = "hertz", interpolate = TRUE) {
-      obj$get_strength_at_time(as.numeric(time), pitch_unit_code(unit), as.logical(interpolate))
+      obj$get_strength_at_time(as.numeric(time), pitch_unit_code(unit),
+        as.logical(interpolate))
     }
   },
   get_mean_strength = function(obj) {
     function(from_time = 0, to_time = 0, unit = "hertz") {
-      obj$get_mean_strength(as.numeric(from_time), as.numeric(to_time), pitch_unit_code(unit))
+      obj$get_mean_strength(as.numeric(from_time), as.numeric(to_time),
+        pitch_unit_code(unit))
     }
   },
   as_data_frame = function(obj) {
     function(include_strength = FALSE, include_intensity = FALSE) {
-      obj$as_data_frame(as.logical(include_strength), as.logical(include_intensity))
+      obj$as_data_frame(as.logical(include_strength),
+        as.logical(include_intensity))
     }
   },
   to_point_process = function(obj) {
@@ -253,7 +261,8 @@ as.data.frame.PitchModule <- function(x, row.names = NULL, optional = FALSE,
   },
   to_textgrid_silences = function(obj) {
     function(min_silent_duration = 0.1, min_sounding_duration = 0.1) {
-      tg_ptr <- obj$to_textgrid_silences_ptr(min_silent_duration, min_sounding_duration)
+      tg_ptr <- obj$to_textgrid_silences_ptr(min_silent_duration,
+        min_sounding_duration)
       TextGrid(.xptr = tg_ptr)
     }
   }
@@ -273,13 +282,16 @@ as.data.frame.PitchModule <- function(x, row.names = NULL, optional = FALSE,
   }
 
   # is_valid is a .method(), not a .property(), in the underlying module
-  # (see src/modules/pitch_module.cpp) - must be called, not accessed as a field.
+  # (see src/modules/pitch_module.cpp) - must be called, not accessed as a
+  #  field.
   if (name == "is_valid") {
     return(obj$is_valid())
   }
 
   # Unit-conversion / transform wrappers (looked up in the shared factory list)
-  if (name %in% names(.pitch_module_methods)) return(.pitch_module_methods[[name]](obj))
+  if (
+    name %in% names(
+      .pitch_module_methods)) return(.pitch_module_methods[[name]](obj))
 
   # Direct passthrough for other methods
   # Direct passthrough for other methods

@@ -7,7 +7,8 @@
 #' as flat data frames (long format for 2-D matrix-like objects, one row per
 #' sample/point/frame for 1-D tiers and tracks).
 #'
-#' @param x A pladdrr R6 object (Discriminant, Electroglottogram, FormantModeler,
+#' @param x A pladdrr R6 object (Discriminant, Electroglottogram,
+#  FormantModeler,
 #'   PCA, PowerCepstrogram, BarkSpectrogram, Cepstrum, Cochleagram, DTW,
 #'   KlattGrid, LPC, LongSound, Matrix, MelSpectrogram, or VocalTract).
 #' @param ... Passed to methods; currently unused except `power` on `Cepstrum`.
@@ -15,7 +16,8 @@
 #'   \code{$as_data_frame()} method or the corresponding `autoplot.*` method
 #'   for the exact columns used.
 #' @examples
-#' sound <- Sound$create_tone(frequency = 220, duration = 0.2, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.2, sampling_rate =
+#  16000)
 #' cepstrum <- sound$to_cepstrum()
 #' df <- as.data.frame(cepstrum)
 #' head(df)
@@ -80,7 +82,8 @@ as.data.frame.Cepstrum <- function(x, row.names = NULL, optional = FALSE,
     pc <- x$to_powercepstrum()
     df <- pc$as_data_frame()
     # The C++ as_data_frame() column is honestly named "power" (raw linear
-    # power). dB conversion happens only in autoplot.Cepstrum/autolayer.Cepstrum.
+    # power). dB conversion happens only in
+    #  autoplot.Cepstrum/autolayer.Cepstrum.
     return(df)
   }
   x$as_data_frame()
@@ -118,7 +121,8 @@ as.data.frame.KlattGrid <- function(x, ...) {
   rows <- list()
   for (t in times) {
     for (f in seq_len(n_formants)) {
-      freq <- tryCatch(x$get_formant_at_time(.klattgrid_formant_type_code("oral"), f, t),
+      freq <- tryCatch(
+        x$get_formant_at_time(.klattgrid_formant_type_code("oral"), f, t),
                        error = function(e) NA_real_)
       if (!is.na(freq)) {
         rows[[length(rows) + 1]] <- data.frame(
@@ -161,7 +165,8 @@ as.data.frame.LPC <- function(x, ...) {
 #' @rdname as-data-frame-missing
 #' @export
 as.data.frame.LongSound <- function(x, ...) {
-  stop("LongSound streams from disk. Use x$extract_part(from, to) to get a Sound, then as.data.frame().")
+  stop(
+    "LongSound streams from disk. Use x$extract_part(from, to) to get a Sound, then as.data.frame().")
 }
 
 #' @rdname as-data-frame-missing

@@ -1,7 +1,8 @@
 # Comprehensive TextGrid Tests
 library(pladdrr)
 
-benchmark_tg <- system.file("extdata", "benchmarkdata1min.TextGrid", package = "pladdrr")
+benchmark_tg <- system.file("extdata", "benchmarkdata1min.TextGrid",
+  package = "pladdrr")
 
 test_that("TextGrid loads without errors", {
   tg <- TextGrid$new(benchmark_tg)
@@ -13,7 +14,8 @@ test_that("TextGrid basic info methods work", {
   
   expect_equal(tg$get_start_time(), 0, tolerance = sqrt(.Machine$double.eps))
   expect_equal(tg$get_end_time(), 60, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(tg$get_total_duration(), 60, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(tg$get_total_duration(), 60,
+    tolerance = sqrt(.Machine$double.eps))
   expect_identical(tg$get_number_of_tiers(), 10L)
 })
 
@@ -128,7 +130,8 @@ test_that("Tier-level accessors error on out-of-range tier number", {
   expect_error(tg$tier_is_point_tier(99))
 })
 
-test_that("get_interval_start_time/end_time error on bad interval number and wrong tier type", {
+test_that(
+  "get_interval_start_time/end_time error on bad interval number and wrong tier type", {
   tg <- TextGrid$new(benchmark_tg)
   # out-of-range interval number on a real interval tier
   expect_error(tg$get_interval_start_time(1, 999999))
@@ -138,14 +141,16 @@ test_that("get_interval_start_time/end_time error on bad interval number and wro
   expect_error(tg$get_interval_end_time(5, 1))
 })
 
-test_that("get_interval_text/get_interval_at_time/get_label_at_time error on wrong tier type", {
+test_that(
+  "get_interval_text/get_interval_at_time/get_label_at_time error on wrong tier type", {
   tg <- TextGrid$new(benchmark_tg)
   expect_error(tg$get_interval_text(5, 1))
   expect_error(tg$get_interval_at_time(5, 0.5))
   expect_error(tg$get_label_at_time(5, 0.5))
 })
 
-test_that("get_labels_at_times returns NA outside the time domain and errors on a point tier", {
+test_that(
+  "get_labels_at_times returns NA outside the time domain and errors on a point tier", {
   tg <- TextGrid$new(benchmark_tg)
   labels <- tg$get_labels_at_times(1, c(-5, 30, 1000))
   expect_true(is.na(labels[1]))
@@ -161,7 +166,8 @@ test_that("set_interval_texts_batch validates length and interval numbers", {
   expect_error(tg$set_interval_texts_batch(1, 999999L, "x"))
 })
 
-test_that("get_all_intervals_fast/get_all_points_fast work and error on wrong tier type", {
+test_that(
+  "get_all_intervals_fast/get_all_points_fast work and error on wrong tier type", {
   tg <- TextGrid$new(benchmark_tg)
 
   intervals <- tg$get_all_intervals_fast(1)
@@ -192,7 +198,8 @@ test_that("insert_boundary and remove_boundary_at_time error paths", {
   expect_error(tg$insert_boundary(99, 0.2))
 })
 
-test_that("get_number_of_points errors on an interval tier; get_point_time/text error on OOB and wrong type", {
+test_that(
+  "get_number_of_points errors on an interval tier; get_point_time/text error on OOB and wrong type", {
   tg <- TextGrid$new(benchmark_tg)
   expect_error(tg$get_number_of_points(1))    # tier 1 is an interval tier
   expect_error(tg$get_point_time(5, 999999))  # out of range point number
@@ -201,12 +208,14 @@ test_that("get_number_of_points errors on an interval tier; get_point_time/text 
 })
 
 test_that("insert_point errors on an invalid tier number", {
-  tg <- TextGrid$create(0, 1, tier_names = "phones tones", point_tiers = "tones")
+  tg <- TextGrid$create(0, 1, tier_names = "phones tones",
+    point_tiers = "tones")
   expect_error(tg$insert_point(99, 0.1, "x"))
 })
 
 test_that("set_point_text and remove_point work and error appropriately", {
-  tg <- TextGrid$create(0, 1, tier_names = "phones tones", point_tiers = "tones")
+  tg <- TextGrid$create(0, 1, tier_names = "phones tones",
+    point_tiers = "tones")
   tg$insert_point(2, 0.3, "a")
 
   tg$set_point_text(2, 1, "b")
@@ -218,7 +227,8 @@ test_that("set_point_text and remove_point work and error appropriately", {
   expect_error(tg$remove_point(2, 1))  # nothing left to remove
 })
 
-test_that("add_interval_tier, remove_tier(invalid), extract_part, get_info work", {
+test_that(
+  "add_interval_tier, remove_tier(invalid), extract_part, get_info work", {
   tg <- TextGrid$create(0, 2, tier_names = "phones")
   tg$add_interval_tier("new_tier")
   expect_identical(tg$get_number_of_tiers(), 2L)
@@ -258,7 +268,8 @@ test_that("save() errors when the destination path is not writable", {
   expect_error(tg$save(bad_path))
 })
 
-test_that("Module_TextGrid_create/Module_TextGrid_read factory functions work directly", {
+test_that(
+  "Module_TextGrid_create/Module_TextGrid_read factory functions work directly", {
   mod <- pladdrr:::get_module("textgrid_module")
 
   ptr <- mod$TextGrid_create(0, 1, "phones", "")
@@ -276,5 +287,7 @@ test_that("Module_TextGrid_create/Module_TextGrid_read factory functions work di
   expect_identical(tg2$get_number_of_tiers(), 1L)
 
   # Reading a nonexistent file must error, not crash
-  expect_error(mod$TextGrid_read(file.path(tempdir(), "does_not_exist_task21_xyz.TextGrid")))
+  expect_error(
+    mod$TextGrid_read(
+      file.path(tempdir(), "does_not_exist_task21_xyz.TextGrid")))
 })

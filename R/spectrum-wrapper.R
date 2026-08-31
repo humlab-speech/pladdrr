@@ -1,4 +1,5 @@
-# spectrum-wrapper.R - Spectrum object using shared dispatch table (pladdrr 4.8.33)
+# spectrum-wrapper.R - Spectrum object using shared dispatch table (pladdrr
+#  4.8.33)
 # Architecture: minimal list + $.Spectrum S3 dispatch → shared method env
 
 #' Spectrum
@@ -17,10 +18,11 @@
 #'   \item \code{get_imaginary_value_in_bin(bin)} - imaginary part at a bin
 #'   \item \code{get_frequency_from_bin(bin)} - frequency for a bin number
 #'   \item \code{get_bin_from_frequency(freq)} - bin number for a frequency
-#'   \item \code{get_band_density(fmin, fmax)} - power density in a band (Pa²/Hz²)
+#' \item \code{get_band_density(fmin, fmax)} - power density in a band (Pa²/Hz²)
 #'   \item \code{get_band_energy(fmin, fmax)} - energy in a band (Pa²·s)
-#'   \item \code{get_centre_of_gravity(power = 2.0)} - spectral center of gravity
-#'   \item \code{get_standard_deviation(power = 2.0)} - spectral standard deviation
+#' \item \code{get_centre_of_gravity(power = 2.0)} - spectral center of gravity
+#' \item \code{get_standard_deviation(power = 2.0)} - spectral standard
+#  deviation
 #'   \item \code{get_skewness(power = 2.0)} - spectral skewness
 #'   \item \code{get_kurtosis(power = 2.0)} - spectral kurtosis
 #'   \item \code{get_central_moment(moment, power = 2.0)} - central moment
@@ -28,9 +30,11 @@
 #'
 #' @section Modification methods:
 #' \itemize{
-#'   \item \code{pass_hann_band(fmin, fmax, smooth = 100)} - apply a Hann band-pass filter
-#'   \item \code{stop_hann_band(fmin, fmax, smooth = 100)} - apply a Hann band-stop filter
-#'   \item \code{cepstral_smoothing(bandwidth)} - smooth using the cepstral method
+#' \item \code{pass_hann_band(fmin, fmax, smooth = 100)} - apply a Hann
+#  band-pass filter
+#' \item \code{stop_hann_band(fmin, fmax, smooth = 100)} - apply a Hann
+#  band-stop filter
+#' \item \code{cepstral_smoothing(bandwidth)} - smooth using the cepstral method
 #' }
 #'
 #' @section Transform methods:
@@ -38,22 +42,27 @@
 #'   \item \code{to_sound()} - convert to Sound (inverse FFT)
 #'   \item \code{to_ltas(bandwidth)} - convert to long-term average spectrum
 #'   \item \code{to_spectrogram(...)} - convert to Spectrogram
-#'   \item \code{to_excitation(erb_density)} - convert to Excitation (auditory representation)
+#' \item \code{to_excitation(erb_density)} - convert to Excitation (auditory
+#  representation)
 #' }
 #'
 #' @section Export methods:
 #' \itemize{
 #'   \item \code{as_matrix()} - export as a numeric matrix (real + imaginary)
-#'   \item \code{as_data_frame()} - export as a data.frame (freq, real, imag, power)
+#' \item \code{as_data_frame()} - export as a data.frame (freq, real, imag,
+#  power)
 #'   \item \code{save(path)} - save to a file
 #' }
 #'
-#' @param .xptr Not for direct use. External pointer to the underlying C++ Spectrum
+#' @param .xptr Not for direct use. External pointer to the underlying C++
+#  Spectrum
 #'   object; set internally when a method returns a new Spectrum.
-#' @return A \code{Spectrum} object with methods for frequency-domain spectral analysis.
+#' @return A \code{Spectrum} object with methods for frequency-domain spectral
+#  analysis.
 #'
 #' @examples
-#' sound <- Sound$create_tone(duration = 0.5, frequency = 440, sampling_rate = 44100)
+#' sound <- Sound$create_tone(duration = 0.5, frequency = 440, sampling_rate =
+#  44100)
 #' spectrum <- sound$to_spectrum(fast = FALSE)
 #' cog <- spectrum$get_centre_of_gravity(power = 2.0)
 #' energy <- spectrum$get_band_energy(fmin = 400, fmax = 500)
@@ -63,7 +72,8 @@
 #' spectrum <- sound$to_spectrum(fast = TRUE)
 #' spec_df <- spectrum$as_data_frame()
 #'
-#' @seealso \code{\link{Sound}}, \code{\link{Spectrogram}}, \code{\link{Ltas}}, \code{\link{PowerCepstrum}}
+#' @seealso \code{\link{Sound}}, \code{\link{Spectrogram}}, \code{\link{Ltas}},
+#  \code{\link{PowerCepstrum}}
 #' @name Spectrum
 NULL
 
@@ -74,10 +84,14 @@ NULL
 .spectrum_methods <- new.env(hash = TRUE, parent = emptyenv())
 
 # --- Query: Basic info ---
-.spectrum_methods$get_lowest_frequency <- function(.self) .spectrum_get_lowest_frequency(.self$.xptr)
-.spectrum_methods$get_highest_frequency <- function(.self) .spectrum_get_highest_frequency(.self$.xptr)
-.spectrum_methods$get_number_of_bins <- function(.self) .spectrum_get_number_of_bins(.self$.xptr)
-.spectrum_methods$get_frequency_step <- function(.self) .spectrum_get_frequency_step(.self$.xptr)
+.spectrum_methods$get_lowest_frequency <- function(
+  .self) .spectrum_get_lowest_frequency(.self$.xptr)
+.spectrum_methods$get_highest_frequency <- function(
+  .self) .spectrum_get_highest_frequency(.self$.xptr)
+.spectrum_methods$get_number_of_bins <- function(
+  .self) .spectrum_get_number_of_bins(.self$.xptr)
+.spectrum_methods$get_frequency_step <- function(
+  .self) .spectrum_get_frequency_step(.self$.xptr)
 .spectrum_methods$get_frequency_from_bin <- function(.self, bin) {
   .spectrum_get_frequency_from_bin(.self$.xptr, as.integer(bin))
 }
@@ -115,14 +129,19 @@ NULL
   .spectrum_get_kurtosis(.self$.xptr, as.numeric(power))
 }
 .spectrum_methods$get_central_moment <- function(.self, moment, power = 2.0) {
-  .spectrum_get_central_moment(.self$.xptr, as.numeric(moment), as.numeric(power))
+  .spectrum_get_central_moment(.self$.xptr, as.numeric(moment),
+    as.numeric(power))
 }
 
 # --- Batch/Vectorized ---
-.spectrum_methods$get_frequencies_vector <- function(.self) .self$.cpp$get_frequencies_vector()
-.spectrum_methods$get_power_vector <- function(.self) .self$.cpp$get_power_vector()
-.spectrum_methods$get_real_vector <- function(.self) .self$.cpp$get_real_vector()
-.spectrum_methods$get_imaginary_vector <- function(.self) .self$.cpp$get_imaginary_vector()
+.spectrum_methods$get_frequencies_vector <- function(
+  .self) .self$.cpp$get_frequencies_vector()
+.spectrum_methods$get_power_vector <- function(
+  .self) .self$.cpp$get_power_vector()
+.spectrum_methods$get_real_vector <- function(
+  .self) .self$.cpp$get_real_vector()
+.spectrum_methods$get_imaginary_vector <- function(
+  .self) .self$.cpp$get_imaginary_vector()
 .spectrum_methods$get_band_energies <- function(.self, fmins, fmaxs) {
   .self$.cpp$get_band_energies(as.numeric(fmins), as.numeric(fmaxs))
 }
@@ -135,11 +154,13 @@ NULL
 
 # --- Modification (in-place, self-returning) ---
 .spectrum_methods$pass_hann_band <- function(.self, fmin, fmax, smooth = 100) {
-  .spectrum_pass_hann_band(.self$.xptr, as.numeric(fmin), as.numeric(fmax), as.numeric(smooth))
+  .spectrum_pass_hann_band(.self$.xptr, as.numeric(fmin), as.numeric(fmax),
+    as.numeric(smooth))
   invisible(.self)
 }
 .spectrum_methods$stop_hann_band <- function(.self, fmin, fmax, smooth = 100) {
-  .spectrum_stop_hann_band(.self$.xptr, as.numeric(fmin), as.numeric(fmax), as.numeric(smooth))
+  .spectrum_stop_hann_band(.self$.xptr, as.numeric(fmin), as.numeric(fmax),
+    as.numeric(smooth))
   invisible(.self)
 }
 .spectrum_methods$formula <- function(.self, formula) {
@@ -160,7 +181,8 @@ NULL
   ptr <- .spectrum_cepstral_smoothing(.self$.xptr, as.numeric(bandwidth))
   Spectrum(.xptr = ptr)
 }
-.spectrum_methods$shift_frequencies <- function(.self, shift_by, new_maximum_frequency = 0,
+.spectrum_methods$shift_frequencies <- function(.self, shift_by,
+  new_maximum_frequency = 0,
                                                 interpolation_depth = 50L) {
   if (new_maximum_frequency <= 0) new_maximum_frequency <- .self$.cpp$get_fmax()
   ptr <- .spectrum_shift_frequencies(.self$.xptr, as.numeric(shift_by),
@@ -214,7 +236,8 @@ NULL
 }
 .spectrum_methods$to_excitation <- function(.self, erb_density = 0.1) {
   stopifnot(
-    "erb_density must be a positive number" = is.numeric(erb_density) && length(erb_density) == 1 && erb_density > 0
+    "erb_density must be a positive number" = is.numeric(
+      erb_density) && length(erb_density) == 1 && erb_density > 0
   )
   ptr <- .spectrum_to_excitation(.self$.xptr, as.numeric(erb_density))
   Excitation(.xptr = ptr)
@@ -266,7 +289,8 @@ Spectrum <- function(.xptr = NULL) {
   }
   spectrum_mod <- get_module("spectrum_module")
   cpp_obj <- spectrum_mod$RSpectrum$new(.xptr)
-  structure(list(.xptr = .xptr, .cpp = cpp_obj), class = c("Spectrum", "PraatObject"))
+  structure(list(.xptr = .xptr, .cpp = cpp_obj),
+    class = c("Spectrum", "PraatObject"))
 }
 
 # ============================================================================

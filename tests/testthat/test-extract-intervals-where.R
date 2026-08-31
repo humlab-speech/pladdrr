@@ -19,7 +19,8 @@ test_that("Sound$extract_intervals_where handles no matches without crashing", {
   
   # Search for non-existent label - should return empty list, not segfault
   # (Praat warning goes to stderr, not R warning system)
-  result <- s$extract_intervals_where(tg, 1, "is equal to", "NONEXISTENT", FALSE)
+  result <- s$extract_intervals_where(tg, 1, "is equal to", "NONEXISTENT",
+    FALSE)
   
   expect_type(result, "list")
   expect_length(result, 0)

@@ -18,11 +18,13 @@ test_that("Sound file loading and errors", {
 test_that("sound_from_values validates input", {
   s <- sound_from_values(seq_len(100) / 100, sampling_rate = 16000)
   expect_s3_class(s, "Sound")
-  expect_error(sound_from_values(data.frame(x = 1:10), 16000), "numeric vector or matrix")
+  expect_error(sound_from_values(data.frame(x = 1:10), 16000),
+    "numeric vector or matrix")
 })
 
 test_that("sound_create_tone with explicit channels", {
-  s <- sound_create_pure_tone(frequency = 220, duration = 0.2, sampling_rate = 16000, channels = 2)
+  s <- sound_create_pure_tone(frequency = 220, duration = 0.2,
+    sampling_rate = 16000, channels = 2)
   expect_s3_class(s, "Sound")
   expect_identical(s$get_number_of_channels(), 2L)
 })

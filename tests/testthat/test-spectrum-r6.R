@@ -135,7 +135,8 @@ test_that("Spectrum R6 get_frequency_step works", {
   expect_gt(df, 0)
 })
 
-test_that("Spectrum R6 get_real_value_in_bin and get_imaginary_value_in_bin work", {
+test_that(
+  "Spectrum R6 get_real_value_in_bin and get_imaginary_value_in_bin work", {
   skip_if_not(file.exists(test_wav), "Test audio file not available")
 
   sound <- Sound$new(test_wav)
@@ -148,7 +149,8 @@ test_that("Spectrum R6 get_real_value_in_bin and get_imaginary_value_in_bin work
   expect_type(im, "double")
 
   n_bins <- spectrum$get_number_of_bins()
-  expect_error(spectrum$get_real_value_in_bin(bin = n_bins + 100), "out of range")
+  expect_error(spectrum$get_real_value_in_bin(bin = n_bins + 100),
+    "out of range")
   expect_error(spectrum$get_imaginary_value_in_bin(bin = 0), "out of range")
 })
 
@@ -196,7 +198,8 @@ test_that("Spectrum R6 to_cepstrum works", {
   expect_s3_class(cepstrum, "Cepstrum")
 })
 
-test_that("Spectrum R6 formula applies a valid formula and errors on an invalid one", {
+test_that(
+  "Spectrum R6 formula applies a valid formula and errors on an invalid one", {
   skip_if_not(file.exists(test_wav), "Test audio file not available")
 
   sound <- Sound$new(test_wav)
@@ -269,18 +272,21 @@ test_that("Spectrum R6 print and is_valid work", {
   expect_true(any(grepl("Praat Spectrum", output2, fixed = TRUE)))
 })
 
-test_that("Spectrum R6 get_band_densities and get_power_at_frequencies batch ops work", {
+test_that(
+  "Spectrum R6 get_band_densities and get_power_at_frequencies batch ops work", {
   skip_if_not(file.exists(test_wav), "Test audio file not available")
 
   sound <- Sound$new(test_wav)
   spectrum <- sound$to_spectrum(fast = TRUE)
 
-  densities <- spectrum$get_band_densities(fmins = c(100, 500), fmaxs = c(500, 1000))
+  densities <- spectrum$get_band_densities(fmins = c(100, 500),
+    fmaxs = c(500, 1000))
   expect_type(densities, "double")
   expect_length(densities, 2)
 
   fmax <- spectrum$get_highest_frequency()
-  powers <- spectrum$get_power_at_frequencies(frequencies = c(500, fmax + 10000))
+  powers <- spectrum$get_power_at_frequencies(
+    frequencies = c(500, fmax + 10000))
   expect_type(powers, "double")
   expect_length(powers, 2)
   expect_false(is.na(powers[1]))

@@ -17,7 +17,8 @@
 #'
 #' @examples
 #' # Old S3 approach (DEPRECATED, shown for reference)
-#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+#  16000)
 #' pitch <- extract_pitch(sound, pitch_floor = 75, pitch_ceiling = 300)
 #'
 #' # New R6 approach (RECOMMENDED)
@@ -25,7 +26,8 @@
 #' mean_f0 <- pitch2$get_mean()
 #'
 #' @export
-extract_pitch <- function(sound, pitch_floor = 75, pitch_ceiling = 600, time_step = 0.01) {
+extract_pitch <- function(sound, pitch_floor = 75, pitch_ceiling = 600,
+  time_step = 0.01) {
   .Deprecated(
     "sound$to_pitch()",
     package = "pladdrr",
@@ -35,7 +37,8 @@ extract_pitch <- function(sound, pitch_floor = 75, pitch_ceiling = 600, time_ste
     )
   )
   
-  sound$to_pitch(time_step = time_step, pitch_floor = pitch_floor, pitch_ceiling = pitch_ceiling)
+  sound$to_pitch(time_step = time_step, pitch_floor = pitch_floor,
+    pitch_ceiling = pitch_ceiling)
 }
 
 #' Get pitch at specific time point (DEPRECATED)
@@ -48,7 +51,8 @@ extract_pitch <- function(sound, pitch_floor = 75, pitch_ceiling = 600, time_ste
 #' @inheritParams pladdrr_shared_params interpolate
 #' @return Pitch value or NA
 #' @examples
-#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+#  16000)
 #' pitch <- sound$to_pitch()
 #' get_pitch_at_time(pitch, 0.25)
 #' @export
@@ -69,7 +73,8 @@ get_pitch_at_time <- function(pitch, time, unit = "Hz", interpolate = FALSE) {
 #' @param time_range Optional time range c(start, end)
 #' @return Mean pitch value
 #' @examples
-#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+#  16000)
 #' pitch <- sound$to_pitch()
 #' suppressWarnings(get_mean_pitch(pitch))
 #' @export
@@ -92,7 +97,8 @@ get_mean_pitch <- function(pitch, unit = "Hz", time_range = NULL) {
 #' @inheritParams pladdrr_shared_params time_range
 #' @return Minimum pitch value
 #' @examples
-#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+#  16000)
 #' pitch <- sound$to_pitch()
 #' suppressWarnings(get_min_pitch(pitch))
 #' @export
@@ -115,7 +121,8 @@ get_min_pitch <- function(pitch, unit = "Hz", time_range = NULL) {
 #' @inheritParams pladdrr_shared_params time_range
 #' @return Maximum pitch value
 #' @examples
-#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+#  16000)
 #' pitch <- sound$to_pitch()
 #' suppressWarnings(get_max_pitch(pitch))
 #' @export

@@ -5,7 +5,9 @@ test_that("SIMD Hamming window has correct properties", {
   skip_if_not_installed("pladdrr")
   library(pladdrr)
   
-  if (exists(".apply_hamming_window_simd", where = asNamespace("pladdrr"), inherits = FALSE)) {
+  if (
+    exists(".apply_hamming_window_simd", where = asNamespace("pladdrr"),
+      inherits = FALSE)) {
     n <- 256
     data <- rep(1.0, n)  # Unit signal
     
@@ -33,7 +35,9 @@ test_that("SIMD Hanning window has correct properties", {
   skip_if_not_installed("pladdrr")
   library(pladdrr)
   
-  if (exists(".apply_hanning_window_simd", where = asNamespace("pladdrr"), inherits = FALSE)) {
+  if (
+    exists(".apply_hanning_window_simd", where = asNamespace("pladdrr"),
+      inherits = FALSE)) {
     n <- 256
     data <- rep(1.0, n)
     
@@ -61,7 +65,9 @@ test_that("SIMD Gaussian window has correct shape", {
   skip_if_not_installed("pladdrr")
   library(pladdrr)
   
-  if (exists(".apply_gaussian_window_simd", where = asNamespace("pladdrr"), inherits = FALSE)) {
+  if (
+    exists(".apply_gaussian_window_simd", where = asNamespace("pladdrr"),
+      inherits = FALSE)) {
     n <- 256
     data <- rep(1.0, n)
     alpha <- 2.5
@@ -89,7 +95,9 @@ test_that("SIMD Blackman window has correct properties", {
   skip_if_not_installed("pladdrr")
   library(pladdrr)
   
-  if (exists(".apply_blackman_window_simd", where = asNamespace("pladdrr"), inherits = FALSE)) {
+  if (
+    exists(".apply_blackman_window_simd", where = asNamespace("pladdrr"),
+      inherits = FALSE)) {
     n <- 256
     data <- rep(1.0, n)
     
@@ -114,7 +122,9 @@ test_that("SIMD window functions preserve DC component correctly", {
   skip_if_not_installed("pladdrr")
   library(pladdrr)
   
-  if (exists(".apply_hamming_window_simd", where = asNamespace("pladdrr"), inherits = FALSE)) {
+  if (
+    exists(".apply_hamming_window_simd", where = asNamespace("pladdrr"),
+      inherits = FALSE)) {
     n <- 512
     amplitude <- 2.5
     data <- rep(amplitude, n)
@@ -136,7 +146,9 @@ test_that("SIMD window functions handle different sizes", {
   skip_if_not_installed("pladdrr")
   library(pladdrr)
   
-  if (exists(".apply_hamming_window_simd", where = asNamespace("pladdrr"), inherits = FALSE)) {
+  if (
+    exists(".apply_hamming_window_simd", where = asNamespace("pladdrr"),
+      inherits = FALSE)) {
     # Small window
     data_small <- rep(1.0, 32)
     windowed_small <- pladdrr:::.apply_hamming_window_simd(data_small)
@@ -165,7 +177,9 @@ test_that("SIMD window functions handle real signals", {
   skip_if_not_installed("pladdrr")
   library(pladdrr)
   
-  if (exists(".apply_hamming_window_simd", where = asNamespace("pladdrr"), inherits = FALSE)) {
+  if (
+    exists(".apply_hamming_window_simd", where = asNamespace("pladdrr"),
+      inherits = FALSE)) {
     # Sine wave
     t <- seq(0, 1, length.out = 512)
     signal <- sin(2 * pi * 50 * t)

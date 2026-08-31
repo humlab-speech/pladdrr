@@ -1,12 +1,15 @@
 #' Check Audio Quality Metrics
 #'
-#' Analyzes a Sound object for common quality issues and returns diagnostic metrics.
+#' Analyzes a Sound object for common quality issues and returns diagnostic
+#  metrics.
 #' This function provides basic quality control checks useful for validating
 #' recording quality in production pipelines.
 #'
 #' @param sound A Sound object to analyze
-#' @param clipping_threshold Amplitude threshold for clipping detection (default 0.99)
-#' @param intensity_floor Minimum pitch for intensity calculation (default 100 Hz)
+#' @param clipping_threshold Amplitude threshold for clipping detection (default
+#  0.99)
+#' @param intensity_floor Minimum pitch for intensity calculation (default 100
+#  Hz)
 #' @param time_step Time step for intensity analysis (0 = auto, default 0.0)
 #'
 #' @return A list with the following components:
@@ -27,13 +30,16 @@
 #' @details
 #' This function is designed to catch common recording problems:
 #'
-#' **Clipping Detection**: Identifies if the signal exceeds a threshold (default 0.99).
+#' **Clipping Detection**: Identifies if the signal exceeds a threshold (default
+#  0.99).
 #' Clipped recordings have distorted peaks and should typically be re-recorded.
 #'
-#' **Intensity Analysis**: Uses Praat's intensity measurement to assess signal strength.
+#' **Intensity Analysis**: Uses Praat's intensity measurement to assess signal
+#  strength.
 #' Very low mean intensity may indicate recording level problems.
 #'
-#' **Dynamic Range**: The difference between maximum and minimum intensity can help
+#' **Dynamic Range**: The difference between maximum and minimum intensity can
+#  help
 #' identify recordings with poor signal-to-noise ratio or excessive compression.
 #'
 #' **Quality Criteria** (general guidelines):
@@ -46,7 +52,8 @@
 #'
 #' @examples
 #' \donttest{
-#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+#  16000)
 #' quality <- check_audio_quality(sound)
 #'
 #' cat("Audio Quality Report:\n")
@@ -67,7 +74,8 @@ check_audio_quality <- function(sound,
   sampling_frequency <- sound$get_sampling_frequency()
   
   # Amplitude analysis + clipping
-  amp <- .analyze_amplitude(sound, clipping_threshold, sampling_frequency, duration)
+  amp <- .analyze_amplitude(sound, clipping_threshold, sampling_frequency,
+    duration)
   max_amplitude <- amp$max_amplitude
   rms_amplitude <- amp$rms_amplitude
   is_clipped <- amp$is_clipped
@@ -127,7 +135,8 @@ check_audio_quality <- function(sound,
 #'
 #' @examples
 #' \donttest{
-#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+#  16000)
 #' quality <- check_audio_quality(sound)
 #' report <- format_quality_report(quality)
 #' cat(report)
@@ -151,12 +160,16 @@ format_quality_report <- function(quality_metrics, detailed = TRUE) {
   }
   
   lines <- c(lines, "\nBasic Properties:")
-  lines <- c(lines, sprintf("  Duration: %.2f seconds", quality_metrics$duration))
-  lines <- c(lines, sprintf("  Sampling Rate: %d Hz", quality_metrics$sampling_frequency))
+  lines <- c(lines,
+    sprintf("  Duration: %.2f seconds", quality_metrics$duration))
+  lines <- c(lines,
+    sprintf("  Sampling Rate: %d Hz", quality_metrics$sampling_frequency))
   
   lines <- c(lines, "\nAmplitude Metrics:")
-  lines <- c(lines, sprintf("  Max Amplitude: %.3f", quality_metrics$max_amplitude))
-  lines <- c(lines, sprintf("  RMS Amplitude: %.3f", quality_metrics$rms_amplitude))
+  lines <- c(lines,
+    sprintf("  Max Amplitude: %.3f", quality_metrics$max_amplitude))
+  lines <- c(lines,
+    sprintf("  RMS Amplitude: %.3f", quality_metrics$rms_amplitude))
   
   if (quality_metrics$is_clipped) {
     lines <- c(lines, sprintf("  Clipping: YES (%.2f%% of samples)",
@@ -178,23 +191,31 @@ format_quality_report <- function(quality_metrics, detailed = TRUE) {
 .analyze_intensity <- function(sound, intensity_floor, time_step) {
   intensity <- sound$to_intensity(
     minimum_pitch = intensity_floor, time_step = time_step, subtract_mean = TRUE)
-  mean_intensity_db <- intensity$get_mean(from_time = 0, to_time = 0, averaging_method = "energy")
-  min_intensity_db <- intensity$get_minimum(from_time = 0, to_time = 0, interpolation = "parabolic")
-  max_intensity_db <- intensity$get_maximum(from_time = 0, to_time = 0, interpolation = "parabolic")
-  list(mean_intensity_db = mean_intensity_db, min_intensity_db = min_intensity_db,
+  mean_intensity_db <- intensity$get_mean(from_time = 0, to_time = 0,
+    averaging_method = "energy")
+  min_intensity_db <- intensity$get_minimum(from_time = 0, to_time = 0,
+    interpolation = "parabolic")
+  max_intensity_db <- intensity$get_maximum(from_time = 0, to_time = 0,
+    interpolation = "parabolic")
+  list(mean_intensity_db = mean_intensity_db,
+    min_intensity_db = min_intensity_db,
        max_intensity_db = max_intensity_db,
        intensity_range_db = max_intensity_db - min_intensity_db)
 }
 
 
 # Amplitude + clipping analysis.
-.analyze_amplitude <- function(sound, clipping_threshold, sampling_frequency, duration) {
+.analyze_amplitude <- function(sound, clipping_threshold, sampling_frequency,
+  duration) {
   max_amplitude <- max(abs(sound$get_minimum(from_time = 0, to_time = 0)),
                         abs(sound$get_maximum(from_time = 0, to_time = 0)))
   rms_amplitude <- sound$get_rms(from_time = 0, to_time = 0)
   is_clipped <- max_amplitude > clipping_threshold
-  n_clipping_samples <- if (is_clipped) as.integer(sampling_frequency * duration * 0.001) else 0L
-  clipping_percentage <- if (is_clipped) (n_clipping_samples / (sampling_frequency * duration)) * 100 else 0
+  n_clipping_samples <- if (
+    is_clipped) as.integer(sampling_frequency * duration * 0.001) else 0L
+  clipping_percentage <- if (
+    is_clipped) (n_clipping_samples / (
+      sampling_frequency * duration)) * 100 else 0
   list(max_amplitude = max_amplitude, rms_amplitude = rms_amplitude,
        is_clipped = is_clipped, n_clipping_samples = n_clipping_samples,
        clipping_percentage = clipping_percentage)
@@ -209,9 +230,13 @@ format_quality_report <- function(quality_metrics, detailed = TRUE) {
     sprintf("  Min: %.1f dB", m$min_intensity_db),
     sprintf("  Max: %.1f dB", m$max_intensity_db),
     "\nRecommendations:")
-  if (m$is_clipped) lines <- c(lines, "  - Re-record with lower input gain to avoid clipping")
-  if (m$mean_intensity_db < -30) lines <- c(lines, "  - Recording level is very low; consider using normalization")
-  if (m$max_amplitude < 0.3) lines <- c(lines, "  - Recording could use more dynamic range; increase input gain")
-  if (m$intensity_range_db > 40) lines <- c(lines, "  - Very high dynamic range; check for background noise")
+  if (m$is_clipped) lines <- c(lines,
+    "  - Re-record with lower input gain to avoid clipping")
+  if (m$mean_intensity_db < -30) lines <- c(lines,
+    "  - Recording level is very low; consider using normalization")
+  if (m$max_amplitude < 0.3) lines <- c(lines,
+    "  - Recording could use more dynamic range; increase input gain")
+  if (m$intensity_range_db > 40) lines <- c(lines,
+    "  - Very high dynamic range; check for background noise")
   lines
 }

@@ -11,7 +11,8 @@
 #' @return External pointer
 #' @keywords internal
 #' @examples
-#' sound <- Sound$create_tone(frequency = 220, duration = 0.2, sampling_rate = 8000)
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.2, sampling_rate =
+#  8000)
 #' pladdrr:::extract_xptr(sound, "Sound")
 #' @noRd
 extract_xptr <- function(obj, class_name) {
@@ -39,14 +40,17 @@ extract_xptr <- function(obj, class_name) {
     }
     
     if (is.null(ptr)) {
-      stop(sprintf("Could not extract external pointer from %s object", class_name))
+      stop(
+        sprintf("Could not extract external pointer from %s object",
+          class_name))
     }
     
     ptr
   } else if (inherits(obj, "externalptr")) {
     obj
   } else {
-    stop(sprintf("Expected %s or externalptr, got %s", class_name, class(obj)[1]))
+    stop(
+      sprintf("Expected %s or externalptr, got %s", class_name, class(obj)[1]))
   }
 }
 

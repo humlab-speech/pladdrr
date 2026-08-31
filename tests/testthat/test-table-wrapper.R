@@ -1,8 +1,10 @@
 # test-table-wrapper.R - Tests for R/table-wrapper.R (Table object)
 
-test_that("Table() requires numberOfRows plus either numberOfColumns or columnNames", {
+test_that(
+  "Table() requires numberOfRows plus either numberOfColumns or columnNames", {
   expect_error(Table(numberOfColumns = 2), "numberOfRows must be specified")
-  expect_error(Table(numberOfRows = -1, numberOfColumns = 2), "numberOfRows must be positive")
+  expect_error(Table(numberOfRows = -1, numberOfColumns = 2),
+    "numberOfRows must be positive")
   expect_error(Table(numberOfRows = 2), "numberOfColumns or columnNames")
 })
 
@@ -13,13 +15,15 @@ test_that("Table() constructs by numberOfColumns and by columnNames", {
   expect_identical(t1$get_number_of_columns(), 3L)
 
   t2 <- Table(numberOfRows = 2, columnNames = c("word", "duration"))
-  expect_equal(t2$get_column_names(), c("word", "duration"), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(t2$get_column_names(), c("word", "duration"),
+    tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("Table column label get/set and index lookup", {
   tbl <- Table(numberOfRows = 1, columnNames = c("word", "duration"))
   expect_identical(tbl$get_column_label(1), "word")
-  expect_equal(tbl$get_column_index("duration"), 2, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(tbl$get_column_index("duration"), 2,
+    tolerance = sqrt(.Machine$double.eps))
 
   tbl$set_column_label(1, "token")
   expect_identical(tbl$get_column_label(1), "token")
@@ -65,7 +69,8 @@ test_that("Table as_data_frame infers numeric vs character columns", {
   expect_equal(df2, df, tolerance = sqrt(.Machine$double.eps))
 })
 
-test_that("Table as_data_frame handles zero rows without misclassifying columns", {
+test_that(
+  "Table as_data_frame handles zero rows without misclassifying columns", {
   ptr <- pladdrr:::.table_create_with_column_names(0, c("word", "duration"))
   tbl <- Table(.xptr = ptr)
   df <- tbl$as_data_frame()
@@ -80,7 +85,8 @@ test_that("Table get_mean/get_standard_deviation compute column statistics", {
   tbl$set_numeric_value(3, "x", 3)
 
   expect_equal(tbl$get_mean("x"), 2, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(tbl$get_standard_deviation("x"), sd(c(1, 2, 3)), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(tbl$get_standard_deviation("x"), sd(c(1, 2, 3)),
+    tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("Table sort_rows sorts in place", {
@@ -90,7 +96,8 @@ test_that("Table sort_rows sorts in place", {
   tbl$set_numeric_value(3, "x", 2)
 
   tbl$sort_rows("x")
-  expect_equal(tbl$as_data_frame()$x, c(1, 2, 3), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(tbl$as_data_frame()$x, c(1, 2, 3),
+    tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("Table extract_rows_where_number/string return filtered sub-tables", {
@@ -142,19 +149,25 @@ test_that("internal .table_* exports for min/max/sum/quantile/matrix work", {
   pladdrr:::.table_set_numeric_value(ptr, 2, 1, 2)
   pladdrr:::.table_set_numeric_value(ptr, 3, 1, 3)
 
-  expect_equal(pladdrr:::.table_get_minimum(ptr, 1), 1, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(pladdrr:::.table_get_maximum(ptr, 1), 3, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(pladdrr:::.table_get_sum(ptr, 1), 6, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(pladdrr:::.table_get_quantile(ptr, 1, 0.5), 2, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pladdrr:::.table_get_minimum(ptr, 1), 1,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pladdrr:::.table_get_maximum(ptr, 1), 3,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pladdrr:::.table_get_sum(ptr, 1), 6,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pladdrr:::.table_get_quantile(ptr, 1, 0.5), 2,
+    tolerance = sqrt(.Machine$double.eps))
 
   mat <- pladdrr:::.table_to_matrix(ptr)
-  expect_equal(as.numeric(mat), c(1, 2, 3), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(as.numeric(mat), c(1, 2, 3),
+    tolerance = sqrt(.Machine$double.eps))
 
   col_numbers <- pladdrr:::.table_get_column_numbers(ptr)
   expect_length(col_numbers, 1)
 })
 
-test_that("internal .table_* exports for remove_row/remove_column/insert_column work", {
+test_that(
+  "internal .table_* exports for remove_row/remove_column/insert_column work", {
   ptr <- pladdrr:::.table_create_with_column_names(2, c("x", "y"))
   pladdrr:::.table_insert_column(ptr, 1, "z")
   expect_identical(pladdrr:::.table_get_number_of_columns(ptr), 3L)
@@ -172,10 +185,12 @@ test_that("internal .table_get_numeric_value returns a cell's value directly", {
   # RTable module instead) or from any other existing test.
   ptr <- pladdrr:::.table_create_with_column_names(1, "x")
   pladdrr:::.table_set_numeric_value(ptr, 1, 1, 42)
-  expect_equal(pladdrr:::.table_get_numeric_value(ptr, 1, 1), 42, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pladdrr:::.table_get_numeric_value(ptr, 1, 1), 42,
+    tolerance = sqrt(.Machine$double.eps))
 })
 
-test_that("internal .table_get_mean/stdev/minimum/maximum/sum/quantile error on out-of-range column", {
+test_that(
+  "internal .table_get_mean/stdev/minimum/maximum/sum/quantile error on out-of-range column", {
   # Verified interactively: an out-of-range column number reaches Praat's
   # Table_getMean() et al., which throw a MelderError that these bare
   # wrappers catch and re-raise as a plain R error (never a crash).
@@ -185,18 +200,23 @@ test_that("internal .table_get_mean/stdev/minimum/maximum/sum/quantile error on 
   ptr <- tbl$get_xptr()
 
   expect_error(pladdrr:::.table_get_mean(ptr, 99), "Failed to get mean")
-  expect_error(pladdrr:::.table_get_stdev(ptr, 99), "Failed to get standard deviation")
+  expect_error(pladdrr:::.table_get_stdev(ptr, 99),
+    "Failed to get standard deviation")
   expect_error(pladdrr:::.table_get_minimum(ptr, 99), "Failed to get minimum")
   expect_error(pladdrr:::.table_get_maximum(ptr, 99), "Failed to get maximum")
   expect_error(pladdrr:::.table_get_sum(ptr, 99), "Failed to get sum")
-  expect_error(pladdrr:::.table_get_quantile(ptr, 99, 0.5), "Failed to get quantile")
+  expect_error(pladdrr:::.table_get_quantile(ptr, 99, 0.5),
+    "Failed to get quantile")
 })
 
-test_that("internal .table_remove_row/.table_remove_column/.table_insert_column error on out-of-range index", {
+test_that(
+  "internal .table_remove_row/.table_remove_column/.table_insert_column error on out-of-range index", {
   ptr <- pladdrr:::.table_create_with_column_names(1, "x")
   expect_error(pladdrr:::.table_remove_row(ptr, 99), "Failed to remove row")
-  expect_error(pladdrr:::.table_remove_column(ptr, 99), "Failed to remove column")
-  expect_error(pladdrr:::.table_insert_column(ptr, 99, "z"), "Failed to insert column")
+  expect_error(pladdrr:::.table_remove_column(ptr, 99),
+    "Failed to remove column")
+  expect_error(pladdrr:::.table_insert_column(ptr, 99, "z"),
+    "Failed to insert column")
 })
 
 # --- RTable module (src/modules/table_module.cpp) methods reached only via
@@ -215,21 +235,27 @@ test_that("Table() creates an RTable module usable directly via $.cpp", {
   expect_s4_class(tbl$.cpp, "Rcpp_RTable")
 })
 
-test_that("RTable module get_mean/get_stdev/get_minimum/get_maximum/get_sum/get_quantile work via $.cpp", {
+test_that(
+  "RTable module get_mean/get_stdev/get_minimum/get_maximum/get_sum/get_quantile work via $.cpp", {
   tbl <- Table(numberOfRows = 3, columnNames = "x")
   tbl$set_numeric_value(1, "x", 1)
   tbl$set_numeric_value(2, "x", 2)
   tbl$set_numeric_value(3, "x", 3)
 
   expect_equal(tbl$.cpp$get_mean(1), 2, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(tbl$.cpp$get_stdev(1), sd(c(1, 2, 3)), tolerance = sqrt(.Machine$double.eps))
-  expect_equal(tbl$.cpp$get_minimum(1), 1, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(tbl$.cpp$get_maximum(1), 3, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(tbl$.cpp$get_stdev(1), sd(c(1, 2, 3)),
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(tbl$.cpp$get_minimum(1), 1,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(tbl$.cpp$get_maximum(1), 3,
+    tolerance = sqrt(.Machine$double.eps))
   expect_equal(tbl$.cpp$get_sum(1), 6, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(tbl$.cpp$get_quantile(1, 0.5), 2, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(tbl$.cpp$get_quantile(1, 0.5), 2,
+    tolerance = sqrt(.Machine$double.eps))
 })
 
-test_that("RTable module statistics return NA (not an error) for an out-of-range column via $.cpp", {
+test_that(
+  "RTable module statistics return NA (not an error) for an out-of-range column via $.cpp", {
   # Verified interactively: unlike the bare .table_get_mean() etc. exports,
   # the RTable module versions catch the same MelderError and return
   # NA_REAL rather than raising -- this is a genuine, safe behavioral
@@ -246,7 +272,8 @@ test_that("RTable module statistics return NA (not an error) for an out-of-range
   expect_true(is.na(tbl$.cpp$get_quantile(99, 0.5)))
 })
 
-test_that("RTable module remove_row/remove_column work via $.cpp (not wired into Table()'s methods)", {
+test_that(
+  "RTable module remove_row/remove_column work via $.cpp (not wired into Table()'s methods)", {
   tbl <- Table(numberOfRows = 2, columnNames = c("x", "y"))
   tbl$.cpp$remove_column(2)
   expect_identical(tbl$get_number_of_columns(), 1L)
@@ -255,7 +282,8 @@ test_that("RTable module remove_row/remove_column work via $.cpp (not wired into
   expect_identical(tbl$get_number_of_rows(), 1L)
 })
 
-test_that("RTable module remove_row/remove_column/insert_row/insert_column/set_column_label error on out-of-range index via $.cpp", {
+test_that(
+  "RTable module remove_row/remove_column/insert_row/insert_column/set_column_label error on out-of-range index via $.cpp", {
   tbl <- Table(numberOfRows = 2, columnNames = c("x", "y"))
   expect_error(tbl$.cpp$remove_row(99), "Failed to remove row")
   expect_error(tbl$.cpp$remove_column(99), "Failed to remove column")
@@ -264,7 +292,8 @@ test_that("RTable module remove_row/remove_column/insert_row/insert_column/set_c
   expect_error(tbl$.cpp$set_column_label(99, "z"), "Failed to set column label")
 })
 
-test_that("Table insert_column adds a column via the R6 method (never exercised by other tests)", {
+test_that(
+  "Table insert_column adds a column via the R6 method (never exercised by other tests)", {
   tbl <- Table(numberOfRows = 2, columnNames = "x")
   tbl$insert_column(1, "y")
   expect_identical(tbl$get_number_of_columns(), 2L)
@@ -295,7 +324,8 @@ test_that("RTable module as_matrix/as_data_frame/get_info work via $.cpp", {
   tbl$set_numeric_value(2, "y", 4)
 
   mat <- tbl$.cpp$as_matrix()
-  expect_equal(as.numeric(mat), c(1, 3, 2, 4), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(as.numeric(mat), c(1, 3, 2, 4),
+    tolerance = sqrt(.Machine$double.eps))
 
   df <- tbl$.cpp$as_data_frame()
   expect_equal(dim(df), c(2, 2), tolerance = sqrt(.Machine$double.eps))
@@ -303,7 +333,8 @@ test_that("RTable module as_matrix/as_data_frame/get_info work via $.cpp", {
   info <- tbl$.cpp$get_info()
   expect_equal(info$n_rows, 2, tolerance = sqrt(.Machine$double.eps))
   expect_equal(info$n_columns, 2, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(info$column_names, c("x", "y"), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(info$column_names, c("x", "y"),
+    tolerance = sqrt(.Machine$double.eps))
 })
 
 # --- table_module.cpp's module-level factory functions ---------------------
@@ -313,7 +344,8 @@ test_that("RTable module as_matrix/as_data_frame/get_info work via $.cpp", {
 # exports instead, so these are unreachable except by pulling the module
 # out directly, the same way R/table-wrapper.R itself does internally.
 
-test_that("table_module's Table_create/Table_create_with_column_names/Table_from_data_frame work directly", {
+test_that(
+  "table_module's Table_create/Table_create_with_column_names/Table_from_data_frame work directly", {
   mod <- pladdrr:::get_module("table_module")
 
   ptr1 <- mod$Table_create(2, 3)
@@ -323,7 +355,8 @@ test_that("table_module's Table_create/Table_create_with_column_names/Table_from
 
   ptr2 <- mod$Table_create_with_column_names(2, c("a", "b"))
   tbl2 <- Table(.xptr = ptr2)
-  expect_equal(tbl2$get_column_names(), c("a", "b"), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(tbl2$get_column_names(), c("a", "b"),
+    tolerance = sqrt(.Machine$double.eps))
 
   # Exercises all three data.frame column-type branches (integer, string,
   # double) inside Module_Table_from_data_frame() in one call.

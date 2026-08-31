@@ -119,12 +119,14 @@ test_that("Formant statistics methods work", {
   expect_true(is.na(f1_mean) || f1_mean > 0)
   
   # Test standard deviation
-  f1_sd <- formant$get_standard_deviation(1, from_time = 0, to_time = 0, unit = "hertz")
+  f1_sd <- formant$get_standard_deviation(1, from_time = 0, to_time = 0,
+    unit = "hertz")
   expect_type(f1_sd, "double")
   expect_true(is.na(f1_sd) || f1_sd >= 0)
   
   # Test quantile
-  f1_median <- formant$get_quantile(1, 0.5, from_time = 0, to_time = 0, unit = "hertz")
+  f1_median <- formant$get_quantile(1, 0.5, from_time = 0, to_time = 0,
+    unit = "hertz")
   expect_type(f1_median, "double")
   
   # Test minimum/maximum
@@ -144,8 +146,10 @@ test_that("Formant time of min/max methods work", {
   sound <- create_test_sound()
   formant <- sound$to_formant_burg()
   
-  t_min <- formant$get_time_of_minimum(1, from_time = 0, to_time = 0, unit = "hertz")
-  t_max <- formant$get_time_of_maximum(1, from_time = 0, to_time = 0, unit = "hertz")
+  t_min <- formant$get_time_of_minimum(1, from_time = 0, to_time = 0,
+    unit = "hertz")
+  t_max <- formant$get_time_of_maximum(1, from_time = 0, to_time = 0,
+    unit = "hertz")
   
   expect_type(t_min, "double")
   expect_type(t_max, "double")
@@ -252,7 +256,8 @@ test_that("Formant unit bug fix: get_value_at_time returns correct scale", {
   f1_dataframe <- df_f1$frequency[idx]
   
   # Skip if either is NA
-  skip_if(is.na(f1_method) || is.na(f1_dataframe), "No formant data at test time")
+  skip_if(is.na(f1_method) || is.na(f1_dataframe),
+    "No formant data at test time")
   
   # Both methods should return Hertz values (not Bark)
   # Hertz values for F1 are typically 300-1500 Hz
@@ -261,9 +266,11 @@ test_that("Formant unit bug fix: get_value_at_time returns correct scale", {
               info = "get_value_at_time should return Hertz (>50), not Bark (<20)")
   
   # The two methods should return similar values (within 100 Hz tolerance)
-  # This was the bug: get_value_at_time returned ~7 (bark) while dataframe returned ~862 (Hz)
+  # This was the bug: get_value_at_time returned ~7 (bark) while dataframe
+  #  returned ~862 (Hz)
   expect_true(abs(f1_method - f1_dataframe) < 100,
-              info = sprintf("Methods should agree: get_value_at_time=%.2f, dataframe=%.2f", 
+              info = sprintf(
+                "Methods should agree: get_value_at_time=%.2f, dataframe=%.2f", 
                            f1_method, f1_dataframe))
   
   # Also verify that bark scale returns different (smaller) values
@@ -332,7 +339,8 @@ test_that("Deprecated S3 functions still work with warnings", {
 
 # BUG-1 regression: to_formant_burg() on short windows must not miss formants
 # Before fix: short-window F1 could be 35-55% too low vs full-sound analysis
-test_that("BUG-1: to_formant_burg() on 40ms window agrees with full-sound analysis", {
+test_that(
+  "BUG-1: to_formant_burg() on 40ms window agrees with full-sound analysis", {
 
   # Formant resonances only (no F0) — avoids LPC confusing F0 with F1
   # F1=700Hz, F2=1220Hz, F3=2600Hz (approximate adult /a/)
@@ -356,11 +364,14 @@ test_that("BUG-1: to_formant_burg() on 40ms window agrees with full-sound analys
   f1_win  <- fmnt_w$get_value_at_time(1, 0.02, "hertz")
   f2_win  <- fmnt_w$get_value_at_time(2, 0.02, "hertz")
 
-  # Short window must agree with full-sound within 200 Hz (before fix: up to 481 Hz mean diff)
+  # Short window must agree with full-sound within 200 Hz (before fix: up to 481
+  #  Hz mean diff)
   if (!is.na(f1_win) && !is.na(f1_full))
     expect_lt(abs(f1_win - f1_full), 200,
-      label = paste0("F1 diff window vs full-sound: ", round(abs(f1_win - f1_full)), " Hz"))
+      label = paste0("F1 diff window vs full-sound: ",
+        round(abs(f1_win - f1_full)), " Hz"))
   if (!is.na(f2_win) && !is.na(f2_full))
     expect_lt(abs(f2_win - f2_full), 300,
-      label = paste0("F2 diff window vs full-sound: ", round(abs(f2_win - f2_full)), " Hz"))
+      label = paste0("F2 diff window vs full-sound: ",
+        round(abs(f2_win - f2_full)), " Hz"))
 })

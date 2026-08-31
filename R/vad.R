@@ -17,7 +17,8 @@ NULL
 # Per-segment zero-crossing-rate keep test (shared by extract_voiced_segments
 # and sound_get_zcr). Long segments (>= zcr_window) use the AVQI 0.0025-0.0275s
 # analysis window; short segments use the whole segment.
-.segment_zcr_keep <- function(all_zeros, seg_start, seg_end, zcr_threshold, zcr_window) {
+.segment_zcr_keep <- function(all_zeros, seg_start, seg_end, zcr_threshold,
+  zcr_window) {
   segment_zeros <- all_zeros[all_zeros >= seg_start & all_zeros < seg_end]
   if (seg_end - seg_start >= zcr_window) {
     relative_zeros <- segment_zeros - seg_start
@@ -32,7 +33,8 @@ NULL
   (length(zc) / afstand) < zcr_threshold
 }
 
-.detect_voiced_intervals <- function(sound, minimum_pitch, time_step, silence_threshold,
+.detect_voiced_intervals <- function(sound, minimum_pitch, time_step,
+  silence_threshold,
                                      min_silent_interval, min_sounding_interval) {
   vad_grid <- sound_to_textgrid_silences(
     sound, minimum_pitch = minimum_pitch, time_step = time_step,
@@ -59,7 +61,8 @@ NULL
 
 # Extract and concatenate voiced segments into a single Sound, optionally
 # returning the source TextGrid.
-.extract_voiced_sound <- function(sound, xmin, xmax, vad_grid, return_textgrid) {
+.extract_voiced_sound <- function(sound, xmin, xmax, vad_grid,
+  return_textgrid) {
   voiced_sounds <- sound_extract_parts(
     sound, xmin, xmax, window_shape = "rectangular",
     relative_width = 1.0, preserve_times = FALSE)
@@ -77,15 +80,23 @@ NULL
 #' which requires extraction of voiced segments from continuous speech.
 #'
 #' @param sound Sound object to analyze
-#' @param minimum_pitch Numeric. Minimum pitch for intensity calculation (Hz, default: 100)
-#' @param time_step Numeric. Time step for intensity calculation (s, default: 0.0 = auto)
-#' @param silence_threshold Numeric. Silence threshold in dB below maximum (default: -25)
-#' @param min_silent_interval Numeric. Minimum duration of silent interval (s, default: 0.1)
-#' @param min_sounding_interval Numeric. Minimum duration of sounding interval (s, default: 0.1)
-#' @param silent_label Character. Label for silent intervals (default: "silence")
-#' @param sounding_label Character. Label for sounding intervals (default: "sounding")
+#' @param minimum_pitch Numeric. Minimum pitch for intensity calculation (Hz,
+#  default: 100)
+#' @param time_step Numeric. Time step for intensity calculation (s, default:
+#  0.0 = auto)
+#' @param silence_threshold Numeric. Silence threshold in dB below maximum
+#  (default: -25)
+#' @param min_silent_interval Numeric. Minimum duration of silent interval (s,
+#  default: 0.1)
+#' @param min_sounding_interval Numeric. Minimum duration of sounding interval
+#  (s, default: 0.1)
+#' @param silent_label Character. Label for silent intervals (default:
+#  "silence")
+#' @param sounding_label Character. Label for sounding intervals (default:
+#  "sounding")
 #'
-#' @return TextGrid object with one interval tier containing silent and sounding intervals
+#' @return TextGrid object with one interval tier containing silent and sounding
+#  intervals
 #'
 #' @details
 #' The function works by:
@@ -270,7 +281,8 @@ textgrid_get_intervals_where <- function(textgrid,
 #' @inheritParams pladdrr_shared_sound sound
 #' @param start_times Numeric vector of interval start times (seconds)
 #' @param end_times Numeric vector of interval end times (seconds)
-#' @param window_shape Character. Window shape for extraction (default: "rectangular").
+#' @param window_shape Character. Window shape for extraction (default:
+#  "rectangular").
 #'   See details for all options.
 #' @param relative_width Numeric. Relative width of window (default: 1.0).
 #'   For gaussian2/kaiser2, use 2.0. For gaussian3-5, use 3.0-5.0 respectively.
@@ -297,7 +309,8 @@ textgrid_get_intervals_where <- function(textgrid,
 #' - "kaiser2" - Narrower Kaiser-Bessel (alpha=40.5), use relative_width=2.0
 #'
 #' @references
-#' Praat documentation: \url{https://www.fon.hum.uva.nl/praat/manual/Sound__Extract_part___.html}
+#' Praat documentation:
+#  \url{https://www.fon.hum.uva.nl/praat/manual/Sound__Extract_part___.html}
 #'
 #' @examples
 #' sound <- sounds_append(
@@ -305,7 +318,8 @@ textgrid_get_intervals_where <- function(textgrid,
 #'   Sound$create_tone(frequency = 200, duration = 0.3, amplitude = 0.001)
 #' )
 #' vad_grid <- sound_to_textgrid_silences(sound)
-#' voiced_intervals <- textgrid_get_intervals_where(vad_grid, 1, "equals", "sounding")
+#' voiced_intervals <- textgrid_get_intervals_where(vad_grid, 1, "equals",
+#  "sounding")
 #'
 #' voiced_sounds <- sound_extract_parts(
 #'   sound,
@@ -315,10 +329,12 @@ textgrid_get_intervals_where <- function(textgrid,
 #'
 #' # Analyze each segment separately
 #' for (i in seq_along(voiced_sounds)) {
-#'   cat("Segment", i, "duration:", voiced_sounds[[i]]$get_total_duration(), "s\n")
+#' cat("Segment", i, "duration:", voiced_sounds[[i]]$get_total_duration(),
+#  "s\n")
 #' }
 #'
-#' @param return_r6 Logical. Return R6 Sound objects (TRUE) or raw xptrs (FALSE).
+#' @param return_r6 Logical. Return R6 Sound objects (TRUE) or raw xptrs
+#  (FALSE).
 #'   Using FALSE skips R6 wrapper construction.
 #' @export
 sound_extract_parts <- function(sound,
@@ -379,18 +395,25 @@ sound_extract_parts <- function(sound,
 #' as a Sound object. This matches the AVQI v2.03/v3.01 voiced extraction.
 #'
 #' @param sound Sound object (continuous speech)
-#' @param minimum_pitch Numeric. Minimum pitch for intensity detection (Hz, default: 50)
-#' @param time_step Numeric. Time step for intensity analysis (s, default: 0.003)
-#' @param silence_threshold Numeric. Silence threshold in dB below max (default: -25)
-#' @param min_silent_interval Numeric. Minimum silence duration (s, default: 0.1)
-#' @param min_sounding_interval Numeric. Minimum voiced duration (s, default: 0.1)
-#' @param zcr_threshold Numeric. Maximum ZCR for voiced speech (Hz, default: 3000)
+#' @param minimum_pitch Numeric. Minimum pitch for intensity detection (Hz,
+#  default: 50)
+#' @param time_step Numeric. Time step for intensity analysis (s, default:
+#  0.003)
+#' @param silence_threshold Numeric. Silence threshold in dB below max (default:
+#  -25)
+#' @param min_silent_interval Numeric. Minimum silence duration (s, default:
+#  0.1)
+#' @param min_sounding_interval Numeric. Minimum voiced duration (s, default:
+#  0.1)
+#' @param zcr_threshold Numeric. Maximum ZCR for voiced speech (Hz, default:
+#  3000)
 #' @param zcr_window Numeric. ZCR analysis window duration (s, default: 0.03)
 #' @param use_zcr Logical. Apply ZCR filtering (default: TRUE)
 #' @param return_textgrid Logical. Also return VAD TextGrid (default: FALSE)
 #'
-#' @return If `return_textgrid = FALSE`: Sound object with concatenated voiced segments.
-#'         If `return_textgrid = TRUE`: List with `sound` and `textgrid` elements.
+#' @return If `return_textgrid = FALSE`: Sound object with concatenated voiced
+#  segments.
+#' If `return_textgrid = TRUE`: List with `sound` and `textgrid` elements.
 #'
 #' @details
 #' The detection pipeline:
@@ -402,7 +425,8 @@ sound_extract_parts <- function(sound,
 #'
 #' @examples
 #' \donttest{
-#' sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate =
+#  16000)
 #'
 #' # Full AVQI-compatible extraction (default)
 #' voiced <- extract_voiced_segments(sound)
@@ -432,7 +456,8 @@ extract_voiced_segments <- function(sound,
   }
 
   # Steps 1-2: Intensity-based detection of voiced intervals
-  det <- .detect_voiced_intervals(sound, minimum_pitch, time_step, silence_threshold,
+  det <- .detect_voiced_intervals(sound, minimum_pitch, time_step,
+    silence_threshold,
                                    min_silent_interval, min_sounding_interval)
   vad_grid <- det$vad_grid
   voiced_intervals <- det$voiced_intervals
@@ -533,7 +558,8 @@ sound_get_zcr <- function(sound,
   start_time <- sound$get_xmin()
 
   # Calculate frame parameters
-  n_frames <- max(1L, as.integer((duration - window_duration) / hop_duration) + 1L)
+  n_frames <- max(1L,
+    as.integer((duration - window_duration) / hop_duration) + 1L)
 
   times <- numeric(n_frames)
   zcr <- numeric(n_frames)
@@ -584,7 +610,8 @@ sound_get_zcr <- function(sound,
 
 
 # Compute per-frame ZCR time series from zero-crossing times.
-.compute_zcr_frames <- function(zero_times, start_time, n_frames, window_duration,
+.compute_zcr_frames <- function(zero_times, start_time, n_frames,
+  window_duration,
                                 hop_duration, avqi_compatible, avqi_start_offset, avqi_end_offset) {
   times <- numeric(n_frames)
   zcr <- numeric(n_frames)

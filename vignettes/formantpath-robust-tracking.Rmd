@@ -25,7 +25,9 @@ FormantPath is Praat's advanced formant tracking algorithm that tests multiple f
 - Standard formant tracking produces spurious values
 - You need maximum robustness across diverse speakers
 
-Unlike standard formant extraction (`to_formant_burg()`), FormantPath generates multiple candidate formant tracks with different ceiling frequencies, then uses statistical criteria to select the best path frame-by-frame.
+Unlike standard formant extraction (
+  `to_formant_burg(
+    )`), FormantPath generates multiple candidate formant tracks with different ceiling frequencies, then uses statistical criteria to select the best path frame-by-frame.
 
 ```{r setup, message=FALSE}
 library(pladdrr)
@@ -38,8 +40,10 @@ library(ggplot2)
 
 Formant tracking quality depends heavily on choosing the right **formant ceiling** - the maximum frequency for formant detection:
 
-- **Too low** (e.g., 5000 Hz for female speaker): Misses F3, tracks harmonics as formants
-- **Too high** (e.g., 6500 Hz for male speaker): Detects spurious formants, poor F1/F2 accuracy
+- **Too low** (e.g.,
+  5000 Hz for female speaker): Misses F3, tracks harmonics as formants
+- **Too high** (e.g.,
+  6500 Hz for male speaker): Detects spurious formants, poor F1/F2 accuracy
 - **Just right**: Accurate F1/F2/F3 tracking with minimal errors
 
 **FormantPath solves this** by testing multiple ceilings automatically.
@@ -250,7 +254,8 @@ ggplot(df_plot, aes(time, frequency, color = factor(formant_num))) +
   ) +
   labs(
     title = "FormantPath: Optimal Formant Track",
-    subtitle = paste("Selected from", fp$get_number_of_candidates(), "ceiling frequency candidates"),
+    subtitle = paste("Selected from", fp$get_number_of_candidates(),
+      "ceiling frequency candidates"),
     x = "Time (s)",
     y = "Frequency (Hz)",
     color = "Formant"
@@ -372,7 +377,8 @@ cat("Using", fp$get_number_of_candidates(), "candidates for robustness\n")
 Compare formants across time-aligned segments using a TextGrid:
 
 ```{r use-case-vowels}
-textgrid <- TextGrid(system.file("extdata", "test.TextGrid", package = "pladdrr"))
+textgrid <- TextGrid(
+  system.file("extdata", "test.TextGrid", package = "pladdrr"))
 
 # Get labelled intervals from the phone tier
 intervals <- textgrid$get_all_intervals("phones")
@@ -490,7 +496,8 @@ pladdrr provides direct R access to Praat's FormantPath algorithm:
 
 ### vs Parselmouth
 
-Parselmouth does not currently expose FormantPath - only standard `to_formant()`.
+Parselmouth does not currently expose FormantPath - only standard `to_formant(
+  )`.
 
 ## Troubleshooting
 
@@ -564,8 +571,10 @@ fp <- sound$to_formant_path(
 
 ## Further Reading
 
-- Praat manual: [FormantPath](https://www.fon.hum.uva.nl/praat/manual/FormantPath.html)
-- Weenink, D. (2015). "Improved formant frequency measurements of short segments"
+- Praat manual: [FormantPath](
+  https://www.fon.hum.uva.nl/praat/manual/FormantPath.html)
+- Weenink, D. (
+  2015). "Improved formant frequency measurements of short segments"
 - pladdrr documentation: `?to_formant_path`
 
 ## Session Info

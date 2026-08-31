@@ -50,16 +50,20 @@ legacy_praat_formant <- function() {
   )
 }
 
-test_that("extract_formants() on an R6 Sound delegates to sound$to_formant_burg()", {
-  sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+test_that(
+  "extract_formants() on an R6 Sound delegates to sound$to_formant_burg()", {
+  sound <- Sound$create_tone(frequency = 220, duration = 0.5,
+    sampling_rate = 16000)
 
-  expect_warning(formants <- extract_formants(sound, max_formant = 5500), "deprecated")
+  expect_warning(formants <- extract_formants(sound, max_formant = 5500),
+    "deprecated")
 
   expect_s3_class(formants, "Formant")
   expect_gt(formants$get_mean(formant_number = 1), 0)
 })
 
-test_that("extract_formants() on a legacy praat_sound runs the R Burg-algorithm path", {
+test_that(
+  "extract_formants() on a legacy praat_sound runs the R Burg-algorithm path", {
   set.seed(1)
   sr <- 16000
   signal <- sin(2 * pi * 500 * seq(0, 0.3, by = 1 / sr)) +
@@ -68,12 +72,19 @@ test_that("extract_formants() on a legacy praat_sound runs the R Burg-algorithm 
   sound <- legacy_praat_sound(signal, sampling_rate = sr)
 
   expect_warning(
-    formants <- extract_formants(sound, max_formant = 5000, n_formants = 3, window_length = 0.025),
+    formants <- extract_formants(sound, max_formant = 5000, n_formants = 3,
+      window_length = 0.025),
     "deprecated"
   )
 
-  expect_true(all(c("values", "n_frames", "time_step", "max_formant", "n_formants") %in% names(formants)))
-  expect_true(all(c("time", "formant_number", "frequency", "bandwidth") %in% names(formants$values)))
+  expect_true(
+    all(
+      c("values", "n_frames", "time_step", "max_formant",
+        "n_formants") %in% names(formants)))
+  expect_true(
+    all(
+      c("time", "formant_number", "frequency",
+        "bandwidth") %in% names(formants$values)))
   expect_equal(formants$n_formants, 3, tolerance = sqrt(.Machine$double.eps))
   expect_gt(nrow(formants$values), 0)
   # Before the array-indexing fix, this was always 0 (every frequency NA).
@@ -98,9 +109,11 @@ test_that("extract_formants() validates its parameters", {
   })
 })
 
-test_that(".burg_algorithm() returns finite LPC coefficients for a well-behaved frame", {
+test_that(
+  ".burg_algorithm() returns finite LPC coefficients for a well-behaved frame", {
   set.seed(1)
-  frame <- sin(2 * pi * 500 * seq(0, 0.025, length.out = 400)) + rnorm(400, sd = 0.01)
+  frame <- sin(2 * pi * 500 * seq(0, 0.025, length.out = 400)) + rnorm(400,
+    sd = 0.01)
   result <- pladdrr:::.burg_algorithm(frame, order = 8)
 
   expect_false(is.null(result))
@@ -125,22 +138,26 @@ test_that("get_formant_at_time() finds the nearest frame and interpolates", {
   expect_equal(nearest, 500, tolerance = sqrt(.Machine$double.eps))
 
   interpolated <- suppressWarnings(
-    get_formant_at_time(formant, formant_number = 1, time = 0.15, interpolate = TRUE)
+    get_formant_at_time(formant, formant_number = 1, time = 0.15,
+      interpolate = TRUE)
   )
   expect_equal(interpolated, 510, tolerance = sqrt(.Machine$double.eps))
 
-  none <- suppressWarnings(get_formant_at_time(formant, formant_number = 9, time = 0.1))
+  none <- suppressWarnings(
+    get_formant_at_time(formant, formant_number = 9, time = 0.1))
   expect_true(is.na(none))
 })
 
-test_that("get_mean_formant() averages over all frames or a restricted time_range", {
+test_that(
+  "get_mean_formant() averages over all frames or a restricted time_range", {
   formant <- legacy_praat_formant()
 
   expect_warning(
     mean_f1 <- get_mean_formant(formant, formant_number = 1),
     "deprecated"
   )
-  expect_equal(mean_f1, mean(c(500, 520)), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(mean_f1, mean(c(500, 520)),
+    tolerance = sqrt(.Machine$double.eps))
 
   mean_f1_range <- suppressWarnings(
     get_mean_formant(formant, formant_number = 1, time_range = c(0.05, 0.15))

@@ -19,7 +19,8 @@ NULL
 
 # Extract measurements for every interval tier, applying measure functions
 # to each extracted sound part. Returns a list of row lists.
-.extract_interval_measurements <- function(sound, textgrid, tier_idx, measures, interval_filter) {
+.extract_interval_measurements <- function(sound, textgrid, tier_idx,
+  measures, interval_filter) {
   n_items <- textgrid$get_number_of_intervals(tier_idx)
   results <- list()
   for (i in seq_len(n_items)) {
@@ -36,7 +37,8 @@ NULL
         value <- measure_func(part, 0, tmax - tmin)
         row[[measure_name]] <- value
       }, error = function(e) {
-        warning("Error in measure '", measure_name, "' for interval ", i, ": ", e$message)
+        warning("Error in measure '", measure_name, "' for interval ", i,
+          ": ", e$message)
         row[[measure_name]] <- NA
       })
     }
@@ -47,7 +49,8 @@ NULL
 
 # Extract measurements at each point tier, applying measure functions to the
 # sound at the point time. Returns a list of row lists.
-.extract_point_measurements <- function(sound, textgrid, tier_idx, measures, interval_filter) {
+.extract_point_measurements <- function(sound, textgrid, tier_idx, measures,
+  interval_filter) {
   n_items <- textgrid$get_number_of_points(tier_idx)
   results <- list()
   for (i in seq_len(n_items)) {
@@ -61,7 +64,8 @@ NULL
         value <- measure_func(sound, time, time)
         row[[measure_name]] <- value
       }, error = function(e) {
-        warning("Error in measure '", measure_name, "' for point ", i, ": ", e$message)
+        warning("Error in measure '", measure_name, "' for point ", i, ": ",
+          e$message)
         row[[measure_name]] <- NA
       })
     }
@@ -128,11 +132,15 @@ NULL
 }
 
 # Create the requested analysis objects (pitch/formants/intensity).
-.create_analysis_objects <- function(sound, measurements, pitch_params, formant_params, intensity_params) {
+.create_analysis_objects <- function(sound, measurements, pitch_params,
+  formant_params, intensity_params) {
   pitch_obj <- formant_obj <- intensity_obj <- NULL
-  if ("pitch" %in% measurements) pitch_obj <- do.call(sound$to_pitch, pitch_params)
-  if ("formants" %in% measurements) formant_obj <- do.call(sound$to_formant_burg, formant_params)
-  if ("intensity" %in% measurements) intensity_obj <- do.call(sound$to_intensity, intensity_params)
+  if ("pitch" %in% measurements) pitch_obj <- do.call(sound$to_pitch,
+    pitch_params)
+  if (
+    "formants" %in% measurements) formant_obj <- do.call(sound$to_formant_burg, formant_params)
+  if (
+    "intensity" %in% measurements) intensity_obj <- do.call(sound$to_intensity, intensity_params)
   list(pitch = pitch_obj, formants = formant_obj, intensity = intensity_obj)
 }
 
@@ -147,12 +155,14 @@ NULL
 #' pattern of creating Strings objects and looping over files.
 #'
 #' @param directory Character path to directory containing audio files
-#' @param pattern Regular expression pattern to match files (default: "\\\\.wav$")
+#' @param pattern Regular expression pattern to match files (default:
+#  "\\\\.wav$")
 #' @param func Function to apply to each file. Should accept a Sound object
 #'   as first argument and return a named list or data frame row
 #' @param recursive Logical, search directories recursively (default: FALSE)
 #' @param parallel Logical, use parallel processing (default: FALSE)
-#' @param ncores Integer, number of cores for parallel processing (default: NULL = all-1)
+#' @param ncores Integer, number of cores for parallel processing (default: NULL
+#  = all-1)
 #' @param progress Logical, show progress bar (default: TRUE)
 #' @param ... Additional arguments passed to func
 #'
@@ -161,7 +171,8 @@ NULL
 #' @examples
 #' audio_dir <- tempfile("audio_")
 #' dir.create(audio_dir)
-#' tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+#' tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate =
+#  16000)
 #' tone$save(file.path(audio_dir, "tone1.wav"))
 #'
 #' results <- batch_process(
@@ -172,7 +183,8 @@ NULL
 #'     pitch <- sound$to_pitch()
 #'     list(
 #'       mean_f0 = pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz"),
-#'       sd_f0 = pitch$get_standard_deviation(from_time = 0, to_time = 0, unit = "hertz")
+#' sd_f0 = pitch$get_standard_deviation(from_time = 0, to_time = 0, unit =
+#  "hertz")
 #'     )
 #'   }
 #' )
@@ -218,16 +230,20 @@ batch_process <- function(directory, pattern = "\\.wav$", func,
 #' @param textgrid_dir Character path to directory containing TextGrid files
 #'   (default: same as sound_dir)
 #' @param sound_pattern Pattern to match sound files (default: "\\\\.wav$")
-#' @param textgrid_pattern Pattern to match TextGrid files (default: "\\\\.TextGrid$")
-#' @param by Matching strategy: "basename" (default), "full", or a custom function
-#' @param require_both Logical, only return pairs where both files exist (default: TRUE)
+#' @param textgrid_pattern Pattern to match TextGrid files (default:
+#  "\\\\.TextGrid$")
+#' @param by Matching strategy: "basename" (default), "full", or a custom
+#  function
+#' @param require_both Logical, only return pairs where both files exist
+#  (default: TRUE)
 #'
 #' @return Data frame with columns: sound_file, textgrid_file, basename
 #'
 #' @examples
 #' audio_dir <- tempfile("audio_")
 #' dir.create(audio_dir)
-#' Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)$save(
+#' Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate =
+#  16000)$save(
 #'   file.path(audio_dir, "utt1.wav")
 #' )
 #' tg <- TextGrid$create(0, 0.3, "words")
@@ -277,7 +293,8 @@ pair_sound_textgrid <- function(sound_dir, textgrid_dir = sound_dir,
     # Match on full filename
     pairs <- data.frame(
       sound_file = sound_files,
-      textgrid_file = textgrid_files[match(basename(sound_files), basename(textgrid_files))],
+      textgrid_file = textgrid_files[match(basename(sound_files),
+        basename(textgrid_files))],
       basename = tools::file_path_sans_ext(basename(sound_files)),
       stringsAsFactors = FALSE
     )
@@ -295,7 +312,8 @@ pair_sound_textgrid <- function(sound_dir, textgrid_dir = sound_dir,
 #' Extract Custom Measurements from TextGrid Intervals
 #'
 #' @description
-#' Extract acoustic measurements from intervals or points in TextGrid annotations.
+#' Extract acoustic measurements from intervals or points in TextGrid
+#  annotations.
 #' This replaces complex Praat scripts that loop over TextGrid intervals.
 #'
 #' @param sound Sound object or path to sound file
@@ -312,7 +330,8 @@ pair_sound_textgrid <- function(sound_dir, textgrid_dir = sound_dir,
 #'
 #' @examples
 #' \donttest{
-#' sound <- Sound$create_tone(frequency = 150, duration = 0.6, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.6, sampling_rate =
+#  16000)
 #' tg <- textgrid_create(0, 0.6, "phones")
 #' tg$insert_boundary("phones", 0.3)
 #' tg$set_interval_text("phones", 1, "a")
@@ -351,9 +370,11 @@ extract_measurements_custom <- function(sound, textgrid, tier, measures,
 
   # Get intervals/points
   if (is_interval_tier) {
-    results <- .extract_interval_measurements(sound, textgrid, tier_idx, measures, interval_filter)
+    results <- .extract_interval_measurements(sound, textgrid, tier_idx,
+      measures, interval_filter)
   } else {
-    results <- .extract_point_measurements(sound, textgrid, tier_idx, measures, interval_filter)
+    results <- .extract_point_measurements(sound, textgrid, tier_idx,
+      measures, interval_filter)
   }
   
   # Convert to data frame
@@ -385,7 +406,8 @@ extract_measurements_custom <- function(sound, textgrid, tier, measures,
 #' @examples
 #' audio_dir <- tempfile("audio_")
 #' dir.create(audio_dir)
-#' tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+#' tone <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate =
+#  16000)
 #' tone$save(file.path(audio_dir, "tone1.wav"))
 #'
 #' # Equivalent to: Create Strings as file list: "list", "*.wav"
@@ -406,10 +428,14 @@ create_file_list <- function(directory, pattern = NULL,
 #' Equivalent to Praat's manual file pairing but automated.
 #'
 #' @param sound_dir Character. Directory containing sound files.
-#' @param textgrid_dir Character. Directory containing TextGrid files (default: same as sound_dir).
-#' @param sound_pattern Character. Pattern for sound files (default: "\\\\.wav$").
-#' @param textgrid_pattern Character. Pattern for TextGrid files (default: "\\\\.TextGrid$").
-#' @param by Character. Matching strategy: "basename" (default), "exact", or a custom function.
+#' @param textgrid_dir Character. Directory containing TextGrid files (default:
+#  same as sound_dir).
+#' @param sound_pattern Character. Pattern for sound files (default:
+#  "\\\\.wav$").
+#' @param textgrid_pattern Character. Pattern for TextGrid files (default:
+#  "\\\\.TextGrid$").
+#' @param by Character. Matching strategy: "basename" (default), "exact", or a
+#  custom function.
 #' @param require_both Logical. Require both files to exist (default: TRUE).
 #'
 #' @return Data frame with columns: sound_file, textgrid_file, basename.
@@ -417,7 +443,8 @@ create_file_list <- function(directory, pattern = NULL,
 #' @examples
 #' audio_dir <- tempfile("audio_")
 #' dir.create(audio_dir)
-#' Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)$save(
+#' Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate =
+#  16000)$save(
 #'   file.path(audio_dir, "utt1.wav")
 #' )
 #' tg <- TextGrid$create(0, 0.3, "words")
@@ -442,8 +469,10 @@ pair_files <- function(sound_dir,
                       require_both = TRUE) {
   
   # Get file lists
-  sound_files <- list.files(sound_dir, pattern = sound_pattern, full.names = TRUE)
-  textgrid_files <- list.files(textgrid_dir, pattern = textgrid_pattern, full.names = TRUE)
+  sound_files <- list.files(sound_dir, pattern = sound_pattern,
+    full.names = TRUE)
+  textgrid_files <- list.files(textgrid_dir, pattern = textgrid_pattern,
+    full.names = TRUE)
   
   # Extract basenames
   sound_basenames <- tools::file_path_sans_ext(basename(sound_files))
@@ -463,10 +492,12 @@ pair_files <- function(sound_dir,
     
     if (require_both) {
       # Inner join - only matched pairs
-      pairs <- data.table::merge.data.table(sound_dt, tg_dt, by = "basename", all = FALSE)
+      pairs <- data.table::merge.data.table(sound_dt, tg_dt, by = "basename",
+        all = FALSE)
     } else {
       # Full outer join - all files
-      pairs <- data.table::merge.data.table(sound_dt, tg_dt, by = "basename", all = TRUE)
+      pairs <- data.table::merge.data.table(sound_dt, tg_dt, by = "basename",
+        all = TRUE)
     }
     
     data.table::setkey(pairs, basename)
@@ -486,22 +517,30 @@ pair_files <- function(sound_dir,
 
 #' Extract Measurements from Sound and TextGrid Pairs
 #'
-#' High-level function to extract acoustic measurements aligned with TextGrid intervals.
-#' Automates the common Praat workflow of measuring formants/pitch at interval midpoints.
+#' High-level function to extract acoustic measurements aligned with TextGrid
+#  intervals.
+#' Automates the common Praat workflow of measuring formants/pitch at interval
+#  midpoints.
 #'
 #' @param sound Sound object or file path.
 #' @param textgrid TextGrid object or file path.
 #' @param tier Integer. Tier number to use for segmentation.
-#' @param measurements Character vector. Measurements to extract: "pitch", "formants", "intensity", etc.
-#' @param time_point Character. Where to measure: "midpoint" (default), "start", "end", or "mean".
-#' @param pitch_params List. Parameters for pitch extraction (time_step, pitch_floor, pitch_ceiling).
-#' @param formant_params List. Parameters for formant extraction (max_formants, max_frequency, etc.).
+#' @param measurements Character vector. Measurements to extract: "pitch",
+#  "formants", "intensity", etc.
+#' @param time_point Character. Where to measure: "midpoint" (default), "start",
+#  "end", or "mean".
+#' @param pitch_params List. Parameters for pitch extraction (time_step,
+#  pitch_floor, pitch_ceiling).
+#' @param formant_params List. Parameters for formant extraction (max_formants,
+#  max_frequency, etc.).
 #' @param intensity_params List. Parameters for intensity extraction.
 #'
-#' @return Data frame with one row per interval, columns for label and requested measurements.
+#' @return Data frame with one row per interval, columns for label and requested
+#  measurements.
 #'
 #' @examples
-#' sound <- Sound$create_tone(frequency = 150, duration = 0.6, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.6, sampling_rate =
+#  16000)
 #' tg <- textgrid_create(0, 0.6, "phones")
 #' tg$insert_boundary("phones", 0.3)
 #' tg$set_interval_text("phones", 1, "a")
@@ -519,12 +558,17 @@ pair_files <- function(sound_dir,
 extract_measurements <- function(sound,
                                 textgrid,
                                 tier = 1,
-                                measurements = c("pitch", "formants", "intensity"),
-                                time_point = c("midpoint", "start", "end", "mean"),
-                                pitch_params = list(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600),
-                                formant_params = list(time_step = 0.01, max_formants = 5, max_frequency = 5500,
+                                measurements = c("pitch", "formants",
+                                  "intensity"),
+                                time_point = c("midpoint", "start", "end",
+                                  "mean"),
+                                pitch_params = list(time_step = 0.01,
+                                  pitch_floor = 75, pitch_ceiling = 600),
+                                formant_params = list(time_step = 0.01,
+                                  max_formants = 5, max_frequency = 5500,
                                                      window_length = 0.025, pre_emphasis = 50),
-                                intensity_params = list(minimum_pitch = 100, time_step = 0, subtract_mean = TRUE)) {
+                                intensity_params = list(minimum_pitch = 100,
+                                  time_step = 0, subtract_mean = TRUE)) {
   
   time_point <- match.arg(time_point)
   
@@ -537,13 +581,16 @@ extract_measurements <- function(sound,
   }
   
   # Create analysis objects
-  objs <- .create_analysis_objects(sound, measurements, pitch_params, formant_params, intensity_params)
+  objs <- .create_analysis_objects(sound, measurements, pitch_params,
+    formant_params, intensity_params)
   pitch_obj <- objs$pitch
   formant_obj <- objs$formants
   intensity_obj <- objs$intensity
   
-  # Get ALL intervals in single C++ call (returns index, label, start, end, duration)
-  # Get ALL intervals in single C++ call (returns index, label, start, end, duration)
+  # Get ALL intervals in single C++ call (returns index, label, start, end,
+  #  duration)
+  # Get ALL intervals in single C++ call (returns index, label, start, end,
+  #  duration)
   intervals <- .get_filtered_intervals(textgrid, tier)
   if (is.null(intervals)) return(NULL)
   
@@ -576,7 +623,8 @@ extract_measurements <- function(sound,
 #'
 #' @param measurements Data frame from extract_measurements().
 #' @param by Character. Column to group by (default: "label").
-#' @param stats Character vector. Statistics to compute: "mean", "sd", "median", "min", "max", "n".
+#' @param stats Character vector. Statistics to compute: "mean", "sd", "median",
+#  "min", "max", "n".
 #'
 #' @return Data frame with aggregated statistics.
 #'
@@ -601,7 +649,8 @@ aggregate_measurements <- function(measurements,
   }
   
   # Get numeric columns
-  numeric_cols <- names(measurements)[vapply(measurements, is.numeric, logical(1))]
+  numeric_cols <- names(measurements)[vapply(measurements, is.numeric,
+    logical(1))]
   
   # Aggregate
   agg_list <- list()
@@ -643,10 +692,12 @@ aggregate_measurements <- function(measurements,
 
 
 # Apply pitch/formant/intensity batch measurements to a results frame.
-.apply_batch_measurements <- function(results, meas_times, pitch_obj, formant_obj,
+.apply_batch_measurements <- function(results, meas_times, pitch_obj,
+  formant_obj,
                                      intensity_obj, formant_params) {
   if (!is.null(pitch_obj)) {
-    results$f0 <- .pitch_get_values_at_times(pitch_obj$.xptr, meas_times, unit = 0L, interpolate = TRUE)
+    results$f0 <- .pitch_get_values_at_times(pitch_obj$.xptr, meas_times,
+      unit = 0L, interpolate = TRUE)
   }
   if (!is.null(formant_obj)) {
     formant_values <- formant_get_multiple_formants_at_times(
@@ -654,7 +705,8 @@ aggregate_measurements <- function(measurements,
     results[names(formant_values)] <- formant_values
   }
   if (!is.null(intensity_obj)) {
-    results$intensity <- .intensity_get_values_at_times(intensity_obj$.xptr, meas_times, interpolation = 1L)
+    results$intensity <- .intensity_get_values_at_times(intensity_obj$.xptr,
+      meas_times, interpolation = 1L)
   }
   results
 }
@@ -663,7 +715,9 @@ aggregate_measurements <- function(measurements,
 # Run batch processing (parallel mclapply or sequential with progress).
 .run_batch_process <- function(files, func, parallel, ncores, progress, ...) {
   if (parallel) {
-    if (!requireNamespace("parallel", quietly = TRUE)) stop("Package 'parallel' is required for parallel processing")
+    if (
+      !requireNamespace("parallel",
+        quietly = TRUE)) stop("Package 'parallel' is required for parallel processing")
     if (is.null(ncores)) ncores <- parallel::detectCores() - 1
     tpw <- .pladdrr_worker_thread_budget(ncores)
     parallel::mclapply(files, function(f) {
@@ -686,7 +740,8 @@ aggregate_measurements <- function(measurements,
 
 # Fetch intervals and filter to non-empty labels (NULL if none).
 .get_filtered_intervals <- function(textgrid, tier) {
-  intervals <- textgrid_interval_statistics_batch(textgrid$get_xptr(), as.integer(tier))
+  intervals <- textgrid_interval_statistics_batch(textgrid$get_xptr(),
+    as.integer(tier))
   keep <- nzchar(intervals$label)
   if (!any(keep)) return(NULL)
   intervals[keep, , drop = FALSE]

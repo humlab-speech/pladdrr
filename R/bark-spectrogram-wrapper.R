@@ -4,7 +4,7 @@
 #' of speech.
 #'
 #' @param .xptr Not for direct use. External pointer to the underlying C++
-#'   BarkSpectrogram object; set internally by \code{Sound$to_bark_spectrogram()}.
+#' BarkSpectrogram object; set internally by \code{Sound$to_bark_spectrogram()}.
 #' @return A BarkSpectrogram object.
 #'
 #' @examples
@@ -17,7 +17,8 @@
 #' @export
 BarkSpectrogram <- function(.xptr = NULL) {
   if (is.null(.xptr)) {
-    stop("BarkSpectrogram objects must be created from Sound$to_bark_spectrogram()")
+    stop(
+      "BarkSpectrogram objects must be created from Sound$to_bark_spectrogram()")
   }
 
   ptr <- .xptr

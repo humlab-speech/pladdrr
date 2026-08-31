@@ -20,7 +20,8 @@
 #' }
 #'
 #' @examples
-#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+#  16000)
 #' p <- ggplot2::autoplot(sound)
 #'
 #' pitch <- sound$to_pitch()
@@ -107,9 +108,11 @@ autoplot.Pitch <- function(object, from_time = NULL, to_time = NULL,
     p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$time, y = .data$frequency,
                                           color = .data$strength)) +
       ggplot2::geom_line(linewidth = 0.8, ...) +
-      ggplot2::scale_color_gradient(low = "gray70", high = color, name = "Voicing")
+      ggplot2::scale_color_gradient(low = "gray70", high = color,
+        name = "Voicing")
   } else {
-    p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$time, y = .data$frequency)) +
+    p <- ggplot2::ggplot(df,
+      ggplot2::aes(x = .data$time, y = .data$frequency)) +
       ggplot2::geom_line(color = color, linewidth = 0.8, ...)
   }
 
@@ -121,7 +124,8 @@ autoplot.Pitch <- function(object, from_time = NULL, to_time = NULL,
 #' @param geom For Pitch: type of geometry ("line" or "point")
 #' @export
 autolayer.Pitch <- function(object, from_time = NULL, to_time = NULL,
-                            color = "darkgreen", geom = c("line", "point"), ...) {
+                            color = "darkgreen", geom = c("line",
+                              "point"), ...) {
   geom <- match.arg(geom)
   df <- object$as_data_frame()
 
@@ -184,7 +188,8 @@ autoplot.Formant <- function(object, from_time = NULL, to_time = NULL,
   formant_labels <- paste0("F", sort(unique(df$formant)))
 
   if (is.null(colors)) {
-    colors <- c("red", "green4", "blue", "purple", "orange")[seq_along(formant_labels)]
+    colors <- c("red", "green4", "blue", "purple",
+      "orange")[seq_along(formant_labels)]
     names(colors) <- formant_labels
   }
 
@@ -213,14 +218,16 @@ autolayer.Formant <- function(object, from_time = NULL, to_time = NULL,
   formant_labels <- paste0("F", sort(unique(df$formant)))
 
   if (is.null(colors)) {
-    colors <- c("red", "yellow", "cyan", "magenta", "white")[seq_along(formant_labels)]
+    colors <- c("red", "yellow", "cyan", "magenta",
+      "white")[seq_along(formant_labels)]
     names(colors) <- formant_labels
   }
 
   list(
     ggplot2::geom_line(
       data = df,
-      ggplot2::aes(x = .data$time, y = .data$frequency, color = .data$formant_label),
+      ggplot2::aes(x = .data$time, y = .data$frequency,
+        color = .data$formant_label),
       linewidth = 1.2, alpha = 0.8, inherit.aes = FALSE, ...
     ),
     ggplot2::scale_color_manual(values = colors, name = "Formant")
@@ -293,12 +300,14 @@ autoplot.Spectrogram <- function(object, from_time = NULL, to_time = NULL,
   if (!is.null(to_freq)) df <- df[df$frequency <= to_freq, ]
 
   max_power <- max(df$power_db, na.rm = TRUE)
-  df$power_db[df$power_db < (max_power - dynamic_range)] <- max_power - dynamic_range
+  df$power_db[df$power_db < (
+    max_power - dynamic_range)] <- max_power - dynamic_range
 
   ggplot2::ggplot(df, ggplot2::aes(x = .data$time, y = .data$frequency,
                                     fill = .data$power_db)) +
     ggplot2::geom_raster() +
-    ggplot2::scale_fill_gradient(low = "white", high = "black", name = "Power (dB)") +
+    ggplot2::scale_fill_gradient(low = "white", high = "black",
+      name = "Power (dB)") +
     ggplot2::labs(title = "Spectrogram", x = "Time (s)", y = "Frequency (Hz)") +
     ggplot2::theme_minimal()
 }
@@ -317,7 +326,8 @@ autolayer.Spectrogram <- function(object, from_time = NULL, to_time = NULL,
   if (!is.null(to_freq)) df <- df[df$frequency <= to_freq, ]
 
   max_power <- max(df$power_db, na.rm = TRUE)
-  df$power_db[df$power_db < (max_power - dynamic_range)] <- max_power - dynamic_range
+  df$power_db[df$power_db < (
+    max_power - dynamic_range)] <- max_power - dynamic_range
 
   list(
     ggplot2::geom_raster(
@@ -325,7 +335,8 @@ autolayer.Spectrogram <- function(object, from_time = NULL, to_time = NULL,
       ggplot2::aes(x = .data$time, y = .data$frequency, fill = .data$power_db),
       ...
     ),
-    ggplot2::scale_fill_gradient(low = "white", high = "black", name = "Power (dB)")
+    ggplot2::scale_fill_gradient(low = "white", high = "black",
+      name = "Power (dB)")
   )
 }
 
@@ -352,7 +363,8 @@ autoplot.Spectrum <- function(object, from_freq = NULL, to_freq = NULL,
     df$power_db <- 10 * log10(df$power)
   }
 
-  p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$frequency, y = .data$power_db)) +
+  p <- ggplot2::ggplot(df,
+    ggplot2::aes(x = .data$frequency, y = .data$power_db)) +
     ggplot2::geom_line(color = color, linewidth = 0.8, ...)
 
   if (log_freq) p <- p + ggplot2::scale_x_log10()
@@ -402,7 +414,8 @@ autoplot.Ltas <- function(object, from_freq = NULL, to_freq = NULL,
   if (!is.null(from_freq)) df <- df[df$frequency >= from_freq, ]
   if (!is.null(to_freq)) df <- df[df$frequency <= to_freq, ]
 
-  p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$frequency, y = .data$power_db)) +
+  p <- ggplot2::ggplot(df,
+    ggplot2::aes(x = .data$frequency, y = .data$power_db)) +
     ggplot2::geom_line(color = color, linewidth = 0.8, ...)
 
   if (log_freq) p <- p + ggplot2::scale_x_log10()
@@ -537,7 +550,8 @@ autolayer.PointProcess <- function(object, from_time = NULL, to_time = NULL,
 #' @param to_quefrency End quefrency in seconds
 #' @param mark_peak Mark the cepstral peak (default: TRUE)
 #' @export
-autoplot.PowerCepstrum <- function(object, from_quefrency = NULL, to_quefrency = NULL,
+autoplot.PowerCepstrum <- function(object, from_quefrency = NULL,
+  to_quefrency = NULL,
                                    color = "darkblue", mark_peak = TRUE, ...) {
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
     stop("Package 'ggplot2' is required. Please install it.")
@@ -556,7 +570,8 @@ autoplot.PowerCepstrum <- function(object, from_quefrency = NULL, to_quefrency =
   if (!is.null(from_quefrency)) df <- df[df$quefrency >= from_quefrency, ]
   if (!is.null(to_quefrency)) df <- df[df$quefrency <= to_quefrency, ]
 
-  p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$quefrency, y = .data$power_db)) +
+  p <- ggplot2::ggplot(df,
+    ggplot2::aes(x = .data$quefrency, y = .data$power_db)) +
     ggplot2::geom_line(color = color, linewidth = 0.8, ...)
 
   if (mark_peak && nrow(df) > 0) {
@@ -569,18 +584,21 @@ autoplot.PowerCepstrum <- function(object, from_quefrency = NULL, to_quefrency =
         ggplot2::geom_vline(xintercept = peak_q, linetype = "dashed",
                             color = "red", alpha = 0.5) +
         ggplot2::annotate("text", x = peak_q, y = peak_v,
-                          label = sprintf("%.4f s\n(%.0f Hz)", peak_q, 1/peak_q),
+                          label = sprintf("%.4f s\n(%.0f Hz)", peak_q,
+                            1/peak_q),
                           hjust = -0.1, size = 3, color = "red")
     }
   }
 
-  p + ggplot2::labs(title = "Power Cepstrum", x = "Quefrency (s)", y = "Power (dB)") +
+  p + ggplot2::labs(title = "Power Cepstrum", x = "Quefrency (s)",
+    y = "Power (dB)") +
     ggplot2::theme_minimal()
 }
 
 #' @rdname autoplot-methods
 #' @export
-autolayer.PowerCepstrum <- function(object, from_quefrency = NULL, to_quefrency = NULL,
+autolayer.PowerCepstrum <- function(object, from_quefrency = NULL,
+  to_quefrency = NULL,
                                     color = "darkblue", ...) {
   df <- object$as_data_frame()
   if (nrow(df) == 0) return(NULL)
@@ -614,7 +632,8 @@ autoplot.TextGrid <- function(object, ...) {
 #' @param tier Tier number or name to display (default: 1)
 #' @param alpha Fill transparency (default: 0.3)
 #' @export
-autolayer.TextGrid <- function(object, tier = 1, from_time = NULL, to_time = NULL,
+autolayer.TextGrid <- function(object, tier = 1, from_time = NULL,
+  to_time = NULL,
                                color = "steelblue", alpha = 0.3, ...) {
   n_tiers <- object$get_number_of_tiers()
 
@@ -638,12 +657,14 @@ autolayer.TextGrid <- function(object, tier = 1, from_time = NULL, to_time = NUL
     list(
       ggplot2::geom_rect(
         data = tier_data,
-        ggplot2::aes(xmin = .data$start, xmax = .data$end, ymin = -Inf, ymax = Inf),
+        ggplot2::aes(xmin = .data$start, xmax = .data$end, ymin = -Inf,
+          ymax = Inf),
         fill = color, alpha = alpha, color = "black", inherit.aes = FALSE, ...
       ),
       ggplot2::geom_text(
         data = tier_data[tier_data$label != "", ],
-        ggplot2::aes(x = (.data$start + .data$end) / 2, y = Inf, label = .data$label),
+        ggplot2::aes(x = (.data$start + .data$end) / 2, y = Inf,
+          label = .data$label),
         vjust = 1.5, size = 3, inherit.aes = FALSE
       )
     )

@@ -19,8 +19,10 @@ test_that("DTW x/y duration and dx/dy are accessible", {
 
   expect_true(is.numeric(dtw$get_x_duration()))
   expect_true(is.numeric(dtw$get_y_duration()))
-  expect_equal(dtw$get_x_duration(), dtw$get_xmax() - dtw$get_xmin(), tolerance = sqrt(.Machine$double.eps))
-  expect_equal(dtw$get_y_duration(), dtw$get_ymax() - dtw$get_ymin(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(dtw$get_x_duration(), dtw$get_xmax() - dtw$get_xmin(),
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(dtw$get_y_duration(), dtw$get_ymax() - dtw$get_ymin(),
+    tolerance = sqrt(.Machine$double.eps))
 
   # get_dx()/get_dy() aren't exposed on the R6-style wrapper at all (only
   # get_nx()/get_ny() are); reach them via the raw .cpp module object.
@@ -28,7 +30,8 @@ test_that("DTW x/y duration and dx/dy are accessible", {
   expect_gt(dtw$.cpp$get_dy(), 0)
 })
 
-test_that("DTW get_x_time_from_y_time maps time (reverse of get_y_time_from_x_time)", {
+test_that(
+  "DTW get_x_time_from_y_time maps time (reverse of get_y_time_from_x_time)", {
   sound <- generate_sine_wave(220, 0.3, sampling_rate = 16000)
   dtw <- sounds_to_dtw(sound, sound)
 
@@ -54,7 +57,8 @@ test_that("DTW map_times y_to_x direction works (vectorized reverse mapping)", {
   expect_true(all(is.finite(mapped)))
 })
 
-test_that("DTW get_maximum_consecutive_steps rejects invalid direction at the C++ layer", {
+test_that(
+  "DTW get_maximum_consecutive_steps rejects invalid direction at the C++ layer", {
   sound <- generate_sine_wave(220, 0.3, sampling_rate = 16000)
   dtw <- sounds_to_dtw(sound, sound)
 
@@ -84,16 +88,20 @@ test_that("DTW to_matrix_cumulative works and produces a valid Matrix", {
   # Matrix is an S3-wrapped Praat object here, not a base R matrix, so
   # base nrow()/ncol() don't apply -- use its own get_nx()/get_ny().
   expect_s3_class(mat, "Matrix")
-  expect_equal(mat$get_ny(), dtw$get_ny(), tolerance = sqrt(.Machine$double.eps))
-  expect_equal(mat$get_nx(), dtw$get_nx(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(mat$get_ny(), dtw$get_ny(),
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(mat$get_nx(), dtw$get_nx(),
+    tolerance = sqrt(.Machine$double.eps))
 })
 
-test_that("DTW to_duration_tier is an unimplemented Praat stub (documented, not fixed)", {
+test_that(
+  "DTW to_duration_tier is an unimplemented Praat stub (documented, not fixed)", {
   sound <- generate_sine_wave(220, 0.3, sampling_rate = 16000)
   dtw <- sounds_to_dtw(sound, sound)
 
   # DTW_to_DurationTier() in praat.github.io/dwtools/DTW.cpp is a stub:
-  #   autoDurationTier DTW_to_DurationTier (DTW /* me */) { return autoDurationTier(); }
+  # autoDurationTier DTW_to_DurationTier (DTW /* me */) { return
+  #  autoDurationTier(); }
   # It always returns a null/empty object rather than a real DurationTier.
   # This is an upstream Praat limitation (no real algorithm exists to call),
   # not a pladdrr bug -- documented here rather than fixed, per this
@@ -116,11 +124,13 @@ test_that("DTW warp_textgrid warps a domain-matching TextGrid", {
   expect_s3_class(warped, "TextGrid")
 })
 
-test_that("DTW warp_textgrid errors on a TextGrid whose domain matches neither DTW axis", {
+test_that(
+  "DTW warp_textgrid errors on a TextGrid whose domain matches neither DTW axis", {
   sound <- generate_sine_wave(220, 0.3, sampling_rate = 16000, amplitude = 0.5)
   dtw <- sounds_to_dtw(sound, sound)
 
-  other_sound <- generate_sine_wave(220, 0.9, sampling_rate = 16000, amplitude = 0.5)
+  other_sound <- generate_sine_wave(220, 0.9, sampling_rate = 16000,
+    amplitude = 0.5)
   other_pitch <- other_sound$to_pitch()
   mismatched_tg <- other_pitch$to_textgrid_silences()
 
@@ -132,7 +142,8 @@ test_that("DTW warp_textgrid errors on a TextGrid whose domain matches neither D
   expect_error(dtw$warp_textgrid(mismatched_tg))
 })
 
-test_that("sounds_to_dtw surfaces a real error for a sound shorter than the analysis window", {
+test_that(
+  "sounds_to_dtw surfaces a real error for a sound shorter than the analysis window", {
   # analysis_width default is 0.025s; the Gaussian window duration used
   # internally is 2*analysis_width = 0.05s. Sampled_shortTermAnalysis()
   # (fon/Sampled.cpp) throws when the window duration exceeds the sound's own
@@ -155,7 +166,8 @@ test_that("mfccs_to_dtw creates a valid DTW from two MFCC objects", {
   expect_true(dtw$.cpp$is_valid())
 })
 
-test_that("mfccs_to_dtw errors when the two MFCCs have a different number of mel filters", {
+test_that(
+  "mfccs_to_dtw errors when the two MFCCs have a different number of mel filters", {
   # Note: MFCC's `maximumNumberOfCoefficients` is always (number of mel
   # filters - 1) -- see MelSpectrogram_to_MFCC() in
   # dwtools/Spectrogram_extensions.cpp -- it does NOT track the
@@ -173,7 +185,8 @@ test_that("mfccs_to_dtw errors when the two MFCCs have a different number of mel
   expect_error(mfccs_to_dtw(mfcc1, mfcc2))
 })
 
-test_that("spectrograms_to_dtw creates a valid DTW from two Spectrogram objects", {
+test_that(
+  "spectrograms_to_dtw creates a valid DTW from two Spectrogram objects", {
   sound <- generate_sine_wave(220, 0.3, sampling_rate = 16000)
   spec1 <- sound$to_spectrogram()
   spec2 <- sound$to_spectrogram()
@@ -184,7 +197,8 @@ test_that("spectrograms_to_dtw creates a valid DTW from two Spectrogram objects"
   expect_true(dtw$.cpp$is_valid())
 })
 
-test_that("spectrograms_to_dtw errors when the two Spectrograms have different frequency ranges", {
+test_that(
+  "spectrograms_to_dtw errors when the two Spectrograms have different frequency ranges", {
   sound <- generate_sine_wave(220, 0.3, sampling_rate = 16000)
   spec1 <- sound$to_spectrogram(max_frequency = 5000)
   spec2 <- sound$to_spectrogram(max_frequency = 4000)

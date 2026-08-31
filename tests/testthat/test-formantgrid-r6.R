@@ -60,8 +60,10 @@ test_that("FormantGrid point removal works", {
   grid$remove_formant_points_between(1, 0.3, 0.7)
   
   # First and last should still exist
-  expect_equal(grid$get_formant_at_time(1, 0.2), 500, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(grid$get_formant_at_time(1, 0.8), 600, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(grid$get_formant_at_time(1, 0.2), 500,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(grid$get_formant_at_time(1, 0.8), 600,
+    tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("FormantGrid to Formant conversion works", {
@@ -98,7 +100,8 @@ test_that("FormantGrid synthesis works", {
   )
   
   expect_s3_class(sound, "Sound")
-  expect_equal(sound$get_sampling_frequency(), 22050, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(sound$get_sampling_frequency(), 22050,
+    tolerance = sqrt(.Machine$double.eps))
   expect_gt(sound$get_duration(), 0)
 })
 
@@ -113,7 +116,8 @@ test_that("praat_formantgrid_create_empty works", {
 
 test_that("Sound FormantGrid filtering works", {
   # Create a simple sound
-  sound <- Sound$create_tone(frequency = 100, duration = 1.0, sampling_rate = 44100)
+  sound <- Sound$create_tone(frequency = 100, duration = 1.0,
+    sampling_rate = 44100)
   
   # Create FormantGrid
   grid <- FormantGrid(tmin = 0, tmax = 1, number_of_formants = 3)
@@ -123,10 +127,13 @@ test_that("Sound FormantGrid filtering works", {
   grid$add_bandwidth_point(2, 0.5, 70)
   
   # Filter sound
-  filtered <- Sound(.xptr = pladdrr:::.sound_formantgrid_filter(sound$get_xptr(), grid$get_xptr()))
+  filtered <- Sound(
+    .xptr = pladdrr:::.sound_formantgrid_filter(sound$get_xptr(),
+      grid$get_xptr()))
   
   expect_s3_class(filtered, "Sound")
-  expect_equal(filtered$get_sampling_frequency(), 44100, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(filtered$get_sampling_frequency(), 44100,
+    tolerance = sqrt(.Machine$double.eps))
   expect_gt(filtered$get_duration(), 0)
 })
 

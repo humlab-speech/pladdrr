@@ -4,7 +4,8 @@
 test_that("get_spectral_moments_batch() returns correct shape", {
 
   sound <- Sound$create_tone(frequency = 440, duration = 0.5)
-  spg   <- sound$to_spectrogram(window_length = 0.005, max_frequency = 5000, time_step = 0.002, frequency_step = 20,
+  spg   <- sound$to_spectrogram(window_length = 0.005, max_frequency = 5000,
+    time_step = 0.002, frequency_step = 20,
     window_shape = "Gaussian")
 
   result <- get_spectral_moments_batch(spg)
@@ -22,7 +23,8 @@ test_that("get_spectral_moments_batch() returns correct shape", {
 test_that("get_spectral_moments_batch() matches per-frame Spectrum calls", {
 
   sound <- Sound$create_tone(frequency = 440, duration = 0.2)
-  spg   <- sound$to_spectrogram(window_length = 0.005, max_frequency = 5000, time_step = 0.002, frequency_step = 20,
+  spg   <- sound$to_spectrogram(window_length = 0.005, max_frequency = 5000,
+    time_step = 0.002, frequency_step = 20,
     window_shape = "Gaussian")
 
   batch <- get_spectral_moments_batch(spg, power = 2.0)
@@ -61,7 +63,8 @@ test_that("get_spectral_moments_batch() CoG is in audible frequency range", {
 
   # 1 kHz tone: CoG should cluster around 1000 Hz
   sound <- Sound$create_tone(frequency = 1000, duration = 0.3)
-  spg   <- sound$to_spectrogram(window_length = 0.005, max_frequency = 5000, time_step = 0.002, frequency_step = 20,
+  spg   <- sound$to_spectrogram(window_length = 0.005, max_frequency = 5000,
+    time_step = 0.002, frequency_step = 20,
     window_shape = "Gaussian")
 
   batch <- get_spectral_moments_batch(spg)
@@ -73,7 +76,8 @@ test_that("get_spectral_moments_batch() CoG is in audible frequency range", {
   expect_lt(median(valid_cog), 5000)
 })
 
-test_that("get_spectral_moments_batch() rejects a null pointer at the C++ layer", {
+test_that(
+  "get_spectral_moments_batch() rejects a null pointer at the C++ layer", {
   # get_spectral_moments_batch() requires inherits(spectrogram, "Spectrogram")
   # with no externalptr fallback, so its C++ null-pointer guard can only be
   # reached via the internal .get_spectral_moments_batch() export.
@@ -84,22 +88,26 @@ test_that("get_spectral_moments_batch() rejects a null pointer at the C++ layer"
   )
 })
 
-test_that("get_spectral_moments_batch() computes moments for power != 2 (the default in every other test)", {
+test_that(
+  "get_spectral_moments_batch() computes moments for power != 2 (the default in every other test)", {
   # Every other test in this file uses the default power = 2.0, which skips
   # the pow(val, halfpower) branch (energy = val directly when
   # halfpower == 1.0). power = 1.0 (halfpower = 0.5) exercises it.
-  sound <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 150, duration = 0.3,
+    sampling_rate = 16000)
   spg <- sound$to_spectrogram()
 
   result <- get_spectral_moments_batch(spg, power = 1.0)
   expect_false(all(is.na(result$cog)))
 })
 
-test_that("get_spectral_moments_batch() returns all-NA moments for a silent (zero-energy) frame", {
+test_that(
+  "get_spectral_moments_batch() returns all-NA moments for a silent (zero-energy) frame", {
   # A zero-amplitude sound has no positive spectrogram bins in any frame,
   # exercising the "zero total energy -> NA for this frame" branch that no
   # other test (all of which use audible tones) reaches.
-  silence <- Sound$create_tone(frequency = 0, duration = 0.3, sampling_rate = 16000)
+  silence <- Sound$create_tone(frequency = 0, duration = 0.3,
+    sampling_rate = 16000)
   spg <- silence$to_spectrogram()
 
   result <- get_spectral_moments_batch(spg)
@@ -109,12 +117,14 @@ test_that("get_spectral_moments_batch() returns all-NA moments for a silent (zer
   expect_true(all(is.na(result$kurtosis)))
 })
 
-test_that("get_spectral_moments_batch() returns sd = 0, skewness/kurtosis = NA for single-bin (zero-variance) frames", {
+test_that(
+  "get_spectral_moments_batch() returns sd = 0, skewness/kurtosis = NA for single-bin (zero-variance) frames", {
   # A very coarse frequency_step concentrates almost all of a pure tone's
   # energy into a single positive spectrogram bin per frame, so the central
   # moment about the CoG is exactly zero -- the "m2 <= 0" branch, distinct
   # from the "zero total energy" (fully silent) case above.
-  sound <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 150, duration = 0.3,
+    sampling_rate = 16000)
   spg <- sound$to_spectrogram(frequency_step = 4000, window_length = 0.005)
 
   result <- get_spectral_moments_batch(spg)

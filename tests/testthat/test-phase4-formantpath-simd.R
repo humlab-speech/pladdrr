@@ -65,12 +65,14 @@ test_that("FormantPath: SIMD vs scalar produce same structure", {
   
   # Should have same number of candidates
   expect_equal(fp_scalar$get_number_of_candidates(), 
-               fp_simd$get_number_of_candidates(), tolerance = sqrt(.Machine$double.eps))
+               fp_simd$get_number_of_candidates(
+                 ), tolerance = sqrt(.Machine$double.eps))
   
   # Should have same time domain
   expect_equal(fp_scalar$get_xmin(), fp_simd$get_xmin(), tolerance = 1e-10)
   expect_equal(fp_scalar$get_xmax(), fp_simd$get_xmax(), tolerance = 1e-10)
-  expect_equal(fp_scalar$get_nx(), fp_simd$get_nx(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(fp_scalar$get_nx(), fp_simd$get_nx(),
+    tolerance = sqrt(.Machine$double.eps))
 })
 
 
@@ -178,7 +180,8 @@ test_that("FormantPath: Multiple ceiling candidates work", {
     )
     
     expected_candidates <- 2 * n_steps + 1
-    expect_equal(fp$get_number_of_candidates(), expected_candidates, tolerance = sqrt(.Machine$double.eps))
+    expect_equal(fp$get_number_of_candidates(), expected_candidates,
+      tolerance = sqrt(.Machine$double.eps))
     
     # Should be able to extract formant
     formant <- fp$extract_formant()
@@ -224,7 +227,8 @@ test_that("FormantPath: qSums matrix computation (SIMD vs scalar)", {
   f_simd <- fp_simd$extract_formant()
   
   # Should have same number of frames
-  expect_equal(f_scalar$get_number_of_frames(), f_simd$get_number_of_frames(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(f_scalar$get_number_of_frames(), f_simd$get_number_of_frames(),
+    tolerance = sqrt(.Machine$double.eps))
 })
 
 

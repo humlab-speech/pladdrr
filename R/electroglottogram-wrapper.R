@@ -9,11 +9,14 @@
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #'   Electroglottogram object; set internally when a method returns a new
 #'   Electroglottogram.
-#' @return An \code{Electroglottogram} object (triple-class \code{c("Electroglottogram",
-#'   "Sound", "PraatObject")}) that inherits Sound's methods in addition to its own.
+#' @return An \code{Electroglottogram} object (triple-class
+#  \code{c("Electroglottogram",
+#' "Sound", "PraatObject")}) that inherits Sound's methods in addition to its
+#  own.
 #'
 #' @examples
-#' egg <- electroglottogram_create(xmin = 0, xmax = 1, nx = 16000, dx = 1 / 16000, x1 = 0)
+#' egg <- electroglottogram_create(xmin = 0, xmax = 1, nx = 16000, dx = 1 /
+#  16000, x1 = 0)
 #' egg$get_duration()
 #' egg$get_number_of_samples()
 #' egg$is_valid()
@@ -34,7 +37,8 @@ NULL
 .egg_methods$get_nx <- function(.self) .self$.cpp$get_nx()
 .egg_methods$get_dx <- function(.self) .self$.cpp$get_dx()
 .egg_methods$get_x1 <- function(.self) .self$.cpp$get_x1()
-.egg_methods$get_number_of_samples <- function(.self) .self$.cpp$get_number_of_samples()
+.egg_methods$get_number_of_samples <- function(
+  .self) .self$.cpp$get_number_of_samples()
 .egg_methods$get_sample_period <- function(.self) .self$.cpp$get_sample_period()
 .egg_methods$get_sample_rate <- function(.self) .self$.cpp$get_sample_rate()
 .egg_methods$get_value_at_sample <- function(.self, sample) {
@@ -94,7 +98,8 @@ NULL
 }
 
 # High-pass filter
-.egg_methods$high_pass_filter <- function(.self, from_freq = 100, smoothing = 100) {
+.egg_methods$high_pass_filter <- function(.self, from_freq = 100,
+  smoothing = 100) {
   ptr <- .self$.cpp$high_pass_filter_ptr(
     as.numeric(from_freq), as.numeric(smoothing)
   )
@@ -174,7 +179,8 @@ Electroglottogram <- function(.xptr = NULL) {
 #' @param x1 Time of first sample in seconds
 #' @return Electroglottogram object
 #' @examples
-#' egg <- electroglottogram_create(xmin = 0, xmax = 1, nx = 16000, dx = 1 / 16000, x1 = 0)
+#' egg <- electroglottogram_create(xmin = 0, xmax = 1, nx = 16000, dx = 1 /
+#  16000, x1 = 0)
 #' egg$get_duration()
 #' @export
 electroglottogram_create <- function(xmin, xmax, nx, dx, x1) {

@@ -7,7 +7,8 @@
 
 test_that("LTAS get_slope returns dB values, not ratios", {
   # Generate test tone
-  sound <- Sound$create_tone(frequency = 440, duration = 0.5, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 440, duration = 0.5,
+    sampling_rate = 16000)
   ltas <- sound$to_ltas(bandwidth = 100)
 
   # Test energy unit returns dB (negative value), not ratio (small positive)
@@ -17,11 +18,13 @@ test_that("LTAS get_slope returns dB values, not ratios", {
   # If returning dB, should be negative ~-10 to -40
   expect_lt(slope_energy, 0,
               label = "energy unit should return dB (negative), not ratio")
-  expect_gt(slope_energy, -100, label = "energy unit value should be reasonable dB")
+  expect_gt(slope_energy, -100,
+    label = "energy unit value should be reasonable dB")
 })
 
 test_that("LTAS get_slope dB unit matches energy unit", {
-  sound <- Sound$create_tone(frequency = 440, duration = 0.5, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 440, duration = 0.5,
+    sampling_rate = 16000)
   ltas <- sound$to_ltas(bandwidth = 100)
 
   slope_energy <- ltas$get_slope(0, 1000, 1000, 10000, unit = "energy")
@@ -36,7 +39,8 @@ test_that("LTAS get_slope dB unit matches energy unit", {
 })
 
 test_that("LTAS get_slope sones unit returns dB values", {
-  sound <- Sound$create_tone(frequency = 440, duration = 0.5, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 440, duration = 0.5,
+    sampling_rate = 16000)
   ltas <- sound$to_ltas(bandwidth = 100)
 
   slope_sones <- ltas$get_slope(0, 1000, 1000, 10000, unit = "sones")
@@ -50,7 +54,8 @@ test_that("LTAS get_slope sones unit returns dB values", {
 })
 
 test_that("LTAS get_mean respects unit parameter", {
-  sound <- Sound$create_tone(frequency = 440, duration = 0.5, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 440, duration = 0.5,
+    sampling_rate = 16000)
   ltas <- sound$to_ltas(bandwidth = 100)
 
   mean_energy <- ltas$get_mean(0, 0, unit = "energy")

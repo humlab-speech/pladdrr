@@ -24,19 +24,23 @@
 #' @section Query methods:
 #' \itemize{
 #'   \item \code{get_duration()} - total duration in seconds
-#'   \item \code{get_start_time()}, \code{get_end_time()} - time domain in seconds
+#' \item \code{get_start_time()}, \code{get_end_time()} - time domain in seconds
 #'   \item \code{get_sample_rate()} - sampling frequency in Hz
 #'   \item \code{get_number_of_samples()} - number of samples per channel
-#'   \item \code{get_number_of_channels()} - number of channels (1 = mono, 2 = stereo)
+#' \item \code{get_number_of_channels()} - number of channels (1 = mono, 2 =
+#  stereo)
 #'   \item \code{get_file_path()} - path to the underlying audio file
-#'   \item \code{get_dx()} - sampling period in seconds (\code{1 / get_sample_rate()})
+#' \item \code{get_dx()} - sampling period in seconds (\code{1 /
+#  get_sample_rate()})
 #'   \item \code{get_x1()} - time of the first sample
 #' }
 #'
 #' @section Time/sample conversion:
 #' \itemize{
-#'   \item \code{get_time_from_sample(sample)} - time, in seconds, of a given sample index
-#'   \item \code{get_sample_from_time(time)} - index of the sample nearest a given time
+#' \item \code{get_time_from_sample(sample)} - time, in seconds, of a given
+#  sample index
+#' \item \code{get_sample_from_time(time)} - index of the sample nearest a given
+#  time
 #' }
 #'
 #' @section Streaming:
@@ -114,9 +118,12 @@ NULL
 .longsound_methods$get_end_time <- function(.self) .self$.cpp$get_end_time()
 
 # Query - audio properties
-.longsound_methods$get_sample_rate <- function(.self) .self$.cpp$get_sample_rate()
-.longsound_methods$get_number_of_channels <- function(.self) .self$.cpp$get_number_of_channels()
-.longsound_methods$get_number_of_samples <- function(.self) .self$.cpp$get_number_of_samples()
+.longsound_methods$get_sample_rate <- function(
+  .self) .self$.cpp$get_sample_rate()
+.longsound_methods$get_number_of_channels <- function(
+  .self) .self$.cpp$get_number_of_channels()
+.longsound_methods$get_number_of_samples <- function(
+  .self) .self$.cpp$get_number_of_samples()
 .longsound_methods$get_dx <- function(.self) .self$.cpp$get_dx()
 .longsound_methods$get_x1 <- function(.self) .self$.cpp$get_x1()
 .longsound_methods$get_file_path <- function(.self) .self$.cpp$get_file_path()
@@ -130,7 +137,8 @@ NULL
 }
 
 # Streaming - extract_part
-.longsound_methods$extract_part <- function(.self, tmin, tmax, preserve_times = FALSE) {
+.longsound_methods$extract_part <- function(.self, tmin, tmax,
+  preserve_times = FALSE) {
   result_ptr <- .self$.cpp$extract_part_ptr(
     as.numeric(tmin), as.numeric(tmax), preserve_times
   )
@@ -143,12 +151,15 @@ NULL
 }
 
 # Streaming - get_window_extrema
-.longsound_methods$get_window_extrema <- function(.self, tmin, tmax, channel = 1L) {
-  .self$.cpp$get_window_extrema(as.numeric(tmin), as.numeric(tmax), as.integer(channel))
+.longsound_methods$get_window_extrema <- function(.self, tmin, tmax,
+  channel = 1L) {
+  .self$.cpp$get_window_extrema(as.numeric(tmin), as.numeric(tmax),
+    as.integer(channel))
 }
 
 # Save methods
-.longsound_methods$save_part <- function(.self, tmin, tmax, path, format = "wav") {
+.longsound_methods$save_part <- function(.self, tmin, tmax, path,
+  format = "wav") {
   type_map <- c(wav = 1L, aiff = 2L, aifc = 3L, flac = 6L, wav24 = 1L)
   bits_map <- c(wav = 16L, aiff = 16L, aifc = 16L, flac = 16L, wav24 = 24L)
   if (!format %in% names(type_map)) {
@@ -159,7 +170,8 @@ NULL
   invisible(.self)
 }
 
-.longsound_methods$save_channel <- function(.self, channel, path, format = "wav") {
+.longsound_methods$save_channel <- function(.self, channel, path,
+  format = "wav") {
   type_map <- c(wav = 1L, aiff = 2L, aifc = 3L, flac = 6L)
   if (!format %in% names(type_map)) {
     stop("Unknown format: ", format, ". Use wav, aiff, aifc, or flac")
@@ -233,7 +245,8 @@ LongSound <- function(.xptr = NULL) {
 #' @export
 #' @examples
 #' wav <- tempfile(fileext = ".wav")
-#' Sound$create_tone(frequency = 220, duration = 1, sampling_rate = 16000)$save(wav)
+#' Sound$create_tone(frequency = 220, duration = 1, sampling_rate =
+#  16000)$save(wav)
 #'
 #' ls <- longsound_open(wav)
 #' print(ls)

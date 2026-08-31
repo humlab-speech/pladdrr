@@ -2,7 +2,8 @@
 
 test_that("sound_get_zcr returns valid frame data", {
   # Generate test tone - sine wave has predictable ZCR
-  sound <- Sound$create_tone(frequency = 440, duration = 0.5, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 440, duration = 0.5,
+    sampling_rate = 16000)
   zcr_data <- sound_get_zcr(sound, window_duration = 0.03, hop_duration = 0.01)
 
   expect_type(zcr_data, "list")
@@ -16,7 +17,8 @@ test_that("sound_get_zcr returns valid frame data", {
 
 test_that("sound_get_zcr for sine wave matches expected frequency", {
   freq <- 440
-  sound <- Sound$create_tone(frequency = freq, duration = 0.5, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = freq, duration = 0.5,
+    sampling_rate = 16000)
   zcr_data <- sound_get_zcr(sound, window_duration = 0.03, hop_duration = 0.01)
 
   # A pure sine wave at frequency F crosses zero 2*F times per second
@@ -25,12 +27,14 @@ test_that("sound_get_zcr for sine wave matches expected frequency", {
 
   # Allow 10% tolerance for windowing effects
   expect_lt(abs(mean_zcr - expected_zcr) / expected_zcr, 0.1,
-              label = sprintf("ZCR %.0f should be near %.0f", mean_zcr, expected_zcr))
+              label = sprintf("ZCR %.0f should be near %.0f", mean_zcr,
+                expected_zcr))
 })
 
 test_that("sound_get_zcr handles short sounds", {
   # Very short sound
-  sound <- Sound$create_tone(frequency = 440, duration = 0.01, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 440, duration = 0.01,
+    sampling_rate = 16000)
   zcr_data <- sound_get_zcr(sound, window_duration = 0.03, hop_duration = 0.01)
 
   expect_type(zcr_data, "list")
@@ -51,7 +55,8 @@ test_that("textgrid_get_intervals_where works", {
   vad_grid <- sound_to_textgrid_silences(sound)
 
   # Get intervals
-  result <- textgrid_get_intervals_where(vad_grid, tier = 1, condition = "equals", text = "sounding")
+  result <- textgrid_get_intervals_where(vad_grid, tier = 1,
+    condition = "equals", text = "sounding")
 
   expect_type(result, "list")
   expect_true("xmin" %in% names(result))

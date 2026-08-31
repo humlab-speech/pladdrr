@@ -7,12 +7,14 @@ library(pladdrr)
 
 # Test Formant batch queries
 test_that("Formant batch queries work correctly", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
+    package = "pladdrr")
   sound <- Sound(sound_path)
   formant <- sound$to_formant_burg()
   
   # Define test times
-  times <- seq(formant$get_xmin() + 0.1, formant$get_xmax() - 0.1, length.out = 10)
+  times <- seq(formant$get_xmin() + 0.1, formant$get_xmax() - 0.1,
+    length.out = 10)
   
   # Test formant frequency batch query
   result <- get_formants_at_times(formant, times, formant_numbers = 1:4)
@@ -23,19 +25,23 @@ test_that("Formant batch queries work correctly", {
   expect_length(result$F2, 10)
   
   # Verify batch results match individual queries
-  f1_individual <- vapply(times, function(t) formant$get_value_at_time(1, t, "hertz"), numeric(1))
+  f1_individual <- vapply(times,
+    function(t) formant$get_value_at_time(1, t, "hertz"), numeric(1))
   expect_equal(result$F1, f1_individual, tolerance = 1e-6)
   
-  f2_individual <- vapply(times, function(t) formant$get_value_at_time(2, t, "hertz"), numeric(1))
+  f2_individual <- vapply(times,
+    function(t) formant$get_value_at_time(2, t, "hertz"), numeric(1))
   expect_equal(result$F2, f2_individual, tolerance = 1e-6)
 })
 
 test_that("Formant bandwidth batch queries work", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
+    package = "pladdrr")
   sound <- Sound(sound_path)
   formant <- sound$to_formant_burg()
   
-  times <- seq(formant$get_xmin() + 0.1, formant$get_xmax() - 0.1, length.out = 5)
+  times <- seq(formant$get_xmin() + 0.1, formant$get_xmax() - 0.1,
+    length.out = 5)
   
   result <- get_formant_bandwidths_at_times(formant, times, 1:4)
   
@@ -44,12 +50,14 @@ test_that("Formant bandwidth batch queries work", {
   expect_length(result$B1, 5)
   
   # Verify correctness
-  b1_individual <- vapply(times, function(t) formant$get_bandwidth_at_time(1, t, "hertz"), numeric(1))
+  b1_individual <- vapply(times,
+    function(t) formant$get_bandwidth_at_time(1, t, "hertz"), numeric(1))
   expect_equal(result$B1, b1_individual, tolerance = 1e-6)
 })
 
 test_that("Formant batch queries handle edge cases", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
+    package = "pladdrr")
   sound <- Sound(sound_path)
   formant <- sound$to_formant_burg()
   
@@ -69,7 +77,8 @@ test_that("Formant batch queries handle edge cases", {
 
 # Test Pitch batch queries
 test_that("Pitch batch queries work correctly", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
+    package = "pladdrr")
   sound <- Sound(sound_path)
   pitch <- sound$to_pitch_cc()
   
@@ -82,12 +91,14 @@ test_that("Pitch batch queries work correctly", {
   expect_length(result, 20)
   
   # Verify batch results match individual queries
-  individual <- vapply(times, function(t) pitch$get_value_at_time(t, "hertz", TRUE), numeric(1))
+  individual <- vapply(times,
+    function(t) pitch$get_value_at_time(t, "hertz", TRUE), numeric(1))
   expect_equal(result, individual, tolerance = 1e-6)
 })
 
 test_that("Pitch strength batch queries work", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
+    package = "pladdrr")
   sound <- Sound(sound_path)
   pitch <- sound$to_pitch_cc()
   
@@ -104,7 +115,8 @@ test_that("Pitch strength batch queries work", {
 })
 
 test_that("Pitch batch queries handle interpolation", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
+    package = "pladdrr")
   sound <- Sound(sound_path)
   pitch <- sound$to_pitch_cc()
   
@@ -123,11 +135,13 @@ test_that("Pitch batch queries handle interpolation", {
 
 # Test Intensity batch queries
 test_that("Intensity batch queries work correctly", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
+    package = "pladdrr")
   sound <- Sound(sound_path)
   intensity <- sound$to_intensity()
   
-  times <- seq(intensity$get_xmin() + 0.1, intensity$get_xmax() - 0.1, length.out = 15)
+  times <- seq(intensity$get_xmin() + 0.1, intensity$get_xmax() - 0.1,
+    length.out = 15)
   
   result <- get_intensity_at_times(intensity, times)
   
@@ -135,13 +149,16 @@ test_that("Intensity batch queries work correctly", {
   expect_length(result, 15)
   
   # Verify batch results match individual queries
-  # Note: Slight numerical differences may occur due to internal interpolation details
-  individual <- vapply(times, function(t) intensity$get_value_at_time(t, "cubic"), numeric(1))
+  # Note: Slight numerical differences may occur due to internal interpolation
+  #  details
+  individual <- vapply(times,
+    function(t) intensity$get_value_at_time(t, "cubic"), numeric(1))
   expect_equal(result, individual, tolerance = 0.5)  # 0.5 dB tolerance
 })
 
 test_that("Intensity batch queries support interpolation methods", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
+    package = "pladdrr")
   sound <- Sound(sound_path)
   intensity <- sound$to_intensity()
   
@@ -162,7 +179,8 @@ test_that("Intensity batch queries support interpolation methods", {
 
 # Test PointProcess batch operations
 test_that("PointProcess get all times works", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
+    package = "pladdrr")
   sound <- Sound(sound_path)
   pitch <- sound$to_pitch_cc()
   pp <- pitch$to_point_process()
@@ -182,7 +200,8 @@ test_that("PointProcess get all times works", {
 })
 
 test_that("PointProcess intervals work correctly", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
+    package = "pladdrr")
   sound <- Sound(sound_path)
   pitch <- sound$to_pitch_cc()
   pp <- pitch$to_point_process()
@@ -202,7 +221,8 @@ test_that("PointProcess intervals work correctly", {
 })
 
 test_that("PointProcess nearest indices query works", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
+    package = "pladdrr")
   sound <- Sound(sound_path)
   pitch <- sound$to_pitch_cc()
   pp <- pitch$to_point_process()
@@ -233,8 +253,10 @@ test_that("PointProcess batch operations handle empty objects", {
   expect_length(intervals, 0)
 })
 
-test_that("formant/bandwidth/pitch-strength batch queries return NA for non-finite query times", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+test_that(
+  "formant/bandwidth/pitch-strength batch queries return NA for non-finite query times", {
+  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
+    package = "pladdrr")
   sound <- Sound(sound_path)
   formant <- sound$to_formant_burg()
   pitch <- sound$to_pitch_cc()
@@ -271,8 +293,10 @@ test_that("formant/bandwidth/pitch-strength batch queries return NA for non-fini
   expect_true(all(is.na(strengths[2:3])))
 })
 
-test_that("internal formant batch functions reject an out-of-range formant index directly", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+test_that(
+  "internal formant batch functions reject an out-of-range formant index directly", {
+  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
+    package = "pladdrr")
   sound <- Sound(sound_path)
   formant <- sound$to_formant_burg()
 
@@ -288,19 +312,23 @@ test_that("internal formant batch functions reject an out-of-range formant index
   # an out-of-range formant index reaches Formant_getBandwidthAtTime()/
   # Sampled_getValueAtX() with an invalid column and comes back as NaN
   # rather than throwing. Confirmed non-crashing by direct run.
-  bandwidth_oor <- pladdrr:::formant_get_multiple_bandwidths_at_times(formant$.xptr, 0.1, -1L)
+  bandwidth_oor <- pladdrr:::formant_get_multiple_bandwidths_at_times(
+    formant$.xptr, 0.1, -1L)
   expect_true(is.nan(bandwidth_oor[[1]]))
 
   # Calling the internal C++ export directly (bypassing the R wrapper's
   # non-empty check) exercises the empty-vector guard inside the C++ layer.
   expect_error(
-    pladdrr:::formant_get_multiple_formants_at_times(formant$.xptr, 0.1, integer(0)),
+    pladdrr:::formant_get_multiple_formants_at_times(formant$.xptr, 0.1,
+      integer(0)),
     "non-empty"
   )
 })
 
-test_that("get_pitch_quantiles_batch() computes named quantiles over default and explicit ranges", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+test_that(
+  "get_pitch_quantiles_batch() computes named quantiles over default and explicit ranges", {
+  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
+    package = "pladdrr")
   sound <- Sound(sound_path)
   pitch <- sound$to_pitch_cc()
 
@@ -327,7 +355,8 @@ test_that("get_pitch_quantiles_batch() computes named quantiles over default and
 test_that("internal batch-query C++ exports reject a null external pointer", {
   null_ptr <- methods::new("externalptr")
 
-  expect_error(pladdrr:::formant_get_multiple_bandwidths_at_times(null_ptr, 0.1, 1L))
+  expect_error(
+    pladdrr:::formant_get_multiple_bandwidths_at_times(null_ptr, 0.1, 1L))
   expect_error(pladdrr:::pitch_get_quantiles_batch(null_ptr, 0.5))
   expect_error(pladdrr:::pointprocess_get_all_times(null_ptr))
   expect_error(pladdrr:::pointprocess_get_intervals(null_ptr))
@@ -343,7 +372,8 @@ test_that("internal batch-query C++ exports reject a null external pointer", {
 
   # get_jitter_shimmer_batch_cpp() validates its two pointers (PointProcess,
   # Sound) independently -- exercise both guards, not just "both null".
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
+    package = "pladdrr")
   sound <- Sound(sound_path)
   pp <- sound$to_point_process_periodic_cc(75, 600)
   expect_error(
@@ -356,8 +386,10 @@ test_that("internal batch-query C++ exports reject a null external pointer", {
   )
 })
 
-test_that("pitch_get_statistics_batch supports median/count_voiced metrics and validates inputs", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+test_that(
+  "pitch_get_statistics_batch supports median/count_voiced metrics and validates inputs", {
+  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
+    package = "pladdrr")
   sound <- Sound(sound_path)
   pitch <- sound$to_pitch_cc()
 
@@ -375,19 +407,23 @@ test_that("pitch_get_statistics_batch supports median/count_voiced metrics and v
   result <- pladdrr:::pitch_get_statistics_batch(
     pitch$.xptr, 0, 0, c("q50", "count_voiced"), 0L
   )
-  expect_equal(colnames(result), c("q50", "count_voiced"), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(colnames(result), c("q50", "count_voiced"),
+    tolerance = sqrt(.Machine$double.eps))
   expect_identical(nrow(result), 1L)
   expect_gte(result[1, "count_voiced"], 0)
 
   # Unrecognized metric name -> "Unknown metric" C++ input-validation error
   expect_error(
-    pladdrr:::pitch_get_statistics_batch(pitch$.xptr, 0, 0, "not_a_real_metric", 0L),
+    pladdrr:::pitch_get_statistics_batch(pitch$.xptr, 0, 0,
+      "not_a_real_metric", 0L),
     "Unknown metric"
   )
 })
 
-test_that("intensity_get_minimum_with_time() returns a minimum value and time", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+test_that(
+  "intensity_get_minimum_with_time() returns a minimum value and time", {
+  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
+    package = "pladdrr")
   sound <- Sound(sound_path)
   intensity <- sound$to_intensity()
 
@@ -406,8 +442,10 @@ test_that("intensity_get_minimum_with_time() returns a minimum value and time", 
   expect_true(is.numeric(result_range$value))
 })
 
-test_that("intensity_get_statistics_batch supports q25/q75 metrics and validates inputs", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+test_that(
+  "intensity_get_statistics_batch supports q25/q75 metrics and validates inputs", {
+  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
+    package = "pladdrr")
   sound <- Sound(sound_path)
   intensity <- sound$to_intensity()
 
@@ -421,7 +459,8 @@ test_that("intensity_get_statistics_batch supports q25/q75 metrics and validates
   result <- pladdrr:::intensity_get_statistics_batch(
     intensity$.xptr, 0, 0, c("q25", "q75"), 0L
   )
-  expect_equal(colnames(result), c("q25", "q75"), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(colnames(result), c("q25", "q75"),
+    tolerance = sqrt(.Machine$double.eps))
   expect_identical(nrow(result), 1L)
   expect_gte(result[1, "q75"], result[1, "q25"])
 
@@ -430,11 +469,14 @@ test_that("intensity_get_statistics_batch supports q25/q75 metrics and validates
   result_median <- pladdrr:::intensity_get_statistics_batch(
     intensity$.xptr, 0, 0, c("q50", "median"), 0L
   )
-  expect_equal(as.numeric(result_median[1, "q50"]), as.numeric(result_median[1, "median"]), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(as.numeric(result_median[1, "q50"]),
+    as.numeric(result_median[1,
+      "median"]), tolerance = sqrt(.Machine$double.eps))
 
   # Unrecognized metric name -> "Unknown metric" C++ input-validation error
   expect_error(
-    pladdrr:::intensity_get_statistics_batch(intensity$.xptr, 0, 0, "not_a_real_metric", 0L),
+    pladdrr:::intensity_get_statistics_batch(intensity$.xptr, 0, 0,
+      "not_a_real_metric", 0L),
     "Unknown metric"
   )
 })
@@ -444,20 +486,26 @@ test_that("Batch queries are faster than loops", {
   skip_on_cran()
   skip_if_not_installed("microbenchmark")
   
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
+    package = "pladdrr")
   sound <- Sound(sound_path)
   formant <- sound$to_formant()
   
-  times <- seq(formant$get_xmin() + 0.1, formant$get_xmax() - 0.1, length.out = 50)
+  times <- seq(formant$get_xmin() + 0.1, formant$get_xmax() - 0.1,
+    length.out = 50)
   
   # Benchmark formant batch vs loop
   benchmark_result <- microbenchmark::microbenchmark(
     batch = get_formants_at_times(formant, times, 1:4),
     loop = {
-      f1 <- vapply(times, function(t) formant$get_value_at_time(1, t, "hertz"), numeric(1))
-      f2 <- vapply(times, function(t) formant$get_value_at_time(2, t, "hertz"), numeric(1))
-      f3 <- vapply(times, function(t) formant$get_value_at_time(3, t, "hertz"), numeric(1))
-      f4 <- vapply(times, function(t) formant$get_value_at_time(4, t, "hertz"), numeric(1))
+      f1 <- vapply(times,
+        function(t) formant$get_value_at_time(1, t, "hertz"), numeric(1))
+      f2 <- vapply(times,
+        function(t) formant$get_value_at_time(2, t, "hertz"), numeric(1))
+      f3 <- vapply(times,
+        function(t) formant$get_value_at_time(3, t, "hertz"), numeric(1))
+      f4 <- vapply(times,
+        function(t) formant$get_value_at_time(4, t, "hertz"), numeric(1))
       list(F1 = f1, F2 = f2, F3 = f3, F4 = f4)
     },
     times = 10
@@ -475,7 +523,8 @@ test_that("PointProcess batch operations are faster than loops", {
   skip_on_cran()
   skip_if_not_installed("microbenchmark")
   
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
+    package = "pladdrr")
   sound <- Sound(sound_path)
   pitch <- sound$to_pitch_cc()
   pp <- pitch$to_point_process()

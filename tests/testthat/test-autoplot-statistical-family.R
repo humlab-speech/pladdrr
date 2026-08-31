@@ -2,7 +2,8 @@
 library(testthat)
 library(pladdrr)
 
-test_that("Matrix as.data.frame uses real xmin/dx/ymin/dy axis values (Task 6 regression guard)", {
+test_that(
+  "Matrix as.data.frame uses real xmin/dx/ymin/dy axis values (Task 6 regression guard)", {
   mat <- Matrix(xmin = 0, xmax = 1, nx = 10, dx = 0.1, x1 = 0.05,
                 ymin = 0, ymax = 2, ny = 20, dy = 0.1, y1 = 0.05)
   df <- as.data.frame(mat)
@@ -14,7 +15,8 @@ test_that("Matrix as.data.frame uses real xmin/dx/ymin/dy axis values (Task 6 re
   expect_s3_class(ggplot2::autoplot(mat), "ggplot")
 })
 
-test_that("VocalTract as.data.frame respects real dx, not hardcoded 0.01 (Task 9 regression guard)", {
+test_that(
+  "VocalTract as.data.frame respects real dx, not hardcoded 0.01 (Task 9 regression guard)", {
   vt <- VocalTract(nx = 10L, dx = 0.02)
   df <- as.data.frame(vt)
   # Section centers per Praat's Matrix_init half-section-offset convention
@@ -27,7 +29,8 @@ test_that("VocalTract as.data.frame respects real dx, not hardcoded 0.01 (Task 9
   expect_s3_class(p2, "ggplot")
 })
 
-test_that("DTW autoplot/autolayer render and degrade gracefully on empty path (Task 5 regression guard)", {
+test_that(
+  "DTW autoplot/autolayer render and degrade gracefully on empty path (Task 5 regression guard)", {
   sound <- generate_sine_wave(440, 0.1, sampling_rate = 16000)
   dtw <- sounds_to_dtw(sound, sound)
   p <- ggplot2::autoplot(dtw)
@@ -42,7 +45,8 @@ test_that("DTW autoplot/autolayer render and degrade gracefully on empty path (T
   expect_null(ggplot2::autolayer(fake))
 })
 
-test_that("Polygon autoplot/autolayer render, fill_color vs fill_col are distinct params", {
+test_that(
+  "Polygon autoplot/autolayer render, fill_color vs fill_col are distinct params", {
   poly <- Polygon(x = c(0, 1, 1, 0), y = c(0, 0, 1, 1))
   p <- ggplot2::autoplot(poly, fill_polygon = TRUE, fill_color = "steelblue")
   expect_s3_class(p, "ggplot")

@@ -2,7 +2,8 @@
 # and the SpectrumTier peak-picking class.
 
 test_that("Ltas exposes get_value_in_bin matching get_value_at_frequency", {
-  sound <- Sound$create_tone(frequency = 440, duration = 0.5, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 440, duration = 0.5,
+    sampling_rate = 16000)
   ltas <- sound$to_ltas(bandwidth = 100)
 
   n_bins <- ltas$get_number_of_bins()
@@ -17,7 +18,8 @@ test_that("Ltas exposes get_value_in_bin matching get_value_at_frequency", {
 })
 
 test_that("Ltas get_frequency_range matches highest minus lowest frequency", {
-  sound <- Sound$create_tone(frequency = 440, duration = 0.5, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 440, duration = 0.5,
+    sampling_rate = 16000)
   ltas <- sound$to_ltas(bandwidth = 100)
 
   expect_equal(
@@ -26,8 +28,10 @@ test_that("Ltas get_frequency_range matches highest minus lowest frequency", {
   , tolerance = sqrt(.Machine$double.eps))
 })
 
-test_that("Ltas get_standard_deviation returns a finite non-negative dB value", {
-  sound <- Sound$create_tone(frequency = 440, duration = 0.5, sampling_rate = 16000)
+test_that(
+  "Ltas get_standard_deviation returns a finite non-negative dB value", {
+  sound <- Sound$create_tone(frequency = 440, duration = 0.5,
+    sampling_rate = 16000)
   ltas <- sound$to_ltas(bandwidth = 100)
 
   sd_db <- ltas$get_standard_deviation(0, 0, unit = "dB")
@@ -37,7 +41,8 @@ test_that("Ltas get_standard_deviation returns a finite non-negative dB value", 
 })
 
 test_that("Ltas get_local_peak_height is positive at a strong tone peak", {
-  sound <- Sound$create_tone(frequency = 1000, duration = 0.5, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 1000, duration = 0.5,
+    sampling_rate = 16000)
   ltas <- sound$to_ltas(bandwidth = 20)
 
   height <- ltas$get_local_peak_height(
@@ -51,18 +56,21 @@ test_that("Ltas get_local_peak_height is positive at a strong tone peak", {
 })
 
 test_that("Ltas to_matrix returns a Matrix object with matching data", {
-  sound <- Sound$create_tone(frequency = 440, duration = 0.5, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 440, duration = 0.5,
+    sampling_rate = 16000)
   ltas <- sound$to_ltas(bandwidth = 100)
 
   mat_obj <- ltas$to_matrix()
   expect_s3_class(mat_obj, "Matrix")
 
   ltas_df <- ltas$as_data_frame()
-  expect_equal(mat_obj$get_number_of_columns(), nrow(ltas_df), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(mat_obj$get_number_of_columns(), nrow(ltas_df),
+    tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("Ltas save writes a readable Praat text file", {
-  sound <- Sound$create_tone(frequency = 440, duration = 0.5, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 440, duration = 0.5,
+    sampling_rate = 16000)
   ltas <- sound$to_ltas(bandwidth = 100)
 
   temp_file <- tempfile(fileext = ".Ltas")
@@ -74,7 +82,8 @@ test_that("Ltas save writes a readable Praat text file", {
 })
 
 test_that("Ltas to_spectrum_tier_peaks finds the tone's peak", {
-  sound <- Sound$create_tone(frequency = 1000, duration = 0.5, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 1000, duration = 0.5,
+    sampling_rate = 16000)
   ltas <- sound$to_ltas(bandwidth = 20)
 
   peaks <- ltas$to_spectrum_tier_peaks()
@@ -88,22 +97,28 @@ test_that("Ltas to_spectrum_tier_peaks finds the tone's peak", {
   expect_true(any(abs(freqs - 1000) < 50))
 })
 
-test_that("SpectrumTier as_data_frame and as_matrix expose frequency and power", {
-  sound <- Sound$create_tone(frequency = 1000, duration = 0.5, sampling_rate = 16000)
+test_that(
+  "SpectrumTier as_data_frame and as_matrix expose frequency and power", {
+  sound <- Sound$create_tone(frequency = 1000, duration = 0.5,
+    sampling_rate = 16000)
   ltas <- sound$to_ltas(bandwidth = 20)
   peaks <- ltas$to_spectrum_tier_peaks()
 
   df <- peaks$as_data_frame()
   expect_named(df, c("frequency", "power_db"))
-  expect_equal(nrow(df), peaks$get_number_of_points(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(nrow(df), peaks$get_number_of_points(),
+    tolerance = sqrt(.Machine$double.eps))
 
   mat <- peaks$as_matrix()
-  expect_equal(rownames(mat), c("frequency", "power_db"), tolerance = sqrt(.Machine$double.eps))
-  expect_equal(ncol(mat), peaks$get_number_of_points(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(rownames(mat), c("frequency", "power_db"),
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(ncol(mat), peaks$get_number_of_points(),
+    tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("SpectrumTier save writes a readable Praat text file", {
-  sound <- Sound$create_tone(frequency = 1000, duration = 0.5, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 1000, duration = 0.5,
+    sampling_rate = 16000)
   ltas <- sound$to_ltas(bandwidth = 20)
   peaks <- ltas$to_spectrum_tier_peaks()
 

@@ -15,7 +15,8 @@ sound_fixture <- function() generate_sine_wave(220, 0.2, sampling_rate = 16000)
 # .formant_colors / .prep_formant_df helpers (custom colors argument)
 # ---------------------------------------------------------------------------
 
-test_that(".formant_colors uses caller-supplied colors instead of the default palette", {
+test_that(
+  ".formant_colors uses caller-supplied colors instead of the default palette", {
   grid <- FormantGrid(tmin = 0, tmax = 1, number_of_formants = 3)
   grid$add_formant_point(1, 0.5, 500)
   p <- ggplot2::autoplot(grid, colors = c("red", "blue", "green"))
@@ -45,7 +46,8 @@ test_that(".prep_formant_df's paste0-on-empty-vector bug makes FormantGrid's
   )
 })
 
-test_that("FormantPath autoplot/autolayer warn and return NULL when time-filtered to empty", {
+test_that(
+  "FormantPath autoplot/autolayer warn and return NULL when time-filtered to empty", {
   # Unlike FormantGrid (data.frame-backed, see above), FormantPath's
   # as_data_frame() returns a data.table, so .prep_formant_df's
   # paste0()-into-0-rows assignment doesn't error here -- the intended
@@ -62,7 +64,8 @@ test_that("FormantPath autoplot/autolayer warn and return NULL when time-filtere
 # FormantTier: from_time/to_time filtering (style="speckle" `next` branch)
 # ---------------------------------------------------------------------------
 
-test_that("FormantTier autoplot/autolayer respect from_time/to_time and warn when empty", {
+test_that(
+  "FormantTier autoplot/autolayer respect from_time/to_time and warn when empty", {
   sound <- sound_fixture()
   formant <- sound$to_formant_burg()
   ft <- FormantTier$from_formant(formant)
@@ -83,7 +86,8 @@ test_that("FormantTier autoplot/autolayer respect from_time/to_time and warn whe
   # style = "line" with from_time/to_time also exercises the alternate loop.
   p3 <- ggplot2::autoplot(ft, style = "line", from_time = 0.05, to_time = 0.15)
   expect_s3_class(p3, "ggplot")
-  layer2 <- ggplot2::autolayer(ft, style = "line", from_time = 0.05, to_time = 0.15)
+  layer2 <- ggplot2::autolayer(ft, style = "line", from_time = 0.05,
+    to_time = 0.15)
   expect_type(layer2, "list")
 })
 
@@ -91,7 +95,8 @@ test_that("FormantTier autoplot/autolayer respect from_time/to_time and warn whe
 # FormantGrid / FormantPath: from_time/to_time filtering (non-empty result)
 # ---------------------------------------------------------------------------
 
-test_that("FormantPath autoplot/autolayer respect from_time/to_time (non-empty result)", {
+test_that(
+  "FormantPath autoplot/autolayer respect from_time/to_time (non-empty result)", {
   # FormantGrid's own as_data_frame() has a separate, more severe defect
   # (its "time" and "formant_number" columns are swapped -- verified
   # interactively: `time` holds small integers 1..3 and `formant_number`
@@ -109,7 +114,8 @@ test_that("FormantPath autoplot/autolayer respect from_time/to_time (non-empty r
   expect_type(layer2, "list")
 })
 
-test_that("FormantPath show_candidates has no effect because as_data_frame() never returns a 'candidate' column", {
+test_that(
+  "FormantPath show_candidates has no effect because as_data_frame() never returns a 'candidate' column", {
   # autoplot.FormantPath/autolayer.FormantPath branch on
   # `show_candidates && "candidate" %in% names(df)`; FormantPath$as_data_frame()
   # (R/formantpath-module.R:122-123, delegating to the C++ module) returns
@@ -132,7 +138,8 @@ test_that("FormantPath show_candidates has no effect because as_data_frame() nev
 # warning, show_phase (patchwork combined plot), and autolayer entirely
 # ---------------------------------------------------------------------------
 
-test_that("ComplexSpectrogram autoplot/autolayer respect all four range filters and warn when empty", {
+test_that(
+  "ComplexSpectrogram autoplot/autolayer respect all four range filters and warn when empty", {
   cs <- sound_fixture()$to_complex_spectrogram()
   p <- ggplot2::autoplot(cs, from_time = 0.01, to_time = 0.15,
                           from_freq = 100, to_freq = 3000)
@@ -145,13 +152,15 @@ test_that("ComplexSpectrogram autoplot/autolayer respect all four range filters 
   expect_s3_class(p2, "ggplot")
 
   # autolayer.ComplexSpectrogram is never called elsewhere in the suite.
-  p3 <- ggplot2::ggplot() + ggplot2::autolayer(cs, from_time = 0.01, to_time = 0.15,
+  p3 <- ggplot2::ggplot() + ggplot2::autolayer(cs, from_time = 0.01,
+    to_time = 0.15,
                                                 from_freq = 100, to_freq = 3000)
   expect_s3_class(p3, "ggplot")
   expect_null(ggplot2::autolayer(cs, from_time = 100, to_time = 200))
 })
 
-test_that("ComplexSpectrogram show_phase=TRUE returns a combined patchwork plot when patchwork is available", {
+test_that(
+  "ComplexSpectrogram show_phase=TRUE returns a combined patchwork plot when patchwork is available", {
   skip_if_not_installed("patchwork")
   cs <- sound_fixture()$to_complex_spectrogram()
   p <- ggplot2::autoplot(cs, show_phase = TRUE)
@@ -162,18 +171,22 @@ test_that("ComplexSpectrogram show_phase=TRUE returns a combined patchwork plot 
 # Cochleagram: from_time/to_time filter, empty warning, autolayer entirely
 # ---------------------------------------------------------------------------
 
-test_that("Cochleagram autoplot/autolayer respect from_time/to_time and warn when empty", {
-  cochlea <- sound_fixture()$to_cochleagram(dt = 0.02, df = 1, window_length = 0.025,
+test_that(
+  "Cochleagram autoplot/autolayer respect from_time/to_time and warn when empty", {
+  cochlea <- sound_fixture()$to_cochleagram(dt = 0.02, df = 1,
+    window_length = 0.025,
                                              forward_masking_time = 0.03)
   p <- ggplot2::autoplot(cochlea, from_time = 0.05, to_time = 0.15)
   expect_s3_class(p, "ggplot")
   expect_true(all(p$data$time >= 0.05 & p$data$time <= 0.15))
 
-  expect_warning(p2 <- ggplot2::autoplot(cochlea, from_time = 100, to_time = 200),
+  expect_warning(
+    p2 <- ggplot2::autoplot(cochlea, from_time = 100, to_time = 200),
                   "Cochleagram has no data")
   expect_s3_class(p2, "ggplot")
 
-  p3 <- ggplot2::ggplot() + ggplot2::autolayer(cochlea, from_time = 0.05, to_time = 0.15)
+  p3 <- ggplot2::ggplot() + ggplot2::autolayer(cochlea, from_time = 0.05,
+    to_time = 0.15)
   expect_s3_class(p3, "ggplot")
   expect_null(ggplot2::autolayer(cochlea, from_time = 100, to_time = 200))
 })
@@ -183,7 +196,8 @@ test_that("Cochleagram autoplot/autolayer respect from_time/to_time and warn whe
 # warning, autolayer entirely
 # ---------------------------------------------------------------------------
 
-test_that("PowerCepstrogram autoplot/autolayer respect from_time/to_time/quefrency_range and warn when empty", {
+test_that(
+  "PowerCepstrogram autoplot/autolayer respect from_time/to_time/quefrency_range and warn when empty", {
   pcg <- sound_fixture()$to_powercepstrogram()
   p <- ggplot2::autoplot(pcg, from_time = 0.05, to_time = 0.15,
                           quefrency_range = c(0.001, 0.01))
@@ -194,8 +208,10 @@ test_that("PowerCepstrogram autoplot/autolayer respect from_time/to_time/quefren
                   "PowerCepstrogram has no data in range")
   expect_s3_class(p2, "ggplot")
 
-  p3 <- ggplot2::ggplot() + ggplot2::autolayer(pcg, from_time = 0.05, to_time = 0.15,
-                                                quefrency_range = c(0.001, 0.01))
+  p3 <- ggplot2::ggplot() + ggplot2::autolayer(pcg, from_time = 0.05,
+    to_time = 0.15,
+                                                quefrency_range = c(0.001,
+                                                  0.01))
   expect_s3_class(p3, "ggplot")
   expect_null(ggplot2::autolayer(pcg, from_time = 100, to_time = 200))
 })
@@ -205,7 +221,8 @@ test_that("PowerCepstrogram autoplot/autolayer respect from_time/to_time/quefren
 # filter warning, autolayer entirely
 # ---------------------------------------------------------------------------
 
-test_that("MFCC autoplot/autolayer respect coefficient_range and warn when it excludes everything", {
+test_that(
+  "MFCC autoplot/autolayer respect coefficient_range and warn when it excludes everything", {
   mfcc <- sound_fixture()$to_mfcc()
   p <- ggplot2::autoplot(mfcc, coefficient_range = 1:3)
   expect_s3_class(p, "ggplot")
@@ -220,7 +237,8 @@ test_that("MFCC autoplot/autolayer respect coefficient_range and warn when it ex
   expect_null(ggplot2::autolayer(mfcc, coefficient_range = 999))
 })
 
-test_that("LFCC autoplot/autolayer respect coefficient_range and warn when it excludes everything", {
+test_that(
+  "LFCC autoplot/autolayer respect coefficient_range and warn when it excludes everything", {
   lpc <- sound_fixture()$to_lpc_burg(prediction_order = 10)
   lfcc <- lpc$to_lfcc()
   p <- ggplot2::autoplot(lfcc, coefficient_range = 1:3)
@@ -255,14 +273,16 @@ test_that("BarkSpectrogram and MelSpectrogram autolayer render", {
 # Matrix: autolayer entirely (never called elsewhere in the suite)
 # ---------------------------------------------------------------------------
 
-test_that("Matrix autolayer renders using the same col/row/value auto-detected columns as autoplot", {
+test_that(
+  "Matrix autolayer renders using the same col/row/value auto-detected columns as autoplot", {
   mat <- Matrix(xmin = 0, xmax = 1, nx = 10, dx = 0.1, x1 = 0.05,
                 ymin = 0, ymax = 2, ny = 20, dy = 0.1, y1 = 0.05)
   p <- ggplot2::ggplot() + ggplot2::autolayer(mat)
   expect_s3_class(p, "ggplot")
   # Explicit column overrides also exercise the is.null(x_col)/y_col/fill_col
   # `else` (skip auto-detect) path.
-  p2 <- ggplot2::ggplot() + ggplot2::autolayer(mat, x_col = "col", y_col = "row",
+  p2 <- ggplot2::ggplot() + ggplot2::autolayer(mat, x_col = "col",
+    y_col = "row",
                                                 fill_col = "value")
   expect_s3_class(p2, "ggplot")
 })
@@ -272,7 +292,8 @@ test_that("Matrix autolayer renders using the same col/row/value auto-detected c
 # tested elsewhere), autolayer for both classes entirely
 # ---------------------------------------------------------------------------
 
-test_that("Discriminant autoplot renders for scores/both types too, and autolayer works for PCA and Discriminant", {
+test_that(
+  "Discriminant autoplot renders for scores/both types too, and autolayer works for PCA and Discriminant", {
   set.seed(1)
   x <- matrix(rnorm(200), nrow = 20)
   pca <- pca_from_matrix(x)
@@ -299,7 +320,8 @@ test_that("Discriminant autoplot renders for scores/both types too, and autolaye
 # track request warns/returns NULL
 # ---------------------------------------------------------------------------
 
-test_that("FormantModeler autoplot/autolayer default to_track=0 means 'all tracks', and out-of-range tracks warn/return NULL", {
+test_that(
+  "FormantModeler autoplot/autolayer default to_track=0 means 'all tracks', and out-of-range tracks warn/return NULL", {
   sound <- sound_fixture()
   formant <- sound$to_formant_burg()
   fm <- formant$to_formant_modeler()
@@ -321,7 +343,8 @@ test_that("FormantModeler autoplot/autolayer default to_track=0 means 'all track
 # warning, and autolayer with the same filters
 # ---------------------------------------------------------------------------
 
-test_that("Electroglottogram autoplot/autolayer respect from_time/to_time and warn when empty", {
+test_that(
+  "Electroglottogram autoplot/autolayer respect from_time/to_time and warn when empty", {
   skip_if_not(file.exists(test_path("fixtures/speech_sample.wav")))
   sound <- Sound(test_path("fixtures/speech_sample.wav"))
   egg <- sound$extract_electroglottogram()
@@ -344,7 +367,8 @@ test_that("Electroglottogram autoplot/autolayer respect from_time/to_time and wa
 # LongSound: required from_time/to_time (stop() on NULL), and autolayer
 # ---------------------------------------------------------------------------
 
-test_that("LongSound autoplot/autolayer require non-NULL from_time/to_time and autolayer renders a layer", {
+test_that(
+  "LongSound autoplot/autolayer require non-NULL from_time/to_time and autolayer renders a layer", {
   skip_if_not(file.exists(test_path("fixtures/speech_sample.wav")))
   ls_obj <- longsound_open(test_path("fixtures/speech_sample.wav"))
 
@@ -376,7 +400,8 @@ test_that("DTW autoplot/autolayer accept a custom alpha_path", {
 # the real Polygon() constructor rejects 0 points outright)
 # ---------------------------------------------------------------------------
 
-test_that("Polygon autoplot/autolayer warn and return an empty/NULL result when as_data_frame() is empty", {
+test_that(
+  "Polygon autoplot/autolayer warn and return an empty/NULL result when as_data_frame() is empty", {
   # Polygon(x = numeric(0), y = numeric(0)) errors at construction time
   # ("At least 1 point required"), so an empty Polygon can't be built via the
   # public constructor. as.data.frame.Polygon (R/polygon-module.R:161-163)
@@ -400,7 +425,8 @@ test_that("VocalTract autoplot supports plot_type = 'line'", {
   vt <- VocalTract(nx = 10L, dx = 0.02)
   p <- ggplot2::autoplot(vt, plot_type = "line")
   expect_s3_class(p, "ggplot")
-  expect_true(any(vapply(p$layers, function(l) inherits(l$geom, "GeomCol"), logical(1))))
+  expect_true(
+    any(vapply(p$layers, function(l) inherits(l$geom, "GeomCol"), logical(1))))
 })
 
 # ---------------------------------------------------------------------------
@@ -422,7 +448,8 @@ test_that("LPC autoplot/autolayer accept a non-default frame index", {
 # formant-data warning), and the matching autolayer NULL branch
 # ---------------------------------------------------------------------------
 
-test_that("KlattGrid autoplot/autolayer warn/return NULL when the requested formant_type has no data", {
+test_that(
+  "KlattGrid autoplot/autolayer warn/return NULL when the requested formant_type has no data", {
   kg <- KlattGrid(0, 0.3, numberOfFormants = 3)
   kg$add_pitch_point(0.15, 120)
   kg$add_voicing_amplitude_point(0.15, 90)

@@ -3,7 +3,8 @@
 # NumericMatrix is stored column-major by R, so channel rows are not
 # contiguous -- a raw memcpy silently interleaved channel data.
 
-test_that("Sound$from_values preserves per-channel data for multi-channel input", {
+test_that(
+  "Sound$from_values preserves per-channel data for multi-channel input", {
   n_samples <- 100
   ch1 <- sin(2 * pi * 5 * seq(0, 1, length.out = n_samples))
   ch2 <- cos(2 * pi * 5 * seq(0, 1, length.out = n_samples))

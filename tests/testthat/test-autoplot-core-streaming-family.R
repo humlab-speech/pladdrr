@@ -35,7 +35,8 @@ test_that("Intensity autoplot/autolayer render and respect from_time/to_time", {
   expect_true(all(p_filtered$data$time >= 0.1 & p_filtered$data$time <= 0.2))
 })
 
-test_that("Pitch autoplot/autolayer render, drop unvoiced frames, and warn when empty", {
+test_that(
+  "Pitch autoplot/autolayer render, drop unvoiced frames, and warn when empty", {
   sound <- generate_sine_wave(220, 0.3, sampling_rate = 16000)
   pitch <- sound$to_pitch()
 
@@ -60,7 +61,8 @@ test_that("Pitch autoplot/autolayer render, drop unvoiced frames, and warn when 
   expect_null(ggplot2::autolayer(pitch, from_time = 100, to_time = 200))
 })
 
-test_that("Formant autoplot/autolayer render long-format multi-track data and warn when filtered empty", {
+test_that(
+  "Formant autoplot/autolayer render long-format multi-track data and warn when filtered empty", {
   sound <- generate_sine_wave(220, 0.3, sampling_rate = 16000)
   formant <- sound$to_formant()
 
@@ -87,7 +89,8 @@ test_that("Formant autoplot/autolayer render long-format multi-track data and wa
   expect_null(ggplot2::autolayer(formant, from_time = 100, to_time = 200))
 })
 
-test_that("Spectrogram autoplot/autolayer render the power_db heatmap and respect from_time/to_time", {
+test_that(
+  "Spectrogram autoplot/autolayer render the power_db heatmap and respect from_time/to_time", {
   sound <- generate_sine_wave(220, 0.3, sampling_rate = 16000)
   spectrogram <- sound$to_spectrogram()
 

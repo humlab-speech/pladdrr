@@ -76,7 +76,8 @@ NULL
 
 # Arrange the three cepstrum panels and optionally save the report.
 .assemble_cepstrum_report <- function(p1, p2, p3, save_path, dpi, format) {
-  combined <- gridExtra::grid.arrange(p1, p2, p3, ncol = 1, heights = c(1, 1.5, 1))
+  combined <- gridExtra::grid.arrange(p1, p2, p3, ncol = 1,
+    heights = c(1, 1.5, 1))
   if (!is.null(save_path)) {
     ggplot2::ggsave(filename = save_path, plot = combined,
                     width = 10, height = 12, dpi = dpi, device = format)
@@ -99,13 +100,17 @@ NULL
 #' @param cepstrum PowerCepstrum object
 #' @param show_peak Logical. Highlight the cepstral peak (default: TRUE)
 #' @param show_trendline Logical. Show regression trend line (default: TRUE)
-#' @param qmin Numeric. Minimum quefrency for peak search (seconds, default: 0.001)
+#' @param qmin Numeric. Minimum quefrency for peak search (seconds, default:
+#  0.001)
 #' @param qmax Numeric. Maximum quefrency for peak search (seconds, default: 0)
 #' @param fit_method Character. Trend line fit method (default: "straight")
-#' @param quefrency_range Numeric vector. c(min, max) quefrency range to display (default: NULL = auto)
-#' @param db_range Numeric vector. c(min, max) dB range to display (default: NULL = auto)
+#' @param quefrency_range Numeric vector. c(min, max) quefrency range to display
+#  (default: NULL = auto)
+#' @param db_range Numeric vector. c(min, max) dB range to display (default:
+#  NULL = auto)
 #' @inheritParams pladdrr_shared_params title
-#' @param theme Character. ggplot2 theme: "minimal", "bw", "classic" (default: "minimal")
+#' @param theme Character. ggplot2 theme: "minimal", "bw", "classic" (default:
+#  "minimal")
 #'
 #' @return A ggplot2 object
 #'
@@ -131,7 +136,8 @@ plot_powercepstrum <- function(cepstrum,
                               show_trendline = TRUE,
                               qmin = 0.001,
                               qmax = 0,
-                              fit_method = c("straight", "exponential decay", "parabolic"),
+                              fit_method = c("straight", "exponential decay",
+                                "parabolic"),
                               quefrency_range = NULL,
                               db_range = NULL,
                               title = NULL,
@@ -185,11 +191,16 @@ plot_powercepstrum <- function(cepstrum,
 #' the cepstral spectrum varies over time, similar to a spectrogram.
 #'
 #' @inheritParams pladdrr_shared_params cepstrogram
-#' @param time_range Numeric vector. c(start, end) time range to display (default: NULL = auto)
-#' @param quefrency_range Numeric vector. c(min, max) quefrency range to display (default: c(0, 0.05))
-#' @param db_range Numeric vector. c(min, max) dB range for color scale (default: NULL = auto)
-#' @param color_scale Character. Color palette: "viridis", "inferno", "magma", "plasma" (default: "viridis")
-#' @param show_cpp_contour Logical. Overlay CPP contour over time (default: FALSE)
+#' @param time_range Numeric vector. c(start, end) time range to display
+#  (default: NULL = auto)
+#' @param quefrency_range Numeric vector. c(min, max) quefrency range to display
+#  (default: c(0, 0.05))
+#' @param db_range Numeric vector. c(min, max) dB range for color scale
+#  (default: NULL = auto)
+#' @param color_scale Character. Color palette: "viridis", "inferno", "magma",
+#  "plasma" (default: "viridis")
+#' @param show_cpp_contour Logical. Overlay CPP contour over time (default:
+#  FALSE)
 #' @param contour_color Character. Color for CPP contour line (default: "white")
 #' @inheritParams pladdrr_shared_params title
 #' @param theme Character. ggplot2 theme (default: "minimal")
@@ -213,7 +224,8 @@ plot_powercepstrogram <- function(cepstrogram,
                                  time_range = NULL,
                                  quefrency_range = c(0, 0.05),
                                  db_range = NULL,
-                                 color_scale = c("viridis", "inferno", "magma", "plasma"),
+                                 color_scale = c("viridis", "inferno",
+                                   "magma", "plasma"),
                                  show_cpp_contour = FALSE,
                                  contour_color = "white",
                                  title = NULL,
@@ -236,7 +248,8 @@ plot_powercepstrogram <- function(cepstrogram,
   plot_data <- .cepstrogram_plot_data(cepstrogram, time_range, quefrency_range)
   
   # Create base heatmap
-  p <- ggplot2::ggplot(plot_data, ggplot2::aes(x = time, y = quefrency, fill = power_db)) +
+  p <- ggplot2::ggplot(plot_data,
+    ggplot2::aes(x = time, y = quefrency, fill = power_db)) +
     ggplot2::geom_raster(interpolate = TRUE)
   
   # Apply color scale (with dB range)
@@ -264,13 +277,15 @@ plot_powercepstrogram <- function(cepstrogram,
 #' from a PowerCepstrogram object. Useful for tracking voice quality variation.
 #'
 #' @inheritParams pladdrr_shared_params cepstrogram
-#' @param time_range Numeric vector. c(start, end) time range to display (default: NULL = auto)
+#' @param time_range Numeric vector. c(start, end) time range to display
+#  (default: NULL = auto)
 #' @param qmin Numeric. Minimum quefrency for peak search (default: 0.001)
 #' @param qmax Numeric. Maximum quefrency for peak search (default: 0)
 #' @param n_samples Integer. Number of time points to sample (default: 100)
 #' @param smooth Logical. Apply smoothing to CPP contour (default: FALSE)
 #' @param smooth_span Numeric. Smoothing span for loess (default: 0.1)
-#' @param reference_lines Numeric vector. Reference CPP values to plot as horizontal lines (default: NULL)
+#' @param reference_lines Numeric vector. Reference CPP values to plot as
+#  horizontal lines (default: NULL)
 #' @inheritParams pladdrr_shared_params title
 #' @param theme Character. ggplot2 theme (default: "minimal")
 #'
@@ -319,7 +334,8 @@ plot_cpp_timeseries <- function(cepstrogram,
   }
   
   # Sample CPP time series and build plot data
-  plot_data <- .cpp_timeseries_data(cepstrogram, time_range, n_samples, qmin, qmax)
+  plot_data <- .cpp_timeseries_data(cepstrogram, time_range, n_samples, qmin,
+    qmax)
   
   # Create base plot
   p <- ggplot2::ggplot(plot_data, ggplot2::aes(x = time, y = cpp)) +
@@ -357,7 +373,8 @@ plot_cpp_timeseries <- function(cepstrogram,
 #' cepstrogram, and CPP time series for comprehensive analysis.
 #'
 #' @inheritParams pladdrr_shared_params cepstrogram
-#' @param time_slice Numeric. Time point for extracting single cepstrum (default: middle)
+#' @param time_slice Numeric. Time point for extracting single cepstrum
+#  (default: middle)
 #' @param save_path Character. Path to save plot (optional)
 #' @param format Character. Output format: "png", "pdf", "svg" (default: "png")
 #' @param dpi Numeric. Resolution for raster formats (default: 300)
@@ -366,7 +383,8 @@ plot_cpp_timeseries <- function(cepstrogram,
 #'
 #' @examples
 #' if (requireNamespace("gridExtra", quietly = TRUE)) {
-#'   sound <- Sound$create_tone(frequency = 150, duration = 0.6, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.6, sampling_rate =
+#  16000)
 #'   cepstrogram <- sound$to_powercepstrogram(pitch_floor = 60)
 #'
 #'   # Create comprehensive report at t = 0.3s (mid-signal)
@@ -385,7 +403,8 @@ create_cepstrum_report <- function(cepstrogram,
   }
   
   if (!requireNamespace("gridExtra", quietly = TRUE)) {
-    stop("Package 'gridExtra' is required for multi-panel layout. Please install it.")
+    stop(
+      "Package 'gridExtra' is required for multi-panel layout. Please install it.")
   }
   
   format <- match.arg(format)
@@ -483,10 +502,14 @@ create_cepstrum_report <- function(cepstrogram,
 # Apply the cepstrogram color scale, optionally with a dB range.
 .apply_cepstrogram_color_scale <- function(p, color_scale, db_range) {
   p <- p + switch(color_scale,
-    viridis = ggplot2::scale_fill_viridis_c(name = "Power (dB)", option = "viridis"),
-    inferno = ggplot2::scale_fill_viridis_c(name = "Power (dB)", option = "inferno"),
-    magma = ggplot2::scale_fill_viridis_c(name = "Power (dB)", option = "magma"),
-    plasma = ggplot2::scale_fill_viridis_c(name = "Power (dB)", option = "plasma"))
+    viridis = ggplot2::scale_fill_viridis_c(name = "Power (dB)",
+      option = "viridis"),
+    inferno = ggplot2::scale_fill_viridis_c(name = "Power (dB)",
+      option = "inferno"),
+    magma = ggplot2::scale_fill_viridis_c(name = "Power (dB)",
+      option = "magma"),
+    plasma = ggplot2::scale_fill_viridis_c(name = "Power (dB)",
+      option = "plasma"))
   if (!is.null(db_range)) {
     p + ggplot2::scale_fill_viridis_c(name = "Power (dB)",
                                       option = color_scale, limits = db_range)
@@ -513,7 +536,8 @@ create_cepstrum_report <- function(cepstrogram,
 
 
 # Sample a CPP time series and build NA-filtered plot data.
-.cpp_timeseries_data <- function(cepstrogram, time_range, n_samples, qmin, qmax) {
+.cpp_timeseries_data <- function(cepstrogram, time_range, n_samples, qmin,
+  qmax) {
   sample_times <- seq(time_range[1], time_range[2], length.out = n_samples)
   cpp_values <- .sample_cpp_timeseries(cepstrogram, sample_times, qmin, qmax)
   plot_data <- data.frame(time = sample_times, cpp = cpp_values)

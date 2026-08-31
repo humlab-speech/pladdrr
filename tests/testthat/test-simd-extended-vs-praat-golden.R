@@ -25,13 +25,16 @@ for (fixture in mono_fixtures) {
   for (simd_enabled in c(FALSE, TRUE)) {
     label <- if (simd_enabled) "SIMD" else "scalar"
 
-    test_that(paste0("ComplexSpectrogram matches Praat.app golden (", fixture, ", ", label, ")"), {
+    test_that(
+      paste0("ComplexSpectrogram matches Praat.app golden (", fixture, ", ",
+        label, ")"), {
       # Praat.app 6.4.47 itself asserts/crashes on "ComplexSpectrogram: To
       # Sound" for these fixtures, so amplitude/phase resynthesis cannot be
       # golden-tested directly; validated indirectly via the power spectrum
       # derived from it (Down to Spectrogram), which exercises the same
       # underlying STFT computation as complexspectrogram_simd.
-      skip_if_not(file.exists(wav_path), "golden fixture missing; run data-raw/generate_simd_goldens.R")
+      skip_if_not(file.exists(wav_path),
+        "golden fixture missing; run data-raw/generate_simd_goldens.R")
       with_simd(simd_enabled, {
         snd <- Sound(wav_path)
         cs <- snd$to_complex_spectrogram()
@@ -47,18 +50,24 @@ for (fixture in mono_fixtures) {
       })
     })
 
-    test_that(paste0("FormantPath matches Praat.app golden (", fixture, ", ", label, ")"), {
-      skip_if_not(file.exists(wav_path), "golden fixture missing; run data-raw/generate_simd_goldens.R")
+    test_that(
+      paste0("FormantPath matches Praat.app golden (", fixture, ", ", label,
+        ")"), {
+      skip_if_not(file.exists(wav_path),
+        "golden fixture missing; run data-raw/generate_simd_goldens.R")
       with_simd(simd_enabled, {
         snd <- Sound(wav_path)
         fp <- snd$to_formant_path()
-        golden <- read.csv(golden_path(fixture, "formantpath"), colClasses = "character")
+        golden <- read.csv(golden_path(fixture, "formantpath"),
+          colClasses = "character")
         golden_oc <- suppressWarnings(as.numeric(golden$optimal_ceiling[1]))
         golden_st <- suppressWarnings(as.numeric(golden$stress_candidate5[1]))
 
-        oc <- fp$get_optimal_ceiling(parameters = c(1, 1, 1, 1, 1), powerf = 1.25)
+        oc <- fp$get_optimal_ceiling(parameters = c(1, 1, 1, 1, 1),
+          powerf = 1.25)
         st <- fp$get_stress_of_candidate(from_formant = 1L, to_formant = 5L,
-                                          parameters = c(1, 1, 1, 1, 1), powerf = 1.25, candidate = 5L)
+                                          parameters = c(1, 1, 1, 1,
+                                            1), powerf = 1.25, candidate = 5L)
         if (is.na(golden_st)) {
           expect_true(is.nan(st) || is.na(st))
         } else {
@@ -72,8 +81,11 @@ for (fixture in mono_fixtures) {
       })
     })
 
-    test_that(paste0("TextGrid (silences) matches Praat.app golden (", fixture, ", ", label, ")"), {
-      skip_if_not(file.exists(wav_path), "golden fixture missing; run data-raw/generate_simd_goldens.R")
+    test_that(
+      paste0("TextGrid (silences) matches Praat.app golden (", fixture, ", ",
+        label, ")"), {
+      skip_if_not(file.exists(wav_path),
+        "golden fixture missing; run data-raw/generate_simd_goldens.R")
       with_simd(simd_enabled, {
         snd <- Sound(wav_path)
         intensity <- snd$to_intensity()
@@ -82,8 +94,10 @@ for (fixture in mono_fixtures) {
                                               min_sounding_duration = 0.05)
         golden <- read.csv(golden_path(fixture, "textgrid_silences"))
 
-        expect_equal(tg$get_number_of_intervals(1), golden$n_intervals[1], tolerance = sqrt(.Machine$double.eps))
-        expect_equal(tg$get_label_at_time(1, 0.0 + 1e-9), golden$label1[1], tolerance = sqrt(.Machine$double.eps))
+        expect_equal(tg$get_number_of_intervals(1), golden$n_intervals[1],
+          tolerance = sqrt(.Machine$double.eps))
+        expect_equal(tg$get_label_at_time(1, 0.0 + 1e-9), golden$label1[1],
+          tolerance = sqrt(.Machine$double.eps))
       })
     })
   }
@@ -93,9 +107,12 @@ for (fixture in mono_fixtures) {
 for (simd_enabled in c(FALSE, TRUE)) {
   label <- if (simd_enabled) "SIMD" else "scalar"
 
-  test_that(paste0("KlattGrid vowel synthesis matches Praat.app golden (", label, ")"), {
+  test_that(
+    paste0("KlattGrid vowel synthesis matches Praat.app golden (", label,
+      ")"), {
     golden_csv <- file.path(fixture_dir, "klattgrid_vowel_golden.csv")
-    skip_if_not(file.exists(golden_csv), "golden fixture missing; run data-raw/generate_simd_goldens.R")
+    skip_if_not(file.exists(golden_csv),
+      "golden fixture missing; run data-raw/generate_simd_goldens.R")
     with_simd(simd_enabled, {
       kg <- klattgrid_create_from_vowel(
         duration = 0.3, f0start = 125,

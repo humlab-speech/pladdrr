@@ -15,12 +15,14 @@ test_that("PitchTier construction and point queries", {
 
   expect_identical(tier$get_number_of_points(), 3L)
   expect_equal(tier$get_time_from_index(2), 0.5)
-  expect_equal(tier$get_value_at_index(2), 150, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(tier$get_value_at_index(2), 150,
+    tolerance = sqrt(.Machine$double.eps))
   expect_equal(tier$get_minimum(), 100, tolerance = sqrt(.Machine$double.eps))
   expect_equal(tier$get_maximum(), 200, tolerance = sqrt(.Machine$double.eps))
 })
 
-test_that("PitchTier get_mean/get_standard_deviation over the full and partial domain", {
+test_that(
+  "PitchTier get_mean/get_standard_deviation over the full and partial domain", {
   tier <- PitchTier(0, 1)
   tier$add_point(0.2, 100)
   tier$add_point(0.8, 200)
@@ -48,15 +50,18 @@ test_that("PitchTier remove_point and remove_points_between", {
   expect_identical(tier$get_number_of_points(), 0L)
 })
 
-test_that("PitchTier multiply_frequencies_in_range and shift_frequencies_in_range", {
+test_that(
+  "PitchTier multiply_frequencies_in_range and shift_frequencies_in_range", {
   tier <- PitchTier(0, 1)
   tier$add_point(0.5, 100)
 
   tier$multiply_frequencies_in_range(0, 1, 2)
-  expect_equal(tier$get_value_at_index(1), 200, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(tier$get_value_at_index(1), 200,
+    tolerance = sqrt(.Machine$double.eps))
 
   tier$shift_frequencies_in_range(0, 1, 50, unit = "hertz")
-  expect_equal(tier$get_value_at_index(1), 250, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(tier$get_value_at_index(1), 250,
+    tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("PitchTier stylize and interpolate_quadratically run without error", {
@@ -80,7 +85,8 @@ test_that("PitchTier as_data_frame/as_matrix reflect the stored points", {
   expect_identical(nrow(df), 2L)
 
   mat <- tier$as_matrix()
-  expect_equal(colnames(mat), c("time", "frequency"), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(colnames(mat), c("time", "frequency"),
+    tolerance = sqrt(.Machine$double.eps))
   expect_identical(nrow(mat), 2L)
 })
 
@@ -95,10 +101,12 @@ test_that("PitchTier save/pitchtier_from_file round-trips through a file", {
 
   expect_s3_class(loaded, "PitchTier")
   expect_identical(loaded$get_number_of_points(), 1L)
-  expect_equal(loaded$get_value_at_index(1), 150, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(loaded$get_value_at_index(1), 150,
+    tolerance = sqrt(.Machine$double.eps))
 })
 
-test_that("PitchTier to_sound_pulse_train/to_sound_phonation/to_sound_sine produce Sounds", {
+test_that(
+  "PitchTier to_sound_pulse_train/to_sound_phonation/to_sound_sine produce Sounds", {
   tier <- PitchTier(0, 0.2)
   tier$add_point(0.1, 150)
 
@@ -117,7 +125,8 @@ test_that("PitchTier to_pitch produces a Pitch object", {
   tier <- PitchTier(0, 0.5)
   tier$add_point(0.25, 150)
 
-  pitch <- tier$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
+  pitch <- tier$to_pitch(time_step = 0.01, pitch_floor = 75,
+    pitch_ceiling = 600)
   expect_s3_class(pitch, "Pitch")
 })
 

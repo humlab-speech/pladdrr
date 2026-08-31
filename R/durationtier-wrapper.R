@@ -11,11 +11,14 @@
 #'   \item 0.5 - double speed (halved duration)
 #' }
 #'
-#' @param tmin Start time in seconds. Used with \code{tmax} to create a new, empty DurationTier.
-#' @param tmax End time in seconds. Used with \code{tmin} to create a new, empty DurationTier.
+#' @param tmin Start time in seconds. Used with \code{tmax} to create a new,
+#  empty DurationTier.
+#' @param tmax End time in seconds. Used with \code{tmin} to create a new, empty
+#  DurationTier.
 #' @param .xptr Not for direct use. External pointer to the underlying C++
-#'   DurationTier object; set internally when a method returns a new DurationTier.
-#' @return A \code{DurationTier} object with methods for duration and tempo manipulation via time-value points.
+#' DurationTier object; set internally when a method returns a new DurationTier.
+#' @return A \code{DurationTier} object with methods for duration and tempo
+#  manipulation via time-value points.
 #'
 #' @examples
 #' dt <- DurationTier(0, 1)
@@ -36,10 +39,14 @@ NULL
 # Query
 .durationtier_methods$get_start_time <- function(.self) .self$.cpp$get_xmin()
 .durationtier_methods$get_end_time <- function(.self) .self$.cpp$get_xmax()
-.durationtier_methods$get_number_of_points <- function(.self) .self$.cpp$get_number_of_points()
-.durationtier_methods$get_time_from_index <- function(.self, index) .self$.cpp$get_time(as.integer(index))
-.durationtier_methods$get_value_at_index <- function(.self, index) .self$.cpp$get_value(as.integer(index))
-.durationtier_methods$get_value_at_time <- function(.self, time) .self$.cpp$get_value_at_time(as.numeric(time))
+.durationtier_methods$get_number_of_points <- function(
+  .self) .self$.cpp$get_number_of_points()
+.durationtier_methods$get_time_from_index <- function(.self,
+  index) .self$.cpp$get_time(as.integer(index))
+.durationtier_methods$get_value_at_index <- function(.self,
+  index) .self$.cpp$get_value(as.integer(index))
+.durationtier_methods$get_value_at_time <- function(.self,
+  time) .self$.cpp$get_value_at_time(as.numeric(time))
 
 .durationtier_methods$get_mean <- function(.self, tmin = NULL, tmax = NULL) {
   if (is.null(tmin)) tmin <- .self$.cpp$get_xmin()
@@ -82,7 +89,9 @@ NULL
 # Display
 .durationtier_methods$print <- function(.self) {
   cat("<Praat DurationTier>\n")
-  cat(sprintf("  Time domain: %.3f to %.3f s\n", .self$.cpp$get_xmin(), .self$.cpp$get_xmax()))
+  cat(
+    sprintf("  Time domain: %.3f to %.3f s\n", .self$.cpp$get_xmin(),
+      .self$.cpp$get_xmax()))
   cat(sprintf("  Number of points: %d\n", .self$.cpp$get_number_of_points()))
   invisible(.self)
 }

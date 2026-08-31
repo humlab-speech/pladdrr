@@ -1,7 +1,9 @@
 # Test Batch/Vectorized Operations
-sound_generate_tone <- function(frequency, duration, sample_rate) Sound$create_tone(frequency = frequency, duration =
+sound_generate_tone <- function(frequency, duration,
+  sample_rate) Sound$create_tone(frequency = frequency, duration =
   duration, sampling_rate = sample_rate)
-module_available <- function(name) !is.null(tryCatch(pladdrr:::get_module(name), error = function(e) NULL))
+module_available <- function(
+  name) !is.null(tryCatch(pladdrr:::get_module(name), error = function(e) NULL))
 # These tests verify that batch operations produce the same results as
 # individual calls, while being significantly faster.
 
@@ -50,7 +52,8 @@ test_that("Sound value extraction is vectorized", {
 
   # Get values at specific times
   times <- seq(0.1, 0.4, by = 0.05)
-  values_batch <- sound$get_values_at_times(times, channel = 1, interpolation = "linear")
+  values_batch <- sound$get_values_at_times(times, channel = 1,
+    interpolation = "linear")
 
   expect_length(values_batch, length(times))
   expect_true(all(is.finite(values_batch)))
@@ -76,7 +79,8 @@ test_that("Pitch batch operations work", {
 
   # Get values at times
   times <- pitch$get_times_vector()
-  values_batch <- pitch$get_values_at_times(times[seq_len(min(10, length(times)))])
+  values_batch <- pitch$get_values_at_times(
+    times[seq_len(min(10, length(times)))])
 
   expect_type(values_batch, "double")
 })
@@ -186,7 +190,8 @@ test_that("Spectrogram batch queries work", {
   skip_if_not(module_available("spectrogram_module"))
 
   sound <- sound_generate_tone(440, duration = 0.2, sample_rate = 16000)
-  spectrogram <- sound$to_spectrogram(window_length = 0.005, max_frequency = 5000)
+  spectrogram <- sound$to_spectrogram(window_length = 0.005,
+    max_frequency = 5000)
 
   # Get vectors
   times <- spectrogram$get_times_vector()

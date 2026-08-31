@@ -15,14 +15,16 @@
 #' @param unit Unit for formant values: "hertz" (default) or "bark"
 #'
 #' @return A list with one element per formant number (e.g., `F1`, `F2`, ...),
-#'   each containing a numeric vector of formant frequencies at the specified times.
+#' each containing a numeric vector of formant frequencies at the specified
+#  times.
 #'
 #' @section Performance:
 #' This function reduces R<->C++ boundary crossings from `4n` calls
 #' (for 4 formants at n times) to just 1 call.
 #'
 #' @examples
-#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+#  16000)
 #' formant <- sound$to_formant_burg()
 #'
 #' # Extract F1-F4 at 5 time points
@@ -34,7 +36,8 @@
 #' f2_vals <- result$F2
 #'
 #' @export
-get_formants_at_times <- function(formant, times, formant_numbers = 1:4, unit = "hertz") {
+get_formants_at_times <- function(formant, times, formant_numbers = 1:4,
+  unit = "hertz") {
   if (!inherits(formant, "Formant")) {
     stop("formant must be a Formant object")
   }
@@ -72,20 +75,23 @@ get_formants_at_times <- function(formant, times, formant_numbers = 1:4, unit = 
 #'
 #' @param formant A Formant object
 #' @inheritParams pladdrr_shared_params times
-#' @param formant_numbers Integer vector specifying which formants (default `1:4`)
+#' @param formant_numbers Integer vector specifying which formants (default
+#  `1:4`)
 #' @param unit Unit for bandwidth values: "hertz" (default) or "bark"
 #'
 #' @return A list with one element per formant number (e.g., `B1`, `B2`, ...),
 #'   each containing a numeric vector of bandwidths.
 #'
 #' @examples
-#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+#  16000)
 #' formant <- sound$to_formant_burg()
 #' times <- seq(0.1, 0.4, length.out = 5)
 #' bandwidths <- get_formant_bandwidths_at_times(formant, times, 1:4)
 #'
 #' @export
-get_formant_bandwidths_at_times <- function(formant, times, formant_numbers = 1:4, unit = "hertz") {
+get_formant_bandwidths_at_times <- function(formant, times,
+  formant_numbers = 1:4, unit = "hertz") {
   if (!inherits(formant, "Formant")) {
     stop("formant must be a Formant object")
   }
@@ -120,7 +126,8 @@ get_formant_bandwidths_at_times <- function(formant, times, formant_numbers = 1:
 #' @inheritParams pladdrr_shared_params times
 #' @param unit Unit for pitch values: "hertz" (default), "mel", "loghertz",
 #'   "semitones", or "erb"
-#' @param interpolate Logical; whether to interpolate between frames (default TRUE)
+#' @param interpolate Logical; whether to interpolate between frames (default
+#  TRUE)
 #'
 #' @return Numeric vector of pitch values at the specified times
 #'
@@ -128,13 +135,15 @@ get_formant_bandwidths_at_times <- function(formant, times, formant_numbers = 1:
 #' This function uses existing optimized C++ code.
 #'
 #' @examples
-#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+#  16000)
 #' pitch <- sound$to_pitch()
 #' times <- seq(0.05, 0.45, length.out = 10)
 #' f0_contour <- get_pitch_at_times(pitch, times)
 #'
 #' @export
-get_pitch_at_times <- function(pitch, times, unit = "hertz", interpolate = TRUE) {
+get_pitch_at_times <- function(pitch, times, unit = "hertz",
+  interpolate = TRUE) {
   if (!inherits(pitch, "Pitch")) {
     stop("pitch must be a Pitch object")
   }
@@ -166,13 +175,15 @@ get_pitch_at_times <- function(pitch, times, unit = "hertz", interpolate = TRUE)
 #' @return Numeric vector of pitch strengths (0-1) at the specified times
 #'
 #' @examples
-#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+#  16000)
 #' pitch <- sound$to_pitch()
 #' times <- seq(0.05, 0.45, length.out = 10)
 #' strengths <- get_pitch_strengths_at_times(pitch, times)
 #'
 #' @export
-get_pitch_strengths_at_times <- function(pitch, times, unit = "hertz", interpolate = TRUE) {
+get_pitch_strengths_at_times <- function(pitch, times, unit = "hertz",
+  interpolate = TRUE) {
   if (!inherits(pitch, "Pitch")) {
     stop("pitch must be a Pitch object")
   }
@@ -196,13 +207,15 @@ get_pitch_strengths_at_times <- function(pitch, times, unit = "hertz", interpola
 #' calculated from quartiles.
 #'
 #' @inheritParams pladdrr_shared_pitch_a pitch
-#' @param quantiles Numeric vector of quantile values (e.g., c(0.25, 0.75) for Q1 and Q3)
+#' @param quantiles Numeric vector of quantile values (e.g., c(0.25, 0.75) for
+#  Q1 and Q3)
 #' @param from_time Start time (0 = beginning of pitch object)
 #' @param to_time End time (0 = end of pitch object)
 #' @param unit Unit for pitch values: "hertz" (default), "mel", "loghertz",
 #'   "semitones", or "erb"
 #'
-#' @return Named numeric vector with quantile values (names like "q0.25", "q0.75")
+#' @return Named numeric vector with quantile values (names like "q0.25",
+#  "q0.75")
 #'
 #' @section Performance:
 #' Reduces R<->C++ boundary crossings from n separate calls to 1 call.
@@ -219,7 +232,8 @@ get_pitch_strengths_at_times <- function(pitch, times, unit = "hertz", interpola
 #' ```
 #'
 #' @examples
-#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+#  16000)
 #' pitch <- sound$to_pitch()
 #'
 #' # Get Q1, median, Q3 in one call
@@ -262,9 +276,11 @@ get_pitch_quantiles_batch <- function(pitch, quantiles,
 #'
 #' @param intensity An Intensity object
 #' @inheritParams pladdrr_shared_params times
-#' @param interpolate Interpolation method: "nearest", "linear", "cubic" (default),
+#' @param interpolate Interpolation method: "nearest", "linear", "cubic"
+#  (default),
 #'   or "sinc70". Kept for backward compatibility; prefer `interpolation`.
-#' @param interpolation Alias for `interpolate` (consistent with R6 method naming).
+#' @param interpolation Alias for `interpolate` (consistent with R6 method
+#  naming).
 #'   When provided, supersedes `interpolate`.
 #'
 #' @return Numeric vector of intensity values (in dB) at the specified times
@@ -273,7 +289,8 @@ get_pitch_quantiles_batch <- function(pitch, quantiles,
 #' Uses existing optimized C++ code.
 #'
 #' @examples
-#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+#  16000)
 #' intensity <- sound$to_intensity()
 #' times <- seq(0.05, 0.45, length.out = 10)
 #' intensities <- get_intensity_at_times(intensity, times)
@@ -326,7 +343,8 @@ get_intensity_at_times <- function(intensity, times, interpolate = "cubic",
 #' Reduces R<->C++ calls from `n` to 1.
 #'
 #' @examples
-#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+#  16000)
 #' pp <- sound$to_point_process_periodic_cc(75, 600)
 #' times <- get_pointprocess_times(pp)
 #'
@@ -352,7 +370,8 @@ get_pointprocess_times <- function(pointprocess) {
 #' Computes all intervals in C++ without R<->C++ overhead.
 #'
 #' @examples
-#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+#  16000)
 #' pp <- sound$to_point_process_periodic_cc(75, 600)
 #' intervals <- get_pointprocess_intervals(pp)
 #' jitter <- sd(intervals) / mean(intervals)
@@ -376,7 +395,8 @@ get_pointprocess_intervals <- function(pointprocess) {
 #' @return Integer vector of nearest point indices (1-based)
 #'
 #' @examples
-#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+#  16000)
 #' pp <- sound$to_point_process_periodic_cc(75, 600)
 #' query_times <- seq(0.1, 0.4, by = 0.05)
 #' indices <- get_pointprocess_nearest_indices(pp, query_times)
@@ -435,7 +455,8 @@ get_pointprocess_nearest_indices <- function(pointprocess, times) {
 #' This function reduces R<->C++ boundary crossings from 11 calls to 1 call.
 #'
 #' @section Workflow:
-#' For accurate voice quality analysis, use `to_point_process_from_sound_and_pitch()`
+#' For accurate voice quality analysis, use
+#  `to_point_process_from_sound_and_pitch()`
 #' which uses the refined pitch contour to guide period detection:
 #' ```r
 #' # Recommended workflow
@@ -446,7 +467,8 @@ get_pointprocess_nearest_indices <- function(pointprocess, times) {
 #' ```
 #'
 #' @examples
-#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+#  16000)
 #' pp <- sound$to_point_process_periodic_cc(75, 600)
 #'
 #' # Get all voice quality measures at once
@@ -529,8 +551,10 @@ get_jitter_shimmer_batch <- function(pointprocess, sound,
 #' @examples
 #' wav1 <- tempfile(fileext = ".wav")
 #' wav2 <- tempfile(fileext = ".wav")
-#' Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)$save(wav1)
-#' Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)$save(wav2)
+#' Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate =
+#  16000)$save(wav1)
+#' Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+#  16000)$save(wav2)
 #'
 #' # Multiple files (DSI workflow)
 #' durations <- get_durations_batch(c(wav1, wav2))
@@ -581,10 +605,12 @@ get_durations_batch <- function(file_paths) {
 #' Ultra functions.
 #'
 #' @examples
-#' sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate =
+#  16000)
 #'
 #' # Get maximum F0 (DSI FH component)
-#' max_f0 <- calculate_f0_stats_ultra(sound, stat = "max", min_pitch = 75, max_pitch = 600)
+#' max_f0 <- calculate_f0_stats_ultra(sound, stat = "max", min_pitch = 75,
+#  max_pitch = 600)
 #'
 #' # Get mean F0
 #' mean_f0 <- calculate_f0_stats_ultra(sound, stat = "mean")
@@ -634,7 +660,8 @@ calculate_f0_stats_ultra <- function(sound, stat,
 #' @param min_pitch Pitch floor in Hz (default: 75)
 #' @inheritParams pladdrr_shared_params max_pitch
 #' @param time_step Time step for analysis (0 = auto)
-#' @param subtract_mean Whether to subtract mean for intensity calculation (default: TRUE)
+#' @param subtract_mean Whether to subtract mean for intensity calculation
+#  (default: TRUE)
 #'
 #' @return Minimum intensity in dB (in voiced regions only). Returns `NA` if
 #'   no voiced regions are detected.
@@ -654,7 +681,8 @@ calculate_f0_stats_ultra <- function(sound, stat,
 #' `inst/agents/AGENT_GUIDE.md`.
 #'
 #' @examples
-#' sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate =
+#  16000)
 #'
 #' # Get minimum intensity in voiced regions (DSI IM component)
 #' min_int <- calculate_minimum_intensity_ultra(sound, min_pitch = 75)
@@ -718,7 +746,8 @@ calculate_minimum_intensity_ultra <- function(sound,
 #' @param metrics Character vector of metrics to compute: "jitter", "shimmer",
 #'   "hnr", or "all" for all metrics
 #' @param min_pitch Pitch floor in Hz for pitch extraction (default: 75).
-#'   Note: HNR always uses 75 Hz as minimum pitch (Praat's CC harmonicity default),
+#' Note: HNR always uses 75 Hz as minimum pitch (Praat's CC harmonicity
+#  default),
 #'   independent of this parameter.
 #' @inheritParams pladdrr_shared_params max_pitch
 #' @param time_step Time step for pitch/HNR (0 = auto; HNR auto uses 0.01 s)
@@ -738,7 +767,7 @@ calculate_minimum_intensity_ultra <- function(sound,
 #'   \item{jitter_local}{Local jitter (relative, fraction)}
 #'   \item{jitter_local_abs}{Local absolute jitter (seconds)}
 #'   \item{jitter_rap}{Relative average perturbation}
-#'   \item{jitter_ppq5}{5-point period perturbation quotient (DSI PPQ component)}
+#' \item{jitter_ppq5}{5-point period perturbation quotient (DSI PPQ component)}
 #'   \item{jitter_ddp}{Difference of differences of periods}
 #'   \item{shimmer_local}{Local shimmer (relative, fraction)}
 #'   \item{shimmer_local_db}{Local shimmer (dB)}
@@ -756,7 +785,8 @@ calculate_minimum_intensity_ultra <- function(sound,
 #' with no intermediate R objects.
 #'
 #' @examples
-#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+#  16000)
 #'
 #' # Get all voice quality metrics
 #' vq <- get_voice_quality_ultra(sound, metrics = "all", min_pitch = 75)
@@ -790,7 +820,8 @@ get_voice_quality_ultra <- function(sound,
                                      min_pitch = 75,
                                      max_pitch = 600,
                                      time_step = 0,
-                                     pitch_method = c("cc", "ac", "periodic_cc"),
+                                     pitch_method = c("cc", "ac",
+                                       "periodic_cc"),
                                      very_accurate = TRUE) {
   if (!inherits(sound, "Sound")) {
     stop("sound must be a Sound object")
@@ -829,13 +860,16 @@ get_voice_quality_ultra <- function(sound,
 #' per-frame Spectrum methods in an R loop.
 #'
 #' @param spectrogram A \code{Spectrogram} object
-#' @param power Numeric. Power for moment weighting (default 2.0, matching Praat)
+#' @param power Numeric. Power for moment weighting (default 2.0, matching
+#  Praat)
 #'
 #' @return \code{data.frame} with columns \code{time}, \code{cog}, \code{sd},
-#'   \code{skewness}, \code{kurtosis} (one row per frame; \code{NA} where undefined)
+#' \code{skewness}, \code{kurtosis} (one row per frame; \code{NA} where
+#  undefined)
 #'
 #' @examples
-#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+#  16000)
 #' spectrogram <- sound$to_spectrogram()
 #' moments <- get_spectral_moments_batch(spectrogram)
 #' head(moments)

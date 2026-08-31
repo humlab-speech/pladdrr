@@ -3,7 +3,8 @@
 # indexed access, and exports.
 
 st_fixture <- function() {
-  l <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)$to_ltas()
+  l <- Sound$create_tone(frequency = 220, duration = 0.3,
+    sampling_rate = 16000)$to_ltas()
   l$to_spectrum_tier_peaks()
 }
 

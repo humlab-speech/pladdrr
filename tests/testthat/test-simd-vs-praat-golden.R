@@ -30,7 +30,8 @@ for (fixture in fixtures) {
   for (simd_enabled in c(FALSE, TRUE)) {
     label <- if (simd_enabled) "SIMD" else "scalar"
 
-    test_that(paste0("Pitch matches Praat.app golden (", fixture, ", ", label, ")"), {
+    test_that(
+      paste0("Pitch matches Praat.app golden (", fixture, ", ", label, ")"), {
       skip_if_not(file.exists(file.path(fixture_dir, paste0(fixture, ".wav"))),
                   "golden fixture missing; run data-raw/generate_simd_goldens.R")
 
@@ -42,7 +43,8 @@ for (fixture in fixtures) {
       pitch <- snd$to_pitch(0, 75, 600)
       golden <- read_golden_pitch(fixture)
 
-      expect_equal(pitch$get_number_of_frames(), nrow(golden), tolerance = sqrt(.Machine$double.eps))
+      expect_equal(pitch$get_number_of_frames(), nrow(golden),
+        tolerance = sqrt(.Machine$double.eps))
 
       f0 <- vapply(seq_len(nrow(golden)), function(i) {
         t <- pitch$get_time_from_frame(i)
@@ -56,7 +58,9 @@ for (fixture in fixtures) {
       expect_true(all(is.na(f0[!voiced]) | f0[!voiced] == 0))
     })
 
-    test_that(paste0("Intensity matches Praat.app golden (", fixture, ", ", label, ")"), {
+    test_that(
+      paste0("Intensity matches Praat.app golden (", fixture, ", ", label,
+        ")"), {
       skip_if_not(file.exists(file.path(fixture_dir, paste0(fixture, ".wav"))),
                   "golden fixture missing; run data-raw/generate_simd_goldens.R")
 
@@ -68,7 +72,8 @@ for (fixture in fixtures) {
       intensity <- snd$to_intensity(100, 0, TRUE)
       golden <- read_golden_intensity(fixture)
 
-      expect_equal(intensity$get_number_of_frames(), nrow(golden), tolerance = sqrt(.Machine$double.eps))
+      expect_equal(intensity$get_number_of_frames(), nrow(golden),
+        tolerance = sqrt(.Machine$double.eps))
 
       db <- vapply(seq_len(nrow(golden)), function(i) {
         t <- intensity$get_time_from_frame(i)

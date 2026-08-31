@@ -95,7 +95,8 @@ test_that("Excitation can be exported as vector", {
 
 test_that("Excitation handles silence correctly", {
   # Create silent sound
-  sound_silence <- Sound$from_values(rep(0, round(0.1 * 16000)), sampling_rate = 16000)
+  sound_silence <- Sound$from_values(rep(0, round(0.1 * 16000)),
+    sampling_rate = 16000)
   spectrum_silence <- sound_silence$to_spectrum()
   excitation_silence <- spectrum_silence$to_excitation()
   

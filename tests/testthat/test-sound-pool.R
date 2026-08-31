@@ -40,7 +40,8 @@ test_that("sound_pool_resize changes capacity without error", {
 })
 
 test_that("sound_extract_parts_pooled extracts pooled Sound segments", {
-  snd <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+  snd <- Sound$create_tone(frequency = 150, duration = 0.3,
+    sampling_rate = 16000)
 
   parts <- sound_extract_parts_pooled(snd$get_xptr(), c(0.0, 0.1), c(0.1, 0.2))
   expect_type(parts, "list")
@@ -53,7 +54,8 @@ test_that("sound_extract_parts_pooled extracts pooled Sound segments", {
 })
 
 test_that("sound_extract_parts_pooled validates start/end lengths", {
-  snd <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+  snd <- Sound$create_tone(frequency = 150, duration = 0.3,
+    sampling_rate = 16000)
 
   expect_error(
     sound_extract_parts_pooled(snd$get_xptr(), 0.0, c(0.1, 0.2)),

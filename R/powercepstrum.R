@@ -1,4 +1,5 @@
-# powercepstrum.R - PowerCepstrum and PowerCepstrogram using shared dispatch tables (pladdrr 4.8.33)
+# powercepstrum.R - PowerCepstrum and PowerCepstrogram using shared dispatch
+#  tables (pladdrr 4.8.33)
 # Architecture: minimal list + S3 dispatch → shared method env
 
 #' PowerCepstrum
@@ -20,19 +21,27 @@
 #'
 #' @section Peak analysis:
 #' \itemize{
-#'   \item \code{get_peak_prominence(pitch_floor, pitch_ceiling, ...)} - CPP value (dB), the main voice quality metric
-#'   \item \code{get_peak_prominence_hillenbrand(pitch_floor, pitch_ceiling)} - CPP using the Hillenbrand algorithm
-#'   \item \code{get_quefrency_of_peak(interpolation)} - quefrency of the cepstral peak (s)
-#'   \item \code{get_value_at_quefrency(quefrency, interpolation, unit)} - cepstral amplitude at a quefrency
+#' \item \code{get_peak_prominence(pitch_floor, pitch_ceiling, ...)} - CPP value
+#  (dB), the main voice quality metric
+#' \item \code{get_peak_prominence_hillenbrand(pitch_floor, pitch_ceiling)} -
+#  CPP using the Hillenbrand algorithm
+#' \item \code{get_quefrency_of_peak(interpolation)} - quefrency of the cepstral
+#  peak (s)
+#' \item \code{get_value_at_quefrency(quefrency, interpolation, unit)} -
+#  cepstral amplitude at a quefrency
 #' }
 #'
 #' @section Trend and smoothing:
 #' \itemize{
 #'   \item \code{smooth(averaging_window)} - smooth the cepstrum
-#'   \item \code{fit_trend_line(qmin, qmax, trend_type, fit_method)} - fit a regression trend line
-#'   \item \code{get_trend_line_value(quefrency, ...)} - value of the fitted trend at a quefrency
-#'   \item \code{subtract_trend(qstart_fit, qend_fit, ...)} - subtract the regression trend (returns a new PowerCepstrum)
-#'   \item \code{subtract_trend_inplace(qstart_fit, qend_fit, ...)} - subtract the trend in place (mutates)
+#' \item \code{fit_trend_line(qmin, qmax, trend_type, fit_method)} - fit a
+#  regression trend line
+#' \item \code{get_trend_line_value(quefrency, ...)} - value of the fitted trend
+#  at a quefrency
+#' \item \code{subtract_trend(qstart_fit, qend_fit, ...)} - subtract the
+#  regression trend (returns a new PowerCepstrum)
+#' \item \code{subtract_trend_inplace(qstart_fit, qend_fit, ...)} - subtract the
+#  trend in place (mutates)
 #' }
 #'
 #' @section Export and transform:
@@ -42,12 +51,14 @@
 #'   \item \code{to_matrix()} - export as a matrix
 #' }
 #'
-#' @seealso \code{\link{Spectrum}}, \code{\link{PowerCepstrogram}}, \code{\link{Sound}}
+#' @seealso \code{\link{Spectrum}}, \code{\link{PowerCepstrogram}},
+#  \code{\link{Sound}}
 #'
 #' @return A PowerCepstrum object.
 #'
 #' @examples
-#' sound <- Sound$create_tone(duration = 0.5, frequency = 200, sampling_rate = 44100)
+#' sound <- Sound$create_tone(duration = 0.5, frequency = 200, sampling_rate =
+#  44100)
 #' spectrum <- sound$to_spectrum()
 #' cepstrum <- spectrum$to_power_cepstrum()
 #' cpp <- cepstrum$get_peak_prominence()
@@ -69,18 +80,22 @@ NULL
 .powercepstrum_methods$is_valid <- function(.self) .self$.cpp$is_valid()
 .powercepstrum_methods$get_qmin <- function(.self) .self$.cpp$get_qmin()
 .powercepstrum_methods$get_qmax <- function(.self) .self$.cpp$get_qmax()
-.powercepstrum_methods$get_quefrency_range <- function(.self) .self$.cpp$get_quefrency_range()
+.powercepstrum_methods$get_quefrency_range <- function(
+  .self) .self$.cpp$get_quefrency_range()
 .powercepstrum_methods$get_n_bins <- function(.self) .self$.cpp$get_n_bins()
 .powercepstrum_methods$get_dq <- function(.self) .self$.cpp$get_dq()
 .powercepstrum_methods$get_q1 <- function(.self) .self$.cpp$get_q1()
 
 .powercepstrum_methods$get_peak_prominence <- function(.self, pitch_floor = 60,
                                                        pitch_ceiling = 333.3,
-                                                       interpolation = c("parabolic", "none", "cubic", "sinc70",
+                                                       interpolation = c(
+                                                         "parabolic", "none", "cubic", "sinc70",
                                                          "sinc700"),
                                                        qmin = 0.001, qmax = 0.05,
-                                                       trend_type = c("exponential decay", "straight"),
-                                                       fit_method = c("robust slow", "robust", "least squares",
+                                                       trend_type = c(
+                                                         "exponential decay", "straight"),
+                                                       fit_method = c(
+                                                         "robust slow", "robust", "least squares",
                                                          "least_squares"),
                                                        tolerance = 0.05) {
   interpolation <- match.arg(interpolation)
@@ -99,45 +114,58 @@ NULL
 }
 
 .powercepstrum_methods$get_quefrency_of_peak <- function(.self,
-                                                         interpolation = c("parabolic", "none", "cubic"),
+                                                         interpolation = c(
+                                                           "parabolic", "none", "cubic"),
                                                          qmin = 0.003, qmax = 0.04) {
   interpolation <- match.arg(interpolation)
-  .self$.cpp$get_quefrency_of_peak(interpolation, as.numeric(qmin), as.numeric(qmax))
+  .self$.cpp$get_quefrency_of_peak(interpolation, as.numeric(qmin),
+    as.numeric(qmax))
 }
 
 .powercepstrum_methods$get_value_at_quefrency <- function(.self, quefrency,
-                                                          interpolation = c("linear", "cubic"),
-                                                          unit = c("dB", "linear")) {
+                                                          interpolation = c(
+                                                            "linear", "cubic"),
+                                                          unit = c("dB",
+                                                            "linear")) {
   interpolation <- match.arg(interpolation)
   unit <- match.arg(unit)
   .self$.cpp$get_value_at_quefrency(as.numeric(quefrency), interpolation, unit)
 }
 
-.powercepstrum_methods$get_peak_prominence_hillenbrand <- function(.self, pitch_floor = 60,
+.powercepstrum_methods$get_peak_prominence_hillenbrand <- function(.self,
+  pitch_floor = 60,
                                                                    pitch_ceiling = 333.3) {
-  .self$.cpp$get_peak_prominence_hillenbrand(as.numeric(pitch_floor), as.numeric(pitch_ceiling))
+  .self$.cpp$get_peak_prominence_hillenbrand(as.numeric(pitch_floor),
+    as.numeric(pitch_ceiling))
 }
 
-.powercepstrum_methods$get_rnr <- function(.self, pitch_floor = 60, pitch_ceiling = 333.3,
+.powercepstrum_methods$get_rnr <- function(.self, pitch_floor = 60,
+  pitch_ceiling = 333.3,
                                            f0_fractional_width = 0.05) {
   .powercepstrum_get_rnr(.self$.xptr, pitch_floor = pitch_floor,
                          pitch_ceiling = pitch_ceiling, f0_fractional_width = f0_fractional_width)
 }
 
-.powercepstrum_methods$tabulate_rhamonics <- function(.self, pitch_floor = 60, pitch_ceiling = 333.3,
-                                                      interpolation = c("parabolic", "none", "cubic", "sinc70",
+.powercepstrum_methods$tabulate_rhamonics <- function(.self, pitch_floor = 60,
+  pitch_ceiling = 333.3,
+                                                      interpolation = c(
+                                                        "parabolic", "none", "cubic", "sinc70",
                                                         "sinc700")) {
   interpolation <- match.arg(interpolation)
   interp_map <- .interp_map
-  xptr <- .powercepstrum_tabulate_rhamonics(.self$.xptr, pitch_floor = pitch_floor,
+  xptr <- .powercepstrum_tabulate_rhamonics(.self$.xptr,
+    pitch_floor = pitch_floor,
                                             pitch_ceiling = pitch_ceiling,
                                             interpolation = interp_map[[interpolation]])
   Table(.xptr = xptr)
 }
 
-.powercepstrum_methods$fit_trend_line <- function(.self, qmin = 0.003, qmax = 0.05,
-                                                  trend_type = c("straight", "exponential decay", "parabolic"),
-                                                  fit_method = c("least squares", "robust", "robust slow")) {
+.powercepstrum_methods$fit_trend_line <- function(.self, qmin = 0.003,
+  qmax = 0.05,
+                                                  trend_type = c("straight",
+                                                    "exponential decay", "parabolic"),
+                                                  fit_method = c(
+                                                    "least squares", "robust", "robust slow")) {
   trend_type <- match.arg(trend_type)
   fit_method <- match.arg(fit_method)
   trend_map <- .trend_line_map
@@ -147,10 +175,13 @@ NULL
                             as.integer(fit_map[[fit_method]]))
 }
 
-.powercepstrum_methods$get_trend_line_value <- function(.self, quefrency, qstart_fit = 0.003,
+.powercepstrum_methods$get_trend_line_value <- function(.self, quefrency,
+  qstart_fit = 0.003,
                                                         qend_fit = 0.05,
-                                                        trend_type = c("straight", "exponential decay", "parabolic"),
-                                                        fit_method = c("least squares", "robust", "robust slow")) {
+                                                        trend_type = c(
+                                                          "straight", "exponential decay", "parabolic"),
+                                                        fit_method = c(
+                                                          "least squares", "robust", "robust slow")) {
   trend_type <- match.arg(trend_type)
   fit_method <- match.arg(fit_method)
   trend_map <- .trend_line_map
@@ -162,30 +193,40 @@ NULL
 }
 
 # --- Transform (return new objects) ---
-.powercepstrum_methods$smooth <- function(.self, averaging_window, nsamples = 100) {
-  xptr <- .self$.cpp$smooth_ptr(as.numeric(averaging_window), as.integer(nsamples))
+.powercepstrum_methods$smooth <- function(.self, averaging_window,
+  nsamples = 100) {
+  xptr <- .self$.cpp$smooth_ptr(as.numeric(averaging_window),
+    as.integer(nsamples))
   PowerCepstrum(.xptr = xptr)
 }
-.powercepstrum_methods$subtract_trend <- function(.self, qstart_fit = 0.003, qend_fit = 0.05,
-                                                  trend_type = c("straight", "exponential decay", "parabolic"),
-                                                  fit_method = c("least squares", "robust", "robust slow")) {
+.powercepstrum_methods$subtract_trend <- function(.self, qstart_fit = 0.003,
+  qend_fit = 0.05,
+                                                  trend_type = c("straight",
+                                                    "exponential decay", "parabolic"),
+                                                  fit_method = c(
+                                                    "least squares", "robust", "robust slow")) {
   trend_type <- match.arg(trend_type)
   fit_method <- match.arg(fit_method)
   trend_map <- .trend_line_map
   fit_map <- .trend_fit_map
-  xptr <- .self$.cpp$subtract_trend_ptr(as.numeric(qstart_fit), as.numeric(qend_fit),
+  xptr <- .self$.cpp$subtract_trend_ptr(as.numeric(qstart_fit),
+    as.numeric(qend_fit),
                                         as.integer(trend_map[[trend_type]]),
                                         as.integer(fit_map[[fit_method]]))
   PowerCepstrum(.xptr = xptr)
 }
-.powercepstrum_methods$subtract_trend_inplace <- function(.self, qstart_fit = 0.001, qend_fit = 0.05,
-                                                          trend_type = c("straight", "exponential decay", "parabolic"),
-                                                          fit_method = c("least squares", "robust", "robust slow")) {
+.powercepstrum_methods$subtract_trend_inplace <- function(.self,
+  qstart_fit = 0.001, qend_fit = 0.05,
+                                                          trend_type = c(
+                                                            "straight", "exponential decay", "parabolic"),
+                                                          fit_method = c(
+                                                            "least squares", "robust", "robust slow")) {
   trend_type <- match.arg(trend_type)
   fit_method <- match.arg(fit_method)
   trend_map <- .trend_line_map
   fit_map <- .trend_fit_map
-  .self$.cpp$subtract_trend_inplace(as.numeric(qstart_fit), as.numeric(qend_fit),
+  .self$.cpp$subtract_trend_inplace(as.numeric(qstart_fit),
+    as.numeric(qend_fit),
                                     as.integer(trend_map[[trend_type]]),
                                     as.integer(fit_map[[fit_method]]))
   invisible(.self)
@@ -201,14 +242,18 @@ NULL
 
 # --- Export ---
 .powercepstrum_methods$as_matrix <- function(.self) .self$.cpp$as_matrix()
-.powercepstrum_methods$as_data_frame <- function(.self) .self$.cpp$as_data_frame()
-.powercepstrum_methods$save <- function(.self, path) .self$.cpp$save(as.character(path))
+.powercepstrum_methods$as_data_frame <- function(
+  .self) .self$.cpp$as_data_frame()
+.powercepstrum_methods$save <- function(.self,
+  path) .self$.cpp$save(as.character(path))
 .powercepstrum_methods$get_xptr <- function(.self) .self$.xptr
 
 # --- Print ---
 .powercepstrum_methods$print <- function(.self) {
   cat("<Praat PowerCepstrum>\n")
-  cat(sprintf("  Quefrency range: [%.4f, %.4f] s\n", .self$.cpp$get_qmin(), .self$.cpp$get_qmax()))
+  cat(
+    sprintf("  Quefrency range: [%.4f, %.4f] s\n", .self$.cpp$get_qmin(),
+      .self$.cpp$get_qmax()))
   cat(sprintf("  Bins: %d\n", .self$.cpp$get_n_bins()))
   invisible(.self)
 }
@@ -226,7 +271,8 @@ PowerCepstrum <- function(.xptr = NULL) {
   }
   pc_mod <- get_module("powercepstrum_module")
   cpp_pc <- pc_mod$RPowerCepstrum$new(.xptr)
-  structure(list(.xptr = .xptr, .cpp = cpp_pc), class = c("PowerCepstrum", "PraatObject"))
+  structure(list(.xptr = .xptr, .cpp = cpp_pc),
+    class = c("PowerCepstrum", "PraatObject"))
 }
 
 # ============================================================================
@@ -267,17 +313,25 @@ PowerCepstrum <- function(.xptr = NULL) {
 #'
 #' @section Query methods:
 #' \itemize{
-#'   \item \code{get_cpp_at_time(time, interpolation, qmin, qmax, fit_method, tolerance)} - cepstral peak prominence at a single time
-#'   \item \code{get_mean_cpp(from_time, to_time, qmin, qmax, fit_method, tolerance)} - mean cepstral peak prominence over a time range
-#'   \item \code{get_cpps(subtract_tilt, time_averaging_window, quefrency_averaging_window, pitch_floor, pitch_ceiling, delta_f0, interpolation, qstart_fit, qend_fit, trend_type, fit_method)} - CPPS, smoothed over time and quefrency
+#' \item \code{get_cpp_at_time(time, interpolation, qmin, qmax, fit_method,
+#  tolerance)} - cepstral peak prominence at a single time
+#' \item \code{get_mean_cpp(from_time, to_time, qmin, qmax, fit_method,
+#  tolerance)} - mean cepstral peak prominence over a time range
+#' \item \code{get_cpps(subtract_tilt, time_averaging_window,
+#  quefrency_averaging_window, pitch_floor, pitch_ceiling, delta_f0,
+#  interpolation, qstart_fit, qend_fit, trend_type, fit_method)} - CPPS,
+#  smoothed over time and quefrency
 #' }
 #'
 #' @section Transformation and export:
 #' \itemize{
-#'   \item \code{get_power_cepstrum_at_time(time)} - single frame as a PowerCepstrum object
-#'   \item \code{smooth(time_averaging_window, quefrency_averaging_window)} - smoothed copy as a new PowerCepstrogram
+#' \item \code{get_power_cepstrum_at_time(time)} - single frame as a
+#  PowerCepstrum object
+#' \item \code{smooth(time_averaging_window, quefrency_averaging_window)} -
+#  smoothed copy as a new PowerCepstrogram
 #'   \item \code{to_matrix()} - values as a Matrix object
-#'   \item \code{as_matrix()} - values as a plain numeric matrix (quefrency x time)
+#' \item \code{as_matrix()} - values as a plain numeric matrix (quefrency x
+#  time)
 #' }
 #'
 #' @param .xptr Not for direct use. External pointer to the underlying C++
@@ -297,23 +351,29 @@ NULL
 .powercepstrogram_methods <- new.env(hash = TRUE, parent = emptyenv())
 
 .powercepstrogram_methods$get_cpp_at_time <- function(.self, time,
-                                                      interpolation = c("linear", "cubic"),
+                                                      interpolation = c(
+                                                        "linear", "cubic"),
                                                       qmin = 0.003, qmax = 0.04,
-                                                      fit_method = c("straight", "exponential decay", "parabolic"),
+                                                      fit_method = c(
+                                                        "straight", "exponential decay", "parabolic"),
                                                       tolerance = 0.05) {
   interpolation <- match.arg(interpolation)
   fit_method <- match.arg(fit_method)
-  .powercepstrogram_get_cpp_at_time(.self$.xptr, time = time, interpolation = interpolation,
+  .powercepstrogram_get_cpp_at_time(.self$.xptr, time = time,
+    interpolation = interpolation,
                                     qmin = qmin, qmax = qmax, fit_method = fit_method,
                                     tolerance = tolerance)
 }
 
-.powercepstrogram_methods$get_mean_cpp <- function(.self, from_time = 0, to_time = 0,
+.powercepstrogram_methods$get_mean_cpp <- function(.self, from_time = 0,
+  to_time = 0,
                                                    qmin = 0.003, qmax = 0.04,
-                                                   fit_method = c("straight", "exponential decay", "parabolic"),
+                                                   fit_method = c("straight",
+                                                     "exponential decay", "parabolic"),
                                                    tolerance = 0.05) {
   fit_method <- match.arg(fit_method)
-  .powercepstrogram_get_mean_cpp(.self$.xptr, from_time = from_time, to_time = to_time,
+  .powercepstrogram_get_mean_cpp(.self$.xptr, from_time = from_time,
+    to_time = to_time,
                                  qmin = qmin, qmax = qmax, fit_method = fit_method,
                                  tolerance = tolerance)
 }
@@ -337,11 +397,14 @@ NULL
                                                quefrency_averaging_window = 0.0005,
                                                pitch_floor = 60, pitch_ceiling = 333.3,
                                                delta_f0 = 0.05,
-                                               interpolation = c("parabolic", "none", "cubic", "sinc70", "sinc700"),
+                                               interpolation = c("parabolic",
+                                                 "none", "cubic", "sinc70", "sinc700"),
                                                quefrency_range_start = 0.003,
                                                quefrency_range_end = 0.04,
-                                               trend_line_type = c("straight", "exponential decay"),
-                                               fit_method = c("robust", "least squares", "robust slow")) {
+                                               trend_line_type = c("straight",
+                                                 "exponential decay"),
+                                               fit_method = c("robust",
+                                                 "least squares", "robust slow")) {
   interpolation <- match.arg(interpolation)
   trend_line_type <- match.arg(trend_line_type)
   fit_method <- match.arg(fit_method)
@@ -361,7 +424,8 @@ NULL
                              fit_method = fit_map[[fit_method]])
 }
 
-.powercepstrogram_methods$smooth <- function(.self, time_averaging_window, quefrency_averaging_window) {
+.powercepstrogram_methods$smooth <- function(.self, time_averaging_window,
+  quefrency_averaging_window) {
   ptr <- .powercepstrogram_smooth(.self$.xptr,
                                   time_averaging_window = time_averaging_window,
                                   quefrency_averaging_window = quefrency_averaging_window)

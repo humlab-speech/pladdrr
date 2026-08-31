@@ -6,7 +6,8 @@
 # kVector_peakInterpolation
 .interp_map <- c("none" = 0, "parabolic" = 1, "cubic" = 2,
                  "sinc70" = 3, "sinc700" = 4)
-# kCepstrum_trendType as accepted by the CPPS APIs: LINEAR=1, EXPONENTIAL_DECAY=2
+# kCepstrum_trendType as accepted by the CPPS APIs: LINEAR=1,
+#  EXPONENTIAL_DECAY=2
 # (no "parabolic" here — that value belongs to .trend_line_map below)
 .cpps_trend_map <- c("straight" = 1, "exponential" = 2, "exponential decay" = 2)
 # Trend-line type for PowerCepstrum fit/subtract methods (parabolic allowed)

@@ -10,7 +10,10 @@ test_that("as.data.frame methods exist for core objects", {
     "as.data.frame.LFCC"
   )
   for (m in methods_expected) {
-    expect_true(is.function(tryCatch(get(m, envir = asNamespace("pladdrr")), error = function(e) NULL)),
+    expect_true(
+      is.function(
+        tryCatch(get(m, envir = asNamespace("pladdrr")),
+          error = function(e) NULL)),
                 info = paste0("Missing S3 method: ", m))
   }
 })
@@ -23,7 +26,8 @@ test_that("print methods exist for core objects", {
     "print.Intensity"
   )
   for (m in methods_expected) {
-    fn <- tryCatch(get(m, envir = asNamespace("pladdrr")), error = function(e) NULL)
+    fn <- tryCatch(get(m, envir = asNamespace("pladdrr")),
+      error = function(e) NULL)
     expect_true(is.function(fn), info = paste0("Missing S3 method: ", m))
   }
 })
@@ -41,14 +45,16 @@ test_that("plot methods exist for core objects", {
     "plot.TextGrid"
   )
   for (m in methods_expected) {
-    fn <- tryCatch(get(m, envir = asNamespace("pladdrr")), error = function(e) NULL)
+    fn <- tryCatch(get(m, envir = asNamespace("pladdrr")),
+      error = function(e) NULL)
     expect_true(is.function(fn), info = paste0("Missing S3 method: ", m))
   }
 })
 
 test_that("as.data.frame.PointProcess works", {
 
-  sound <- Sound$create_tone(frequency = 440, duration = 0.5, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 440, duration = 0.5,
+    sampling_rate = 16000)
   pp <- sound$to_point_process_periodic_cc()
   df <- as.data.frame(pp)
   expect_s3_class(df, "data.frame")
@@ -88,7 +94,8 @@ test_that("summary.praat_sound prints amplitude statistics", {
   expect_identical(ret$value, x)
 })
 
-test_that("as.data.frame.praat_sound is deprecated and returns time/amplitude columns", {
+test_that(
+  "as.data.frame.praat_sound is deprecated and returns time/amplitude columns", {
   x <- make_legacy_sound()
   # Test that warning is produced
   expect_warning(as.data.frame(x), "deprecated")
@@ -109,7 +116,8 @@ test_that("as.data.frame.praat_sound validates its input", {
 })
 
 test_that("as.data.frame.Sound delegates to Sound$as_data_frame()", {
-  sound <- Sound$create_tone(frequency = 220, duration = 0.1, sampling_rate = 8000)
+  sound <- Sound$create_tone(frequency = 220, duration = 0.1,
+    sampling_rate = 8000)
   df <- as.data.frame(sound)
   expect_s3_class(df, "data.frame")
   expect_true("time" %in% names(df))
@@ -171,11 +179,13 @@ test_that("summary.praat_formant reports per-formant stats across the loop", {
   expect_identical(ret$value, x)
 })
 
-test_that("summary.praat_formant reports no valid measurements for an all-NA formant", {
+test_that(
+  "summary.praat_formant reports no valid measurements for an all-NA formant", {
   x <- make_legacy_formant(n_formants = 2, all_na_formant = 2)
   out <- capture.output(summary(x))
   f2_idx <- grep("Formant F2:", out, fixed = TRUE)
-  expect_true(any(grepl("No valid measurements", out[f2_idx:(f2_idx + 2)], fixed = TRUE)))
+  expect_true(
+    any(grepl("No valid measurements", out[f2_idx:(f2_idx + 2)], fixed = TRUE)))
 })
 
 test_that("as.data.frame.praat_formant returns the values data.frame", {
@@ -200,7 +210,8 @@ test_that("print.praat_intensity reports 'no' when mean not subtracted", {
   expect_output(print(x), "Mean subtracted: no")
 })
 
-test_that("summary.praat_intensity reports statistics when valid frames exist", {
+test_that(
+  "summary.praat_intensity reports statistics when valid frames exist", {
   x <- make_legacy_intensity()
   expect_output(summary(x), "Intensity statistics:")
   expect_output(summary(x), "Mean: .* dB")
@@ -222,11 +233,13 @@ test_that("as.data.frame.praat_intensity returns the values data.frame", {
 })
 
 test_that("as.data.frame.Formant delegates and forwards ... (max_formants)", {
-  sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 220, duration = 0.3,
+    sampling_rate = 16000)
   formant <- sound$to_formant_burg()
   df_default <- as.data.frame(formant)
   expect_s3_class(df_default, "data.frame")
-  expect_true(all(c("time", "formant", "frequency", "bandwidth") %in% names(df_default)))
+  expect_true(
+    all(c("time", "formant", "frequency", "bandwidth") %in% names(df_default)))
 
   df_limited <- as.data.frame(formant, max_formants = 2)
   expect_s3_class(df_limited, "data.frame")
@@ -234,15 +247,18 @@ test_that("as.data.frame.Formant delegates and forwards ... (max_formants)", {
 })
 
 test_that("as.data.frame.Intensity delegates to Intensity$as_data_frame()", {
-  sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 220, duration = 0.3,
+    sampling_rate = 16000)
   intensity <- sound$to_intensity()
   df <- as.data.frame(intensity)
   expect_s3_class(df, "data.frame")
-  expect_equal(df, intensity$as_data_frame(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(df, intensity$as_data_frame(),
+    tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("as.data.frame.Pitch delegates to Pitch$as_data_frame()", {
-  sound <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 150, duration = 0.3,
+    sampling_rate = 16000)
   pitch <- sound$to_pitch()
   df <- as.data.frame(pitch)
   expect_s3_class(df, "data.frame")
@@ -250,7 +266,8 @@ test_that("as.data.frame.Pitch delegates to Pitch$as_data_frame()", {
 })
 
 test_that("as.data.frame.MFCC delegates to MFCC$as_data_frame()", {
-  sound <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 150, duration = 0.3,
+    sampling_rate = 16000)
   mfcc <- sound$to_mel_spectrogram()$to_mfcc()
   df <- as.data.frame(mfcc)
   expect_s3_class(df, "data.frame")
@@ -258,7 +275,8 @@ test_that("as.data.frame.MFCC delegates to MFCC$as_data_frame()", {
 })
 
 test_that("as.data.frame.LFCC delegates to LFCC$as_data_frame()", {
-  sound <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 150, duration = 0.3,
+    sampling_rate = 16000)
   lfcc <- sound$to_lpc_burg()$to_lfcc()
   df <- as.data.frame(lfcc)
   expect_s3_class(df, "data.frame")

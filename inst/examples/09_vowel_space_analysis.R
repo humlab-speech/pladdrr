@@ -4,9 +4,11 @@
 
 library(speaker)
 
-cat("================================================================================\n")
+cat(
+  "================================================================================\n")
 cat("Example 9: Vowel Space Analysis Pipeline\n")
-cat("================================================================================\n\n")
+cat(
+  "================================================================================\n\n")
 
 cat("This example demonstrates:\n")
 cat("  • Complete vowel extraction and analysis workflow\n")
@@ -60,7 +62,8 @@ vowel_data <- data.frame(
   start = c(0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5),
   end = c(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0),
   vowel = c("i", "e", "a", "o", "u", "i", "a", "e", "u"),
-  word = c("beet", "bait", "bat", "boat", "boot", "beat", "father", "bet", "boot"),
+  word = c("beet", "bait", "bat", "boat", "boot", "beat", "father", "bet",
+    "boot"),
   stringsAsFactors = FALSE
 )
 
@@ -112,7 +115,9 @@ measurements <- list()
 speaker_gender <- "male"
 max_formant <- switch(speaker_gender, female = 5500, male = 5000, 8000)
 
-cat(sprintf("Using formant ceiling: %d Hz (%s speaker)\n\n", max_formant, speaker_gender))
+cat(
+  sprintf("Using formant ceiling: %d Hz (%s speaker)\n\n", max_formant,
+    speaker_gender))
 
 # Process each vowel token
 for (i in seq_len(nrow(vowel_data))) {
@@ -192,7 +197,9 @@ for (i in seq_len(nrow(vowel_data))) {
     )
     
     if (label == "midpoint") {  # Only print midpoint for brevity
-      cat(sprintf("  → Midpoint: F1=%.0f Hz, F2=%.0f Hz, F3=%.0f Hz\n", f1, f2, f3))
+      cat(
+        sprintf("  → Midpoint: F1=%.0f Hz, F2=%.0f Hz, F3=%.0f Hz\n", f1, f2,
+          f3))
     }
   }
   
@@ -202,7 +209,9 @@ for (i in seq_len(nrow(vowel_data))) {
 # Combine all measurements
 formant_data <- do.call(rbind, measurements)
 
-cat(sprintf("✓ Extracted formants for %d tokens × %d time points = %d measurements\n\n", 
+cat(
+  sprintf(
+    "✓ Extracted formants for %d tokens × %d time points = %d measurements\n\n", 
             nrow(vowel_data), length(time_points), nrow(formant_data)))
 
 # ============================================================================
@@ -213,7 +222,8 @@ cat("\nPart 3: Formant normalization\n")
 cat(strrep("=", 80), "\n\n")
 
 cat("Applying Lobanov (z-score) normalization...\n")
-cat("Formula: F'[vowel, formant] = (F[vowel, formant] - mean[formant]) / sd[formant]\n\n")
+cat(
+  "Formula: F'[vowel, formant] = (F[vowel, formant] - mean[formant]) / sd[formant]\n\n")
 
 # Filter to midpoint measurements for normalization
 midpoint_data <- subset(formant_data, measurement_point == "midpoint")
@@ -238,7 +248,9 @@ midpoint_data$f2_norm <- (midpoint_data$f2 - mean_f2) / sd_f2
 midpoint_data$f3_norm <- (midpoint_data$f3 - mean_f3) / sd_f3
 
 cat("Sample of normalized values:\n")
-print(head(midpoint_data[, c("vowel", "word", "f1", "f1_norm", "f2", "f2_norm")], 5))
+print(
+  head(midpoint_data[, c("vowel", "word", "f1", "f1_norm", "f2", "f2_norm")],
+    5))
 cat("\n")
 
 # ============================================================================
@@ -302,7 +314,8 @@ if (all(c("i", "a", "u") %in% vowel_stats$vowel)) {
   u_f2 <- vowel_stats$f2[vowel_stats$vowel == "u"]
   
   # Triangle area using cross product
-  area <- abs((i_f1 * (a_f2 - u_f2) + a_f1 * (u_f2 - i_f2) + u_f1 * (i_f2 - a_f2)) / 2)
+  area <- abs(
+    (i_f1 * (a_f2 - u_f2) + a_f1 * (u_f2 - i_f2) + u_f1 * (i_f2 - a_f2)) / 2)
   
   cat(sprintf("Vowel space area (/i/-/a/-/u/ triangle): %.0f Hz²\n", area))
   cat("(Larger area = more dispersed vowel space)\n\n")
@@ -427,4 +440,5 @@ cat("  •", trajectory_file, "\n\n")
 cat("For related examples:\n")
 cat("  • inst/examples/02_voice_quality.R - Voice quality metrics\n")
 cat("  • inst/examples/05_complete_workflow.R - General acoustic analysis\n")
-cat("  • inst/examples/07_comprehensive_phonetic_analysis.R - Integrated workflow\n\n")
+cat(
+  "  • inst/examples/07_comprehensive_phonetic_analysis.R - Integrated workflow\n\n")

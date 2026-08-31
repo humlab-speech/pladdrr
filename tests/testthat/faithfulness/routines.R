@@ -55,13 +55,16 @@ FAITHFULNESS_ROUTINES <- list(
     rationale   = "Pitch CC pipeline; FP noise from FFT + interpolation. 0.0001 Hz is below any phonetic threshold.",
     praat_script = '
       sound = Read from file: "{path}"
-      pitch = To Pitch (cc): 0.0, 75, 15, "no", 0.03, 0.45, 0.01, 0.35, 0.14, 600
+      pitch = To Pitch (
+        cc): 0.0, 75, 15, "no", 0.03, 0.45, 0.01, 0.35, 0.14, 600
       mean_f0 = Get mean: 0, 0, "Hertz"
       writeInfoLine: mean_f0
     ',
     parse_praat = function(lines) {
       v <- as.numeric(tail(lines, 1))
-      if (is.na(v) || grepl("undefined", tail(lines, 1), ignore.case = TRUE, fixed = TRUE)) NA_real_ else v
+      if (
+        is.na(v) || grepl("undefined", tail(lines, 1), ignore.case = TRUE,
+          fixed = TRUE)) NA_real_ else v
     },
     pladdrr = function(path) {
       s <- pladdrr::Sound(path)
@@ -107,7 +110,9 @@ FAITHFULNESS_ROUTINES <- list(
     ',
     parse_praat = function(lines) {
       v <- as.numeric(tail(lines, 1))
-      if (is.na(v) || grepl("undefined", tail(lines, 1), ignore.case = TRUE, fixed = TRUE)) NA_real_ else v
+      if (
+        is.na(v) || grepl("undefined", tail(lines, 1), ignore.case = TRUE,
+          fixed = TRUE)) NA_real_ else v
     },
     pladdrr = function(path) {
       s <- pladdrr::Sound(path)
@@ -125,7 +130,8 @@ FAITHFULNESS_ROUTINES <- list(
     name        = "CPPS (calculate_cpps_ultra)",
     fixture     = "extdata/test.wav",
     tolerance   = 5e-3,
-    rationale   = paste("CPPS dB. 0.005 dB covers the ~0.003 dB drift traced to the",
+    rationale   = paste(
+      "CPPS dB. 0.005 dB covers the ~0.003 dB drift traced to the",
                         "pocketfft-for-FFTPACK substitution (PRAAT_MODIFICATIONS v4.8.12):",
                         "~1e-11 relative in the cepstrogram, amplified by log + peak-pick +",
                         "robust fit. Three orders of magnitude below any clinical threshold."),
@@ -150,13 +156,16 @@ FAITHFULNESS_ROUTINES <- list(
     rationale   = "Pitch AC pipeline; FP noise from autocorrelation + interpolation.",
     praat_script = '
       sound = Read from file: "{path}"
-      pitch = To Pitch (ac): 0.0, 75, 15, "no", 0.03, 0.45, 0.01, 0.35, 0.14, 600
+      pitch = To Pitch (
+        ac): 0.0, 75, 15, "no", 0.03, 0.45, 0.01, 0.35, 0.14, 600
       mean_f0 = Get mean: 0, 0, "Hertz"
       writeInfoLine: mean_f0
     ',
     parse_praat = function(lines) {
       v <- as.numeric(tail(lines, 1))
-      if (is.na(v) || grepl("undefined", tail(lines, 1), ignore.case = TRUE, fixed = TRUE)) NA_real_ else v
+      if (
+        is.na(v) || grepl("undefined", tail(lines, 1), ignore.case = TRUE,
+          fixed = TRUE)) NA_real_ else v
     },
     pladdrr = function(path) {
       s <- pladdrr::Sound(path)
@@ -184,11 +193,14 @@ FAITHFULNESS_ROUTINES <- list(
     ',
     parse_praat = function(lines) {
       v <- as.numeric(tail(lines, 1))
-      if (is.na(v) || grepl("undefined", tail(lines, 1), ignore.case = TRUE, fixed = TRUE)) NA_real_ else v
+      if (
+        is.na(v) || grepl("undefined", tail(lines, 1), ignore.case = TRUE,
+          fixed = TRUE)) NA_real_ else v
     },
     pladdrr = function(path) {
       s <- pladdrr::Sound(path)
-      p <- s$to_pitch_shs(time_step = 0.01, pitch_floor = 75, max_frequency = 1250,
+      p <- s$to_pitch_shs(time_step = 0.01, pitch_floor = 75,
+        max_frequency = 1250,
                           max_candidates = 15, compression_factor = 0.84,
                           pitch_ceiling = 600, n_points_per_octave = 48)
       p$get_mean(unit = "hertz")
@@ -200,7 +212,8 @@ FAITHFULNESS_ROUTINES <- list(
     name        = "Intensity -> mean (energy-averaged, dB)",
     fixture     = "extdata/test.wav",
     tolerance   = 1e-5,
-    rationale   = paste("Energy averaging converts to the linear domain and back",
+    rationale   = paste(
+      "Energy averaging converts to the linear domain and back",
                         "(mean of 10^(x/10), then 10*log10), so it carries more FP",
                         "amplification than the dB-averaged query above, which holds",
                         "at 1e-6. Observed |D| ~ 7.7e-6 dB on ~85 dB is ~4 ulp."),
@@ -213,7 +226,8 @@ FAITHFULNESS_ROUTINES <- list(
     parse_praat = function(lines) as.numeric(tail(lines, 1)),
     pladdrr = function(path) {
       s <- pladdrr::Sound(path)
-      i <- s$to_intensity(minimum_pitch = 100, time_step = 0, subtract_mean = TRUE)
+      i <- s$to_intensity(minimum_pitch = 100, time_step = 0,
+        subtract_mean = TRUE)
       i$get_mean(averaging_method = "energy")
     }
   ),
@@ -223,7 +237,8 @@ FAITHFULNESS_ROUTINES <- list(
     name        = "Formant (keepAll) -> F1@0.5s (Hz)",
     fixture     = "extdata/test.wav",
     tolerance   = 1e-3,
-    rationale   = paste("KeepAll LPC variant; same precision expectation as Burg.",
+    rationale   = paste(
+      "KeepAll LPC variant; same precision expectation as Burg.",
                         "On the 440 Hz tone fixture both sides return 0 Hz for F1:",
                         "a pure tone has no formant structure, so this row guards the",
                         "degenerate-input path rather than a formant value."),
@@ -235,7 +250,9 @@ FAITHFULNESS_ROUTINES <- list(
     ',
     parse_praat = function(lines) {
       v <- as.numeric(tail(lines, 1))
-      if (is.na(v) || grepl("undefined", tail(lines, 1), ignore.case = TRUE, fixed = TRUE)) NA_real_ else v
+      if (
+        is.na(v) || grepl("undefined", tail(lines, 1), ignore.case = TRUE,
+          fixed = TRUE)) NA_real_ else v
     },
     pladdrr = function(path) {
       s <- pladdrr::Sound(path)
@@ -254,7 +271,8 @@ FAITHFULNESS_ROUTINES <- list(
     name        = "Harmonicity (cc) -> mean (dB)",
     fixture     = "extdata/test.wav",
     tolerance   = 1e-4,
-    rationale   = paste("HNR runs through the pitch autocorrelation machinery, so it",
+    rationale   = paste(
+      "HNR runs through the pitch autocorrelation machinery, so it",
                         "inherits the pocketfft substitution's ~1e-11 relative FFT",
                         "drift plus interpolation noise. Observed |D| ~ 8.2e-5 dB on",
                         "~92 dB, i.e. ~9e-7 relative - the loosest DSP row in the",
@@ -275,14 +293,17 @@ FAITHFULNESS_ROUTINES <- list(
   ),
 
   # Spectrogram power at a (time, frequency) point.
-  # This row exists because the assessment measured a 24% relative deviation here
-  # and nothing in the suite caught it. Keep the tolerance tight: if it fails, that
+  # This row exists because the assessment measured a 24% relative deviation
+  #  here
+  # and nothing in the suite caught it. Keep the tolerance tight: if it fails,
+  #  that
   # is the finding, not a reason to widen it.
   list(
     name        = "Spectrogram -> power at (0.5 s, 1000 Hz)",
     fixture     = "extdata/test.wav",
     tolerance   = 1e-9,
-    rationale   = paste("Direct cell query on a Gaussian-window spectrogram; no",
+    rationale   = paste(
+      "Direct cell query on a Gaussian-window spectrogram; no",
                         "robust fitting or peak picking to amplify FP noise, so it",
                         "should agree far below 1e-9."),
     praat_script = '
@@ -294,7 +315,8 @@ FAITHFULNESS_ROUTINES <- list(
     parse_praat = function(lines) as.numeric(tail(lines, 1)),
     pladdrr = function(path) {
       s <- pladdrr::Sound(path)
-      s$to_spectrogram(0.005, 5000, 0.002, 20, "Gaussian")$get_power_at(0.5, 1000)
+      s$to_spectrogram(0.005, 5000, 0.002, 20, "Gaussian")$get_power_at(0.5,
+        1000)
     }
   ),
 
@@ -303,7 +325,8 @@ FAITHFULNESS_ROUTINES <- list(
     name        = "PointProcess (cc) -> jitter local",
     fixture     = "extdata/test.wav",
     tolerance   = 1e-9,
-    rationale   = paste("Jitter is a ratio of period differences; absolute values are",
+    rationale   = paste(
+      "Jitter is a ratio of period differences; absolute values are",
                         "~1e-6, so a 1e-9 absolute tolerance is ~1e-3 relative and",
                         "still tight enough to catch a changed period set."),
     praat_script = '
@@ -315,7 +338,8 @@ FAITHFULNESS_ROUTINES <- list(
     parse_praat = function(lines) as.numeric(tail(lines, 1)),
     pladdrr = function(path) {
       s <- pladdrr::Sound(path)
-      s$to_point_process_periodic_cc(75, 600)$get_jitter_local(0, 0, 0.0001, 0.02, 1.3)
+      s$to_point_process_periodic_cc(75, 600)$get_jitter_local(0, 0, 0.0001,
+        0.02, 1.3)
     }
   ),
 

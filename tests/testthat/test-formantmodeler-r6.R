@@ -22,7 +22,9 @@ test_that("FormantModeler per-track fit-quality queries work", {
   expect_gte(modeler$get_number_of_parameters(1), 1)
   expect_gte(modeler$get_number_of_invalid_data_points(1), 0)
   expect_type(modeler$get_coefficient_of_determination(1, 3), "double")
-  expect_equal(modeler$get_r_squared(1, 3), modeler$get_coefficient_of_determination(1, 3), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(modeler$get_r_squared(1, 3),
+    modeler$get_coefficient_of_determination(1,
+      3), tolerance = sqrt(.Machine$double.eps))
   expect_type(modeler$get_standard_deviation(1), "double")
   expect_type(modeler$get_residual_sum_of_squares(1), "double")
   expect_type(modeler$get_stress(1, 3), "double")
@@ -50,7 +52,8 @@ test_that("FormantModeler per-track value queries and refit", {
   # get_track_model_values(track) returns one modeled value per data point
   # (src/modules/formantmodeler_module.cpp loops i = 1..n_data_points) --
   # cross-check its length against the data-point count.
-  expect_length(modeler$get_track_model_values(1), modeler$get_number_of_data_points())
+  expect_length(modeler$get_track_model_values(1),
+    modeler$get_number_of_data_points())
 
   # process_outliers() is a pure function: it returns a *new* FormantModeler
   # (verified via identical() against the original -- FALSE), it does not
@@ -75,7 +78,8 @@ test_that("FormantModeler to_formant, as_data_frame, get_info, save", {
   df <- modeler$as_data_frame()
   expect_s3_class(df, "data.frame")
   expect_true(all(c("time", "F1_original", "F1_modeled") %in% names(df)))
-  expect_equal(nrow(df), modeler$get_number_of_data_points(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(nrow(df), modeler$get_number_of_data_points(),
+    tolerance = sqrt(.Machine$double.eps))
 
   # as_data_frame()'s F1_original column and get_data_point_value(1, i) both
   # read FormantModeler_getDataPointValue() per data point (same C++ call in
@@ -85,7 +89,8 @@ test_that("FormantModeler to_formant, as_data_frame, get_info, save", {
     function(i) modeler$get_data_point_value(1, i),
     numeric(1)
   )
-  expect_equal(df$F1_original, original_via_getter, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(df$F1_original, original_via_getter,
+    tolerance = sqrt(.Machine$double.eps))
 
   # get_info() returns a *list* of summary fields (xmin, xmax, n_tracks,
   # n_data_points, track_r2, track_sd, track_parameters) -- not a character

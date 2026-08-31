@@ -7,10 +7,12 @@ library(pladdrr)
 
 tier_fixtures <- list(
   # AmplitudeTier has no direct sound$to_amplitude_tier(); built from a
-  # PointProcess, per amplitude_tier_from_point_process() (R/amplitudetier-wrapper.R:183).
+  # PointProcess, per amplitude_tier_from_point_process()
+  #  (R/amplitudetier-wrapper.R:183).
   AmplitudeTier = function() {
     sound <- generate_sine_wave(220, 0.2, sampling_rate = 16000)
-    pp <- sound$to_point_process_periodic_cc(pitch_floor = 75, pitch_ceiling = 500)
+    pp <- sound$to_point_process_periodic_cc(pitch_floor = 75,
+      pitch_ceiling = 500)
     amplitude_tier_from_point_process(pp, sound)
   },
   DurationTier = function() {
@@ -19,7 +21,8 @@ tier_fixtures <- list(
     dt$add_point(0.7, 0.8)
     dt
   },
-  # IntensityTier: intensity$down_to_intensity_tier() (R/intensity-wrapper.R:116),
+  # IntensityTier: intensity$down_to_intensity_tier()
+  #  (R/intensity-wrapper.R:116),
   # not to_intensity_tier() (that name lives on AmplitudeTier instead).
   IntensityTier = function() {
     sound <- generate_sine_wave(220, 0.2, sampling_rate = 16000)
@@ -58,7 +61,8 @@ for (cls in names(tier_fixtures)) {
       expect_true("time" %in% names(df))
     })
 
-    test_that(paste(class_name, "from_time/to_time filtering narrows the range"), {
+    test_that(
+      paste(class_name, "from_time/to_time filtering narrows the range"), {
       obj <- make()
       full <- as.data.frame(obj)
       skip_if(nrow(full) < 2, "not enough points to test filtering")

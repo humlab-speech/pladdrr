@@ -4,7 +4,8 @@
 # unknown-method branches, S3 print/convert methods, matrix_create, and the
 # praat-interpreter helpers.
 
-snd <- function() Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+snd <- function() Sound$create_tone(frequency = 220, duration = 0.3,
+  sampling_rate = 16000)
 
 test_that("wrapper constructors validate their xptr", {
   expect_error(Intensity(.xptr = NULL), "to_intensity")

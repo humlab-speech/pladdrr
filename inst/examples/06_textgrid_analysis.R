@@ -3,15 +3,19 @@
 
 library(speaker)
 
-cat("================================================================================\n")
+cat(
+  "================================================================================\n")
 cat("Example 6: TextGrid Analysis and Manipulation\n")
-cat("================================================================================\n\n")
+cat(
+  "================================================================================\n\n")
 
 # 1. Load TextGrid file
 cat("1. Loading TextGrid from file...\n")
-tg_file <- system.file("extdata", "benchmarkdata1min.TextGrid", package = "speaker")
+tg_file <- system.file("extdata", "benchmarkdata1min.TextGrid",
+  package = "speaker")
 if (!file.exists(tg_file)) {
-  stop("TextGrid file not found. Please ensure inst/extdata/benchmarkdata1min.TextGrid exists.")
+  stop(
+    "TextGrid file not found. Please ensure inst/extdata/benchmarkdata1min.TextGrid exists.")
 }
 
 tg <- TextGrid$new(tg_file)
@@ -48,7 +52,8 @@ cat("   Total intervals:", n_intervals, "\n")
 
 # Sample first 10 intervals
 cat("\n   First 10 intervals:\n")
-cat("   ", sprintf("%-6s %-10s %-10s %-20s\n", "Index", "Start", "End", "Label"))
+cat("   ",
+  sprintf("%-6s %-10s %-10s %-20s\n", "Index", "Start", "End", "Label"))
 cat("   ", strrep("-", 50), "\n")
 
 for (i in seq_len(min(10, n_intervals))) {
@@ -166,7 +171,8 @@ cat("9. TextGrid modification example...\n")
 cat("   Creating a copy for demonstration...\n")
 
 # Create a new simple TextGrid for modification demo
-tg_new <- TextGrid$create(xmin = 0, xmax = 5, tier_names = "demo", point_tiers = FALSE)
+tg_new <- TextGrid$create(xmin = 0, xmax = 5, tier_names = "demo",
+  point_tiers = FALSE)
 cat("   ✓ Created new TextGrid (0-5 seconds)\n")
 cat("   Duration:", tg_new$get_total_duration(), "seconds\n")
 cat("   Tiers:", tg_new$get_number_of_tiers(), "\n")
@@ -179,10 +185,13 @@ tg_new$insert_boundary(tier_number = 1, time = 4.0)
 cat("   ✓ Added 3 boundaries\n")
 
 # Set labels
-tg_new$set_interval_label(tier_number = 1, interval_number = 1, label = "silence")
-tg_new$set_interval_label(tier_number = 1, interval_number = 2, label = "speech")
+tg_new$set_interval_label(tier_number = 1, interval_number = 1,
+  label = "silence")
+tg_new$set_interval_label(tier_number = 1, interval_number = 2,
+  label = "speech")
 tg_new$set_interval_label(tier_number = 1, interval_number = 3, label = "pause")
-tg_new$set_interval_label(tier_number = 1, interval_number = 4, label = "speech")
+tg_new$set_interval_label(tier_number = 1, interval_number = 4,
+  label = "speech")
 cat("   ✓ Set interval labels\n")
 
 cat("\n   Modified TextGrid structure:\n")
@@ -207,9 +216,11 @@ cat("   ✓ Successfully reloaded TextGrid\n")
 cat("   Verified intervals:", tg_reloaded$get_number_of_intervals(1), "\n")
 
 cat("\n")
-cat("================================================================================\n")
+cat(
+  "================================================================================\n")
 cat("Example 6 Complete!\n")
-cat("================================================================================\n")
+cat(
+  "================================================================================\n")
 cat("\nKey capabilities demonstrated:\n")
 cat("  ✓ Load TextGrid files\n")
 cat("  ✓ Query tier structure and properties\n")
@@ -220,5 +231,6 @@ cat("  ✓ Calculate duration statistics\n")
 cat("  ✓ Export to R data frames\n")
 cat("  ✓ Create and modify TextGrids\n")
 cat("  ✓ Save TextGrids to files\n")
-cat("\nThis example shows how speaker provides comprehensive TextGrid support\n")
+cat(
+  "\nThis example shows how speaker provides comprehensive TextGrid support\n")
 cat("for annotation, analysis, and manipulation workflows.\n")

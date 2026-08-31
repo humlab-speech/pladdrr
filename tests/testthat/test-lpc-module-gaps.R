@@ -21,7 +21,8 @@
 # in this codebase: check both entry points before assuming a missed
 # line is dead.
 
-test_that("RLPC getters not exposed via LPC$ dispatch table work via $.cpp directly", {
+test_that(
+  "RLPC getters not exposed via LPC$ dispatch table work via $.cpp directly", {
   sound <- generate_sine_wave(150, 0.3, sampling_rate = 16000)
   lpc <- sound$to_lpc_burg()
 
@@ -31,18 +32,24 @@ test_that("RLPC getters not exposed via LPC$ dispatch table work via $.cpp direc
   expect_type(lpc$.cpp$get_xmin(), "double")
   expect_type(lpc$.cpp$get_xmax(), "double")
   expect_gt(lpc$.cpp$get_xmax(), lpc$.cpp$get_xmin())
-  expect_equal(lpc$.cpp$get_duration(), lpc$.cpp$get_xmax() - lpc$.cpp$get_xmin(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(lpc$.cpp$get_duration(),
+    lpc$.cpp$get_xmax(
+      ) - lpc$.cpp$get_xmin(), tolerance = sqrt(.Machine$double.eps))
   expect_type(lpc$.cpp$get_x1(), "double")
   expect_type(lpc$.cpp$get_sampling_frequency(), "double")
-  expect_equal(lpc$.cpp$get_sampling_frequency(), 1 / lpc$.cpp$get_sampling_period(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(lpc$.cpp$get_sampling_frequency(),
+    1 / lpc$.cpp$get_sampling_period(), tolerance = sqrt(.Machine$double.eps))
 
   # get_nx/get_dx are the underlying implementations behind the R6-exposed
   # aliases get_number_of_frames()/get_time_step() -- cross check.
-  expect_equal(lpc$.cpp$get_nx(), lpc$get_number_of_frames(), tolerance = sqrt(.Machine$double.eps))
-  expect_equal(lpc$.cpp$get_dx(), lpc$get_time_step(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(lpc$.cpp$get_nx(), lpc$get_number_of_frames(),
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(lpc$.cpp$get_dx(), lpc$get_time_step(),
+    tolerance = sqrt(.Machine$double.eps))
 })
 
-test_that("RLPC$get_num_coefficients_at_frame works (no R6-dispatch counterpart)", {
+test_that(
+  "RLPC$get_num_coefficients_at_frame works (no R6-dispatch counterpart)", {
   sound <- generate_sine_wave(150, 0.3, sampling_rate = 16000)
   lpc <- sound$to_lpc_burg(prediction_order = 10)
 
@@ -50,10 +57,12 @@ test_that("RLPC$get_num_coefficients_at_frame works (no R6-dispatch counterpart)
   expect_type(n_coef, "integer")
   expect_gte(n_coef, 1)
   # Should agree with the length of the coefficient vector for that frame.
-  expect_equal(n_coef, length(lpc$get_coefficients_at_frame(1)), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(n_coef, length(lpc$get_coefficients_at_frame(1)),
+    tolerance = sqrt(.Machine$double.eps))
 })
 
-test_that("RLPC frame/time conversion methods work (no R6-dispatch counterpart)", {
+test_that(
+  "RLPC frame/time conversion methods work (no R6-dispatch counterpart)", {
   sound <- generate_sine_wave(150, 0.3, sampling_rate = 16000)
   lpc <- sound$to_lpc_burg()
 
@@ -71,7 +80,8 @@ test_that("RLPC frame/time conversion methods work (no R6-dispatch counterpart)"
   expect_gt(t_last, t1)
 })
 
-test_that("RLPC$get_gain_at_frame / get_coefficients_at_frame reject out-of-range frames", {
+test_that(
+  "RLPC$get_gain_at_frame / get_coefficients_at_frame reject out-of-range frames", {
   sound <- generate_sine_wave(150, 0.3, sampling_rate = 16000)
   lpc <- sound$to_lpc_burg()
   n_frames <- lpc$get_number_of_frames()
@@ -81,11 +91,13 @@ test_that("RLPC$get_gain_at_frame / get_coefficients_at_frame reject out-of-rang
   expect_error(lpc$.cpp$get_gain_at_frame(0L), "out of range")
   expect_error(lpc$.cpp$get_gain_at_frame(n_frames + 1L), "out of range")
   expect_error(lpc$.cpp$get_coefficients_at_frame(0L), "out of range")
-  expect_error(lpc$.cpp$get_coefficients_at_frame(n_frames + 1L), "out of range")
+  expect_error(lpc$.cpp$get_coefficients_at_frame(n_frames + 1L),
+    "out of range")
   expect_error(lpc$.cpp$get_num_coefficients_at_frame(0L), "out of range")
 })
 
-test_that("RLPC$to_spectrum_ptr / to_matrix_ptr work directly (R6 routes through lpc_wrappers.cpp instead)", {
+test_that(
+  "RLPC$to_spectrum_ptr / to_matrix_ptr work directly (R6 routes through lpc_wrappers.cpp instead)", {
   sound <- generate_sine_wave(150, 0.3, sampling_rate = 16000)
   lpc <- sound$to_lpc_burg()
 
@@ -100,7 +112,8 @@ test_that("RLPC$to_spectrum_ptr / to_matrix_ptr work directly (R6 routes through
   expect_s3_class(mat, "Matrix")
 })
 
-test_that("RLPC$filter_inverse_ptr / filter_inverse_at_time_ptr work directly on a raw Sound xptr", {
+test_that(
+  "RLPC$filter_inverse_ptr / filter_inverse_at_time_ptr work directly on a raw Sound xptr", {
   # R6's LPC$filter_inverse(sound) is broken (documented in test-lpc-r6.R):
   # .lpc_sound_filter_inverse_r6() expects an R6-shaped S4 object and
   # pladdrr's Sound() is a plain S3 list. RLPC$filter_inverse_ptr(), by
@@ -120,7 +133,8 @@ test_that("RLPC$filter_inverse_ptr / filter_inverse_at_time_ptr work directly on
   expect_s3_class(source_sound2, "Sound")
 })
 
-test_that("RLPC$as_data_frame / get_info / save work directly (no R6-dispatch counterpart)", {
+test_that(
+  "RLPC$as_data_frame / get_info / save work directly (no R6-dispatch counterpart)", {
   sound <- generate_sine_wave(150, 0.3, sampling_rate = 16000)
   lpc <- sound$to_lpc_burg(prediction_order = 8)
   n_frames <- lpc$get_number_of_frames()
@@ -129,7 +143,8 @@ test_that("RLPC$as_data_frame / get_info / save work directly (no R6-dispatch co
   expect_s3_class(df, "data.frame")
   expect_equal(nrow(df), n_frames, tolerance = sqrt(.Machine$double.eps))
   expect_setequal(names(df), c("time", "gain", "n_coefficients"))
-  expect_equal(df$gain, lpc$get_all_gains(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(df$gain, lpc$get_all_gains(),
+    tolerance = sqrt(.Machine$double.eps))
 
   info <- lpc$.cpp$get_info()
   expect_type(info, "list")
@@ -138,7 +153,8 @@ test_that("RLPC$as_data_frame / get_info / save work directly (no R6-dispatch co
     c("xmin", "xmax", "nx", "dx", "x1", "sampling_period", "max_n_coefficients")
   )
   expect_equal(info$nx, n_frames, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(info$max_n_coefficients, lpc$get_max_num_coefficients(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(info$max_n_coefficients, lpc$get_max_num_coefficients(),
+    tolerance = sqrt(.Machine$double.eps))
 
   tmp <- tempfile(fileext = ".LPC")
   on.exit(unlink(tmp), add = TRUE)
@@ -147,7 +163,8 @@ test_that("RLPC$as_data_frame / get_info / save work directly (no R6-dispatch co
   expect_gt(file.info(tmp)$size, 0)
 })
 
-test_that("Module_Sound_to_LPC_burg/auto/covar/marple factory functions work directly (dead from R6's perspective)", {
+test_that(
+  "Module_Sound_to_LPC_burg/auto/covar/marple factory functions work directly (dead from R6's perspective)", {
   # R/sound-wrapper.R's Sound$to_lpc_burg()/to_lpc_auto()/to_lpc_covariance()/
   # to_lpc_marple() all call the standalone Rcpp::export wrappers in
   # lpc_wrappers.cpp (.sound_to_lpc_burg etc, RcppExports.R), never the
@@ -157,35 +174,44 @@ test_that("Module_Sound_to_LPC_burg/auto/covar/marple factory functions work dir
   sound <- generate_sine_wave(150, 0.3, sampling_rate = 16000)
   lpc_mod <- pladdrr:::get_module("lpc_module")
 
-  burg_ptr <- lpc_mod$Sound_to_LPC_burg(sound$get_xptr(), 12L, 0.025, 0.005, 50.0)
+  burg_ptr <- lpc_mod$Sound_to_LPC_burg(sound$get_xptr(), 12L, 0.025, 0.005,
+    50.0)
   expect_type(burg_ptr, "externalptr")
   expect_s3_class(LPC(.xptr = burg_ptr), "LPC")
 
-  auto_ptr <- lpc_mod$Sound_to_LPC_auto(sound$get_xptr(), 12L, 0.025, 0.005, 50.0)
+  auto_ptr <- lpc_mod$Sound_to_LPC_auto(sound$get_xptr(), 12L, 0.025, 0.005,
+    50.0)
   expect_type(auto_ptr, "externalptr")
   expect_s3_class(LPC(.xptr = auto_ptr), "LPC")
 
-  covar_ptr <- lpc_mod$Sound_to_LPC_covar(sound$get_xptr(), 12L, 0.025, 0.005, 50.0)
+  covar_ptr <- lpc_mod$Sound_to_LPC_covar(sound$get_xptr(), 12L, 0.025, 0.005,
+    50.0)
   expect_type(covar_ptr, "externalptr")
   expect_s3_class(LPC(.xptr = covar_ptr), "LPC")
 
-  marple_ptr <- lpc_mod$Sound_to_LPC_marple(sound$get_xptr(), 12L, 0.025, 0.005, 50.0, 1e-6, 1e-6)
+  marple_ptr <- lpc_mod$Sound_to_LPC_marple(sound$get_xptr(), 12L, 0.025,
+    0.005, 50.0, 1e-6, 1e-6)
   expect_type(marple_ptr, "externalptr")
   expect_s3_class(LPC(.xptr = marple_ptr), "LPC")
 })
 
-test_that("Module_Sound_to_LPC_* factory functions reject an invalid Sound pointer", {
+test_that(
+  "Module_Sound_to_LPC_* factory functions reject an invalid Sound pointer", {
   lpc_mod <- pladdrr:::get_module("lpc_module")
   null_ptr <- methods::new("externalptr")
 
-  expect_error(lpc_mod$Sound_to_LPC_burg(null_ptr, 12L, 0.025, 0.005, 50.0), "Invalid Sound pointer")
+  expect_error(lpc_mod$Sound_to_LPC_burg(null_ptr, 12L, 0.025, 0.005, 50.0),
+    "Invalid Sound pointer")
 })
 
-test_that(".lpc_sound_filter_inverse (raw-xptr variant) works directly, unlike the broken R6 _r6 variant", {
-  # lpc_wrappers.cpp exports BOTH .lpc_sound_filter_inverse(lpc_xptr, sound_xptr)
+test_that(
+  ".lpc_sound_filter_inverse (raw-xptr variant) works directly, unlike the broken R6 _r6 variant", {
+  # lpc_wrappers.cpp exports BOTH .lpc_sound_filter_inverse(lpc_xptr,
+  #  sound_xptr)
   # (raw XPtr<structSound>, no S4 conversion) and
   # .lpc_sound_filter_inverse_r6(lpc_xptr, sound_r6) (expects R6-shaped S4,
-  # broken for pladdrr's S3 Sound -- see test-lpc-r6.R). R6's LPC$filter_inverse()
+  # broken for pladdrr's S3 Sound -- see test-lpc-r6.R). R6's
+  #  LPC$filter_inverse()
   # only calls the _r6 variant; the raw-xptr variant is otherwise dead from R6
   # but directly reachable and correct, matching the working
   # filter_inverse_at_time() pattern.

@@ -3,7 +3,8 @@
 # frame/frequency conversion, power queries, and conversions.
 
 sg_fixture <- function() {
-  Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)$to_spectrogram()
+  Sound$create_tone(frequency = 220, duration = 0.3,
+    sampling_rate = 16000)$to_spectrogram()
 }
 
 test_that("Spectrogram geometry getters", {
@@ -32,7 +33,8 @@ test_that("Spectrogram frame/frequency conversion", {
 
 test_that("Spectrogram power queries", {
   sg <- sg_fixture()
-  p <- sg$get_power_at(sg$get_start_time() + 0.05, sg$get_lowest_frequency() + 10)
+  p <- sg$get_power_at(sg$get_start_time() + 0.05,
+    sg$get_lowest_frequency() + 10)
   expect_type(p, "double")
   fr <- sg$get_frame(sg$get_start_time() + 0.05)
   expect_type(fr, "double")
@@ -40,7 +42,8 @@ test_that("Spectrogram power queries", {
   expect_type(fs, "double")
   frs <- sg$get_frames(c(0.05, 0.1))
   expect_true(is.list(frs) || is.matrix(frs))
-  bp <- sg$get_band_power(sg$get_lowest_frequency() + 10, sg$get_lowest_frequency() + 100)
+  bp <- sg$get_band_power(sg$get_lowest_frequency() + 10,
+    sg$get_lowest_frequency() + 100)
   expect_type(bp, "double")
 })
 
@@ -50,7 +53,8 @@ test_that("Spectrogram vectors and conversions", {
   expect_type(tv, "double")
   fv <- sg$get_frequencies_vector()
   expect_type(fv, "double")
-  pp <- sg$get_power_at_points(tv[seq_len(min(3, length(tv)))], rep(fv[1], min(3, length(tv))))
+  pp <- sg$get_power_at_points(tv[seq_len(min(3, length(tv)))],
+    rep(fv[1], min(3, length(tv))))
   expect_type(pp, "double")
   sm <- sg$get_spectral_moments_batch()
   expect_type(sm, "list")

@@ -1,6 +1,7 @@
 #' PitchTier
 #'
-#' Praat PitchTier object: a sequence of time-value points describing a pitch contour.
+#' Praat PitchTier object: a sequence of time-value points describing a pitch
+#  contour.
 #'
 #' PitchTiers are used together with Manipulation objects to modify the pitch
 #' contour of sounds. Unlike Pitch objects, which hold sampled data, PitchTiers
@@ -29,13 +30,18 @@
 #' \itemize{
 #'   \item \code{add_point(time, value)} - add a pitch point (Hz)
 #'   \item \code{remove_point(index)} - remove a point by index
-#'   \item \code{remove_points_between(tmin, tmax)} - remove points in a time range
+#' \item \code{remove_points_between(tmin, tmax)} - remove points in a time
+#  range
 #'   \item \code{multiply_frequencies(factor)} - scale all frequencies
-#'   \item \code{multiply_frequencies_in_range(tmin, tmax, factor)} - scale in a range
+#' \item \code{multiply_frequencies_in_range(tmin, tmax, factor)} - scale in a
+#  range
 #'   \item \code{shift_frequencies(shift, unit)} - add to all frequencies
-#'   \item \code{shift_frequencies_in_range(tmin, tmax, shift, unit)} - shift in a range
-#'   \item \code{stylize(frequency_resolution, use_semitones)} - simplify the contour
-#'   \item \code{interpolate_quadratically(points_per_parabola, logarithmically)} - smooth the contour
+#' \item \code{shift_frequencies_in_range(tmin, tmax, shift, unit)} - shift in a
+#  range
+#' \item \code{stylize(frequency_resolution, use_semitones)} - simplify the
+#  contour
+#' \item \code{interpolate_quadratically(points_per_parabola, logarithmically)}
+#  - smooth the contour
 #' }
 #'
 #' @section Conversion:
@@ -44,7 +50,8 @@
 #'   \item \code{to_sound_phonation(sample_rate)} - synthesize phonation
 #'   \item \code{to_sound_sine(sample_rate)} - synthesize a sine wave
 #'   \item \code{down_to_point_process()} - extract time points
-#'   \item \code{to_pitch(time_step, pitch_floor, pitch_ceiling)} - convert to a Pitch object
+#' \item \code{to_pitch(time_step, pitch_floor, pitch_ceiling)} - convert to a
+#  Pitch object
 #' }
 #'
 #' @section Export:
@@ -96,7 +103,8 @@ NULL
 # ============================================================================
 
 # Helper: pitch unit string -> integer code.
-# Same mapping as .pitch_unit_code() in pitch-wrapper.R — delegate to avoid drift.
+# Same mapping as .pitch_unit_code() in pitch-wrapper.R — delegate to avoid
+#  drift.
 .pitchtier_unit_code <- function(unit) {
   .pitch_unit_code(unit)
 }
@@ -111,10 +119,14 @@ NULL
 .pitchtier_methods$get_start_time <- function(.self) .self$.cpp$get_xmin()
 .pitchtier_methods$get_end_time <- function(.self) .self$.cpp$get_xmax()
 .pitchtier_methods$get_duration <- function(.self) .self$.cpp$get_duration()
-.pitchtier_methods$get_number_of_points <- function(.self) .self$.cpp$get_number_of_points()
-.pitchtier_methods$get_time_from_index <- function(.self, index) .self$.cpp$get_time(as.integer(index))
-.pitchtier_methods$get_value_at_index <- function(.self, index) .self$.cpp$get_value(as.integer(index))
-.pitchtier_methods$get_value_at_time <- function(.self, time) .self$.cpp$get_value_at_time(as.numeric(time))
+.pitchtier_methods$get_number_of_points <- function(
+  .self) .self$.cpp$get_number_of_points()
+.pitchtier_methods$get_time_from_index <- function(.self,
+  index) .self$.cpp$get_time(as.integer(index))
+.pitchtier_methods$get_value_at_index <- function(.self,
+  index) .self$.cpp$get_value(as.integer(index))
+.pitchtier_methods$get_value_at_time <- function(.self,
+  time) .self$.cpp$get_value_at_time(as.numeric(time))
 .pitchtier_methods$get_minimum <- function(.self) .self$.cpp$get_minimum()
 .pitchtier_methods$get_maximum <- function(.self) .self$.cpp$get_maximum()
 
@@ -124,19 +136,22 @@ NULL
   .self$.cpp$get_mean_curve(as.numeric(tmin), as.numeric(tmax))
 }
 
-.pitchtier_methods$get_mean_points <- function(.self, tmin = NULL, tmax = NULL) {
+.pitchtier_methods$get_mean_points <- function(.self, tmin = NULL,
+  tmax = NULL) {
   if (is.null(tmin)) tmin <- .self$.cpp$get_xmin()
   if (is.null(tmax)) tmax <- .self$.cpp$get_xmax()
   .self$.cpp$get_mean_points(as.numeric(tmin), as.numeric(tmax))
 }
 
-.pitchtier_methods$get_standard_deviation <- function(.self, tmin = NULL, tmax = NULL) {
+.pitchtier_methods$get_standard_deviation <- function(.self, tmin = NULL,
+  tmax = NULL) {
   if (is.null(tmin)) tmin <- .self$.cpp$get_xmin()
   if (is.null(tmax)) tmax <- .self$.cpp$get_xmax()
   .self$.cpp$get_standard_deviation_curve(as.numeric(tmin), as.numeric(tmax))
 }
 
-.pitchtier_methods$get_standard_deviation_points <- function(.self, tmin = NULL, tmax = NULL) {
+.pitchtier_methods$get_standard_deviation_points <- function(.self,
+  tmin = NULL, tmax = NULL) {
   if (is.null(tmin)) tmin <- .self$.cpp$get_xmin()
   if (is.null(tmax)) tmax <- .self$.cpp$get_xmax()
   .self$.cpp$get_standard_deviation_points(as.numeric(tmin), as.numeric(tmax))
@@ -167,12 +182,15 @@ NULL
 .pitchtier_methods$multiply_frequencies <- function(.self, factor) {
   tmin <- .self$.cpp$get_xmin()
   tmax <- .self$.cpp$get_xmax()
-  .self$.cpp$multiply_frequencies(as.numeric(tmin), as.numeric(tmax), as.numeric(factor))
+  .self$.cpp$multiply_frequencies(as.numeric(tmin), as.numeric(tmax),
+    as.numeric(factor))
   invisible(.self)
 }
 
-.pitchtier_methods$multiply_frequencies_in_range <- function(.self, tmin, tmax, factor) {
-  .self$.cpp$multiply_frequencies(as.numeric(tmin), as.numeric(tmax), as.numeric(factor))
+.pitchtier_methods$multiply_frequencies_in_range <- function(.self, tmin,
+  tmax, factor) {
+  .self$.cpp$multiply_frequencies(as.numeric(tmin), as.numeric(tmax),
+    as.numeric(factor))
   invisible(.self)
 }
 
@@ -180,23 +198,30 @@ NULL
   tmin <- .self$.cpp$get_xmin()
   tmax <- .self$.cpp$get_xmax()
   unit_code <- .pitchtier_unit_code(unit)
-  .self$.cpp$shift_frequencies(as.numeric(tmin), as.numeric(tmax), as.numeric(shift), unit_code)
+  .self$.cpp$shift_frequencies(as.numeric(tmin), as.numeric(tmax),
+    as.numeric(shift), unit_code)
   invisible(.self)
 }
 
-.pitchtier_methods$shift_frequencies_in_range <- function(.self, tmin, tmax, shift, unit = "hertz") {
+.pitchtier_methods$shift_frequencies_in_range <- function(.self, tmin, tmax,
+  shift, unit = "hertz") {
   unit_code <- .pitchtier_unit_code(unit)
-  .self$.cpp$shift_frequencies(as.numeric(tmin), as.numeric(tmax), as.numeric(shift), unit_code)
+  .self$.cpp$shift_frequencies(as.numeric(tmin), as.numeric(tmax),
+    as.numeric(shift), unit_code)
   invisible(.self)
 }
 
-.pitchtier_methods$stylize <- function(.self, frequency_resolution = 2.0, use_semitones = FALSE) {
-  .self$.cpp$stylize(as.numeric(frequency_resolution), as.logical(use_semitones))
+.pitchtier_methods$stylize <- function(.self, frequency_resolution = 2.0,
+  use_semitones = FALSE) {
+  .self$.cpp$stylize(as.numeric(frequency_resolution),
+    as.logical(use_semitones))
   invisible(.self)
 }
 
-.pitchtier_methods$interpolate_quadratically <- function(.self, points_per_parabola = 4, logarithmically = FALSE) {
-  .pitchtier_interpolate_quadratically(.self$.xptr, as.integer(points_per_parabola), as.logical(logarithmically))
+.pitchtier_methods$interpolate_quadratically <- function(.self,
+  points_per_parabola = 4, logarithmically = FALSE) {
+  .pitchtier_interpolate_quadratically(.self$.xptr,
+    as.integer(points_per_parabola), as.logical(logarithmically))
   invisible(.self)
 }
 
@@ -206,16 +231,19 @@ NULL
   PointProcess(.xptr = pp_ptr)
 }
 
-.pitchtier_methods$to_sound_pulse_train <- function(.self, sample_rate = 44100, adaptation_factor = 1.0,
+.pitchtier_methods$to_sound_pulse_train <- function(.self,
+  sample_rate = 44100, adaptation_factor = 1.0,
                                                      adaptation_time = 0.05, interpolation_depth = 2000) {
-  snd_ptr <- .pitchtier_to_sound_pulse_train(.self$.xptr, as.numeric(sample_rate),
+  snd_ptr <- .pitchtier_to_sound_pulse_train(.self$.xptr,
+    as.numeric(sample_rate),
                                               as.numeric(adaptation_factor),
                                               as.numeric(adaptation_time),
                                               as.integer(interpolation_depth))
   Sound(.xptr = snd_ptr)
 }
 
-.pitchtier_methods$to_sound_phonation <- function(.self, sample_rate = 44100, adaptation_factor = 1.0,
+.pitchtier_methods$to_sound_phonation <- function(.self, sample_rate = 44100,
+  adaptation_factor = 1.0,
                                                    maximum_period = 0.05, open_phase = 0.7,
                                                    collision_phase = 0.03, power1 = 3.0, power2 = 4.0) {
   snd_ptr <- .pitchtier_to_sound_phonation(.self$.xptr, as.numeric(sample_rate),
@@ -223,21 +251,26 @@ NULL
                                             as.numeric(maximum_period),
                                             as.numeric(open_phase),
                                             as.numeric(collision_phase),
-                                            as.numeric(power1), as.numeric(power2))
+                                            as.numeric(
+                                              power1), as.numeric(power2))
   Sound(.xptr = snd_ptr)
 }
 
-.pitchtier_methods$to_sound_sine <- function(.self, sample_rate = 44100, tmin = NULL, tmax = NULL) {
+.pitchtier_methods$to_sound_sine <- function(.self, sample_rate = 44100,
+  tmin = NULL, tmax = NULL) {
   if (is.null(tmin)) tmin <- .self$.cpp$get_xmin()
   if (is.null(tmax)) tmax <- .self$.cpp$get_xmax()
-  snd_ptr <- .pitchtier_to_sound_sine(.self$.xptr, as.numeric(tmin), as.numeric(tmax),
+  snd_ptr <- .pitchtier_to_sound_sine(.self$.xptr, as.numeric(tmin),
+    as.numeric(tmax),
                                        as.numeric(sample_rate))
   Sound(.xptr = snd_ptr)
 }
 
-.pitchtier_methods$to_pitch <- function(.self, time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600) {
+.pitchtier_methods$to_pitch <- function(.self, time_step = 0.01,
+  pitch_floor = 75, pitch_ceiling = 600) {
   pitch_ptr <- .pitchtier_to_pitch(.self$.xptr, as.numeric(time_step),
-                                    as.numeric(pitch_floor), as.numeric(pitch_ceiling))
+                                    as.numeric(
+                                      pitch_floor), as.numeric(pitch_ceiling))
   Pitch(.xptr = pitch_ptr)
 }
 
@@ -270,8 +303,11 @@ NULL
   n_points <- .self$.cpp$get_number_of_points()
   cat(sprintf("  Number of points: %d\n", n_points))
   if (n_points > 0) {
-    cat(sprintf("  F0 range: %.1f - %.1f Hz\n", .self$.cpp$get_minimum(), .self$.cpp$get_maximum()))
-    mean_f0 <- .self$.cpp$get_mean_curve(.self$.cpp$get_xmin(), .self$.cpp$get_xmax())
+    cat(
+      sprintf("  F0 range: %.1f - %.1f Hz\n", .self$.cpp$get_minimum(),
+        .self$.cpp$get_maximum()))
+    mean_f0 <- .self$.cpp$get_mean_curve(.self$.cpp$get_xmin(),
+      .self$.cpp$get_xmax())
     cat(sprintf("  Mean frequency: %.1f Hz\n", mean_f0))
   }
   invisible(.self)

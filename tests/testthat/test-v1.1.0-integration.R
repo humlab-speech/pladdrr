@@ -47,7 +47,8 @@ test_that("Multiple formant methods produce comparable vowel formants", {
     0.5 * sin(2 * pi * 700 * t) +
     0.3 * sin(2 * pi * 1220 * t) +
     0.2 * sin(2 * pi * 2600 * t)
-  sound <- Sound$from_values(signal / max(abs(signal)) * 0.5, sampling_rate = sampling_rate)
+  sound <- Sound$from_values(signal / max(abs(signal)) * 0.5,
+    sampling_rate = sampling_rate)
   
   # Extract using different methods
   formant_burg <- sound$to_formant_burg(max_number_of_formants = 5)
@@ -67,7 +68,9 @@ test_that("Multiple formant methods produce comparable vowel formants", {
   
   # At least some methods should produce valid values
   valid_count <- sum(!is.na(c(f1_burg, f1_willems, f1_sl)))
-  expect_true(valid_count >= 1 || all(vapply(list(f1_burg, f1_willems, f1_sl), is.double, logical(1))))
+  expect_true(
+    valid_count >= 1 || all(
+      vapply(list(f1_burg, f1_willems, f1_sl), is.double, logical(1))))
 })
 
 test_that("Cochleagram comparison workflow for hearing simulation", {
@@ -83,7 +86,8 @@ test_that("Cochleagram comparison workflow for hearing simulation", {
   cochlea_impaired <- sound_filtered$to_cochleagram(dt = 0.01, df = 0.1)
   
   # Calculate perceptual difference
-  difference <- cochlea_normal$get_difference(cochlea_impaired, tmin = 0, tmax = 0)
+  difference <- cochlea_normal$get_difference(cochlea_impaired, tmin = 0,
+    tmax = 0)
   
   expect_true(is.finite(difference))
   expect_gte(difference, 0)
@@ -104,10 +108,13 @@ test_that("Batch processing with new objects works", {
   
   # Verify all succeeded
   expect_length(cochleagrams, 3)
-  expect_true(all(vapply(cochleagrams, function(c) inherits(c, "Cochleagram"), logical(1))))
+  expect_true(
+    all(
+      vapply(cochleagrams, function(c) inherits(c, "Cochleagram"), logical(1))))
   
   # Get loudness from all
-  loudnesses <- vapply(cochleagrams, function(c) c$get_loudness_at_time(0.05), numeric(1))
+  loudnesses <- vapply(cochleagrams, function(c) c$get_loudness_at_time(0.05),
+    numeric(1))
   
   expect_length(loudnesses, 3)
   expect_true(all(is.finite(loudnesses)))

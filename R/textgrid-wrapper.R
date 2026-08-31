@@ -1,4 +1,5 @@
-# textgrid-wrapper.R - TextGrid object using shared dispatch table (pladdrr 4.8.33)
+# textgrid-wrapper.R - TextGrid object using shared dispatch table (pladdrr
+#  4.8.33)
 # Architecture: minimal list + $.TextGrid S3 dispatch → shared method env
 
 #' @title Praat TextGrid Object
@@ -11,21 +12,24 @@
 #' contain one or more tiers, where each tier can be:
 #'
 #' \itemize{
-#'   \item \code{IntervalTier}: consecutive time intervals with labels (e.g., phonemes, words)
-#'   \item \code{PointTier} (TextTier): time points with labels (e.g., events, tones)
+#' \item \code{IntervalTier}: consecutive time intervals with labels (e.g.,
+#  phonemes, words)
+#' \item \code{PointTier} (TextTier): time points with labels (e.g., events,
+#  tones)
 #' }
 #'
 #' @section Creating TextGrid objects:
 #' \itemize{
 #'   \item \code{TextGrid(path)} - read from file (Praat text or binary format)
-#'   \item \code{textgrid_create(tmin, tmax, tier_names, point_tiers)} - create an empty grid
+#' \item \code{textgrid_create(tmin, tmax, tier_names, point_tiers)} - create an
+#  empty grid
 #' }
 #'
 #' @section Querying tiers:
 #' \itemize{
 #'   \item \code{get_number_of_tiers()} - number of tiers
 #'   \item \code{get_tier_names()} - names of all tiers
-#'   \item \code{tier_is_interval_tier(tier)} - check if a tier is an IntervalTier
+#' \item \code{tier_is_interval_tier(tier)} - check if a tier is an IntervalTier
 #'   \item \code{tier_is_point_tier(tier)} - check if a tier is a PointTier
 #' }
 #'
@@ -33,10 +37,13 @@
 #' \itemize{
 #'   \item \code{get_number_of_intervals(tier)} - number of intervals in a tier
 #'   \item \code{get_interval_text(tier, n)} - get the label of interval n
-#'   \item \code{get_label_at_time(tier, time)} - get the label at a specific time
-#'   \item \code{get_all_intervals(tier)} - get all intervals as a data.frame (fast)
-#'   \item \code{extract_intervals_batch(tier, ...)} - extract matching intervals (fast)
-#'   \item \code{extract_intervals_where(sound, tier, criterion, text, preserve_times)} - extract Sound intervals matching a text criterion
+#' \item \code{get_label_at_time(tier, time)} - get the label at a specific time
+#' \item \code{get_all_intervals(tier)} - get all intervals as a data.frame
+#  (fast)
+#' \item \code{extract_intervals_batch(tier, ...)} - extract matching intervals
+#  (fast)
+#' \item \code{extract_intervals_where(sound, tier, criterion, text,
+#  preserve_times)} - extract Sound intervals matching a text criterion
 #'   \item \code{set_interval_text(tier, n, text)} - set the label of interval n
 #'   \item \code{insert_boundary(tier, time)} - insert a new boundary
 #'   \item \code{remove_boundary(tier, time)} - remove a boundary
@@ -57,7 +64,8 @@
 #'   \item \code{add_point_tier(name)} - add a new PointTier
 #'   \item \code{remove_tier(tier)} - remove a tier
 #'   \item \code{set_tier_name(tier, name)} - rename a tier
-#'   \item \code{duplicate_tier(tier, new_name)} - duplicate a tier with a new name
+#' \item \code{duplicate_tier(tier, new_name)} - duplicate a tier with a new
+#  name
 #' }
 #'
 #' @section Export:
@@ -76,7 +84,8 @@
 #'
 #' @examples
 #' # Create new TextGrid with one interval tier and one point tier
-#' # (tier_names lists all tiers; point_tiers names the subset that are point tiers)
+#' # (tier_names lists all tiers; point_tiers names the subset that are point
+#  tiers)
 #' tg <- textgrid_create(0, 1, "words tones", "tones")
 #' tg$get_tier_names()
 #'
@@ -120,12 +129,16 @@ NULL
 }
 
 # Build an interval-tier data frame (start/end/label) filtered to time range.
-.textgrid_interval_data <- function(object, tier, from_time = NULL, to_time = NULL) {
+.textgrid_interval_data <- function(object, tier, from_time = NULL,
+  to_time = NULL) {
   n <- object$get_number_of_intervals(tier)
   d <- data.frame(
-    start = vapply(seq_len(n), function(i) object$get_interval_start_time(tier, i), numeric(1)),
-    end = vapply(seq_len(n), function(i) object$get_interval_end_time(tier, i), numeric(1)),
-    label = vapply(seq_len(n), function(i) object$get_interval_text(tier, i), character(1)),
+    start = vapply(seq_len(n),
+      function(i) object$get_interval_start_time(tier, i), numeric(1)),
+    end = vapply(seq_len(n),
+      function(i) object$get_interval_end_time(tier, i), numeric(1)),
+    label = vapply(seq_len(n), function(i) object$get_interval_text(tier, i),
+      character(1)),
     stringsAsFactors = FALSE
   )
   if (!is.null(from_time)) d <- d[d$end >= from_time, ]
@@ -134,11 +147,14 @@ NULL
 }
 
 # Build a point-tier data frame (time/label) filtered to time range.
-.textgrid_point_data <- function(object, tier, from_time = NULL, to_time = NULL) {
+.textgrid_point_data <- function(object, tier, from_time = NULL,
+  to_time = NULL) {
   n <- object$get_number_of_points(tier)
   d <- data.frame(
-    time = vapply(seq_len(n), function(i) object$get_point_time(tier, i), numeric(1)),
-    label = vapply(seq_len(n), function(i) object$get_point_text(tier, i), character(1)),
+    time = vapply(seq_len(n), function(i) object$get_point_time(tier, i),
+      numeric(1)),
+    label = vapply(seq_len(n), function(i) object$get_point_text(tier, i),
+      character(1)),
     stringsAsFactors = FALSE
   )
   if (!is.null(from_time)) d <- d[d$time >= from_time, ]
@@ -157,8 +173,10 @@ NULL
 .textgrid_methods$is_valid <- function(.self) .self$.cpp$is_valid()
 .textgrid_methods$get_start_time <- function(.self) .self$.cpp$get_xmin()
 .textgrid_methods$get_end_time <- function(.self) .self$.cpp$get_xmax()
-.textgrid_methods$get_total_duration <- function(.self) .self$.cpp$get_duration()
-.textgrid_methods$get_number_of_tiers <- function(.self) .self$.cpp$get_number_of_tiers()
+.textgrid_methods$get_total_duration <- function(
+  .self) .self$.cpp$get_duration()
+.textgrid_methods$get_number_of_tiers <- function(
+  .self) .self$.cpp$get_number_of_tiers()
 .textgrid_methods$get_xmin <- function(.self) .self$.cpp$get_xmin()
 .textgrid_methods$get_xmax <- function(.self) .self$.cpp$get_xmax()
 .textgrid_methods$get_duration <- function(.self) .self$.cpp$get_duration()
@@ -188,11 +206,13 @@ NULL
   tier_num <- .textgrid_resolve_tier(.self$.cpp, tier)
   .self$.cpp$get_number_of_intervals(tier_num)
 }
-.textgrid_methods$get_interval_start_time <- function(.self, tier, interval_number) {
+.textgrid_methods$get_interval_start_time <- function(.self, tier,
+  interval_number) {
   tier_num <- .textgrid_resolve_tier(.self$.cpp, tier)
   .self$.cpp$get_interval_start_time(tier_num, as.integer(interval_number))
 }
-.textgrid_methods$get_interval_end_time <- function(.self, tier, interval_number) {
+.textgrid_methods$get_interval_end_time <- function(.self, tier,
+  interval_number) {
   tier_num <- .textgrid_resolve_tier(.self$.cpp, tier)
   .self$.cpp$get_interval_end_time(tier_num, as.integer(interval_number))
 }
@@ -222,7 +242,8 @@ NULL
     stringsAsFactors = FALSE
   )
 }
-.textgrid_methods$extract_intervals_batch <- function(.self, tier, comparison_type = "equals",
+.textgrid_methods$extract_intervals_batch <- function(.self, tier,
+  comparison_type = "equals",
                                                       target_value = "", sound = NULL,
                                                       extract_sounds = FALSE) {
   tier_num <- .textgrid_resolve_tier(.self$.cpp, tier)
@@ -274,9 +295,11 @@ NULL
   tier_num <- .textgrid_resolve_tier(.self$.cpp, tier)
   .self$.cpp$get_labels_at_times(tier_num, as.numeric(times))
 }
-.textgrid_methods$set_interval_texts_batch <- function(.self, tier, interval_numbers, texts) {
+.textgrid_methods$set_interval_texts_batch <- function(.self, tier,
+  interval_numbers, texts) {
   tier_num <- .textgrid_resolve_tier(.self$.cpp, tier)
-  .self$.cpp$set_interval_texts_batch(tier_num, as.integer(interval_numbers), as.character(texts))
+  .self$.cpp$set_interval_texts_batch(tier_num, as.integer(interval_numbers),
+    as.character(texts))
   invisible(.self)
 }
 .textgrid_methods$get_all_intervals_fast <- function(.self, tier) {
@@ -289,9 +312,11 @@ NULL
 }
 
 # --- IntervalTier Modification ---
-.textgrid_methods$set_interval_text <- function(.self, tier, interval_number, text) {
+.textgrid_methods$set_interval_text <- function(.self, tier, interval_number,
+  text) {
   tier_num <- .textgrid_resolve_tier(.self$.cpp, tier)
-  .self$.cpp$set_interval_text(tier_num, as.integer(interval_number), as.character(text))
+  .self$.cpp$set_interval_text(tier_num, as.integer(interval_number),
+    as.character(text))
   invisible(.self)
 }
 .textgrid_methods$insert_boundary <- function(.self, tier, time) {
@@ -336,7 +361,8 @@ NULL
 }
 .textgrid_methods$set_point_text <- function(.self, tier, point_number, text) {
   tier_num <- .textgrid_resolve_tier(.self$.cpp, tier)
-  .self$.cpp$set_point_text(tier_num, as.integer(point_number), as.character(text))
+  .self$.cpp$set_point_text(tier_num, as.integer(point_number),
+    as.character(text))
   invisible(.self)
 }
 .textgrid_methods$remove_point <- function(.self, tier, point_number) {
@@ -361,7 +387,8 @@ NULL
 }
 
 # --- Transformations ---
-.textgrid_methods$extract_part <- function(.self, start_time, end_time, preserve_times = TRUE) {
+.textgrid_methods$extract_part <- function(.self, start_time, end_time,
+  preserve_times = TRUE) {
   ptr_result <- .self$.cpp$extract_part_ptr(
     as.numeric(start_time), as.numeric(end_time), as.logical(preserve_times)
   )
@@ -386,7 +413,8 @@ NULL
   .self$.cpp$as_data_frame()
 }
 .textgrid_methods$get_info <- function(.self) .self$.cpp$get_info()
-.textgrid_methods$save <- function(.self, path) .self$.cpp$save(as.character(path))
+.textgrid_methods$save <- function(.self,
+  path) .self$.cpp$save(as.character(path))
 .textgrid_methods$get_xptr <- function(.self) .self$.xptr
 
 # --- Convenience ---
@@ -395,16 +423,19 @@ NULL
   .textgrid_duplicate_tier(.self$.xptr, tier_num, as.character(new_name))
   invisible(.self)
 }
-.textgrid_methods$get_intervals_where <- function(.self, tier, condition = "equals", text = "") {
+.textgrid_methods$get_intervals_where <- function(.self, tier,
+  condition = "equals", text = "") {
   tier_num <- .textgrid_resolve_tier(.self$.cpp, tier)
-  textgrid_get_intervals_where(.self, tier = tier_num, condition = condition, text = text)
+  textgrid_get_intervals_where(.self, tier = tier_num, condition = condition,
+    text = text)
 }
 
 # --- Print ---
 .textgrid_methods$print <- function(.self) {
   cat("<Praat TextGrid>\n")
   cat(sprintf("  Time domain: [%.3f, %.3f] s (%.3f s)\n",
-              .self$.cpp$get_xmin(), .self$.cpp$get_xmax(), .self$.cpp$get_duration()))
+              .self$.cpp$get_xmin(
+                ), .self$.cpp$get_xmax(), .self$.cpp$get_duration()))
   cat(sprintf("  Tiers: %d\n", .self$.cpp$get_number_of_tiers()))
   tier_names <- .self$.cpp$get_tier_names()
   for (i in seq_along(tier_names)) {
@@ -415,7 +446,9 @@ NULL
     } else {
       .self$.cpp$get_number_of_points(i)
     }
-    cat(sprintf("    %d. %s (%s, %d items)\n", i, tier_names[i], tier_type, n_items))
+    cat(
+      sprintf("    %d. %s (%s, %d items)\n", i, tier_names[i], tier_type,
+        n_items))
   }
   invisible(.self)
 }
@@ -440,7 +473,8 @@ TextGrid <- function(path = NULL, .xptr = NULL) {
   }
   tg_mod <- get_module("textgrid_module")
   cpp_tg <- tg_mod$RTextGrid$new(ptr)
-  structure(list(.xptr = ptr, .cpp = cpp_tg), class = c("TextGrid", "PraatObject"))
+  structure(list(.xptr = ptr, .cpp = cpp_tg),
+    class = c("TextGrid", "PraatObject"))
 }
 
 # ============================================================================
@@ -469,8 +503,10 @@ TextGrid <- function(path = NULL, .xptr = NULL) {
 #' @inheritParams pladdrr_shared_params tmin
 #' @inheritParams pladdrr_shared_params tmax
 #' @param tier_names Space-separated tier names (e.g., "phones words syllables")
-#' @param point_tiers Space-separated names of tiers that should be PointTiers (default: all are IntervalTiers)
-#' @seealso \code{\link{Sound}}, \code{\link{Pitch}}, \code{\link{Formant}}, \code{\link{PointProcess}}
+#' @param point_tiers Space-separated names of tiers that should be PointTiers
+#  (default: all are IntervalTiers)
+#' @seealso \code{\link{Sound}}, \code{\link{Pitch}}, \code{\link{Formant}},
+#  \code{\link{PointProcess}}
 #' @return A \code{TextGrid} object.
 #' @export
 #'

@@ -25,11 +25,14 @@ print.praat_sound <- function(x, ...) {
   cat(sprintf("Samples:       %d\n", x$n_samples))
   cat(sprintf("Channels:      %d (%s)\n", x$n_channels,
               if (x$n_channels == 1) "mono" else "stereo"))
-  cat(sprintf("Time range:    [%.6f, %.6f] seconds\n", x$start_time, x$end_time))
+  cat(
+    sprintf("Time range:    [%.6f, %.6f] seconds\n", x$start_time, x$end_time))
 
   # Show amplitude range
   amplitude_range <- range(x$values)
-  cat(sprintf("Amplitude:     [%.6f, %.6f]\n", amplitude_range[1], amplitude_range[2]))
+  cat(
+    sprintf("Amplitude:     [%.6f, %.6f]\n", amplitude_range[1],
+      amplitude_range[2]))
 
   invisible(x)
 }
@@ -78,7 +81,8 @@ summary.praat_sound <- function(object, ...) {
 
 #' Convert praat_sound to data frame
 #'
-#' Converts a praat_sound object to a data frame with time and amplitude columns.
+#' Converts a praat_sound object to a data frame with time and amplitude
+#  columns.
 #' This is useful for plotting and further analysis in R.
 #'
 #' @param x A praat_sound object
@@ -124,9 +128,11 @@ as.data.frame.praat_sound <- function(x, ...) {
 #' @inheritParams pladdrr_shared_params row.names
 #' @inheritParams pladdrr_shared_params optional
 #' @param ... Additional arguments (ignored)
-#' @return A data.table (inherits from data.frame) with time, channel, and value columns
+#' @return A data.table (inherits from data.frame) with time, channel, and value
+#  columns
 #' @examples
-#' sound <- Sound$create_tone(frequency = 220, duration = 0.1, sampling_rate = 8000)
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.1, sampling_rate =
+#  8000)
 #' df <- as.data.frame(sound)
 #' head(df)
 #' @export
@@ -163,10 +169,12 @@ print.praat_pitch <- function(x, ...) {
   voiced <- sum(!is.na(x$frequency) & x$frequency > 0)
   unvoiced <- nrow(x) - voiced
   cat(sprintf("Voiced:        %d (%.1f%%)\n", voiced, 100 * voiced / nrow(x)))
-  cat(sprintf("Unvoiced:      %d (%.1f%%)\n", unvoiced, 100 * unvoiced / nrow(x)))
+  cat(
+    sprintf("Unvoiced:      %d (%.1f%%)\n", unvoiced, 100 * unvoiced / nrow(x)))
 
   # Time range
-  cat(sprintf("Time range:    [%.3f, %.3f] seconds\n", min(x$time), max(x$time)))
+  cat(
+    sprintf("Time range:    [%.3f, %.3f] seconds\n", min(x$time), max(x$time)))
 
   # Pitch statistics (for voiced frames only)
   if (voiced > 0) {
@@ -207,24 +215,32 @@ summary.praat_pitch <- function(object, ...) {
   # Voiced/unvoiced
   voiced <- sum(!is.na(object$frequency) & object$frequency > 0)
   unvoiced <- nrow(object) - voiced
-  cat(sprintf("  Voiced:        %d (%.1f%%)\n", voiced, 100 * voiced / nrow(object)))
-  cat(sprintf("  Unvoiced:      %d (%.1f%%)\n", unvoiced, 100 * unvoiced / nrow(object)))
+  cat(
+    sprintf("  Voiced:        %d (%.1f%%)\n", voiced,
+      100 * voiced / nrow(object)))
+  cat(
+    sprintf("  Unvoiced:      %d (%.1f%%)\n", unvoiced,
+      100 * unvoiced / nrow(object)))
 
   # Time range
   cat(sprintf("\nTime Range:\n"))
   cat(sprintf("  Start:         %.3f seconds\n", min(object$time)))
   cat(sprintf("  End:           %.3f seconds\n", max(object$time)))
-  cat(sprintf("  Duration:      %.3f seconds\n", max(object$time) - min(object$time)))
+  cat(
+    sprintf("  Duration:      %.3f seconds\n",
+      max(object$time) - min(object$time)))
 
   # Pitch statistics (for voiced frames only)
   if (voiced > 0) {
-    voiced_freqs <- object$frequency[!is.na(object$frequency) & object$frequency > 0]
+    voiced_freqs <- object$frequency[!is.na(
+      object$frequency) & object$frequency > 0]
     cat("\nPitch Statistics (voiced frames, Hz):\n")
     cat(sprintf("  Mean:          %.2f\n", mean(voiced_freqs)))
     cat(sprintf("  Median:        %.2f\n", median(voiced_freqs)))
     cat(sprintf("  Min:           %.2f\n", min(voiced_freqs)))
     cat(sprintf("  Max:           %.2f\n", max(voiced_freqs)))
-    cat(sprintf("  Range:         %.2f\n", max(voiced_freqs) - min(voiced_freqs)))
+    cat(
+      sprintf("  Range:         %.2f\n", max(voiced_freqs) - min(voiced_freqs)))
     cat(sprintf("  Std Dev:       %.2f\n", sd(voiced_freqs)))
     cat(sprintf("  Quantiles:\n"))
     quants <- quantile(voiced_freqs, probs = c(0.25, 0.5, 0.75))
@@ -309,7 +325,9 @@ summary.praat_formant <- function(object, ...) {
                   100 * length(valid_freqs) / nrow(formant_data)))
       cat(sprintf("  Mean: %.1f Hz\n", mean(valid_freqs)))
       cat(sprintf("  SD: %.1f Hz\n", sd(valid_freqs)))
-      cat(sprintf("  Range: %.1f - %.1f Hz\n", min(valid_freqs), max(valid_freqs)))
+      cat(
+        sprintf("  Range: %.1f - %.1f Hz\n", min(valid_freqs),
+          max(valid_freqs)))
     } else {
       cat("  No valid measurements\n")
     }
@@ -324,7 +342,8 @@ summary.praat_formant <- function(object, ...) {
 #' @param row.names Not used
 #' @param optional Not used
 #' @param ... Additional arguments (unused)
-#' @return The values data.table (inherits from data.frame) from the formant object
+#' @return The values data.table (inherits from data.frame) from the formant
+#  object
 #' @examples
 #' x <- list(values = data.frame(
 #'   time = c(0.1, 0.2), formant_number = c(1, 1),
@@ -333,7 +352,8 @@ summary.praat_formant <- function(object, ...) {
 #' class(x) <- "praat_formant"
 #' as.data.frame(x)
 #' @export
-as.data.frame.praat_formant <- function(x, row.names = NULL, optional = FALSE, ...) {
+as.data.frame.praat_formant <- function(x, row.names = NULL, optional = FALSE,
+  ...) {
   x$values
 }
 
@@ -388,7 +408,8 @@ summary.praat_intensity <- function(object, ...) {
   cat(sprintf("Time step: %.6f s\n", object$time_step))
   cat(sprintf("Minimum pitch: %.0f Hz\n", object$minimum_pitch))
   
-  valid_intensities <- object$values$intensity_db[!is.na(object$values$intensity_db)]
+  valid_intensities <- object$values$intensity_db[!is.na(
+    object$values$intensity_db)]
   
   if (length(valid_intensities) > 0) {
     cat(sprintf("\nIntensity statistics:\n"))
@@ -397,7 +418,9 @@ summary.praat_intensity <- function(object, ...) {
                 100 * length(valid_intensities) / nrow(object$values)))
     cat(sprintf("  Mean: %.2f dB\n", mean(valid_intensities)))
     cat(sprintf("  SD: %.2f dB\n", sd(valid_intensities)))
-    cat(sprintf("  Range: %.2f - %.2f dB\n", min(valid_intensities), max(valid_intensities)))
+    cat(
+      sprintf("  Range: %.2f - %.2f dB\n", min(valid_intensities),
+        max(valid_intensities)))
   } else {
     cat("\nNo valid intensity measurements\n")
   }
@@ -411,13 +434,16 @@ summary.praat_intensity <- function(object, ...) {
 #' @param row.names Not used
 #' @param optional Not used
 #' @param ... Additional arguments (unused)
-#' @return The values data.table (inherits from data.frame) from the intensity object
+#' @return The values data.table (inherits from data.frame) from the intensity
+#  object
 #' @examples
-#' x <- list(values = data.frame(time = c(0.1, 0.2), intensity_db = c(65.2, 66.1)))
+#' x <- list(values = data.frame(time = c(0.1, 0.2), intensity_db = c(65.2,
+#  66.1)))
 #' class(x) <- "praat_intensity"
 #' as.data.frame(x)
 #' @export
-as.data.frame.praat_intensity <- function(x, row.names = NULL, optional = FALSE, ...) {
+as.data.frame.praat_intensity <- function(x, row.names = NULL,
+  optional = FALSE, ...) {
   x$values
 }
 
@@ -440,7 +466,8 @@ as.data.frame.praat_intensity <- function(x, row.names = NULL, optional = FALSE,
 #'   number), `frequency` (Hz), `bandwidth` (Hz). Matches
 #'   `as.data.frame.FormantPath()`.
 #' @examples
-#' sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate =
+#  16000)
 #' formant <- sound$to_formant_burg()
 #' df <- as.data.frame(formant)
 #' head(df)
@@ -458,14 +485,17 @@ as.data.frame.Formant <- function(x, row.names = NULL, optional = FALSE, ...) {
 #' @inheritParams pladdrr_shared_params row.names
 #' @inheritParams pladdrr_shared_params optional
 #' @param ... Additional arguments (ignored)
-#' @return A data.table (inherits from data.frame) with time and intensity columns
+#' @return A data.table (inherits from data.frame) with time and intensity
+#  columns
 #' @examples
-#' sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate =
+#  16000)
 #' intensity <- sound$to_intensity()
 #' df <- as.data.frame(intensity)
 #' head(df)
 #' @export
-as.data.frame.Intensity <- function(x, row.names = NULL, optional = FALSE, ...) {
+as.data.frame.Intensity <- function(x, row.names = NULL, optional = FALSE,
+  ...) {
   x$as_data_frame()
 }
 
@@ -480,7 +510,8 @@ as.data.frame.Intensity <- function(x, row.names = NULL, optional = FALSE, ...) 
 #' @param ... Additional arguments (ignored)
 #' @return A data.table (inherits from data.frame) with pitch measurements
 #' @examples
-#' sound <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.3, sampling_rate =
+#  16000)
 #' pitch <- sound$to_pitch()
 #' df <- as.data.frame(pitch)
 #' head(df)
@@ -492,7 +523,8 @@ as.data.frame.Pitch <- function(x, row.names = NULL, optional = FALSE, ...) {
 #' @describeIn as.data.frame.Pitch Convert PointProcess to data.frame
 #' @param x A PointProcess R6 object
 #' @export
-as.data.frame.PointProcess <- function(x, row.names = NULL, optional = FALSE, ...) {
+as.data.frame.PointProcess <- function(x, row.names = NULL, optional = FALSE,
+  ...) {
   x$as_data_frame()
 }
 

@@ -3,7 +3,8 @@
 
 test_that("extract_part accepts all window shape names", {
   # Create a simple tone
-  sound <- Sound$create_tone(frequency = 440, duration = 1.0, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 440, duration = 1.0,
+    sampling_rate = 16000)
   
   # All window shapes should work without error
   window_shapes <- c(
@@ -19,11 +20,13 @@ test_that("extract_part accepts all window shape names", {
 })
 
 test_that("extract_part with gaussian2 and relative_width=2.0 works", {
-  sound <- Sound$create_tone(frequency = 440, duration = 1.0, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 440, duration = 1.0,
+    sampling_rate = 16000)
   
   # Gaussian2 with relative_width=2.0 (common for spectral analysis)
   expect_no_error(
-    part <- sound$extract_part(0.3, 0.7, window_shape = "gaussian2", relative_width = 2.0)
+    part <- sound$extract_part(0.3, 0.7, window_shape = "gaussian2",
+      relative_width = 2.0)
   )
   
   # Should return a valid Sound object
@@ -31,11 +34,13 @@ test_that("extract_part with gaussian2 and relative_width=2.0 works", {
 })
 
 test_that("extract_part with kaiser2 and relative_width=2.0 works", {
-  sound <- Sound$create_tone(frequency = 440, duration = 1.0, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 440, duration = 1.0,
+    sampling_rate = 16000)
   
   # Kaiser2 with relative_width=2.0 (used in Praat's accurate pitch tracking)
   expect_no_error(
-    part <- sound$extract_part(0.3, 0.7, window_shape = "kaiser2", relative_width = 2.0)
+    part <- sound$extract_part(0.3, 0.7, window_shape = "kaiser2",
+      relative_width = 2.0)
   )
   
   # Should return a valid Sound object
@@ -43,7 +48,8 @@ test_that("extract_part with kaiser2 and relative_width=2.0 works", {
 })
 
 test_that("extract_part with window applies tapering", {
-  sound <- Sound$create_tone(frequency = 440, duration = 1.0, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 440, duration = 1.0,
+    sampling_rate = 16000)
   
   # Extract with rectangular (no taper)
   rect <- sound$extract_part(0.2, 0.8, window_shape = "rectangular")
@@ -63,7 +69,8 @@ test_that("extract_part with window applies tapering", {
 })
 
 test_that("extract_part preserve_times parameter works", {
-  sound <- Sound$create_tone(frequency = 440, duration = 1.0, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 440, duration = 1.0,
+    sampling_rate = 16000)
   
   # Without preserve_times (default: FALSE)
   part_shifted <- sound$extract_part(0.3, 0.7, preserve_times = FALSE)
@@ -76,14 +83,16 @@ test_that("extract_part preserve_times parameter works", {
 })
 
 test_that("extract_parts_batch works with window shapes", {
-  sound <- Sound$create_tone(frequency = 440, duration = 1.0, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 440, duration = 1.0,
+    sampling_rate = 16000)
   
   start_times <- c(0.1, 0.3, 0.5)
   end_times <- c(0.2, 0.4, 0.6)
   
   # Should work with gaussian1
   expect_no_error(
-    parts <- sound$extract_parts_batch(start_times, end_times, window_shape = "gaussian1")
+    parts <- sound$extract_parts_batch(start_times, end_times,
+      window_shape = "gaussian1")
   )
   
   expect_length(parts, 3)
@@ -91,7 +100,8 @@ test_that("extract_parts_batch works with window shapes", {
 })
 
 test_that("sound_extract_parts function works with window shapes", {
-  sound <- Sound$create_tone(frequency = 440, duration = 1.0, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 440, duration = 1.0,
+    sampling_rate = 16000)
   
   start_times <- c(0.1, 0.3, 0.5)
   end_times <- c(0.2, 0.4, 0.6)

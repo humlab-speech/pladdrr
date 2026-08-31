@@ -77,7 +77,8 @@ std_f0 = Get standard deviation: 0, 0, "Hertz"
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
 mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
-std_f0 <- pitch$get_standard_deviation(from_time = 0, to_time = 0, unit = "hertz")
+std_f0 <- pitch$get_standard_deviation(from_time = 0, to_time = 0,
+  unit = "hertz")
 ```
 
 ### Formant Extraction
@@ -117,9 +118,12 @@ max_intensity = Get maximum: 0, 0, "Parabolic"
 **pladdrr:**
 ```{r}
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
-intensity <- sound$to_intensity(minimum_pitch = 100, time_step = 0.01, subtract_mean = TRUE)
-mean_intensity <- intensity$get_mean(from_time = 0, to_time = 0, averaging_method = "energy")
-max_intensity <- intensity$get_maximum(from_time = 0, to_time = 0, interpolation = "parabolic")
+intensity <- sound$to_intensity(minimum_pitch = 100, time_step = 0.01,
+  subtract_mean = TRUE)
+mean_intensity <- intensity$get_mean(from_time = 0, to_time = 0,
+  averaging_method = "energy")
+max_intensity <- intensity$get_maximum(from_time = 0, to_time = 0,
+  interpolation = "parabolic")
 ```
 
 ### Spectral Analysis
@@ -149,7 +153,8 @@ Set interval text: 1, 1, "hello"
 
 **pladdrr:**
 ```{r}
-textgrid <- TextGrid$create(tmin = 0, tmax = 1, tier_names = "words phones", point_tiers = "phones")
+textgrid <- TextGrid$create(tmin = 0, tmax = 1, tier_names = "words phones",
+  point_tiers = "phones")
 textgrid$insert_boundary(tier = 1, time = 0.5)
 textgrid$set_interval_text(tier = 1, interval_number = 1, text = "hello")
 ```
@@ -187,7 +192,8 @@ files <- list.files(pattern = "\\.wav$", full.names = TRUE)
 # Process each file
 results <- lapply(files, function(filepath) {
   sound <- Sound$new(filepath)
-  pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
+  pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75,
+    pitch_ceiling = 600)
   mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
   
   data.frame(
@@ -213,9 +219,12 @@ library(purrr)
 results <- tibble(file = list.files(pattern = "\\.wav$")) %>%
   mutate(
     sound = map(file, Sound$new),
-    pitch = map(sound, ~.$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)),
-    mean_f0 = map_dbl(pitch, ~.$get_mean(from_time = 0, to_time = 0, unit = "hertz")),
-    sd_f0 = map_dbl(pitch, ~.$get_standard_deviation(from_time = 0, to_time = 0, unit = "hertz"))
+    pitch = map(sound,
+      ~.$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)),
+    mean_f0 = map_dbl(pitch,
+      ~.$get_mean(from_time = 0, to_time = 0, unit = "hertz")),
+    sd_f0 = map_dbl(pitch,
+      ~.$get_standard_deviation(from_time = 0, to_time = 0, unit = "hertz"))
   ) %>%
   select(file, mean_f0, sd_f0)
 ```

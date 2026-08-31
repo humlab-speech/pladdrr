@@ -103,7 +103,8 @@ test_that("extract_textgrid_intervals validates inputs", {
   tg <- pp$to_textgrid_vuv(0.02, 0.01)
   
   # Invalid textgrid
-  expect_error(extract_textgrid_intervals("not a textgrid", tier = 1, text_equals = "V"))
+  expect_error(
+    extract_textgrid_intervals("not a textgrid", tier = 1, text_equals = "V"))
   
   # Invalid tier
   expect_error(extract_textgrid_intervals(tg, tier = 999, text_equals = "V"))
@@ -112,10 +113,14 @@ test_that("extract_textgrid_intervals validates inputs", {
   expect_error(extract_textgrid_intervals(tg, tier = 1))
   
   # Multiple criteria
-  expect_error(extract_textgrid_intervals(tg, tier = 1, text_equals = "V", text_contains = "V"))
+  expect_error(
+    extract_textgrid_intervals(tg, tier = 1, text_equals = "V",
+      text_contains = "V"))
   
   # extract_sounds = TRUE without sound
-  expect_error(extract_textgrid_intervals(tg, tier = 1, text_equals = "V", extract_sounds = TRUE))
+  expect_error(
+    extract_textgrid_intervals(tg, tier = 1, text_equals = "V",
+      extract_sounds = TRUE))
 })
 
 
@@ -137,7 +142,8 @@ test_that("get_textgrid_labels_all returns all labels", {
   
   # Labels should match individual queries
   for (i in 1:min(5, n_intervals)) {
-    expect_equal(labels[i], tg$get_interval_text(1, i), tolerance = sqrt(.Machine$double.eps))
+    expect_equal(labels[i], tg$get_interval_text(1, i),
+      tolerance = sqrt(.Machine$double.eps))
   }
 })
 
@@ -203,12 +209,14 @@ test_that("batch operations are faster than manual loops", {
       }
     }
     
-    list(indices = indices, labels = labels, start_times = starts, end_times = ends)
+    list(indices = indices, labels = labels, start_times = starts,
+      end_times = ends)
   }
   
   # Batch operation
   batch_extract <- function() {
-    extract_textgrid_intervals(tg, tier = 1, text_equals = "V", extract_sounds = FALSE)
+    extract_textgrid_intervals(tg, tier = 1, text_equals = "V",
+      extract_sounds = FALSE)
   }
   
   library(microbenchmark)
@@ -254,7 +262,8 @@ test_that("batch operations return same results as manual", {
   batch_stats <- get_textgrid_interval_stats(tg, tier = 1)
   
   # Compare
-  expect_equal(batch_stats$label, manual_labels, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(batch_stats$label, manual_labels,
+    tolerance = sqrt(.Machine$double.eps))
   expect_equal(batch_stats$start, manual_starts, tolerance = 1e-10)
   expect_equal(batch_stats$end, manual_ends, tolerance = 1e-10)
 })
@@ -270,7 +279,8 @@ test_that("batch operations return same results as manual", {
 # to exercise "Invalid ... pointer" checks without touching a real object.
 # ----------------------------------------------------------------------------
 
-test_that("textgrid_extract_intervals_batch errors on invalid pointers and unknown comparison_type", {
+test_that(
+  "textgrid_extract_intervals_batch errors on invalid pointers and unknown comparison_type", {
   null_ptr <- methods::new("externalptr")
 
   expect_error(
@@ -285,24 +295,29 @@ test_that("textgrid_extract_intervals_batch errors on invalid pointers and unkno
   tg <- pp$to_textgrid_vuv(0.02, 0.01)
 
   expect_error(
-    textgrid_extract_intervals_batch(tg$.xptr, null_ptr, 1L, extract_sounds = TRUE),
+    textgrid_extract_intervals_batch(tg$.xptr, null_ptr, 1L,
+      extract_sounds = TRUE),
     "Invalid Sound pointer"
   )
 
   expect_error(
-    textgrid_extract_intervals_batch(tg$.xptr, NULL, 1L, comparison_type = "bogus"),
+    textgrid_extract_intervals_batch(tg$.xptr, NULL, 1L,
+      comparison_type = "bogus"),
     "Unknown comparison_type"
   )
 })
 
 test_that("textgrid_get_all_labels errors on an invalid TextGrid pointer", {
   null_ptr <- methods::new("externalptr")
-  expect_error(textgrid_get_all_labels(null_ptr, 1L), "Invalid TextGrid pointer")
+  expect_error(textgrid_get_all_labels(null_ptr, 1L),
+    "Invalid TextGrid pointer")
 })
 
-test_that("textgrid_interval_statistics_batch errors on invalid pointer and matches with SIMD disabled", {
+test_that(
+  "textgrid_interval_statistics_batch errors on invalid pointer and matches with SIMD disabled", {
   null_ptr <- methods::new("externalptr")
-  expect_error(textgrid_interval_statistics_batch(null_ptr, 1L), "Invalid TextGrid pointer")
+  expect_error(textgrid_interval_statistics_batch(null_ptr, 1L),
+    "Invalid TextGrid pointer")
 
   tg <- textgrid_create(0, 2.0, tier_names = "segment", point_tiers = "")
   tg$insert_boundary(1, 0.3)
@@ -322,7 +337,8 @@ test_that("textgrid_interval_statistics_batch errors on invalid pointer and matc
   expect_equal(stats$duration[4], 1.2, tolerance = 1e-10)
 })
 
-test_that("get_interval_predicate builds usable built-in predicates and errors on unknown type", {
+test_that(
+  "get_interval_predicate builds usable built-in predicates and errors on unknown type", {
   expect_error(get_interval_predicate("bogus"), "Unknown predicate type")
 
   pred_ne <- get_interval_predicate("non_empty")
@@ -334,7 +350,8 @@ test_that("get_interval_predicate builds usable built-in predicates and errors o
   expect_type(pred_max, "externalptr")
 })
 
-test_that("textgrid_filter_xptr filters with built-in predicates and errors on bad inputs", {
+test_that(
+  "textgrid_filter_xptr filters with built-in predicates and errors on bad inputs", {
   tg <- textgrid_create(0, 2.0, tier_names = "segment", point_tiers = "")
   tg$insert_boundary(1, 0.3)
   tg$insert_boundary(1, 0.5)
@@ -347,14 +364,16 @@ test_that("textgrid_filter_xptr filters with built-in predicates and errors on b
   pred_ne <- get_interval_predicate("non_empty")
   result <- textgrid_filter_xptr(tg$.xptr, 1L, pred_ne)
   expect_equal(result$n_matched, 2L, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(result$labels, c("b", "d"), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(result$labels, c("b", "d"),
+    tolerance = sqrt(.Machine$double.eps))
 
   pred_min <- get_interval_predicate("min_duration", 1.0)
   result2 <- textgrid_filter_xptr(tg$.xptr, 1L, pred_min)
   expect_equal(result2$n_matched, 1L, tolerance = sqrt(.Machine$double.eps))  # only interval 4: [0.8, 2.0] = 1.2s
 
   # With sound extraction
-  sound <- Sound$create_tone(frequency = 150, duration = 2, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 150, duration = 2,
+    sampling_rate = 16000)
   result3 <- textgrid_filter_xptr(
     tg$.xptr, 1L, pred_ne,
     sound_xptr = sound$.xptr, extract_sounds = TRUE
@@ -363,11 +382,13 @@ test_that("textgrid_filter_xptr filters with built-in predicates and errors on b
   expect_length(result3$sounds, result3$n_matched)
 
   null_ptr <- methods::new("externalptr")
-  expect_error(textgrid_filter_xptr(null_ptr, 1L, pred_ne), "Invalid TextGrid pointer")
+  expect_error(textgrid_filter_xptr(null_ptr, 1L, pred_ne),
+    "Invalid TextGrid pointer")
   expect_error(textgrid_filter_xptr(tg$.xptr, 1L, 42), "external pointer")
   expect_error(textgrid_filter_xptr(tg$.xptr, 1L, null_ptr), "NULL")
   expect_error(
-    textgrid_filter_xptr(tg$.xptr, 1L, pred_ne, sound_xptr = null_ptr, extract_sounds = TRUE),
+    textgrid_filter_xptr(tg$.xptr, 1L, pred_ne, sound_xptr = null_ptr,
+      extract_sounds = TRUE),
     "Invalid Sound pointer"
   )
 })

@@ -10,7 +10,8 @@
 # get_resynthesis_pulses_hum or the module factories at all.
 
 manip_from_tone <- function() {
-  snd <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+  snd <- Sound$create_tone(frequency = 150, duration = 0.5,
+    sampling_rate = 16000)
   snd$to_manipulation(pitch_floor = 75, pitch_ceiling = 300)
 }
 
@@ -64,7 +65,8 @@ test_that("module save writes a file", {
 
 test_that("module factory Sound_to_Manipulation builds a valid Manipulation", {
   mod <- pladdrr:::get_module("manipulation_module")
-  snd <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+  snd <- Sound$create_tone(frequency = 150, duration = 0.5,
+    sampling_rate = 16000)
 
   xptr <- mod$Sound_to_Manipulation(snd$get_xptr(), 0.01, 75, 300)
   expect_type(xptr, "externalptr")

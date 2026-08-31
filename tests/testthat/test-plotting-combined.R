@@ -7,8 +7,10 @@
 #   - plot_sound_pitch() passed `pitch_floor`/`pitch_ceiling` to plot.Pitch(),
 #     which ignores them; the parameters were removed.
 
-test_that("plot_spectrogram_pitch freq_max actually caps the displayed frequency", {
-  sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+test_that(
+  "plot_spectrogram_pitch freq_max actually caps the displayed frequency", {
+  sound <- Sound$create_tone(frequency = 220, duration = 0.3,
+    sampling_rate = 16000)
   spectrogram <- sound$to_spectrogram()
   pitch <- sound$to_pitch()
 
@@ -24,7 +26,8 @@ test_that("plot_spectrogram_pitch freq_max actually caps the displayed frequency
 })
 
 test_that("plot_spectrogram_pitch renders without a freq_max cap", {
-  sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 220, duration = 0.3,
+    sampling_rate = 16000)
   spectrogram <- sound$to_spectrogram()
   pitch <- sound$to_pitch()
 
@@ -33,7 +36,8 @@ test_that("plot_spectrogram_pitch renders without a freq_max cap", {
 })
 
 test_that("plot_spectrogram_pitch validates its inputs", {
-  sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 220, duration = 0.5,
+    sampling_rate = 16000)
   spectrogram <- sound$to_spectrogram()
   pitch <- sound$to_pitch()
 
@@ -44,39 +48,48 @@ test_that("plot_spectrogram_pitch validates its inputs", {
 })
 
 test_that("plot_spectrogram_pitch accepts pitch_color and title", {
-  sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 220, duration = 0.5,
+    sampling_rate = 16000)
   spectrogram <- sound$to_spectrogram()
   pitch <- sound$to_pitch()
 
-  p <- plot_spectrogram_pitch(spectrogram, pitch, pitch_color = "purple", title = "Custom")
+  p <- plot_spectrogram_pitch(spectrogram, pitch, pitch_color = "purple",
+    title = "Custom")
   expect_s3_class(p, "ggplot")
   expect_identical(p$labels$title, "Custom")
 })
 
 test_that("plot_spectrogram_pitch filters by pitch_floor/pitch_ceiling", {
-  sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 220, duration = 0.5,
+    sampling_rate = 16000)
   spectrogram <- sound$to_spectrogram()
   pitch <- sound$to_pitch()
 
-  p <- plot_spectrogram_pitch(spectrogram, pitch, pitch_floor = 75, pitch_ceiling = 500,
+  p <- plot_spectrogram_pitch(spectrogram, pitch, pitch_floor = 75,
+    pitch_ceiling = 500,
                                from_time = 0.05, to_time = 0.4)
   expect_s3_class(p, "ggplot")
 })
 
-test_that("plot_spectrogram_pitch warns and returns bare spectrogram when pitch range excludes all data", {
-  sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+test_that(
+  "plot_spectrogram_pitch warns and returns bare spectrogram when pitch range excludes all data", {
+  sound <- Sound$create_tone(frequency = 220, duration = 0.5,
+    sampling_rate = 16000)
   spectrogram <- sound$to_spectrogram()
   pitch <- sound$to_pitch()
 
   expect_warning(
-    p <- plot_spectrogram_pitch(spectrogram, pitch, pitch_floor = 10000, pitch_ceiling = 10001),
+    p <- plot_spectrogram_pitch(spectrogram, pitch, pitch_floor = 10000,
+      pitch_ceiling = 10001),
     "No pitch data available in the specified range"
   )
   expect_s3_class(p, "ggplot")
 })
 
-test_that("plot_sound_pitch renders and no longer accepts pitch_floor/pitch_ceiling", {
-  sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+test_that(
+  "plot_sound_pitch renders and no longer accepts pitch_floor/pitch_ceiling", {
+  sound <- Sound$create_tone(frequency = 220, duration = 0.3,
+    sampling_rate = 16000)
   pitch <- sound$to_pitch()
 
   p <- plot_sound_pitch(sound, pitch)
@@ -85,15 +98,19 @@ test_that("plot_sound_pitch renders and no longer accepts pitch_floor/pitch_ceil
 })
 
 test_that("plot_sound_pitch validates its inputs", {
-  sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 220, duration = 0.5,
+    sampling_rate = 16000)
   pitch <- sound$to_pitch()
 
-  expect_error(plot_sound_pitch("not a sound", pitch), "sound must be a Sound object")
-  expect_error(plot_sound_pitch(sound, "not a pitch"), "pitch must be a Pitch object")
+  expect_error(plot_sound_pitch("not a sound", pitch),
+    "sound must be a Sound object")
+  expect_error(plot_sound_pitch(sound, "not a pitch"),
+    "pitch must be a Pitch object")
 })
 
 test_that("plot_sound_pitch accepts a time range, custom colors, and a title", {
-  sound <- Sound$create_tone(frequency = 220, duration = 1.0, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 220, duration = 1.0,
+    sampling_rate = 16000)
   pitch <- sound$to_pitch()
 
   p <- plot_sound_pitch(sound, pitch, from_time = 0.2, to_time = 0.8,
@@ -108,15 +125,19 @@ test_that("plot_sound_pitch no longer has pitch_floor/pitch_ceiling formals", {
 })
 
 test_that("plot_textgrid_sound validates its inputs", {
-  sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 220, duration = 0.5,
+    sampling_rate = 16000)
   tg <- TextGrid$create(tmin = 0, tmax = 0.5, tier_names = "words")
 
-  expect_error(plot_textgrid_sound("not a textgrid", sound), "textgrid must be a TextGrid object")
-  expect_error(plot_textgrid_sound(tg, "not a sound"), "sound must be a Sound object")
+  expect_error(plot_textgrid_sound("not a textgrid", sound),
+    "textgrid must be a TextGrid object")
+  expect_error(plot_textgrid_sound(tg, "not a sound"),
+    "sound must be a Sound object")
 })
 
 test_that("plot_textgrid_sound errors on an unknown tier name", {
-  sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 220, duration = 0.5,
+    sampling_rate = 16000)
   tg <- TextGrid$create(tmin = 0, tmax = 0.5, tier_names = "words")
 
   expect_error(plot_textgrid_sound(tg, sound, tier = "nonexistent"),
@@ -124,7 +145,8 @@ test_that("plot_textgrid_sound errors on an unknown tier name", {
 })
 
 test_that("plot_textgrid_sound renders all interval tiers by default", {
-  sound <- Sound$create_tone(frequency = 220, duration = 1.0, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 220, duration = 1.0,
+    sampling_rate = 16000)
   tg <- TextGrid$create(tmin = 0, tmax = 1.0, tier_names = "words phones")
   tg$insert_boundary("words", 0.5)
   tg$set_interval_text("words", 1, "hello")
@@ -135,7 +157,8 @@ test_that("plot_textgrid_sound renders all interval tiers by default", {
 })
 
 test_that("plot_textgrid_sound accepts a numeric tier index and a time range", {
-  sound <- Sound$create_tone(frequency = 220, duration = 1.0, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 220, duration = 1.0,
+    sampling_rate = 16000)
   tg <- TextGrid$create(tmin = 0, tmax = 1.0, tier_names = "words phones")
   tg$insert_boundary("words", 0.5)
   tg$set_interval_text("words", 1, "hello")
@@ -147,8 +170,10 @@ test_that("plot_textgrid_sound accepts a numeric tier index and a time range", {
 })
 
 test_that("plot_textgrid_sound renders a point tier", {
-  sound <- Sound$create_tone(frequency = 220, duration = 1.0, sampling_rate = 16000)
-  tg <- TextGrid$create(tmin = 0, tmax = 1.0, tier_names = "words tones", point_tiers = "tones")
+  sound <- Sound$create_tone(frequency = 220, duration = 1.0,
+    sampling_rate = 16000)
+  tg <- TextGrid$create(tmin = 0, tmax = 1.0, tier_names = "words tones",
+    point_tiers = "tones")
   tg$insert_point("tones", 0.2, "H*")
   tg$insert_point("tones", 0.8, "L-L%")
 
@@ -157,16 +182,20 @@ test_that("plot_textgrid_sound renders a point tier", {
 })
 
 test_that("plot_textgrid_pitch validates its inputs", {
-  sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 220, duration = 0.5,
+    sampling_rate = 16000)
   pitch <- sound$to_pitch()
   tg <- TextGrid$create(tmin = 0, tmax = 0.5, tier_names = "words")
 
-  expect_error(plot_textgrid_pitch("not a textgrid", pitch), "textgrid must be a TextGrid object")
-  expect_error(plot_textgrid_pitch(tg, "not a pitch"), "pitch must be a Pitch object")
+  expect_error(plot_textgrid_pitch("not a textgrid", pitch),
+    "textgrid must be a TextGrid object")
+  expect_error(plot_textgrid_pitch(tg, "not a pitch"),
+    "pitch must be a Pitch object")
 })
 
 test_that("plot_textgrid_pitch errors on an unknown tier name", {
-  sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 220, duration = 0.5,
+    sampling_rate = 16000)
   pitch <- sound$to_pitch()
   tg <- TextGrid$create(tmin = 0, tmax = 0.5, tier_names = "words")
 
@@ -175,7 +204,8 @@ test_that("plot_textgrid_pitch errors on an unknown tier name", {
 })
 
 test_that("plot_textgrid_pitch renders all interval tiers by default", {
-  sound <- Sound$create_tone(frequency = 220, duration = 1.0, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 220, duration = 1.0,
+    sampling_rate = 16000)
   pitch <- sound$to_pitch()
   tg <- TextGrid$create(tmin = 0, tmax = 1.0, tier_names = "words phones")
   tg$insert_boundary("words", 0.5)
@@ -186,8 +216,10 @@ test_that("plot_textgrid_pitch renders all interval tiers by default", {
   expect_combined_plot(p)
 })
 
-test_that("plot_textgrid_pitch accepts a numeric tier index, time range, and custom color", {
-  sound <- Sound$create_tone(frequency = 220, duration = 1.0, sampling_rate = 16000)
+test_that(
+  "plot_textgrid_pitch accepts a numeric tier index, time range, and custom color", {
+  sound <- Sound$create_tone(frequency = 220, duration = 1.0,
+    sampling_rate = 16000)
   pitch <- sound$to_pitch()
   tg <- TextGrid$create(tmin = 0, tmax = 1.0, tier_names = "words phones")
   tg$insert_boundary("words", 0.5)
@@ -198,9 +230,11 @@ test_that("plot_textgrid_pitch accepts a numeric tier index, time range, and cus
 })
 
 test_that("plot_textgrid_pitch renders a point tier", {
-  sound <- Sound$create_tone(frequency = 220, duration = 1.0, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 220, duration = 1.0,
+    sampling_rate = 16000)
   pitch <- sound$to_pitch()
-  tg <- TextGrid$create(tmin = 0, tmax = 1.0, tier_names = "words tones", point_tiers = "tones")
+  tg <- TextGrid$create(tmin = 0, tmax = 1.0, tier_names = "words tones",
+    point_tiers = "tones")
   tg$insert_point("tones", 0.2, "H*")
   tg$insert_point("tones", 0.8, "L-L%")
 
@@ -209,16 +243,21 @@ test_that("plot_textgrid_pitch renders a point tier", {
 })
 
 test_that("plot_pitch_intensity validates its inputs", {
-  sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 220, duration = 0.5,
+    sampling_rate = 16000)
   pitch <- sound$to_pitch()
   intensity <- sound$to_intensity()
 
-  expect_error(plot_pitch_intensity("not a pitch", intensity), "pitch must be a Pitch object")
-  expect_error(plot_pitch_intensity(pitch, "not an intensity"), "intensity must be an Intensity object")
+  expect_error(plot_pitch_intensity("not a pitch", intensity),
+    "pitch must be a Pitch object")
+  expect_error(plot_pitch_intensity(pitch, "not an intensity"),
+    "intensity must be an Intensity object")
 })
 
-test_that("plot_pitch_intensity renders a dual-axis ggplot with default range", {
-  sound <- Sound$create_tone(frequency = 220, duration = 1.0, sampling_rate = 16000)
+test_that(
+  "plot_pitch_intensity renders a dual-axis ggplot with default range", {
+  sound <- Sound$create_tone(frequency = 220, duration = 1.0,
+    sampling_rate = 16000)
   pitch <- sound$to_pitch()
   intensity <- sound$to_intensity()
 
@@ -228,7 +267,8 @@ test_that("plot_pitch_intensity renders a dual-axis ggplot with default range", 
 })
 
 test_that("plot_pitch_intensity accepts a time range and custom colors/title", {
-  sound <- Sound$create_tone(frequency = 220, duration = 1.0, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 220, duration = 1.0,
+    sampling_rate = 16000)
   pitch <- sound$to_pitch()
   intensity <- sound$to_intensity()
 
@@ -240,7 +280,8 @@ test_that("plot_pitch_intensity accepts a time range and custom colors/title", {
 })
 
 test_that("plot_spectrogram_formants validates its inputs", {
-  sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 220, duration = 0.5,
+    sampling_rate = 16000)
   spectrogram <- sound$to_spectrogram()
   formant <- sound$to_formant()
 
@@ -251,7 +292,8 @@ test_that("plot_spectrogram_formants validates its inputs", {
 })
 
 test_that("plot_spectrogram_formants overlays formant tracks by default", {
-  sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+  sound <- Sound$create_tone(frequency = 220, duration = 0.5,
+    sampling_rate = 16000)
   spectrogram <- sound$to_spectrogram()
   formant <- sound$to_formant()
 
@@ -260,8 +302,10 @@ test_that("plot_spectrogram_formants overlays formant tracks by default", {
   expect_identical(p$labels$title, "Spectrogram + Formants")
 })
 
-test_that("plot_spectrogram_formants accepts max_formant, formant_colors, dynamic_range", {
-  sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+test_that(
+  "plot_spectrogram_formants accepts max_formant, formant_colors, dynamic_range", {
+  sound <- Sound$create_tone(frequency = 220, duration = 0.5,
+    sampling_rate = 16000)
   spectrogram <- sound$to_spectrogram()
   formant <- sound$to_formant()
 
@@ -272,23 +316,28 @@ test_that("plot_spectrogram_formants accepts max_formant, formant_colors, dynami
   expect_identical(p$labels$title, "Custom")
 })
 
-test_that("plot_spectrogram_formants warns and returns bare spectrogram when no formant data in range", {
-  sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+test_that(
+  "plot_spectrogram_formants warns and returns bare spectrogram when no formant data in range", {
+  sound <- Sound$create_tone(frequency = 220, duration = 0.5,
+    sampling_rate = 16000)
   spectrogram <- sound$to_spectrogram()
   formant <- sound$to_formant()
 
   expect_warning(
-    p <- plot_spectrogram_formants(spectrogram, formant, from_time = 10, to_time = 20),
+    p <- plot_spectrogram_formants(spectrogram, formant, from_time = 10,
+      to_time = 20),
     "No formant data available in the specified time range"
   )
   expect_s3_class(p, "ggplot")
 })
 
-test_that("plot_sound_pitch falls back to gridExtra when patchwork unavailable", {
+test_that(
+  "plot_sound_pitch falls back to gridExtra when patchwork unavailable", {
   s <- Sound$create_tone(frequency = 200, duration = 0.2)
   pitch <- s$to_pitch()
   local_mocked_bindings(
-    requireNamespace = function(pkg, ...) pkg %in% c("ggplot2", "grid", "gridExtra"),
+    requireNamespace = function(pkg, ...) pkg %in% c("ggplot2", "grid",
+      "gridExtra"),
     .package = "base"
   )
   res <- plot_sound_pitch(s, pitch)

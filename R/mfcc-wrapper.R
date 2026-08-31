@@ -1,4 +1,5 @@
-# mfcc-wrapper.R - MFCC and LFCC objects using shared dispatch tables (pladdrr 4.8.33)
+# mfcc-wrapper.R - MFCC and LFCC objects using shared dispatch tables (pladdrr
+#  4.8.33)
 # Architecture: minimal list + $.MFCC / $.LFCC S3 dispatch → shared method env
 
 #' MFCC
@@ -23,7 +24,7 @@
 #'   \item \code{get_fmin()}, \code{get_fmax()} - frequency range (mel)
 #'   \item \code{get_c0_at_frame(frame)} - C0 (energy) for a specific frame
 #'   \item \code{get_value_in_frame(frame, coef)} - coefficient value at a frame
-#'   \item \code{get_coefficients_at_frame(frame)} - all coefficients for a frame
+#' \item \code{get_coefficients_at_frame(frame)} - all coefficients for a frame
 #'   \item \code{get_all_coefficients()} - matrix of all coefficients
 #'   \item \code{get_all_c0()} - vector of all C0 values
 #' }
@@ -41,7 +42,8 @@
 #'
 #' @param .xptr Not for direct use. External pointer to the underlying C++ MFCC
 #'   object; set internally when a method returns a new MFCC.
-#' @return An \code{MFCC} object with methods for Mel-frequency cepstral coefficient analysis.
+#' @return An \code{MFCC} object with methods for Mel-frequency cepstral
+#  coefficient analysis.
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.3)
@@ -69,9 +71,11 @@ NULL
 .mfcc_methods <- new.env(hash = TRUE, parent = emptyenv())
 
 # --- Properties ---
-.mfcc_methods$get_number_of_frames <- function(.self) .self$.cpp$get_number_of_frames()
+.mfcc_methods$get_number_of_frames <- function(
+  .self) .self$.cpp$get_number_of_frames()
 .mfcc_methods$get_time_step <- function(.self) .self$.cpp$get_time_step()
-.mfcc_methods$get_max_num_coefficients <- function(.self) .self$.cpp$get_max_num_coefficients()
+.mfcc_methods$get_max_num_coefficients <- function(
+  .self) .self$.cpp$get_max_num_coefficients()
 .mfcc_methods$get_fmin <- function(.self) .self$.cpp$get_fmin()
 .mfcc_methods$get_fmax <- function(.self) .self$.cpp$get_fmax()
 .mfcc_methods$get_xmin <- function(.self) .self$.cpp$get_xmin()
@@ -85,8 +89,10 @@ NULL
 .mfcc_methods$get_num_coefficients_at_frame <- function(.self, frame_number) {
   .self$.cpp$get_num_coefficients_at_frame(as.integer(frame_number))
 }
-.mfcc_methods$get_value_in_frame <- function(.self, frame_number, coeff_number) {
-  .self$.cpp$get_value_in_frame(as.integer(frame_number), as.integer(coeff_number))
+.mfcc_methods$get_value_in_frame <- function(.self, frame_number,
+  coeff_number) {
+  .self$.cpp$get_value_in_frame(as.integer(frame_number),
+    as.integer(coeff_number))
 }
 .mfcc_methods$get_value_at_time <- function(.self, time, coeff_number) {
   .self$.cpp$get_value_at_time(as.numeric(time), as.integer(coeff_number))
@@ -95,7 +101,8 @@ NULL
   .self$.cpp$get_coefficients_at_frame(as.integer(frame_number))
 }
 .mfcc_methods$get_all_c0 <- function(.self) .self$.cpp$get_all_c0()
-.mfcc_methods$get_all_coefficients <- function(.self) .self$.cpp$get_all_coefficients()
+.mfcc_methods$get_all_coefficients <- function(
+  .self) .self$.cpp$get_all_coefficients()
 
 # --- Frame/time conversion ---
 .mfcc_methods$get_time_from_frame <- function(.self, frame_number) {
@@ -116,9 +123,11 @@ NULL
   matrix_ptr <- .self$.cpp$to_matrix_ptr()
   Matrix(.xptr = matrix_ptr)
 }
-.mfcc_methods$to_mel_spectrogram <- function(.self, first_coefficient = 1, last_coefficient = 0,
+.mfcc_methods$to_mel_spectrogram <- function(.self, first_coefficient = 1,
+  last_coefficient = 0,
                                              include_c0 = FALSE) {
-  if (last_coefficient == 0) last_coefficient <- .self$.cpp$get_max_num_coefficients()
+  if (
+    last_coefficient == 0) last_coefficient <- .self$.cpp$get_max_num_coefficients()
   mel_ptr <- .mfcc_to_mel_spectrogram(
     .self$.xptr, as.integer(first_coefficient),
     as.integer(last_coefficient), include_c0
@@ -153,9 +162,13 @@ NULL
 .mfcc_methods$print <- function(.self) {
   info <- .self$.cpp$get_info()
   cat("<Praat MFCC>\n")
-  cat(sprintf("  Time: %.3f - %.3f s (%.3f s)\n", info$xmin, info$xmax, info$xmax - info$xmin))
+  cat(
+    sprintf("  Time: %.3f - %.3f s (%.3f s)\n", info$xmin, info$xmax,
+      info$xmax - info$xmin))
   cat(sprintf("  Frames: %d (step: %.4f s)\n", info$nx, info$dx))
-  cat(sprintf("  Coefficients: %d (max %d used)\n", info$max_n_coefficients, info$max_n_coefficients_used))
+  cat(
+    sprintf("  Coefficients: %d (max %d used)\n", info$max_n_coefficients,
+      info$max_n_coefficients_used))
   cat(sprintf("  Mel range: %.1f - %.1f mel\n", info$fmin_mel, info$fmax_mel))
   invisible(.self)
 }
@@ -170,11 +183,13 @@ lockEnvironment(.mfcc_methods, bindings = TRUE)
 #' @export
 MFCC <- function(.xptr = NULL) {
   if (is.null(.xptr)) {
-    stop("MFCC objects must be created from a Sound object using sound$to_mfcc()")
+    stop(
+      "MFCC objects must be created from a Sound object using sound$to_mfcc()")
   }
   mfcc_mod <- get_module("mfcc_module")
   cpp_obj <- mfcc_mod$RMFCC$new(.xptr)
-  structure(list(.xptr = .xptr, .cpp = cpp_obj), class = c("MFCC", "PraatObject"))
+  structure(list(.xptr = .xptr, .cpp = cpp_obj),
+    class = c("MFCC", "PraatObject"))
 }
 
 # ============================================================================
@@ -207,7 +222,8 @@ MFCC <- function(.xptr = NULL) {
 #'
 #' @param .xptr Not for direct use. External pointer to the underlying C++ LFCC
 #'   object; set internally when a method returns a new LFCC.
-#' @return An \code{LFCC} object with methods for linear-frequency cepstral coefficient analysis.
+#' @return An \code{LFCC} object with methods for linear-frequency cepstral
+#  coefficient analysis.
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.3)
@@ -223,9 +239,11 @@ NULL
 .lfcc_methods <- new.env(hash = TRUE, parent = emptyenv())
 
 # --- Properties ---
-.lfcc_methods$get_number_of_frames <- function(.self) .self$.cpp$get_number_of_frames()
+.lfcc_methods$get_number_of_frames <- function(
+  .self) .self$.cpp$get_number_of_frames()
 .lfcc_methods$get_time_step <- function(.self) .self$.cpp$get_time_step()
-.lfcc_methods$get_max_num_coefficients <- function(.self) .self$.cpp$get_max_num_coefficients()
+.lfcc_methods$get_max_num_coefficients <- function(
+  .self) .self$.cpp$get_max_num_coefficients()
 .lfcc_methods$get_fmin <- function(.self) .self$.cpp$get_fmin()
 .lfcc_methods$get_fmax <- function(.self) .self$.cpp$get_fmax()
 .lfcc_methods$get_xmin <- function(.self) .self$.cpp$get_xmin()
@@ -239,8 +257,10 @@ NULL
 .lfcc_methods$get_num_coefficients_at_frame <- function(.self, frame_number) {
   .self$.cpp$get_num_coefficients_at_frame(as.integer(frame_number))
 }
-.lfcc_methods$get_value_in_frame <- function(.self, frame_number, coeff_number) {
-  .self$.cpp$get_value_in_frame(as.integer(frame_number), as.integer(coeff_number))
+.lfcc_methods$get_value_in_frame <- function(.self, frame_number,
+  coeff_number) {
+  .self$.cpp$get_value_in_frame(as.integer(frame_number),
+    as.integer(coeff_number))
 }
 .lfcc_methods$get_value_at_time <- function(.self, time, coeff_number) {
   .self$.cpp$get_value_at_time(as.numeric(time), as.integer(coeff_number))
@@ -248,7 +268,8 @@ NULL
 .lfcc_methods$get_coefficients_at_frame <- function(.self, frame_number) {
   .self$.cpp$get_coefficients_at_frame(as.integer(frame_number))
 }
-.lfcc_methods$get_all_coefficients <- function(.self) .self$.cpp$get_all_coefficients()
+.lfcc_methods$get_all_coefficients <- function(
+  .self) .self$.cpp$get_all_coefficients()
 
 # --- Frame/time conversion ---
 .lfcc_methods$get_time_from_frame <- function(.self, frame_number) {
@@ -283,9 +304,13 @@ NULL
 .lfcc_methods$print <- function(.self) {
   info <- .self$.cpp$get_info()
   cat("<Praat LFCC>\n")
-  cat(sprintf("  Time: %.3f - %.3f s (%.3f s)\n", info$xmin, info$xmax, info$xmax - info$xmin))
+  cat(
+    sprintf("  Time: %.3f - %.3f s (%.3f s)\n", info$xmin, info$xmax,
+      info$xmax - info$xmin))
   cat(sprintf("  Frames: %d (step: %.4f s)\n", info$nx, info$dx))
-  cat(sprintf("  Coefficients: %d (max %d used)\n", info$max_n_coefficients, info$max_n_coefficients_used))
+  cat(
+    sprintf("  Coefficients: %d (max %d used)\n", info$max_n_coefficients,
+      info$max_n_coefficients_used))
   cat(sprintf("  Frequency range: %.1f - %.1f Hz\n", info$fmin, info$fmax))
   invisible(.self)
 }
@@ -304,7 +329,8 @@ LFCC <- function(.xptr = NULL) {
   }
   mfcc_mod <- get_module("mfcc_module")
   cpp_obj <- mfcc_mod$RLFCC$new(.xptr)
-  structure(list(.xptr = .xptr, .cpp = cpp_obj), class = c("LFCC", "PraatObject"))
+  structure(list(.xptr = .xptr, .cpp = cpp_obj),
+    class = c("LFCC", "PraatObject"))
 }
 
 # ============================================================================

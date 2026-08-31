@@ -25,7 +25,8 @@ test_that("plot.Pitch renders a ggplot with time/frequency columns", {
   expect_s3_class(p2, "ggplot")
 })
 
-test_that("plot.Pitch show_voicing actually colors by strength (was a dead column name)", {
+test_that(
+  "plot.Pitch show_voicing actually colors by strength (was a dead column name)", {
   pitch <- fixture_sound()$to_pitch()
   # show_voicing = TRUE must pull the strength column (Pitch$as_data_frame()
   # names it "strength", not "voicing_strength") and color by it.
@@ -41,7 +42,8 @@ test_that("plot.Formant renders long-format time/formant/frequency columns", {
   formant <- fixture_sound()$to_formant_burg()
   p <- plot(formant, max_formant = 3)
   expect_s3_class(p, "ggplot")
-  expect_true(all(c("time", "formant", "frequency", "bandwidth") %in% names(p$data)))
+  expect_true(
+    all(c("time", "formant", "frequency", "bandwidth") %in% names(p$data)))
 })
 
 test_that("plot.Intensity renders a ggplot with time/intensity_db columns", {
@@ -100,7 +102,8 @@ test_that("plot_powercepstrum show_peak and show_trendline branches render", {
 })
 
 test_that("plot_cpp_timeseries smooth and reference_lines branches render", {
-  cepstrogram <- fixture_sound()$to_powercepstrogram(pitch_floor = 60, time_step = 0.002)
+  cepstrogram <- fixture_sound()$to_powercepstrogram(pitch_floor = 60,
+    time_step = 0.002)
   p <- plot_cpp_timeseries(cepstrogram, n_samples = 30,
                            smooth = TRUE, reference_lines = c(0, 20))
   expect_s3_class(p, "ggplot")

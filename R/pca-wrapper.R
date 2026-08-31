@@ -9,7 +9,8 @@
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #'   PCA object; set internally when a method returns a new PCA (for example
 #'   \code{\link{pca_from_matrix}}).
-#' @return A \code{PCA} object with methods for querying components, eigenvalues,
+#' @return A \code{PCA} object with methods for querying components,
+#  eigenvalues,
 #'   and projections.
 #'
 #' @examples
@@ -30,9 +31,11 @@ NULL
 .pca_methods <- new.env(hash = TRUE, parent = emptyenv())
 
 # Query - Properties
-.pca_methods$get_number_of_components <- function(.self) .self$.cpp$get_number_of_components()
+.pca_methods$get_number_of_components <- function(
+  .self) .self$.cpp$get_number_of_components()
 .pca_methods$get_dimension <- function(.self) .self$.cpp$get_dimension()
-.pca_methods$get_number_of_observations <- function(.self) .self$.cpp$get_number_of_observations()
+.pca_methods$get_number_of_observations <- function(
+  .self) .self$.cpp$get_number_of_observations()
 
 # Eigenvalues
 .pca_methods$get_eigenvalues <- function(.self) .self$.cpp$get_eigenvalues()
@@ -91,7 +94,9 @@ NULL
   cum_var <- cumsum(eigenvals / total)
 
   cat("<PCA>\n")
-  cat(sprintf("  Components: %d, Dimension: %d\n", info$n_components, info$dimension))
+  cat(
+    sprintf("  Components: %d, Dimension: %d\n", info$n_components,
+      info$dimension))
   cat(sprintf("  Observations: %d\n", info$n_observations))
   cat("  Variance explained:\n")
   for (i in seq_len(min(5, length(eigenvals)))) {
@@ -128,7 +133,8 @@ lockEnvironment(.pca_methods, bindings = TRUE)
 #' @export
 PCA <- function(.xptr = NULL) {
   if (is.null(.xptr)) {
-    stop("PCA objects must be created using pca_from_matrix() or matrix$to_pca()")
+    stop(
+      "PCA objects must be created using pca_from_matrix() or matrix$to_pca()")
   }
 
   pca_mod <- get_module("pca_module")
@@ -144,7 +150,8 @@ PCA <- function(.xptr = NULL) {
 #'
 #' Performs Principal Component Analysis on a numeric matrix.
 #'
-#' @param data Numeric matrix where rows are observations and columns are variables
+#' @param data Numeric matrix where rows are observations and columns are
+#  variables
 #' @return A PCA object
 #' @examples
 #' set.seed(1)

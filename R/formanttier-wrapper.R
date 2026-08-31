@@ -14,16 +14,20 @@
 #'
 #' @section Query methods:
 #' \itemize{
-#'   \item \code{get_start_time()}, \code{get_end_time()}, \code{get_duration()} - time range in seconds
+#' \item \code{get_start_time()}, \code{get_end_time()}, \code{get_duration()} -
+#  time range in seconds
 #'   \item \code{get_number_of_points()} - number of time points
-#'   \item \code{get_min_num_formants()}, \code{get_max_num_formants()} - formant count across points
-#'   \item \code{get_value_at_time(formant_number, time)} - formant frequency in Hz
+#' \item \code{get_min_num_formants()}, \code{get_max_num_formants()} - formant
+#  count across points
+#' \item \code{get_value_at_time(formant_number, time)} - formant frequency in
+#  Hz
 #'   \item \code{get_bandwidth_at_time(formant_number, time)} - bandwidth in Hz
 #' }
 #'
 #' @section Transformation:
 #' \itemize{
-#'   \item \code{filter_sound(sound, scale = TRUE)} - filter a sound through the formants
+#' \item \code{filter_sound(sound, scale = TRUE)} - filter a sound through the
+#  formants
 #'   \item \code{as_data_frame()} - export to a data frame
 #'   \item \code{save(path)} - save to file
 #' }
@@ -62,15 +66,20 @@ NULL
 .formanttier_methods$get_start_time <- function(.self) .self$.cpp$get_xmin()
 .formanttier_methods$get_end_time <- function(.self) .self$.cpp$get_xmax()
 .formanttier_methods$get_duration <- function(.self) .self$.cpp$get_duration()
-.formanttier_methods$get_number_of_points <- function(.self) .self$.cpp$get_number_of_points()
-.formanttier_methods$get_min_num_formants <- function(.self) .self$.cpp$get_min_num_formants()
-.formanttier_methods$get_max_num_formants <- function(.self) .self$.cpp$get_max_num_formants()
+.formanttier_methods$get_number_of_points <- function(
+  .self) .self$.cpp$get_number_of_points()
+.formanttier_methods$get_min_num_formants <- function(
+  .self) .self$.cpp$get_min_num_formants()
+.formanttier_methods$get_max_num_formants <- function(
+  .self) .self$.cpp$get_max_num_formants()
 
-.formanttier_methods$get_value_at_time <- function(.self, formant_number, time) {
+.formanttier_methods$get_value_at_time <- function(.self, formant_number,
+  time) {
   .self$.cpp$get_value_at_time(as.integer(formant_number), as.numeric(time))
 }
 
-.formanttier_methods$get_bandwidth_at_time <- function(.self, formant_number, time) {
+.formanttier_methods$get_bandwidth_at_time <- function(.self, formant_number,
+  time) {
   .self$.cpp$get_bandwidth_at_time(as.integer(formant_number), as.numeric(time))
 }
 
@@ -160,7 +169,8 @@ FormantTier <- function(tmin = 0, tmax = 1, .xptr = NULL) {
 #' @return FormantTier object
 #' @export
 #' @examples
-#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
+#  16000)
 #' formant <- sound$to_formant_burg()
 #' ft <- FormantTier$from_formant(formant)
 #' print(ft)

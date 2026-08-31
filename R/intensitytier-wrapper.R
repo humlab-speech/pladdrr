@@ -1,12 +1,15 @@
 #' @title Praat IntensityTier Object
 #' @description
-#' Praat IntensityTier object with direct C++ module binding for intensity manipulation.
+#' Praat IntensityTier object with direct C++ module binding for intensity
+#  manipulation.
 #'
 #' @details
-#' IntensityTiers contain discrete time-value pairs representing intensity in dB SPL.
+#' IntensityTiers contain discrete time-value pairs representing intensity in dB
+#  SPL.
 #' They can be used to modify the amplitude envelope of sounds.
 #'
-#' @return An \code{IntensityTier} object with methods for intensity (dB SPL) manipulation via time-value points.
+#' @return An \code{IntensityTier} object with methods for intensity (dB SPL)
+#  manipulation via time-value points.
 #'
 #' @examples
 #' it <- IntensityTier(0, 1)
@@ -27,10 +30,14 @@ NULL
 # Query
 .intensitytier_methods$get_start_time <- function(.self) .self$.cpp$get_xmin()
 .intensitytier_methods$get_end_time <- function(.self) .self$.cpp$get_xmax()
-.intensitytier_methods$get_number_of_points <- function(.self) .self$.cpp$get_number_of_points()
-.intensitytier_methods$get_time_from_index <- function(.self, index) .self$.cpp$get_time(as.integer(index))
-.intensitytier_methods$get_value_at_index <- function(.self, index) .self$.cpp$get_value(as.integer(index))
-.intensitytier_methods$get_value_at_time <- function(.self, time) .self$.cpp$get_value_at_time(as.numeric(time))
+.intensitytier_methods$get_number_of_points <- function(
+  .self) .self$.cpp$get_number_of_points()
+.intensitytier_methods$get_time_from_index <- function(.self,
+  index) .self$.cpp$get_time(as.integer(index))
+.intensitytier_methods$get_value_at_index <- function(.self,
+  index) .self$.cpp$get_value(as.integer(index))
+.intensitytier_methods$get_value_at_time <- function(.self,
+  time) .self$.cpp$get_value_at_time(as.numeric(time))
 
 .intensitytier_methods$get_mean <- function(.self, tmin = NULL, tmax = NULL) {
   if (is.null(tmin)) tmin <- .self$.cpp$get_xmin()
@@ -65,11 +72,14 @@ NULL
 # Display
 .intensitytier_methods$print <- function(.self) {
   cat("<Praat IntensityTier>\n")
-  cat(sprintf("  Time domain: %.3f to %.3f s\n", .self$.cpp$get_xmin(), .self$.cpp$get_xmax()))
+  cat(
+    sprintf("  Time domain: %.3f to %.3f s\n", .self$.cpp$get_xmin(),
+      .self$.cpp$get_xmax()))
   n_points <- .self$.cpp$get_number_of_points()
   cat(sprintf("  Number of points: %d\n", n_points))
   if (n_points > 0) {
-    mean_int <- .self$.cpp$get_mean_curve(.self$.cpp$get_xmin(), .self$.cpp$get_xmax())
+    mean_int <- .self$.cpp$get_mean_curve(.self$.cpp$get_xmin(),
+      .self$.cpp$get_xmax())
     cat(sprintf("  Mean intensity: %.1f dB\n", mean_int))
   }
   invisible(.self)

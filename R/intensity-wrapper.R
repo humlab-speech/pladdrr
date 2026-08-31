@@ -1,4 +1,5 @@
-# intensity-wrapper.R - Intensity object using shared dispatch table (pladdrr 4.8.33)
+# intensity-wrapper.R - Intensity object using shared dispatch table (pladdrr
+#  4.8.33)
 # Architecture: minimal list + $.Intensity S3 dispatch → shared method env
 
 #' Intensity
@@ -16,18 +17,25 @@
 #'
 #' @section Point query methods:
 #' \itemize{
-#'   \item \code{get_value_at_time(time, interpolation)} - intensity at a time point (dB)
-#'   \item \code{get_values_at_times(times, interpolation)} - intensity at a vector of times (batch)
+#' \item \code{get_value_at_time(time, interpolation)} - intensity at a time
+#  point (dB)
+#' \item \code{get_values_at_times(times, interpolation)} - intensity at a
+#  vector of times (batch)
 #' }
 #'
 #' @section Statistics methods (over a time range):
 #' \itemize{
-#'   \item \code{get_mean(from_time, to_time, averaging_method)} - mean intensity (dB)
-#'   \item \code{get_standard_deviation(from_time, to_time)} - standard deviation (dB)
-#'   \item \code{get_minimum(from_time, to_time, interpolation)} - minimum intensity
-#'   \item \code{get_maximum(from_time, to_time, interpolation)} - maximum intensity
+#' \item \code{get_mean(from_time, to_time, averaging_method)} - mean intensity
+#  (dB)
+#' \item \code{get_standard_deviation(from_time, to_time)} - standard deviation
+#  (dB)
+#' \item \code{get_minimum(from_time, to_time, interpolation)} - minimum
+#  intensity
+#' \item \code{get_maximum(from_time, to_time, interpolation)} - maximum
+#  intensity
 #'   \item \code{get_quantile(quantile, from_time, to_time)} - quantile
-#'   \item \code{get_time_of_minimum(...)}, \code{get_time_of_maximum(...)} - time of extremum
+#' \item \code{get_time_of_minimum(...)}, \code{get_time_of_maximum(...)} - time
+#  of extremum
 #' }
 #'
 #' @section Export methods:
@@ -38,16 +46,20 @@
 #' }
 #'
 #' @section Interpolation:
-#' Codes: \code{"nearest"} (0), \code{"linear"} (1), \code{"cubic"} (2, default),
+#' Codes: \code{"nearest"} (0), \code{"linear"} (1), \code{"cubic"} (2,
+#  default),
 #' \code{"sinc70"} (3), \code{"sinc700"} (4).
-#' Averaging methods: \code{"energy"} (0, default), \code{"sones"} (1), \code{"db"} (2).
+#' Averaging methods: \code{"energy"} (0, default), \code{"sones"} (1),
+#  \code{"db"} (2).
 #'
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #'   Intensity object; set internally when a method returns a new Intensity.
-#' @seealso \code{\link{Sound}}, \code{\link{Pitch}}, \code{\link{IntensityTier}}
+#' @seealso \code{\link{Sound}}, \code{\link{Pitch}},
+#  \code{\link{IntensityTier}}
 #'
 #' @examples
-#' sound <- Sound$create_tone(duration = 1.0, frequency = 200, sampling_rate = 44100)
+#' sound <- Sound$create_tone(duration = 1.0, frequency = 200, sampling_rate =
+#  44100)
 #' intensity <- sound$to_intensity(minimum_pitch = 100, time_step = 0.0)
 #' mean_int <- intensity$get_mean()
 #' df <- intensity$as_data_frame()
@@ -76,36 +88,52 @@ NULL
 }
 
 # --- Query ---
-.intensity_methods$get_value_at_time <- function(.self, time, interpolation = "cubic") {
+.intensity_methods$get_value_at_time <- function(.self, time,
+  interpolation = "cubic") {
   .self$.cpp$get_value_at_time(time, .praat_interpolation_code(interpolation))
 }
-.intensity_methods$get_mean <- function(.self, from_time = 0, to_time = 0, averaging_method = "energy") {
+.intensity_methods$get_mean <- function(.self, from_time = 0, to_time = 0,
+  averaging_method = "energy") {
   .self$.cpp$get_mean(from_time, to_time, .intensity_avg_code(averaging_method))
 }
-.intensity_methods$get_minimum <- function(.self, from_time = 0, to_time = 0, interpolation = "parabolic") {
-  .self$.cpp$get_minimum(from_time, to_time, .praat_peak_interpolation_code(interpolation))
+.intensity_methods$get_minimum <- function(.self, from_time = 0, to_time = 0,
+  interpolation = "parabolic") {
+  .self$.cpp$get_minimum(from_time, to_time,
+    .praat_peak_interpolation_code(interpolation))
 }
-.intensity_methods$get_maximum <- function(.self, from_time = 0, to_time = 0, interpolation = "parabolic") {
-  .self$.cpp$get_maximum(from_time, to_time, .praat_peak_interpolation_code(interpolation))
+.intensity_methods$get_maximum <- function(.self, from_time = 0, to_time = 0,
+  interpolation = "parabolic") {
+  .self$.cpp$get_maximum(from_time, to_time,
+    .praat_peak_interpolation_code(interpolation))
 }
-.intensity_methods$get_standard_deviation <- function(.self, from_time = 0, to_time = 0) {
+.intensity_methods$get_standard_deviation <- function(.self, from_time = 0,
+  to_time = 0) {
   .self$.cpp$get_standard_deviation(from_time, to_time)
 }
-.intensity_methods$get_quantile <- function(.self, from_time = 0, to_time = 0, quantile = 0.5) {
+.intensity_methods$get_quantile <- function(.self, from_time = 0, to_time = 0,
+  quantile = 0.5) {
   .self$.cpp$get_quantile(from_time, to_time, quantile)
 }
-.intensity_methods$get_time_of_minimum <- function(.self, from_time = 0, to_time = 0, interpolation = "parabolic") {
-  .self$.cpp$get_time_of_minimum(from_time, to_time, .praat_peak_interpolation_code(interpolation))
+.intensity_methods$get_time_of_minimum <- function(.self, from_time = 0,
+  to_time = 0, interpolation = "parabolic") {
+  .self$.cpp$get_time_of_minimum(from_time, to_time,
+    .praat_peak_interpolation_code(interpolation))
 }
-.intensity_methods$get_time_of_maximum <- function(.self, from_time = 0, to_time = 0, interpolation = "parabolic") {
-  .self$.cpp$get_time_of_maximum(from_time, to_time, .praat_peak_interpolation_code(interpolation))
+.intensity_methods$get_time_of_maximum <- function(.self, from_time = 0,
+  to_time = 0, interpolation = "parabolic") {
+  .self$.cpp$get_time_of_maximum(from_time, to_time,
+    .praat_peak_interpolation_code(interpolation))
 }
 
 # --- Time domain ---
-.intensity_methods$get_time_from_frame <- function(.self, frame) .self$.cpp$get_time_from_frame(frame)
-.intensity_methods$get_frame_from_time <- function(.self, time) .self$.cpp$get_frame_from_time(time)
-.intensity_methods$get_number_of_frames <- function(.self) .self$.cpp$get_number_of_frames()
-.intensity_methods$get_sampling_period <- function(.self) .self$.cpp$get_time_step()
+.intensity_methods$get_time_from_frame <- function(.self,
+  frame) .self$.cpp$get_time_from_frame(frame)
+.intensity_methods$get_frame_from_time <- function(.self,
+  time) .self$.cpp$get_frame_from_time(time)
+.intensity_methods$get_number_of_frames <- function(
+  .self) .self$.cpp$get_number_of_frames()
+.intensity_methods$get_sampling_period <- function(
+  .self) .self$.cpp$get_time_step()
 .intensity_methods$get_start_time <- function(.self) .self$.cpp$get_xmin()
 .intensity_methods$get_end_time <- function(.self) .self$.cpp$get_xmax()
 .intensity_methods$get_xmin <- function(.self) .self$.cpp$get_xmin()
@@ -118,14 +146,20 @@ NULL
 }
 
 # --- Batch ---
-.intensity_methods$get_values_at_times <- function(.self, times, interpolation = "cubic") {
-  .self$.cpp$get_values_at_times(as.numeric(times), .praat_interpolation_code(interpolation))
+.intensity_methods$get_values_at_times <- function(.self, times,
+  interpolation = "cubic") {
+  .self$.cpp$get_values_at_times(as.numeric(times),
+    .praat_interpolation_code(interpolation))
 }
-.intensity_methods$get_times_vector <- function(.self) .self$.cpp$get_times_vector()
-.intensity_methods$get_values_vector <- function(.self) .self$.cpp$get_values_vector()
+.intensity_methods$get_times_vector <- function(
+  .self) .self$.cpp$get_times_vector()
+.intensity_methods$get_values_vector <- function(
+  .self) .self$.cpp$get_values_vector()
 .intensity_methods$get_statistics <- function(.self, from_time = 0, to_time = 0,
-                                              metrics = c("mean", "stdev", "min", "max", "median")) {
-  .self$.cpp$get_statistics(as.numeric(from_time), as.numeric(to_time), as.character(metrics))
+                                              metrics = c("mean", "stdev",
+                                                "min", "max", "median")) {
+  .self$.cpp$get_statistics(as.numeric(from_time), as.numeric(to_time),
+    as.character(metrics))
 }
 
 # --- Export ---
@@ -140,7 +174,8 @@ NULL
 }
 
 # --- Silence detection ---
-.intensity_methods$to_textgrid_silences <- function(.self, silence_threshold = -25,
+.intensity_methods$to_textgrid_silences <- function(.self,
+  silence_threshold = -25,
                                                      min_silence_duration = 0.3, min_sounding_duration = 0.1,
                                                      silent_label = "silent", sounding_label = "sounding") {
   tg_ptr <- .intensity_to_textgrid_silences(
@@ -172,11 +207,13 @@ lockEnvironment(.intensity_methods, bindings = TRUE)
 #' @export
 Intensity <- function(.xptr = NULL) {
   if (is.null(.xptr)) {
-    stop("Intensity objects should be created from Sound objects using to_intensity()")
+    stop(
+      "Intensity objects should be created from Sound objects using to_intensity()")
   }
   intensity_mod <- get_module("intensity_module")
   cpp_obj <- intensity_mod$RIntensity$new(.xptr)
-  structure(list(.xptr = .xptr, .cpp = cpp_obj), class = c("Intensity", "PraatObject"))
+  structure(list(.xptr = .xptr, .cpp = cpp_obj),
+    class = c("Intensity", "PraatObject"))
 }
 
 # ============================================================================

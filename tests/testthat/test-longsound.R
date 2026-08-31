@@ -23,9 +23,12 @@ test_that("LongSound$open() opens a file and reports correct properties", {
 
   expect_s3_class(ls, "LongSound")
   expect_true(ls$is_valid())
-  expect_equal(ls$get_sample_rate(), 44100, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(ls$get_number_of_channels(), 1, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(ls$get_number_of_samples(), 44100, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(ls$get_sample_rate(), 44100,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(ls$get_number_of_channels(), 1,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(ls$get_number_of_samples(), 44100,
+    tolerance = sqrt(.Machine$double.eps))
   expect_equal(ls$get_start_time(), 0, tolerance = sqrt(.Machine$double.eps))
   expect_equal(ls$get_end_time(), 1.0, tolerance = 1e-6)
   expect_equal(ls$get_duration(), 1.0, tolerance = 1e-6)
@@ -65,9 +68,12 @@ test_that("LongSound query methods match an equivalent in-memory Sound", {
   ls <- LongSound$open(path)
   snd <- Sound(path = path)
 
-  expect_equal(ls$get_sample_rate(), snd$get_sampling_frequency(), tolerance = sqrt(.Machine$double.eps))
-  expect_equal(ls$get_number_of_channels(), snd$get_number_of_channels(), tolerance = sqrt(.Machine$double.eps))
-  expect_equal(ls$get_number_of_samples(), snd$get_number_of_samples(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(ls$get_sample_rate(), snd$get_sampling_frequency(),
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(ls$get_number_of_channels(), snd$get_number_of_channels(),
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(ls$get_number_of_samples(), snd$get_number_of_samples(),
+    tolerance = sqrt(.Machine$double.eps))
   expect_equal(ls$get_duration(), snd$get_duration(), tolerance = 1e-6)
 })
 
@@ -86,7 +92,8 @@ test_that("extract_part() returns a Sound matching the source samples", {
   part_values <- part$get_values()
   start_sample <- round(0.1 * 44100) + 1
   expect_equal(part_values,
-               full_values[start_sample:(start_sample + length(part_values) - 1)],
+               full_values[start_sample:(
+                 start_sample + length(part_values) - 1)],
                tolerance = 1e-6)
 })
 
@@ -115,13 +122,15 @@ test_that("have_window() and get_window_extrema() report sane values", {
   expect_gte(extrema[["minimum"]], -1.0)
 })
 
-test_that("get_dx()/get_x1() match the Sampled convention (dx = 1/rate, x1 = xmin + dx/2)", {
+test_that(
+  "get_dx()/get_x1() match the Sampled convention (dx = 1/rate, x1 = xmin + dx/2)", {
   path <- .make_wav(sampling_rate = 44100)
   on.exit(unlink(path))
   ls <- LongSound$open(path)
 
   expect_equal(ls$get_dx(), 1 / 44100, tolerance = 1e-12)
-  expect_equal(ls$get_x1(), ls$get_start_time() + ls$get_dx() / 2, tolerance = 1e-12)
+  expect_equal(ls$get_x1(), ls$get_start_time() + ls$get_dx() / 2,
+    tolerance = 1e-12)
 })
 
 test_that("get_time_from_sample() and get_sample_from_time() round-trip", {
@@ -131,11 +140,13 @@ test_that("get_time_from_sample() and get_sample_from_time() round-trip", {
 
   for (sample in c(1L, 100L, 22050L, 44100L)) {
     t <- ls$get_time_from_sample(sample)
-    expect_equal(ls$get_sample_from_time(t), sample, tolerance = sqrt(.Machine$double.eps))
+    expect_equal(ls$get_sample_from_time(t), sample,
+      tolerance = sqrt(.Machine$double.eps))
   }
 })
 
-test_that("save_part() writes a correctly-sized audio file (regression: nmax=0 buffer overflow)", {
+test_that(
+  "save_part() writes a correctly-sized audio file (regression: nmax=0 buffer overflow)", {
   path <- .make_wav(duration = 1.0, sampling_rate = 44100)
   on.exit(unlink(path))
   ls <- LongSound$open(path)
@@ -150,7 +161,8 @@ test_that("save_part() writes a correctly-sized audio file (regression: nmax=0 b
   expect_equal(saved$get_duration(), 0.5, tolerance = 1e-3)
 })
 
-test_that("save_part() survives repeated calls without crashing (heap-overflow regression)", {
+test_that(
+  "save_part() survives repeated calls without crashing (heap-overflow regression)", {
   path <- .make_wav(duration = 1.0, sampling_rate = 44100)
   on.exit(unlink(path))
   ls <- LongSound$open(path)
@@ -179,7 +191,8 @@ test_that("save_part() rejects an unknown format", {
   on.exit(unlink(path))
   ls <- LongSound$open(path)
 
-  expect_error(ls$save_part(0, 0.5, tempfile(), format = "mp3"), "Unknown format")
+  expect_error(ls$save_part(0, 0.5, tempfile(), format = "mp3"),
+    "Unknown format")
 })
 
 test_that("is_valid() is TRUE for a freshly opened LongSound", {
@@ -187,10 +200,12 @@ test_that("is_valid() is TRUE for a freshly opened LongSound", {
   on.exit(unlink(path))
   ls <- LongSound$open(path)
   expect_true(ls$is_valid())
-  expect_true(is.numeric(ls$get_xptr()) || inherits(ls$get_xptr(), "externalptr"))
+  expect_true(
+    is.numeric(ls$get_xptr()) || inherits(ls$get_xptr(), "externalptr"))
 })
 
-test_that("longsound_get_buffer_size_pref_seconds()/set round-trip and default is sane", {
+test_that(
+  "longsound_get_buffer_size_pref_seconds()/set round-trip and default is sane", {
   original <- longsound_get_buffer_size_pref_seconds()
   on.exit(longsound_set_buffer_size_pref_seconds(original))
 
@@ -198,5 +213,6 @@ test_that("longsound_get_buffer_size_pref_seconds()/set round-trip and default i
 
   old <- longsound_set_buffer_size_pref_seconds(120)
   expect_equal(old, original, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(longsound_get_buffer_size_pref_seconds(), 120, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(longsound_get_buffer_size_pref_seconds(), 120,
+    tolerance = sqrt(.Machine$double.eps))
 })

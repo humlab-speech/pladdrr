@@ -31,10 +31,13 @@ NULL
 .manipulation_methods$get_start_time <- function(.self) .self$.cpp$get_xmin()
 .manipulation_methods$get_end_time <- function(.self) .self$.cpp$get_xmax()
 .manipulation_methods$get_duration <- function(.self) .self$.cpp$get_duration()
-.manipulation_methods$has_pitch_tier <- function(.self) .self$.cpp$has_pitch_tier()
-.manipulation_methods$has_duration_tier <- function(.self) .self$.cpp$has_duration_tier()
+.manipulation_methods$has_pitch_tier <- function(
+  .self) .self$.cpp$has_pitch_tier()
+.manipulation_methods$has_duration_tier <- function(
+  .self) .self$.cpp$has_duration_tier()
 .manipulation_methods$has_pulses <- function(.self) .self$.cpp$has_pulses()
-.manipulation_methods$has_original_sound <- function(.self) .self$.cpp$has_original_sound()
+.manipulation_methods$has_original_sound <- function(
+  .self) .self$.cpp$has_original_sound()
 
 # Extract tiers
 .manipulation_methods$extract_pitch_tier <- function(.self) {
@@ -56,17 +59,23 @@ NULL
 
 # Replace tiers
 .manipulation_methods$replace_pitch_tier <- function(.self, pitch_tier) {
-  if (!inherits(pitch_tier, "PitchTier")) stop("pitch_tier must be a PitchTier object")
+  if (
+    !inherits(pitch_tier,
+      "PitchTier")) stop("pitch_tier must be a PitchTier object")
   .self$.cpp$replace_pitch_tier(pitch_tier$get_xptr())
   invisible(.self)
 }
 .manipulation_methods$replace_duration_tier <- function(.self, duration_tier) {
-  if (!inherits(duration_tier, "DurationTier")) stop("duration_tier must be a DurationTier object")
+  if (
+    !inherits(duration_tier,
+      "DurationTier")) stop("duration_tier must be a DurationTier object")
   .self$.cpp$replace_duration_tier(duration_tier$get_xptr())
   invisible(.self)
 }
 .manipulation_methods$replace_pulses <- function(.self, point_process) {
-  if (!inherits(point_process, "PointProcess")) stop("point_process must be a PointProcess object")
+  if (
+    !inherits(point_process,
+      "PointProcess")) stop("point_process must be a PointProcess object")
   .self$.cpp$replace_pulses(point_process$get_xptr())
   invisible(.self)
 }
@@ -87,10 +96,17 @@ NULL
 # Print
 .manipulation_methods$print <- function(.self) {
   cat("<Praat Manipulation>\n")
-  cat(sprintf("  Time domain: %.3f to %.3f s\n", .self$.cpp$get_xmin(), .self$.cpp$get_xmax()))
-  cat(sprintf("  Has pitch tier: %s\n", if (.self$.cpp$has_pitch_tier()) "yes" else "no"))
-  cat(sprintf("  Has duration tier: %s\n", if (.self$.cpp$has_duration_tier()) "yes" else "no"))
-  cat(sprintf("  Has pulses: %s\n", if (.self$.cpp$has_pulses()) "yes" else "no"))
+  cat(
+    sprintf("  Time domain: %.3f to %.3f s\n", .self$.cpp$get_xmin(),
+      .self$.cpp$get_xmax()))
+  cat(
+    sprintf("  Has pitch tier: %s\n",
+      if (.self$.cpp$has_pitch_tier()) "yes" else "no"))
+  cat(
+    sprintf("  Has duration tier: %s\n",
+      if (.self$.cpp$has_duration_tier()) "yes" else "no"))
+  cat(
+    sprintf("  Has pulses: %s\n", if (.self$.cpp$has_pulses()) "yes" else "no"))
   invisible(.self)
 }
 
@@ -118,7 +134,8 @@ lockEnvironment(.manipulation_methods, bindings = TRUE)
 #' @export
 Manipulation <- function(.xptr) {
   if (missing(.xptr) || is.null(.xptr)) {
-    stop("Manipulation objects must be created from a Sound object using sound$to_manipulation()")
+    stop(
+      "Manipulation objects must be created from a Sound object using sound$to_manipulation()")
   }
   
   manip_mod <- get_module("manipulation_module")

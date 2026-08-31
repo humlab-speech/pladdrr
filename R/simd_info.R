@@ -9,8 +9,10 @@
 #'   \item{available}{Logical indicating if SIMD support was compiled in}
 #'   \item{architecture}{Character string describing the SIMD instruction set
 #'     (e.g., "AVX2", "SSE4.2", "NEON")}
-#'   \item{batch_size_double}{Integer number of doubles processed per SIMD operation}
-#'   \item{batch_size_float}{Integer number of floats processed per SIMD operation}
+#' \item{batch_size_double}{Integer number of doubles processed per SIMD
+#  operation}
+#' \item{batch_size_float}{Integer number of floats processed per SIMD
+#  operation}
 #'   \item{version}{Character string describing the SIMD library in use}
 #'   \item{debug_build}{Logical indicating the shared object was compiled
 #'     without \code{NDEBUG}, i.e. by \code{devtools::load_all()} /
@@ -29,9 +31,11 @@
 #'
 #' Common SIMD instruction sets:
 #' \itemize{
-#'   \item \strong{AVX2}: 256-bit vectors (4 doubles or 8 floats) - Intel/AMD x86_64
-#'   \item \strong{SSE4.2}: 128-bit vectors (2 doubles or 4 floats) - Older x86_64
-#'   \item \strong{NEON}: 128-bit vectors (2 doubles or 4 floats) - ARM (Apple Silicon)
+#' \item \strong{AVX2}: 256-bit vectors (4 doubles or 8 floats) - Intel/AMD
+#  x86_64
+#' \item \strong{SSE4.2}: 128-bit vectors (2 doubles or 4 floats) - Older x86_64
+#' \item \strong{NEON}: 128-bit vectors (2 doubles or 4 floats) - ARM (Apple
+#  Silicon)
 #' }
 #' 
 #' Set \code{options(pladdrr.use_simd = FALSE)} before loading the package to

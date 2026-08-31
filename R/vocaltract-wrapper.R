@@ -8,7 +8,7 @@
 #'
 #' @section Usage:
 #' \preformatted{
-#' VocalTract(nx, dx)                       # create an empty vocal tract with nx sections
+#' VocalTract(nx, dx) # create an empty vocal tract with nx sections
 #' VocalTract$create_from_phone(phone)      # create from a phone name
 #' }
 #'
@@ -37,7 +37,8 @@
 #' @param dx Section length in metres. Default 0.01.
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #'   VocalTract object; set internally when a method returns a new VocalTract.
-#' @return A \code{VocalTract} object with methods for articulatory tube-model access.
+#' @return A \code{VocalTract} object with methods for articulatory tube-model
+#  access.
 #'
 #' @examples
 #' vt <- VocalTract$create_from_phone("a")
@@ -59,9 +60,12 @@ NULL
 
 # Query
 .vocaltract_methods$get_length <- function(.self) .self$.cpp$get_length()
-.vocaltract_methods$get_number_of_sections <- function(.self) .self$.cpp$get_number_of_sections()
-.vocaltract_methods$get_section_length <- function(.self) .self$.cpp$get_section_length()
-.vocaltract_methods$get_area <- function(.self, section) .self$.cpp$get_area(as.integer(section))
+.vocaltract_methods$get_number_of_sections <- function(
+  .self) .self$.cpp$get_number_of_sections()
+.vocaltract_methods$get_section_length <- function(
+  .self) .self$.cpp$get_section_length()
+.vocaltract_methods$get_area <- function(.self,
+  section) .self$.cpp$get_area(as.integer(section))
 .vocaltract_methods$get_areas <- function(.self) .self$.cpp$get_areas()
 
 # Modification (self-returning)
@@ -75,7 +79,8 @@ NULL
 }
 
 # Transformation
-.vocaltract_methods$to_spectrum <- function(.self, number_of_frequencies = 4096L,
+.vocaltract_methods$to_spectrum <- function(.self,
+  number_of_frequencies = 4096L,
                                              maximum_frequency = 5000.0,
                                              glottal_damping = 0.1,
                                              radiation_damping = TRUE,
@@ -104,11 +109,14 @@ NULL
 .vocaltract_methods$print <- function(.self) {
   cat("<Praat VocalTract>\n")
   if (.self$.cpp$is_valid()) {
-    cat("  Total length:", sprintf("%.3f", .self$.cpp$get_length() * 100), "cm\n")
+    cat("  Total length:", sprintf("%.3f", .self$.cpp$get_length() * 100),
+      "cm\n")
     cat("  Number of sections:", .self$.cpp$get_number_of_sections(), "\n")
-    cat("  Section length:", sprintf("%.1f", .self$.cpp$get_section_length() * 1000), "mm\n")
+    cat("  Section length:",
+      sprintf("%.1f", .self$.cpp$get_section_length() * 1000), "mm\n")
     areas <- .self$.cpp$get_areas()
-    cat("  Area range:", sprintf("%.2f - %.2f", min(areas) * 1e4, max(areas) * 1e4), "cm^2\n")
+    cat("  Area range:",
+      sprintf("%.2f - %.2f", min(areas) * 1e4, max(areas) * 1e4), "cm^2\n")
   } else {
     cat("  [Invalid or deleted object]\n")
   }

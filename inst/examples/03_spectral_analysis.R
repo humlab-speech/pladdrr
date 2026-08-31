@@ -48,8 +48,10 @@ spectral_moments <- function(sound,
 }
 
 # Usage:
-sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate = 16000)
-moments <- spectral_moments(sound, window_length = 0.005, time_step = 0.005, power = 2.0)
+sound <- Sound$create_tone(frequency = 220, duration = 0.5,
+  sampling_rate = 16000)
+moments <- spectral_moments(sound, window_length = 0.005, time_step = 0.005,
+  power = 2.0)
 
 plot(moments$time, moments$center_of_gravity,
      type = "l", col = "blue",
@@ -117,7 +119,8 @@ plot_spectral_evolution <- function(audio_file,
                                    n_formants = 5) {
   
   # Get approximation using formants
-  spectral_data <- approximate_spectral_center(audio_file, max_formant, n_formants)
+  spectral_data <- approximate_spectral_center(audio_file, max_formant,
+    n_formants)
   
   # Create multi-panel plot
   par(mfrow = c(2, 1), mar = c(4, 4, 2, 1))
@@ -149,7 +152,8 @@ analyze_fricative <- function(audio_file,
                               fricative_end,
                               window_length = 0.005) {
   
-  cat("Analyzing fricative from", fricative_start, "to", fricative_end, "seconds\n")
+  cat("Analyzing fricative from", fricative_start, "to", fricative_end,
+    "seconds\n")
   
   # Load sound
   sound <- read_sound(audio_file)
@@ -225,7 +229,8 @@ compare_sibilants <- function(audio_file,
   # Create comparison
   comparison <- data.frame(
     fricative = c("/s/", "/ʃ/"),
-    spectral_mean = c(s_analysis$spectral_mean_hz, sh_analysis$spectral_mean_hz),
+    spectral_mean = c(s_analysis$spectral_mean_hz,
+      sh_analysis$spectral_mean_hz),
     intensity = c(s_analysis$mean_intensity_db, sh_analysis$mean_intensity_db),
     f3 = c(s_analysis$f3_mean, sh_analysis$f3_mean),
     f4 = c(s_analysis$f4_mean, sh_analysis$f4_mean),
@@ -304,7 +309,7 @@ estimate_spectral_tilt <- function(audio_file,
 # if (FALSE) {  # Don't run automatically
 #   
 #   # Approximate spectral analysis using formants
-#   spectral_data <- approximate_spectral_center("speech.wav", max_formant = 5500)
+# spectral_data <- approximate_spectral_center("speech.wav", max_formant = 5500)
 #   
 #   # Visualize spectral evolution
 #   plot_spectral_evolution("speech.wav", max_formant = 5500)
@@ -321,7 +326,8 @@ estimate_spectral_tilt <- function(audio_file,
 #                                           sh_start = 1.2, sh_end = 1.35)
 #   
 #   # Spectral tilt
-#   tilt_analysis <- estimate_spectral_tilt("speech.wav", from_time = 0, to_time = 0)
+# tilt_analysis <- estimate_spectral_tilt("speech.wav", from_time = 0, to_time =
+#  0)
 #   print(paste("Mean spectral tilt:", round(tilt_analysis$mean_tilt, 2)))
 # }
 

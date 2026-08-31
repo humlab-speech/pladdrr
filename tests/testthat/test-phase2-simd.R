@@ -6,7 +6,8 @@ library(testthat)
 library(pladdrr)
 
 # Test helper: Generate test signal
-generate_test_signal <- function(duration = 1.0, sr = 16000, freqs = c(200, 400, 800)) {
+generate_test_signal <- function(duration = 1.0, sr = 16000,
+  freqs = c(200, 400, 800)) {
   t <- seq(0, duration, length.out = sr * duration)
   signal <- numeric(length(t))
   for (f in freqs) {
@@ -43,7 +44,8 @@ test_that("Spectrogram SIMD matches scalar (Gaussian window)", {
   scalar_mat <- spec_scalar$as_matrix()
   simd_mat <- spec_simd$as_matrix()
 
-  expect_equal(dim(scalar_mat), dim(simd_mat), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(dim(scalar_mat), dim(simd_mat),
+    tolerance = sqrt(.Machine$double.eps))
   expect_equal(simd_mat, scalar_mat, tolerance = 1e-10)
 })
 
@@ -117,7 +119,8 @@ test_that("Spectrogram SIMD handles stereo signals", {
   pladdrr_simd(TRUE)
   spec_simd <- snd$to_spectrogram()
 
-  expect_equal(spec_simd$as_matrix(), spec_scalar$as_matrix(), tolerance = 1e-10)
+  expect_equal(spec_simd$as_matrix(), spec_scalar$as_matrix(),
+    tolerance = 1e-10)
 })
 
 # ============================================================================

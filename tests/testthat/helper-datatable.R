@@ -6,7 +6,8 @@
 #' @param expected_cols Character vector of expected column names
 #' @param expected_rows Optional, expected number of rows
 #' @param key Optional, expected key columns
-expect_datatable <- function(object, expected_cols, expected_rows = NULL, key = NULL) {
+expect_datatable <- function(object, expected_cols, expected_rows = NULL,
+  key = NULL) {
   # Check it's a data.table
   testthat::expect_true(
     data.table::is.data.table(object),

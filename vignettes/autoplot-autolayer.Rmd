@@ -23,7 +23,8 @@ library(ggplot2)
 
 ## Overview
 
-pladdrr provides `autoplot()` and `autolayer()` methods following the ggplot2 convention for visualizing acoustic data.
+pladdrr provides `autoplot(
+  )` and `autolayer()` methods following the ggplot2 convention for visualizing acoustic data.
 
 - **`autoplot(object)`** - Creates a complete ggplot for a single Praat object
 - **`autolayer(object)`** - Returns layers to add to an existing plot
@@ -38,7 +39,8 @@ autoplot(spec) +
 
 ## Basic Usage: Single Object Plots
 
-Each Praat object type has an `autoplot()` method that creates an appropriate visualization.
+Each Praat object type has an `autoplot(
+  )` method that creates an appropriate visualization.
 
 ```{r load-sound}
 # Load example sound
@@ -81,7 +83,8 @@ autoplot(intensity)
 ### Formants
 
 ```{r autoplot-formant}
-# Formant extraction may fail on some sounds (e.g., if too short or no voiced content)
+# Formant extraction may fail on some sounds (e.g., if too short or no voiced
+#  content)
 formant <- tryCatch(
   sound$to_formant_burg(),
   error = function(e) {

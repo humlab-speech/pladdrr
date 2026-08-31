@@ -1,5 +1,6 @@
 # autoplot-missing.R — autoplot + autolayer S3 methods for pladdrr classes
-# Covers 27 classes: Tier, Formant-like, Spectral, Heatmap, Statistical, Specialized.
+# Covers 27 classes: Tier, Formant-like, Spectral, Heatmap, Statistical,
+#  Specialized.
 
 # ===========================================================================
 # Helpers
@@ -40,7 +41,8 @@
 #' @param from_track,to_track Track index range to display (FormantModeler).
 #' @param power If TRUE, use the power/dB variant of the quantity instead of
 #'   the raw linear default (Cepstrum).
-#' @param style Speckle vs. line rendering style, where applicable (FormantTier).
+#' @param style Speckle vs. line rendering style, where applicable
+#  (FormantTier).
 #' @export
 autoplot.AmplitudeTier <- function(object, from_time = NULL, to_time = NULL,
                                     color = "darkred", garnish = TRUE, ...) {
@@ -94,7 +96,8 @@ autoplot.DurationTier <- function(object, from_time = NULL, to_time = NULL,
     warning("DurationTier has no data in the specified time range")
     return(ggplot2::ggplot() + ggplot2::theme_void())
   }
-  p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$time, y = .data$duration_factor)) +
+  p <- ggplot2::ggplot(df,
+    ggplot2::aes(x = .data$time, y = .data$duration_factor)) +
     ggplot2::geom_line(color = color, linewidth = 0.8, ...) +
     ggplot2::geom_point(color = color, size = 1.5, ...) +
     ggplot2::geom_hline(yintercept = 1, linetype = "dashed", alpha = 0.4)
@@ -136,7 +139,8 @@ autoplot.IntensityTier <- function(object, from_time = NULL, to_time = NULL,
     warning("IntensityTier has no data in the specified time range")
     return(ggplot2::ggplot() + ggplot2::theme_void())
   }
-  p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$time, y = .data$intensity_db)) +
+  p <- ggplot2::ggplot(df,
+    ggplot2::aes(x = .data$time, y = .data$intensity_db)) +
     ggplot2::geom_line(color = color, linewidth = 0.8, ...) +
     ggplot2::geom_point(color = color, size = 1.5, ...)
   if (garnish) {
@@ -208,8 +212,10 @@ autolayer.PitchTier <- function(object, from_time = NULL, to_time = NULL,
 #' @rdname autoplot-methods
 #' @param max_formant Maximum formant number to display (default: 3).
 #' @param colors Colors for each formant track (default: auto).
-#' @param time_step Sampling interval in seconds, only used when style="line" (default: 0.005).
-#' @param style "speckle" (default, matches Praat's FormantTier_speckle: plots the
+#' @param time_step Sampling interval in seconds, only used when style="line"
+#  (default: 0.005).
+#' @param style "speckle" (default, matches Praat's FormantTier_speckle: plots
+#  the
 #'   tier's own stored points, unconnected) or "line" (interpolates on a
 #'   time_step grid and connects with a line — not Praat's default view).
 #' @export
@@ -242,7 +248,8 @@ autoplot.FormantTier <- function(object, from_time = NULL, to_time = NULL,
   p <- if (style == "speckle") {
     p + ggplot2::geom_point(size = 1.5, ...)
   } else {
-    p + ggplot2::geom_line(linewidth = 0.8, ...) + ggplot2::geom_point(size = 1.5, ...)
+    p + ggplot2::geom_line(linewidth = 0.8,
+      ...) + ggplot2::geom_point(size = 1.5, ...)
   }
   p <- p + ggplot2::scale_color_manual(values = colors, name = "Formant")
   if (garnish) {
@@ -298,7 +305,8 @@ autoplot.FormantGrid <- function(object, from_time = NULL, to_time = NULL,
                                   garnish = TRUE, ...) {
   if (!requireNamespace("ggplot2", quietly = TRUE))
     stop("Package 'ggplot2' is required. Please install it.")
-  df <- .prep_formant_df(object$as_data_frame(), from_time, to_time, max_formant)
+  df <- .prep_formant_df(object$as_data_frame(), from_time, to_time,
+    max_formant)
   if (nrow(df) == 0) {
     warning("FormantGrid has no data")
     return(ggplot2::ggplot() + ggplot2::theme_void())
@@ -321,7 +329,8 @@ autoplot.FormantGrid <- function(object, from_time = NULL, to_time = NULL,
 #' @export
 autolayer.FormantGrid <- function(object, from_time = NULL, to_time = NULL,
                                    max_formant = 3L, colors = NULL, ...) {
-  df <- .prep_formant_df(object$as_data_frame(), from_time, to_time, max_formant)
+  df <- .prep_formant_df(object$as_data_frame(), from_time, to_time,
+    max_formant)
   if (nrow(df) == 0) return(NULL)
   colors <- .formant_colors(df, colors)
   list(
@@ -360,7 +369,8 @@ autoplot.FormantPath <- function(object, from_time = NULL, to_time = NULL,
         ggplot2::geom_line(data = candidates,
           ggplot2::aes(x = .data$time, y = .data$frequency,
                        color = .data$formant_label,
-                       group = interaction(.data$formant_label, .data$candidate)),
+                       group = interaction(.data$formant_label,
+                         .data$candidate)),
           alpha = 0.15, linewidth = 0.3, ...) +
         ggplot2::geom_line(data = optimal,
           ggplot2::aes(x = .data$time, y = .data$frequency,
@@ -451,7 +461,8 @@ autolayer.Excitation <- function(object, color = "darkred", ...) {
 
 
 # Filter a ComplexSpectrogram data frame to time/freq ranges.
-.filter_complex_spectrogram_df <- function(df, from_time, to_time, from_freq, to_freq) {
+.filter_complex_spectrogram_df <- function(df, from_time, to_time, from_freq,
+  to_freq) {
   if (!is.null(from_time)) df <- df[df$time >= from_time, ]
   if (!is.null(to_time)) df <- df[df$time <= to_time, ]
   if (!is.null(from_freq)) df <- df[df$frequency >= from_freq, ]
@@ -462,7 +473,9 @@ autolayer.Excitation <- function(object, color = "darkred", ...) {
 # Ensure a ComplexSpectrogram data frame has an amplitude_dB column.
 .to_amplitude_db <- function(df, dynamic_range) {
   if ("amplitude_dB" %in% names(df)) return(df)
-  if (!"amplitude" %in% names(df)) stop("ComplexSpectrogram data frame missing amplitude column")
+  if (
+    !"amplitude" %in% names(
+      df)) stop("ComplexSpectrogram data frame missing amplitude column")
   ref <- max(df$amplitude, 1e-300)
   df$amplitude_dB <- 20 * log10(pmax(df$amplitude, 1e-300) / ref)
   floor_dB <- -dynamic_range
@@ -473,13 +486,15 @@ autolayer.Excitation <- function(object, color = "darkred", ...) {
 #' @rdname autoplot-methods
 #' @param show_phase Include phase as separate panel (default: FALSE).
 #' @export
-autoplot.ComplexSpectrogram <- function(object, from_time = NULL, to_time = NULL,
+autoplot.ComplexSpectrogram <- function(object, from_time = NULL,
+  to_time = NULL,
     from_freq = NULL, to_freq = NULL, dynamic_range = 70,
     garnish = TRUE, show_phase = FALSE, ...) {
   if (!requireNamespace("ggplot2", quietly = TRUE))
     stop("Package 'ggplot2' is required. Please install it.")
   df <- as.data.frame(object)
-  df <- .filter_complex_spectrogram_df(df, from_time, to_time, from_freq, to_freq)
+  df <- .filter_complex_spectrogram_df(df, from_time, to_time, from_freq,
+    to_freq)
   if (nrow(df) == 0) {
     warning("ComplexSpectrogram has no data in range")
     return(ggplot2::ggplot() + ggplot2::theme_void())
@@ -527,7 +542,9 @@ autolayer.ComplexSpectrogram <- function(object, from_time = NULL,
   if (nrow(df) == 0) return(NULL)
   amp_col <- "amplitude_dB"
   if (!"amplitude_dB" %in% names(df)) {
-    if (!"amplitude" %in% names(df)) stop("ComplexSpectrogram data frame missing amplitude column")
+    if (
+      !"amplitude" %in% names(
+        df)) stop("ComplexSpectrogram data frame missing amplitude column")
     ref <- max(df$amplitude, 1e-300)
     # equivalent to 10*log10(power/ref^2) since power = amplitude^2
     df$amplitude_dB <- 20 * log10(pmax(df$amplitude, 1e-300) / ref)
@@ -549,7 +566,8 @@ autolayer.ComplexSpectrogram <- function(object, from_time = NULL,
 #' @param power If TRUE, plot as PowerCepstrum (dB). Default FALSE matches
 #'   Praat's default `Cepstrum_drawLinear` (raw signed cepstrum, linear scale).
 #' @export
-autoplot.Cepstrum <- function(object, power = FALSE, garnish = TRUE, color = "darkblue", ...) {
+autoplot.Cepstrum <- function(object, power = FALSE, garnish = TRUE,
+  color = "darkblue", ...) {
   if (!requireNamespace("ggplot2", quietly = TRUE))
     stop("Package 'ggplot2' is required. Please install it.")
   df <- as.data.frame(object, power = power)
@@ -609,7 +627,8 @@ autoplot.Cochleagram <- function(object, from_time = NULL, to_time = NULL,
 
 #' @rdname autoplot-methods
 #' @export
-autolayer.Cochleagram <- function(object, from_time = NULL, to_time = NULL, ...) {
+autolayer.Cochleagram <- function(object, from_time = NULL, to_time = NULL,
+  ...) {
   df <- as.data.frame(object)
   if (!is.null(from_time)) df <- df[df$time >= from_time, ]
   if (!is.null(to_time))   df <- df[df$time <= to_time, ]
@@ -681,7 +700,8 @@ autolayer.PowerCepstrogram <- function(object, from_time = NULL, to_time = NULL,
 #' @rdname autoplot-methods
 #' @param coefficient_range Range of coefficients to display (e.g. 1:12).
 #' @export
-autoplot.MFCC <- function(object, coefficient_range = NULL, garnish = TRUE, ...) {
+autoplot.MFCC <- function(object, coefficient_range = NULL, garnish = TRUE,
+  ...) {
   if (!requireNamespace("ggplot2", quietly = TRUE))
     stop("Package 'ggplot2' is required. Please install it.")
   df <- as.data.frame(object)
@@ -745,7 +765,8 @@ autolayer.MFCC <- function(object, coefficient_range = NULL, ...) {
 #' @rdname autoplot-methods
 #' @param coefficient_range Range of coefficients to display (e.g. 1:12).
 #' @export
-autoplot.LFCC <- function(object, coefficient_range = NULL, garnish = TRUE, ...) {
+autoplot.LFCC <- function(object, coefficient_range = NULL, garnish = TRUE,
+  ...) {
   if (!requireNamespace("ggplot2", quietly = TRUE))
     stop("Package 'ggplot2' is required. Please install it.")
   df <- as.data.frame(object)
@@ -820,8 +841,12 @@ autoplot.BarkSpectrogram <- function(object, garnish = TRUE, ...) {
     else if ("col" %in% names(df)) "col"
     else if ("row" %in% names(df)) "row"
     else names(df)[1]
-  yc <- if ("frequency" %in% names(df)) "frequency" else if ("row" %in% names(df)) "row" else names(df)[2]
-  fc <- if ("power_db" %in% names(df)) "power_db" else if ("value" %in% names(df)) "value" else names(df)[3]
+  yc <- if (
+    "frequency" %in% names(
+      df)) "frequency" else if ("row" %in% names(df)) "row" else names(df)[2]
+  fc <- if (
+    "power_db" %in% names(
+      df)) "power_db" else if ("value" %in% names(df)) "value" else names(df)[3]
   p <- ggplot2::ggplot(df,
         ggplot2::aes(x = .data[[xc]], y = .data[[yc]],
                      fill = .data[[fc]])) +
@@ -844,8 +869,12 @@ autolayer.BarkSpectrogram <- function(object, ...) {
     else if ("col" %in% names(df)) "col"
     else if ("row" %in% names(df)) "row"
     else names(df)[1]
-  yc <- if ("frequency" %in% names(df)) "frequency" else if ("row" %in% names(df)) "row" else names(df)[2]
-  fc <- if ("power_db" %in% names(df)) "power_db" else if ("value" %in% names(df)) "value" else names(df)[3]
+  yc <- if (
+    "frequency" %in% names(
+      df)) "frequency" else if ("row" %in% names(df)) "row" else names(df)[2]
+  fc <- if (
+    "power_db" %in% names(
+      df)) "power_db" else if ("value" %in% names(df)) "value" else names(df)[3]
   list(
     ggplot2::geom_raster(data = df,
       ggplot2::aes(x = .data[[xc]], y = .data[[yc]],
@@ -870,8 +899,12 @@ autoplot.MelSpectrogram <- function(object, garnish = TRUE, ...) {
     else if ("col" %in% names(df)) "col"
     else if ("row" %in% names(df)) "row"
     else names(df)[1]
-  yc <- if ("frequency" %in% names(df)) "frequency" else if ("row" %in% names(df)) "row" else names(df)[2]
-  fc <- if ("power_db" %in% names(df)) "power_db" else if ("value" %in% names(df)) "value" else names(df)[3]
+  yc <- if (
+    "frequency" %in% names(
+      df)) "frequency" else if ("row" %in% names(df)) "row" else names(df)[2]
+  fc <- if (
+    "power_db" %in% names(
+      df)) "power_db" else if ("value" %in% names(df)) "value" else names(df)[3]
   p <- ggplot2::ggplot(df,
         ggplot2::aes(x = .data[[xc]], y = .data[[yc]],
                      fill = .data[[fc]])) +
@@ -894,8 +927,12 @@ autolayer.MelSpectrogram <- function(object, ...) {
     else if ("col" %in% names(df)) "col"
     else if ("row" %in% names(df)) "row"
     else names(df)[1]
-  yc <- if ("frequency" %in% names(df)) "frequency" else if ("row" %in% names(df)) "row" else names(df)[2]
-  fc <- if ("power_db" %in% names(df)) "power_db" else if ("value" %in% names(df)) "value" else names(df)[3]
+  yc <- if (
+    "frequency" %in% names(
+      df)) "frequency" else if ("row" %in% names(df)) "row" else names(df)[2]
+  fc <- if (
+    "power_db" %in% names(
+      df)) "power_db" else if ("value" %in% names(df)) "value" else names(df)[3]
   list(
     ggplot2::geom_raster(data = df,
       ggplot2::aes(x = .data[[xc]], y = .data[[yc]],
@@ -1001,10 +1038,13 @@ autoplot.PCA <- function(object, type = c("scree", "scores", "both"),
   if (!requireNamespace("ggplot2", quietly = TRUE))
     stop("Package 'ggplot2' is required. Please install it.")
   type <- match.arg(type)
-  p_scree <- if (type == "scree" || type == "both") .scree_plot(object, "PC", "PCA Scree Plot", garnish) else NULL
-  p_scores <- if (type == "scores" || type == "both") .scores_plot(object, type, "PCA Scores", garnish, ...) else NULL
+  p_scree <- if (type == "scree" || type == "both") .scree_plot(object, "PC",
+    "PCA Scree Plot", garnish) else NULL
+  p_scores <- if (type == "scores" || type == "both") .scores_plot(object,
+    type, "PCA Scores", garnish, ...) else NULL
   if (type == "both") {
-    if (requireNamespace("patchwork", quietly = TRUE)) return(p_scree | p_scores)
+    if (
+      requireNamespace("patchwork", quietly = TRUE)) return(p_scree | p_scores)
     warning("patchwork not installed; returning scree plot only")
     return(p_scree)
   }
@@ -1037,7 +1077,8 @@ autoplot.Discriminant <- function(object, type = c("scree", "scores", "both"),
     .scores_plot(object, type, "Discriminant Scores", garnish, ...)
   } else NULL
   if (type == "both") {
-    if (requireNamespace("patchwork", quietly = TRUE)) return(p_scree | p_scores)
+    if (
+      requireNamespace("patchwork", quietly = TRUE)) return(p_scree | p_scores)
     warning("patchwork not installed; returning scree plot only")
     return(p_scree)
   }
@@ -1105,7 +1146,8 @@ autoplot.FormantModeler <- function(object, from_track = 1L, to_track = 0L,
 
 #' @rdname autoplot-methods
 #' @export
-autolayer.FormantModeler <- function(object, from_track = 1L, to_track = 0L, ...) {
+autolayer.FormantModeler <- function(object, from_track = 1L, to_track = 0L,
+  ...) {
   df <- .formant_modeler_long_df(as.data.frame(object), from_track, to_track,
                                   object$get_number_of_tracks())
   if (nrow(df) == 0) return(NULL)
@@ -1144,7 +1186,8 @@ autoplot.Electroglottogram <- function(object, from_time = NULL, to_time = NULL,
 
 #' @rdname autoplot-methods
 #' @export
-autolayer.Electroglottogram <- function(object, from_time = NULL, to_time = NULL,
+autolayer.Electroglottogram <- function(object, from_time = NULL,
+  to_time = NULL,
     color = "black", ...) {
   df <- as.data.frame(object)
   if (!is.null(from_time)) df <- df[df$time >= from_time, ]
@@ -1163,7 +1206,8 @@ autoplot.LongSound <- function(object, from_time = 0, to_time = 2,
   if (!requireNamespace("ggplot2", quietly = TRUE))
     stop("Package 'ggplot2' is required. Please install it.")
   if (is.null(from_time) || is.null(to_time))
-    stop("from_time and to_time are required for LongSound (streaming from disk)")
+    stop(
+      "from_time and to_time are required for LongSound (streaming from disk)")
   message("Extracting ", from_time, "-", to_time, " s from LongSound...")
   sound <- object$extract_part(from_time, to_time)
   df <- sound$as_data_frame()
@@ -1180,7 +1224,8 @@ autoplot.LongSound <- function(object, from_time = 0, to_time = 2,
 autolayer.LongSound <- function(object, from_time = 0, to_time = 2,
     color = "black", ...) {
   if (is.null(from_time) || is.null(to_time))
-    stop("from_time and to_time are required for LongSound (streaming from disk)")
+    stop(
+      "from_time and to_time are required for LongSound (streaming from disk)")
   sound <- object$extract_part(from_time, to_time)
   df <- sound$as_data_frame()
   yc <- if ("amplitude" %in% names(df)) "amplitude" else "value"
@@ -1200,8 +1245,12 @@ autoplot.DTW <- function(object, garnish = TRUE, alpha_path = 0.8, ...) {
     warning("DTW has no path data")
     return(ggplot2::ggplot() + ggplot2::theme_void())
   }
-  xc <- if ("x_time" %in% names(path)) "x_time" else if ("x" %in% names(path)) "x" else names(path)[1]
-  yc <- if ("y_time" %in% names(path)) "y_time" else if ("y" %in% names(path)) "y" else names(path)[2]
+  xc <- if (
+    "x_time" %in% names(
+      path)) "x_time" else if ("x" %in% names(path)) "x" else names(path)[1]
+  yc <- if (
+    "y_time" %in% names(
+      path)) "y_time" else if ("y" %in% names(path)) "y" else names(path)[2]
   p <- ggplot2::ggplot(path,
         ggplot2::aes(x = .data[[xc]], y = .data[[yc]])) +
     ggplot2::geom_path(color = "darkred", linewidth = 0.8,
@@ -1219,8 +1268,12 @@ autoplot.DTW <- function(object, garnish = TRUE, alpha_path = 0.8, ...) {
 autolayer.DTW <- function(object, alpha_path = 0.8, ...) {
   path <- object$get_path()
   if (is.null(path) || nrow(path) == 0) return(NULL)
-  xc <- if ("x_time" %in% names(path)) "x_time" else if ("x" %in% names(path)) "x" else names(path)[1]
-  yc <- if ("y_time" %in% names(path)) "y_time" else if ("y" %in% names(path)) "y" else names(path)[2]
+  xc <- if (
+    "x_time" %in% names(
+      path)) "x_time" else if ("x" %in% names(path)) "x" else names(path)[1]
+  yc <- if (
+    "y_time" %in% names(
+      path)) "y_time" else if ("y" %in% names(path)) "y" else names(path)[2]
   list(
     ggplot2::geom_path(data = path,
       ggplot2::aes(x = .data[[xc]], y = .data[[yc]]),
@@ -1351,7 +1404,8 @@ autolayer.LPC <- function(object, frame = 1L, color = "darkred", ...) {
   rows <- list()
   for (t in times)
     for (f in seq_len(nf)) {
-      freq <- tryCatch(obj$get_formant_at_time(.klattgrid_formant_type_code(ftype), f, t),
+      freq <- tryCatch(
+        obj$get_formant_at_time(.klattgrid_formant_type_code(ftype), f, t),
                        error = function(e) NA_real_)
       if (!is.na(freq))
         rows[[length(rows) + 1]] <- data.frame(
@@ -1411,7 +1465,9 @@ autolayer.KlattGrid <- function(object, from_time = NULL, to_time = NULL,
   rows <- list()
   for (t in times)
     for (f in seq_len(max_formant)) {
-      freq <- tryCatch(object$get_formant_at_time(.klattgrid_formant_type_code(formant_type), f, t),
+      freq <- tryCatch(
+        object$get_formant_at_time(.klattgrid_formant_type_code(formant_type),
+          f, t),
                        error = function(e) NA_real_)
       if (!is.na(freq))
         rows[[length(rows) + 1]] <- data.frame(
@@ -1419,7 +1475,8 @@ autolayer.KlattGrid <- function(object, from_time = NULL, to_time = NULL,
     }
   if (length(rows) == 0) return(NULL)
   df <- do.call(rbind, rows)
-  df$formant_label <- paste0(toupper(substr(formant_type, 1, 1)), "F", df$formant)
+  df$formant_label <- paste0(toupper(substr(formant_type, 1, 1)), "F",
+    df$formant)
   list(
     ggplot2::geom_line(data = df,
       ggplot2::aes(x = .data$time, y = .data$frequency,

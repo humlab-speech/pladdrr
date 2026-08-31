@@ -2,7 +2,8 @@
 # Validates numerical accuracy and performance of tone synthesis
 
 # Helper function to create a tone (workaround for Sound$create_tone API issues)
-create_test_tone <- function(duration, frequency, sample_rate, amplitude = 0.5) {
+create_test_tone <- function(duration, frequency, sample_rate,
+  amplitude = 0.5) {
   n_samples <- as.integer(duration * sample_rate)
   t <- seq(0, duration, length.out = n_samples)
   samples <- amplitude * sin(2 * pi * frequency * t)

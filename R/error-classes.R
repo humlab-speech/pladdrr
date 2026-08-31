@@ -12,7 +12,7 @@
 #         pladdrr_input_error  — invalid argument or precondition failed
 #         pladdrr_praat_error  — Praat-internal failure
 #         pladdrr_data_loss    — output incomplete vs requested range; the
-#                                return value carries attr(., "pladdrr_data_loss")
+# return value carries attr(., "pladdrr_data_loss")
 #
 # Hierarchy: each class inherits from "pladdrr_error" -> "error" -> "condition"
 # (warnings inherit from "pladdrr_warning" -> "warning" -> "condition").
@@ -35,7 +35,8 @@
 }
 
 #' Build a classed pladdrr error condition
-#' @return A condition object with class \code{c(klass, "pladdrr_error", "error", "condition")}
+#' @return A condition object with class \code{c(klass, "pladdrr_error",
+#  "error", "condition")}
 #'   and elements \code{message}, \code{call}, \code{routine}, \code{param}.
 #' @examples
 #' cond <- pladdrr:::pladdrr_error_cond(
@@ -44,7 +45,8 @@
 #' conditionMessage(cond)
 #' @keywords internal
 #' @noRd
-pladdrr_error_cond <- function(klass, routine, param, message, call = sys.call(-1L)) {
+pladdrr_error_cond <- function(klass, routine, param, message,
+  call = sys.call(-1L)) {
   structure(
     class = c(klass, "pladdrr_error", "error", "condition"),
     list(message = message, call = call, routine = routine, param = param)
@@ -52,7 +54,8 @@ pladdrr_error_cond <- function(klass, routine, param, message, call = sys.call(-
 }
 
 #' Build a classed pladdrr warning condition
-#' @return A condition object with class \code{c(klass, "pladdrr_warning", "warning", "condition")}
+#' @return A condition object with class \code{c(klass, "pladdrr_warning",
+#  "warning", "condition")}
 #'   and elements \code{message}, \code{call}, \code{routine}, \code{param}.
 #' @examples
 #' cond <- pladdrr:::pladdrr_warning_cond(
@@ -61,7 +64,8 @@ pladdrr_error_cond <- function(klass, routine, param, message, call = sys.call(-
 #' conditionMessage(cond)
 #' @keywords internal
 #' @noRd
-pladdrr_warning_cond <- function(klass, routine, param, message, call = sys.call(-1L)) {
+pladdrr_warning_cond <- function(klass, routine, param, message,
+  call = sys.call(-1L)) {
   structure(
     class = c(klass, "pladdrr_warning", "warning", "condition"),
     list(message = message, call = call, routine = routine, param = param)
@@ -96,7 +100,8 @@ pladdrr_warning_cond <- function(klass, routine, param, message, call = sys.call
 #' @return value of \code{expr}, possibly with a \code{pladdrr_data_loss}
 #'   attribute.
 #' @examples
-#' sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate =
+#  16000)
 #' formant <- sound$to_formant_burg()
 #' tryCatch(
 #'   with_pladdrr_errors(
@@ -104,7 +109,7 @@ pladdrr_warning_cond <- function(klass, routine, param, message, call = sys.call
 #'       formant$.xptr, times = c(0.1, 0.2), formant_numbers = 0L
 #'     )
 #'   ),
-#'   pladdrr_input_error = function(e) message("bad input: ", conditionMessage(e))
+#' pladdrr_input_error = function(e) message("bad input: ", conditionMessage(e))
 #' )
 #' @export
 with_pladdrr_errors <- function(expr) {
@@ -116,7 +121,8 @@ with_pladdrr_errors <- function(expr) {
       error = function(e) {
         tag <- .parse_pladdrr_tag(conditionMessage(e))
         if (is.null(tag)) stop(e)
-        cond <- pladdrr_error_cond(tag$class, tag$routine, tag$param, tag$message,
+        cond <- pladdrr_error_cond(tag$class, tag$routine, tag$param,
+          tag$message,
                                    call = conditionCall(e))
         stop(cond)
       }
@@ -133,7 +139,8 @@ with_pladdrr_errors <- function(expr) {
       }
       if (!identical(mode, "silent")) {
         # Surface as a classed warning but keep going.
-        warning(pladdrr_warning_cond(tag$class, tag$routine, tag$param, tag$message,
+        warning(
+          pladdrr_warning_cond(tag$class, tag$routine, tag$param, tag$message,
                                      call = conditionCall(w)))
       }
       invokeRestart("muffleWarning")

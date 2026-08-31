@@ -13,7 +13,8 @@ cat("PART 1: Reading and Querying TextGrid\n")
 cat("=====================================\n\n")
 
 # Read existing TextGrid (using the 1-minute benchmark file)
-tg_path <- system.file("extdata", "benchmarkdata1min.TextGrid", package = "speaker")
+tg_path <- system.file("extdata", "benchmarkdata1min.TextGrid",
+  package = "speaker")
 if (tg_path == "") {
   stop("Benchmark TextGrid not found in package")
 }
@@ -37,7 +38,8 @@ if (tg$tier_is_interval_tier(1)) {
     start_t <- tg$get_interval_start_time(1, i)
     end_t <- tg$get_interval_end_time(1, i)
     label <- tg$get_interval_text(1, i)
-    cat(sprintf("  Interval %d: [%.3f - %.3f] '%s'\n", i, start_t, end_t, label))
+    cat(
+      sprintf("  Interval %d: [%.3f - %.3f] '%s'\n", i, start_t, end_t, label))
   }
 }
 
@@ -298,7 +300,9 @@ vot_row <- vot_df[vot_df$label == "VOT", ]
 if (nrow(vot_row) > 0) {
   vot_duration <- vot_row$end_time - vot_row$start_time
   cat(sprintf("  VOT duration: %.0f ms\n", vot_duration * 1000))
-  cat(sprintf("  Start: %.3f s, End: %.3f s\n", vot_row$start_time, vot_row$end_time))
+  cat(
+    sprintf("  Start: %.3f s, End: %.3f s\n", vot_row$start_time,
+      vot_row$end_time))
 }
 
 # Example 2: MOMEL/INTSINT Annotation (reindeer use case)

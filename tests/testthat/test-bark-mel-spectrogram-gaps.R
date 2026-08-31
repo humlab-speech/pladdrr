@@ -26,7 +26,8 @@ test_that("BarkSpectrogram$as_matrix returns a numeric matrix", {
   expect_gt(ncol(mat), 0)
 })
 
-test_that("BarkSpectrogram$print prints a header and returns the object invisibly", {
+test_that(
+  "BarkSpectrogram$print prints a header and returns the object invisibly", {
   bark <- sound_fixture()$to_bark_spectrogram()
   expect_output(bark$print(), "<Praat BarkSpectrogram>")
   expect_invisible(bark$print())
@@ -60,7 +61,8 @@ test_that("MelSpectrogram$to_mfcc returns an MFCC", {
 # ---------------------------------------------------------------------------
 # MelSpectrogram wrapper methods
 
-test_that("MelSpectrogram$print prints a header and returns the object invisibly", {
+test_that(
+  "MelSpectrogram$print prints a header and returns the object invisibly", {
   mel <- sound_fixture()$to_mel_spectrogram(0.005, 40, 8000)
   expect_output(print(mel), "<Praat MelSpectrogram>")
   expect_invisible(print(mel))

@@ -7,7 +7,8 @@ test_that("LTAS get_peaks_batch matches individual calls", {
   sr <- 44100
   t <- seq(0, 1, 1/sr)
   # Fundamental at 200Hz with harmonics
-  signal <- sin(2 * pi * 200 * t) + 0.5 * sin(2 * pi * 400 * t) + 0.3 * sin(2 * pi * 600 * t)
+  signal <- sin(
+    2 * pi * 200 * t) + 0.5 * sin(2 * pi * 400 * t) + 0.3 * sin(2 * pi * 600 * t)
   sound <- Sound$from_values(signal, sr)
   ltas <- sound$to_ltas(bandwidth = 100)
 
@@ -24,7 +25,8 @@ test_that("LTAS get_peaks_batch matches individual calls", {
     expected_freq <- ltas$get_frequency_of_maximum(fmins[i], fmaxs[i])
 
     expect_equal(peaks_batch$peak_value[i], expected_value, tolerance = 1e-10)
-    expect_equal(peaks_batch$peak_frequency[i], expected_freq, tolerance = 1e-10)
+    expect_equal(peaks_batch$peak_frequency[i], expected_freq,
+      tolerance = 1e-10)
   }
 })
 
@@ -39,7 +41,9 @@ test_that("LTAS get_minima_batch matches individual calls", {
   minima_batch <- ltas$get_minima_batch(fmins, fmaxs)
 
   expect_identical(nrow(minima_batch), 3L)
-  expect_true(all(c("fmin", "fmax", "min_value", "min_frequency") %in% names(minima_batch)))
+  expect_true(
+    all(
+      c("fmin", "fmax", "min_value", "min_frequency") %in% names(minima_batch)))
 })
 
 test_that("LTAS get_values_at_frequencies returns correct values", {
@@ -90,7 +94,8 @@ test_that("Pitch subtract_linear_fit returns new Pitch object", {
 
   expect_s3_class(detrended_pitch, "Pitch")
   expect_true(detrended_pitch$is_valid())
-  expect_equal(detrended_pitch$get_number_of_frames(), pitch$get_number_of_frames(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(detrended_pitch$get_number_of_frames(),
+    pitch$get_number_of_frames(), tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("Pitch interpolate returns new Pitch object", {
@@ -149,10 +154,12 @@ test_that("PointProcess get_values_from_sound returns correct values", {
 
   # Create sound and extract pulses
   sound <- Sound$create_tone(frequency = 200, duration = 0.5)
-  pp <- sound$to_point_process_periodic_cc(pitch_floor = 75, pitch_ceiling = 600)
+  pp <- sound$to_point_process_periodic_cc(pitch_floor = 75,
+    pitch_ceiling = 600)
 
   if (pp$get_number_of_points() > 0) {
-    values <- pp$get_values_from_sound(sound, channel = 1, interpolation = "cubic")
+    values <- pp$get_values_from_sound(sound, channel = 1,
+      interpolation = "cubic")
 
     expect_length(values, pp$get_number_of_points())
     expect_true(is.numeric(values))
@@ -162,7 +169,8 @@ test_that("PointProcess get_values_from_sound returns correct values", {
 test_that("PointProcess get_periods_vector returns inter-point intervals", {
 
   sound <- Sound$create_tone(frequency = 200, duration = 0.5)
-  pp <- sound$to_point_process_periodic_cc(pitch_floor = 75, pitch_ceiling = 600)
+  pp <- sound$to_point_process_periodic_cc(pitch_floor = 75,
+    pitch_ceiling = 600)
 
   n_points <- pp$get_number_of_points()
   if (n_points >= 2) {
@@ -177,7 +185,8 @@ test_that("PointProcess get_periods_vector returns inter-point intervals", {
 test_that("PointProcess get_jitter_batch returns all jitter measures", {
 
   sound <- Sound$create_tone(frequency = 200, duration = 0.5)
-  pp <- sound$to_point_process_periodic_cc(pitch_floor = 75, pitch_ceiling = 600)
+  pp <- sound$to_point_process_periodic_cc(pitch_floor = 75,
+    pitch_ceiling = 600)
 
   jitter <- pp$get_jitter_batch(
     from_time = 0, to_time = 0,
@@ -225,7 +234,8 @@ test_that("Spectrum batch band operations work", {
 })
 
 # BUG-2 regression: parabolic interpolation must not produce impossible values
-test_that("BUG-2: get_peaks_batch(parabolic) returns physically plausible values", {
+test_that(
+  "BUG-2: get_peaks_batch(parabolic) returns physically plausible values", {
 
   # Tone with flat spectrum regions — creates the near-zero d2y condition
   sr     <- 44100
@@ -246,7 +256,8 @@ test_that("BUG-2: get_peaks_batch(parabolic) returns physically plausible values
   peaks_para <- ltas$get_peaks_batch(fmins, fmaxs, interpolation = "parabolic")
   peaks_none <- ltas$get_peaks_batch(fmins, fmaxs, interpolation = "none")
 
-  # No physically impossible values (hard limit: nothing > 200 dB in any spectrum)
+  # No physically impossible values (hard limit: nothing > 200 dB in any
+  #  spectrum)
   expect_true(all(peaks_para$peak_value < 200),
     info = paste("Parabolic peaks:", toString(round(peaks_para$peak_value, 1))))
 
@@ -257,7 +268,8 @@ test_that("BUG-2: get_peaks_batch(parabolic) returns physically plausible values
 })
 
 # API-1 regression: to_ltas_direct() must return a wrapped Ltas, not externalptr
-test_that("API-1: to_ltas_direct() returns usable Ltas object without manual wrapping", {
+test_that(
+  "API-1: to_ltas_direct() returns usable Ltas object without manual wrapping", {
 
   sound <- Sound$create_tone(frequency = 440, duration = 0.5)
   ltas  <- to_ltas_direct(sound, bandwidth = 100)

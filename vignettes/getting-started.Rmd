@@ -106,7 +106,8 @@ print(stats)
 
 ## Pitch Analysis
 
-Extract fundamental frequency (F0) from speech or sustained tones using object methods:
+Extract fundamental frequency (
+  F0) from speech or sustained tones using object methods:
 
 ```{r}
 # For speech, use typical settings
@@ -168,7 +169,8 @@ formants
 formants_male <- speech$to_formant_burg(max_frequency = 5000, max_formants = 5)
 
 # Adult female
-formants_female <- speech$to_formant_burg(max_frequency = 5500, max_formants = 5)
+formants_female <- speech$to_formant_burg(max_frequency = 5500,
+  max_formants = 5)
 
 # Child
 formants_child <- speech$to_formant_burg(max_frequency = 8000, max_formants = 5)
@@ -254,7 +256,9 @@ head(intensity_df)
 
 ## Visualization
 
-The `pladdrr` package provides ggplot2-based visualization functions (`autoplot()`/`autolayer()` methods, see `vignette("autoplot-autolayer")`) for its analysis objects. For detailed examples of creating plots, see `vignette("visualization")`, which covers:
+The `pladdrr` package provides ggplot2-based visualization functions (
+  `autoplot(
+    )`/`autolayer()` methods, see `vignette("autoplot-autolayer")`) for its analysis objects. For detailed examples of creating plots, see `vignette("visualization")`, which covers:
 
 - Voice quality visualization (AVQI, DSI, CPP)
 - Formant analysis (vowel spaces, trajectories)

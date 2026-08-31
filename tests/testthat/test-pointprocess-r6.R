@@ -1,4 +1,5 @@
-# test-pointprocess-r6.R - Tests for R/pointprocess-wrapper.R (PointProcess object)
+# test-pointprocess-r6.R - Tests for R/pointprocess-wrapper.R (PointProcess
+#  object)
 #
 # There is no dedicated test file for the PointProcess R6 class elsewhere in
 # this repo -- it's only exercised incidentally in test-batch-queries.R,
@@ -30,7 +31,8 @@ test_that("PointProcess() with no arguments and no .xptr errors clearly", {
   expect_error(PointProcess(tmax = 1), "must be created from a Sound or Pitch")
 })
 
-test_that("Pitch$to_point_process() and Sound$to_point_process_periodic_cc() both build a valid PointProcess", {
+test_that(
+  "Pitch$to_point_process() and Sound$to_point_process_periodic_cc() both build a valid PointProcess", {
   s <- generate_sine_wave(150, 0.3, sampling_rate = 16000)
   pitch <- s$to_pitch_cc(pitch_floor = 75, pitch_ceiling = 600)
 
@@ -38,14 +40,16 @@ test_that("Pitch$to_point_process() and Sound$to_point_process_periodic_cc() bot
   expect_s3_class(pp_from_pitch, "PointProcess")
   expect_gt(pp_from_pitch$get_number_of_points(), 0)
 
-  pp_from_sound <- s$to_point_process_periodic_cc(pitch_floor = 75, pitch_ceiling = 600)
+  pp_from_sound <- s$to_point_process_periodic_cc(pitch_floor = 75,
+    pitch_ceiling = 600)
   expect_s3_class(pp_from_sound, "PointProcess")
   expect_gt(pp_from_sound$get_number_of_points(), 0)
 })
 
 # --- Basic query getters ---
 
-test_that("basic query getters work on a manually-populated empty PointProcess", {
+test_that(
+  "basic query getters work on a manually-populated empty PointProcess", {
   pp <- PointProcess(0, 1)
   pp$add_point(0.1)
   pp$add_point(0.2)
@@ -54,9 +58,12 @@ test_that("basic query getters work on a manually-populated empty PointProcess",
   expect_identical(pp$get_number_of_points(), 3L)
   expect_equal(pp$get_time(1), 0.1, tolerance = 1e-10)
   expect_equal(pp$get_time_from_index(2), 0.2, tolerance = 1e-10)
-  expect_equal(pp$get_low_index(0.15), 1L, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(pp$get_high_index(0.15), 2L, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(pp$get_nearest_index(0.19), 2L, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pp$get_low_index(0.15), 1L,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pp$get_high_index(0.15), 2L,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pp$get_nearest_index(0.19), 2L,
+    tolerance = sqrt(.Machine$double.eps))
   expect_equal(pp$get_interval(0.15), 0.1, tolerance = 1e-10)
 })
 
@@ -70,7 +77,8 @@ test_that("get_time() errors on an out-of-range point number", {
 
 # --- Period statistics ---
 
-test_that("period statistics work with both qualifying and non-qualifying period ranges", {
+test_that(
+  "period statistics work with both qualifying and non-qualifying period ranges", {
   s <- generate_sine_wave(150, 0.3, sampling_rate = 16000)
   pitch <- s$to_pitch_cc(pitch_floor = 75, pitch_ceiling = 600)
   pp <- suppressWarnings(pitch$to_point_process())
@@ -81,27 +89,36 @@ test_that("period statistics work with both qualifying and non-qualifying period
   expect_gt(n_periods, 0)
   expect_true(is.finite(pp$get_mean_period(0, 0)))
   expect_true(is.finite(pp$get_stdev_period(0, 0)))
-  expect_equal(pp$get_voice_breaks(0, 0), 0, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pp$get_voice_breaks(0, 0), 0,
+    tolerance = sqrt(.Machine$double.eps))
 
   # A period_ceiling far below any real period disqualifies everything;
   # this exercises the "0 qualifying periods" (NaN) branch too.
   pp2 <- PointProcess(0, 1)
   pp2$add_point(0.1); pp2$add_point(0.2); pp2$add_point(0.3)
-  expect_identical(pp2$get_number_of_periods(0, 0, period_floor = 0.0001, period_ceiling = 0.02), 0L)
-  expect_true(is.nan(pp2$get_mean_period(0, 0, period_floor = 0.0001, period_ceiling = 0.02)))
+  expect_identical(
+    pp2$get_number_of_periods(0, 0, period_floor = 0.0001,
+      period_ceiling = 0.02), 0L)
+  expect_true(
+    is.nan(
+      pp2$get_mean_period(0, 0, period_floor = 0.0001, period_ceiling = 0.02)))
 })
 
 # --- Periods as vectors ---
 
-test_that("get_periods_vector() and get_periods_filtered() work, including the n<2 empty branch", {
+test_that(
+  "get_periods_vector() and get_periods_filtered() work, including the n<2 empty branch", {
   # n < 2 points: both should return an empty (length-0) numeric vector.
   pp_empty <- PointProcess(0, 1)
-  expect_equal(pp_empty$get_periods_vector(), numeric(0), tolerance = sqrt(.Machine$double.eps))
-  expect_equal(pp_empty$get_periods_filtered(), numeric(0), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pp_empty$get_periods_vector(), numeric(0),
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pp_empty$get_periods_filtered(), numeric(0),
+    tolerance = sqrt(.Machine$double.eps))
 
   pp_one <- PointProcess(0, 1)
   pp_one$add_point(0.1)
-  expect_equal(pp_one$get_periods_vector(), numeric(0), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(pp_one$get_periods_vector(), numeric(0),
+    tolerance = sqrt(.Machine$double.eps))
 
   pp <- PointProcess(0, 1)
   pp$add_point(0.1); pp$add_point(0.2); pp$add_point(0.3); pp$add_point(0.45)
@@ -118,7 +135,8 @@ test_that("get_periods_vector() and get_periods_filtered() work, including the n
 
 # --- Modification methods ---
 
-test_that("add_point/remove_point/remove_point_near/remove_points_between/fill/voice all mutate and return invisible self", {
+test_that(
+  "add_point/remove_point/remove_point_near/remove_points_between/fill/voice all mutate and return invisible self", {
   pp <- PointProcess(0, 1)
 
   ret <- pp$add_point(0.1)
@@ -148,7 +166,8 @@ test_that("add_point/remove_point/remove_point_near/remove_points_between/fill/v
 
 # --- Set operations ---
 
-test_that("union_with/intersection_with/difference_with combine two PointProcess objects", {
+test_that(
+  "union_with/intersection_with/difference_with combine two PointProcess objects", {
   # These return a *new* PointProcess wrapping the result (see the NOTE
   # above .pp_methods$union_with in R/pointprocess-wrapper.R) - callers
   # must reassign, e.g. `pp1 <- pp1$union_with(pp2)`.
@@ -175,16 +194,19 @@ test_that("union_with/intersection_with/difference_with combine two PointProcess
   expect_equal(diffed$as_vector(), 0.1, tolerance = 1e-10)
 })
 
-test_that("union_with/intersection_with/difference_with reject non-PointProcess arguments", {
+test_that(
+  "union_with/intersection_with/difference_with reject non-PointProcess arguments", {
   pp <- PointProcess(0, 1)
-  expect_error(pp$union_with("not a pointprocess"), "Argument must be PointProcess")
+  expect_error(pp$union_with("not a pointprocess"),
+    "Argument must be PointProcess")
   expect_error(pp$intersection_with(42), "Argument must be PointProcess")
   expect_error(pp$difference_with(list()), "Argument must be PointProcess")
 })
 
 # --- Conversions ---
 
-test_that("upto_pitch_tier() and upto_intensity_tier() convert to the expected tier classes", {
+test_that(
+  "upto_pitch_tier() and upto_intensity_tier() convert to the expected tier classes", {
   pp <- PointProcess(0, 1)
   pp$add_point(0.1); pp$add_point(0.2); pp$add_point(0.3)
 
@@ -195,7 +217,8 @@ test_that("upto_pitch_tier() and upto_intensity_tier() convert to the expected t
   expect_s3_class(it, "IntensityTier")
 })
 
-test_that("to_sound_pulse_train() and to_sound_hum() synthesize Sound objects", {
+test_that(
+  "to_sound_pulse_train() and to_sound_hum() synthesize Sound objects", {
   s <- generate_sine_wave(150, 0.3, sampling_rate = 16000)
   pitch <- s$to_pitch_cc(pitch_floor = 75, pitch_ceiling = 600)
   pp <- suppressWarnings(pitch$to_point_process())
@@ -211,7 +234,8 @@ test_that("to_sound_pulse_train() and to_sound_hum() synthesize Sound objects", 
 
 # --- Batch operations ---
 
-test_that("get_values_from_sound() returns one value per point, and rejects non-Sound input", {
+test_that(
+  "get_values_from_sound() returns one value per point, and rejects non-Sound input", {
   s <- generate_sine_wave(150, 0.3, sampling_rate = 16000)
   pitch <- s$to_pitch_cc(pitch_floor = 75, pitch_ceiling = 600)
   pp <- suppressWarnings(pitch$to_point_process())
@@ -220,7 +244,8 @@ test_that("get_values_from_sound() returns one value per point, and rejects non-
   expect_type(vals, "double")
   expect_length(vals, pp$get_number_of_points())
 
-  expect_error(pp$get_values_from_sound("not a sound"), "sound must be a Sound object")
+  expect_error(pp$get_values_from_sound("not a sound"),
+    "sound must be a Sound object")
 })
 
 test_that("get_jitter_batch() returns all five jitter measures in one call", {
@@ -230,15 +255,18 @@ test_that("get_jitter_batch() returns all five jitter measures in one call", {
 
   res <- pp$get_jitter_batch(0, 0, 0.0001, 0.02, 1.3)
   expect_type(res, "list")
-  expect_named(res, c("local", "local_absolute", "rap", "ppq5", "ddp"), ignore.order = TRUE)
+  expect_named(res, c("local", "local_absolute", "rap", "ppq5", "ddp"),
+    ignore.order = TRUE)
   for (nm in names(res)) {
     expect_type(res[[nm]], "double")
   }
 })
 
-# --- Voice quality (jitter) without a cached Sound (bare .pointprocess_get_jitter_* path) ---
+# --- Voice quality (jitter) without a cached Sound (bare
+#  .pointprocess_get_jitter_* path) ---
 
-test_that("jitter accessors work directly (no prior shimmer call caching a Sound)", {
+test_that(
+  "jitter accessors work directly (no prior shimmer call caching a Sound)", {
   s <- generate_sine_wave(150, 0.3, sampling_rate = 16000)
   pitch <- s$to_pitch_cc(pitch_floor = 75, pitch_ceiling = 600)
   pp <- suppressWarnings(pitch$to_point_process())
@@ -287,7 +315,8 @@ test_that("get_xptr() returns the underlying external pointer", {
 
 # --- Print ---
 
-test_that("print.PointProcess() and $print() report time domain and point count", {
+test_that(
+  "print.PointProcess() and $print() report time domain and point count", {
   pp <- PointProcess(0, 1)
   pp$add_point(0.1); pp$add_point(0.2)
 
@@ -297,12 +326,14 @@ test_that("print.PointProcess() and $print() report time domain and point count"
   expect_s3_class(ret, "PointProcess")
 })
 
-# --- voice_report edge case (no jitter/shimmer-qualifying periods, still succeeds) ---
+# --- voice_report edge case (no jitter/shimmer-qualifying periods, still
+#  succeeds) ---
 
 # voice_report on an empty PointProcess aborts silently under MSVC on
 # Windows; the body runs in an isolated child R process there (see
 # helper-windows-crash-probe.R) so the abort is a visible failure, not a skip.
-probe_test("voice_report() on a nearly-empty PointProcess still returns a list (no crash)", {
+probe_test(
+  "voice_report() on a nearly-empty PointProcess still returns a list (no crash)", {
   s <- generate_sine_wave(150, 0.3, sampling_rate = 16000)
   pitch <- s$to_pitch_cc(pitch_floor = 75, pitch_ceiling = 600)
   pp_empty <- PointProcess(0, s$get_total_duration())

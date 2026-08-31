@@ -3,7 +3,10 @@
 test_that("pladdrr_threads() with no args just queries current state", {
   state <- pladdrr_threads()
   expect_type(state, "list")
-  expect_true(all(c("processors", "enabled", "max_threads", "min_elements_per_thread") %in% names(state)))
+  expect_true(
+    all(
+      c("processors", "enabled", "max_threads",
+        "min_elements_per_thread") %in% names(state)))
   expect_gte(state$processors, 1)
 })
 

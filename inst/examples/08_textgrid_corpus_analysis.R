@@ -4,9 +4,11 @@
 
 library(speaker)
 
-cat("================================================================================\n")
+cat(
+  "================================================================================\n")
 cat("Example 8: Large-Scale TextGrid Corpus Analysis\n")
-cat("================================================================================\n\n")
+cat(
+  "================================================================================\n\n")
 
 cat("This example demonstrates:\n")
 cat("  • Loading and processing large TextGrid files\n")
@@ -23,7 +25,8 @@ cat("Part 1: Loading benchmark TextGrid data\n")
 cat(strrep("=", 80), "\n\n")
 
 # Use the 1-minute benchmark file (smaller than 10-min or 30-min versions)
-tg_file <- system.file("extdata", "benchmarkdata1min.TextGrid", package = "speaker")
+tg_file <- system.file("extdata", "benchmarkdata1min.TextGrid",
+  package = "speaker")
 
 if (!file.exists(tg_file)) {
   cat("ERROR: Benchmark TextGrid file not found.\n")
@@ -128,7 +131,8 @@ cat("\nPart 3: Computing interval duration statistics\n")
 cat(strrep("=", 80), "\n\n")
 
 # Analyze each interval tier
-interval_tiers <- which(vapply(tier_info, function(x) x$is_interval, numeric(1)))
+interval_tiers <- which(
+  vapply(tier_info, function(x) x$is_interval, numeric(1)))
 
 if (length(interval_tiers) > 0) {
   cat(sprintf("Analyzing %d interval tier(s):\n\n", length(interval_tiers)))
@@ -168,7 +172,8 @@ if (length(interval_tiers) > 0) {
                   sum(non_empty), 
                   100 * sum(non_empty) / length(non_empty)))
       cat(sprintf("  Mean duration: %.4f seconds\n", mean(labeled_durations)))
-      cat(sprintf("  Median duration: %.4f seconds\n", median(labeled_durations)))
+      cat(
+        sprintf("  Median duration: %.4f seconds\n", median(labeled_durations)))
       cat(sprintf("  SD duration: %.4f seconds\n", sd(labeled_durations)))
       cat(sprintf("  Min duration: %.4f seconds\n", min(labeled_durations)))
       cat(sprintf("  Max duration: %.4f seconds\n", max(labeled_durations)))
@@ -244,7 +249,8 @@ if (length(interval_tiers) > 0) {
   non_empty_labels <- all_labels[nchar(trimws(all_labels)) > 0]
   if (length(non_empty_labels) > 0) {
     label_lengths <- nchar(non_empty_labels)
-    cat(sprintf("  Average label length: %.1f characters\n", mean(label_lengths)))
+    cat(
+      sprintf("  Average label length: %.1f characters\n", mean(label_lengths)))
     cat(sprintf("  Label length range: %d - %d characters\n", 
                 min(label_lengths), max(label_lengths)))
   }
@@ -263,7 +269,9 @@ if (length(interval_tiers) > 0) {
   total_duration <- tg$get_total_duration()
   
   cat("Calculating temporal coverage for each tier:\n\n")
-  cat(sprintf("  %-30s %-15s %-15s %-10s\n", "Tier", "Labeled (s)", "Coverage (%)", "Intervals"))
+  cat(
+    sprintf("  %-30s %-15s %-15s %-10s\n", "Tier", "Labeled (s)",
+      "Coverage (%)", "Intervals"))
   cat(sprintf("  %s\n", strrep("-", 75)))
   
   for (tier_idx in interval_tiers) {
@@ -385,7 +393,8 @@ if (length(interval_tiers) > 0) {
   for (t in query_times) {
     label <- tg$get_label_at_time(tier_idx, t)
   }
-  time_query_time <- as.numeric(difftime(Sys.time(), start_time, units = "secs"))
+  time_query_time <- as.numeric(
+    difftime(Sys.time(), start_time, units = "secs"))
   
   cat(sprintf("  Time-based label queries: %d queries in %.3f s\n", 
               n_time_queries, time_query_time))
@@ -434,4 +443,5 @@ cat("  • Batch feature extraction from large corpora\n\n")
 
 cat("For related examples, see:\n")
 cat("  • inst/examples/06_textgrid_analysis.R - Basic TextGrid operations\n")
-cat("  • inst/examples/07_comprehensive_phonetic_analysis.R - Integrated analysis\n\n")
+cat(
+  "  • inst/examples/07_comprehensive_phonetic_analysis.R - Integrated analysis\n\n")

@@ -21,7 +21,8 @@ test_that("sound_as_matrix_fast returns a numeric matrix", {
   m <- sound_as_matrix_fast(snd)
   expect_type(m, "double")
   expect_true(is.matrix(m))
-  expect_equal(ncol(m), snd$get_number_of_channels(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(ncol(m), snd$get_number_of_channels(),
+    tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("fast_vector class and print", {

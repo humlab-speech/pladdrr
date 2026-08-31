@@ -19,11 +19,12 @@
 #'
 #' @section Query methods:
 #' \itemize{
-#'   \item \code{get_start_time()}, \code{get_end_time()} - time domain in seconds
+#' \item \code{get_start_time()}, \code{get_end_time()} - time domain in seconds
 #'   \item \code{get_number_of_points()} - number of (time, value) points
 #'   \item \code{get_time_from_index(index)} - time at a 1-based point index
-#'   \item \code{get_value_at_index(index)} - amplitude at a 1-based point index (Pa)
-#'   \item \code{get_value_at_time(time)} - interpolated amplitude at a time (Pa)
+#' \item \code{get_value_at_index(index)} - amplitude at a 1-based point index
+#  (Pa)
+#' \item \code{get_value_at_time(time)} - interpolated amplitude at a time (Pa)
 #' }
 #'
 #' @section Modification:
@@ -34,8 +35,10 @@
 #'
 #' @section Conversion and export:
 #' \itemize{
-#'   \item \code{to_intensity_tier(threshold_db)} - convert amplitude to an IntensityTier
-#'   \item \code{as_data_frame()} - points as a data frame with \code{time} and \code{amplitude_pa} columns
+#' \item \code{to_intensity_tier(threshold_db)} - convert amplitude to an
+#  IntensityTier
+#' \item \code{as_data_frame()} - points as a data frame with \code{time} and
+#  \code{amplitude_pa} columns
 #'   \item \code{save(path)} - write to file
 #' }
 #'
@@ -65,10 +68,14 @@ NULL
 # Query
 .amplitudetier_methods$get_start_time <- function(.self) .self$.cpp$get_xmin()
 .amplitudetier_methods$get_end_time <- function(.self) .self$.cpp$get_xmax()
-.amplitudetier_methods$get_number_of_points <- function(.self) .self$.cpp$get_number_of_points()
-.amplitudetier_methods$get_time_from_index <- function(.self, index) .self$.cpp$get_time(as.integer(index))
-.amplitudetier_methods$get_value_at_index <- function(.self, index) .self$.cpp$get_value(as.integer(index))
-.amplitudetier_methods$get_value_at_time <- function(.self, time) .self$.cpp$get_value_at_time(as.numeric(time))
+.amplitudetier_methods$get_number_of_points <- function(
+  .self) .self$.cpp$get_number_of_points()
+.amplitudetier_methods$get_time_from_index <- function(.self,
+  index) .self$.cpp$get_time(as.integer(index))
+.amplitudetier_methods$get_value_at_index <- function(.self,
+  index) .self$.cpp$get_value(as.integer(index))
+.amplitudetier_methods$get_value_at_time <- function(.self,
+  time) .self$.cpp$get_value_at_time(as.numeric(time))
 
 # Modification (self-returning)
 .amplitudetier_methods$add_point <- function(.self, time, value) {
@@ -81,7 +88,8 @@ NULL
 }
 
 # Conversion
-.amplitudetier_methods$to_intensity_tier <- function(.self, threshold_db = -200) {
+.amplitudetier_methods$to_intensity_tier <- function(.self,
+  threshold_db = -200) {
   ptr <- .self$.cpp$to_intensity_tier_ptr(threshold_db)
   IntensityTier(.xptr = ptr)
 }
@@ -111,7 +119,9 @@ NULL
 # Display
 .amplitudetier_methods$print <- function(.self) {
   cat("<Praat AmplitudeTier>\n")
-  cat(sprintf("  Time domain: %.3f to %.3f s\n", .self$.cpp$get_xmin(), .self$.cpp$get_xmax()))
+  cat(
+    sprintf("  Time domain: %.3f to %.3f s\n", .self$.cpp$get_xmin(),
+      .self$.cpp$get_xmax()))
   cat(sprintf("  Number of points: %d\n", .self$.cpp$get_number_of_points()))
   invisible(.self)
 }
@@ -142,7 +152,8 @@ lockEnvironment(.amplitudetier_methods, bindings = TRUE)
 #' @export
 AmplitudeTier <- function(.xptr = NULL) {
   if (is.null(.xptr)) {
-    stop("AmplitudeTier objects must be created using amplitude_tier_create() or related functions")
+    stop(
+      "AmplitudeTier objects must be created using amplitude_tier_create() or related functions")
   }
 
   tier_mod <- get_module("amplitudetier_module")
@@ -183,13 +194,15 @@ amplitude_tier_create <- function(tmin, tmax) {
 
 #' Create AmplitudeTier from PointProcess and Sound
 #'
-#' Extracts amplitude values from a Sound at the times specified by a PointProcess.
+#' Extracts amplitude values from a Sound at the times specified by a
+#  PointProcess.
 #'
 #' @param point_process A PointProcess object
 #' @inheritParams pladdrr_shared_sound_a sound
 #' @return An AmplitudeTier object with amplitudes at each point time
 #' @examples
-#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate = 16000)
+#' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
+#  16000)
 #' pp <- sound$to_point_process_periodic_cc(75, 600)
 #' tier <- amplitude_tier_from_point_process(pp, sound)
 #' tier$get_number_of_points()
@@ -201,7 +214,8 @@ amplitude_tier_from_point_process <- function(point_process, sound) {
   if (!inherits(sound, "Sound")) {
     stop("sound must be a Sound object")
   }
-  ptr <- point_process_sound_to_amplitude_tier_point_cpp(point_process$.xptr, sound$.xptr)
+  ptr <- point_process_sound_to_amplitude_tier_point_cpp(point_process$.xptr,
+    sound$.xptr)
   AmplitudeTier(.xptr = ptr)
 }
 

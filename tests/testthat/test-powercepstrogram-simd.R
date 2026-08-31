@@ -4,7 +4,8 @@
 test_that("PowerCepstrogram SIMD detection works", {
   # Should return logical
   simd_available <- tryCatch({
-    .Call("_pladdrr_should_use_simd_for_powercepstrogram_bridge", PACKAGE = "pladdrr")
+    .Call("_pladdrr_should_use_simd_for_powercepstrogram_bridge",
+      PACKAGE = "pladdrr")
   }, error = function(e) FALSE)
   
   expect_type(simd_available, "logical")
@@ -14,7 +15,8 @@ test_that("PowerCepstrogram creation works with SIMD", {
   skip_if_not_installed("pladdrr")
   
   # Create test sound (500 Hz tone, 0.5s)
-  sound <- pladdrr::generate_sine_wave(500, duration = 0.5, sampling_rate = 16000)
+  sound <- pladdrr::generate_sine_wave(500, duration = 0.5,
+    sampling_rate = 16000)
   
   # Convert to PowerCepstrogram
   pc <- sound$to_powercepstrogram(
@@ -33,7 +35,8 @@ test_that("CPPS calculation with SIMD matches scalar", {
   skip_on_cran()  # Skip intensive test on CRAN
   
   # Create test sound
-  sound <- pladdrr::generate_sine_wave(500, duration = 1.0, sampling_rate = 16000)
+  sound <- pladdrr::generate_sine_wave(500, duration = 1.0,
+    sampling_rate = 16000)
   
   # Calculate CPPS (uses PowerCepstrogram internally with SIMD)
   cpps <- tryCatch({
@@ -51,13 +54,15 @@ test_that("PowerCepstrogram SIMD handles edge cases", {
   skip_on_cran()
   
   # Very short sound (edge case for SIMD threshold)
-  short_sound <- pladdrr::generate_sine_wave(440, duration = 0.1, sampling_rate = 16000)
+  short_sound <- pladdrr::generate_sine_wave(440, duration = 0.1,
+    sampling_rate = 16000)
   
   pc_short <- short_sound$to_powercepstrogram()
   expect_s3_class(pc_short, "PowerCepstrogram")
   
   # Longer sound (should definitely use SIMD)
-  long_sound <- pladdrr::generate_sine_wave(440, duration = 2.0, sampling_rate = 16000)
+  long_sound <- pladdrr::generate_sine_wave(440, duration = 2.0,
+    sampling_rate = 16000)
   
   pc_long <- long_sound$to_powercepstrogram()
   expect_s3_class(pc_long, "PowerCepstrogram")

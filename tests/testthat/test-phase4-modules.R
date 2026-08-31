@@ -77,8 +77,10 @@ test_that("RMatrix statistics work", {
   ptr <- mod$Matrix_from_r_matrix(r_mat)
   rmatrix <- new(mod$RMatrix, ptr)
 
-  expect_equal(rmatrix$get_sum(), sum(1:12), tolerance = sqrt(.Machine$double.eps))
-  expect_equal(rmatrix$get_mean(), mean(1:12), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(rmatrix$get_sum(), sum(1:12),
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(rmatrix$get_mean(), mean(1:12),
+    tolerance = sqrt(.Machine$double.eps))
   expect_equal(rmatrix$get_minimum(), 1, tolerance = sqrt(.Machine$double.eps))
   expect_equal(rmatrix$get_maximum(), 12, tolerance = sqrt(.Machine$double.eps))
 })
@@ -92,12 +94,15 @@ test_that("RMatrix value access works", {
   rmatrix <- new(mod$RMatrix, ptr)
 
   # Note: Praat matrices are 1-indexed (row, col)
-  expect_equal(rmatrix$get_value(1, 1), 1, tolerance = sqrt(.Machine$double.eps))
-  expect_equal(rmatrix$get_value(3, 4), 12, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(rmatrix$get_value(1, 1), 1,
+    tolerance = sqrt(.Machine$double.eps))
+  expect_equal(rmatrix$get_value(3, 4), 12,
+    tolerance = sqrt(.Machine$double.eps))
 
   # Set and verify
   rmatrix$set_value(2, 2, 99)
-  expect_equal(rmatrix$get_value(2, 2), 99, tolerance = sqrt(.Machine$double.eps))
+  expect_equal(rmatrix$get_value(2, 2), 99,
+    tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("RMatrix export works", {
@@ -218,7 +223,8 @@ test_that("RPowerCepstrogram CPPS works", {
   expect_type(cpps, "double")
 })
 
-probe_test("RPowerCepstrum get_peak_prominence, hillenbrand, trend, smoothing, and export methods work", {
+probe_test(
+  "RPowerCepstrum get_peak_prominence, hillenbrand, trend, smoothing, and export methods work", {
   # Coverage gap-fill note (task 20): PowerCepstrum$get_peak_prominence() (the
   # R6 method) dispatches to the bare .powercepstrum_get_peak_prominence()
   # wrapper.cpp export, NOT to this module's own get_peak_prominence() method
@@ -277,7 +283,8 @@ probe_test("RPowerCepstrum get_peak_prominence, hillenbrand, trend, smoothing, a
   expect_no_error(rpc$save(tmp))
 }, preamble = PHASE4_PC_PREAMBLE)
 
-probe_test("RPowerCepstrogram exposes time/quefrency domain properties, slicing, smoothing, matrix export, and save", {
+probe_test(
+  "RPowerCepstrogram exposes time/quefrency domain properties, slicing, smoothing, matrix export, and save", {
   # Coverage gap-fill note (task 20): the PowerCepstrogram R6 class has NO
   # module at all ("# No module -- pure Rcpp function wrapper" in
   # R/powercepstrum.R) -- every one of RPowerCepstrogram's methods below is
@@ -302,7 +309,8 @@ probe_test("RPowerCepstrogram exposes time/quefrency domain properties, slicing,
   expect_gt(rpcg$get_dy(), 0)
 
   mid_time <- (rpcg$get_xmin() + rpcg$get_xmax()) / 2
-  cpp <- rpcg$get_cpp_at_time(mid_time, "cubic", 0.003, 0.04, "exponential decay", 0.05)
+  cpp <- rpcg$get_cpp_at_time(mid_time, "cubic", 0.003, 0.04,
+    "exponential decay", 0.05)
   expect_true(is.numeric(cpp))
 
   slice_ptr <- rpcg$get_slice_ptr(mid_time)
@@ -324,7 +332,8 @@ probe_test("RPowerCepstrogram exposes time/quefrency domain properties, slicing,
   expect_no_error(rpcg$save(tmp))
 }, preamble = PHASE4_PC_PREAMBLE)
 
-probe_test("powercepstrum_module's Sound_to_PowerCepstrogram free function validates pitch_floor, time_step, and maximum_frequency", {
+probe_test(
+  "powercepstrum_module's Sound_to_PowerCepstrogram free function validates pitch_floor, time_step, and maximum_frequency", {
   skip_if_no_module("powercepstrum")
   skip_if_no_module("sound")
 

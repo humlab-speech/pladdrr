@@ -77,12 +77,15 @@
 #' Praat Script Interpreter
 #'
 #' R6 class for executing Praat scripts with persistent interpreter state.
-#' Allows running multiple scripts while maintaining variables and state between runs.
+#' Allows running multiple scripts while maintaining variables and state between
+#  runs.
 #' Provides bidirectional object transfer between R and Praat's object list.
 #'
 #' @description
-#' The PraatInterpreter provides a persistent Praat scripting environment within R.
-#' Unlike one-shot script execution, the interpreter maintains state between calls,
+#' The PraatInterpreter provides a persistent Praat scripting environment within
+#  R.
+#' Unlike one-shot script execution, the interpreter maintains state between
+#  calls,
 #' enabling incremental script development and interactive exploration.
 #'
 #' @return An R6 object of class \code{PraatInterpreter}.
@@ -130,7 +133,8 @@ PraatInterpreter <- R6::R6Class(
     #' @return Self (invisibly), for method chaining.
     run = function(script) {
       if (!is.character(script) || length(script) != 1L || !nzchar(script)) {
-        stop("'script' must be a single non-empty character string", call. = FALSE)
+        stop("'script' must be a single non-empty character string",
+          call. = FALSE)
       }
       private$cpp$run(script)
       invisible(self)
@@ -151,7 +155,8 @@ PraatInterpreter <- R6::R6Class(
     #' @return Self (invisibly).
     set_variable = function(name, value) {
       if (!is.character(name) || length(name) != 1L || !nzchar(name)) {
-        stop("'name' must be a single non-empty character string", call. = FALSE)
+        stop("'name' must be a single non-empty character string",
+          call. = FALSE)
       }
       private$cpp$set_variable(name, value)
       invisible(self)
@@ -162,8 +167,11 @@ PraatInterpreter <- R6::R6Class(
     #' @param expression Praat expression.
     #' @return Result of the expression.
     eval = function(expression) {
-      if (!is.character(expression) || length(expression) != 1L || !nzchar(expression)) {
-        stop("'expression' must be a single non-empty character string", call. = FALSE)
+      if (
+        !is.character(
+          expression) || length(expression) != 1L || !nzchar(expression)) {
+        stop("'expression' must be a single non-empty character string",
+          call. = FALSE)
       }
       # Try to determine result type and evaluate using interpreter context
       # Try numeric first
@@ -295,7 +303,9 @@ PraatInterpreter <- R6::R6Class(
         objs <- self$list_objects()
         for (i in seq_len(nrow(objs))) {
           sel <- if (objs$selected[i]) "*" else " "
-          cat(sprintf("    %s[%d] %s %s\n", sel, objs$id[i], objs$class[i], objs$name[i]))
+          cat(
+            sprintf("    %s[%d] %s %s\n", sel, objs$id[i], objs$class[i],
+              objs$name[i]))
         }
       } else if (n_objects > 5) {
         cat("    (use $list_objects() to see all)\n")

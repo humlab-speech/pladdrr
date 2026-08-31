@@ -23,7 +23,8 @@
 # bare-wrapper dead-code case, just never wired up to the public API. Same
 # `.cpp$` escape hatch used to reach them.
 #
-# get_bandwidth_track() IS wired up normally (`.formant_methods$get_bandwidth_track`
+# get_bandwidth_track() IS wired up normally
+#  (`.formant_methods$get_bandwidth_track`
 # calls `.self$.cpp$get_bandwidth_track()`) but was simply untested before this
 # file -- get_formant_track()'s sibling function, covered elsewhere, masked
 # the gap.
@@ -64,8 +65,9 @@
 #    371-375/398-402/425-429/452-456 in formant_wrappers.cpp) are left
 #    uncovered as confirmed-unreachable defensive branches, not because
 #    reaching them wasn't attempted.
-#  - **REAL BUG FOUND, NOT TESTED**: `sound$to_formant_willems(number_of_formants = 200)`
-#    segfaults (SIGSEGV, exit 139) and `sound$to_formant_sl(number_of_poles = 200)`
+# - **REAL BUG FOUND, NOT TESTED**: `sound$to_formant_willems(number_of_formants
+#  = 200)`
+# segfaults (SIGSEGV, exit 139) and `sound$to_formant_sl(number_of_poles = 200)`
 #    aborts (SIGABRT, exit 134) on a plain 0.3 s / 16 kHz sine wave -- both pass
 #    R's `.check_positive_count()` guard (200 is a positive count) and reach
 #    Sound_to_Formant_any_inplace() in
@@ -81,7 +83,8 @@
 library(testthat)
 library(pladdrr)
 
-make_test_formant <- function(frequency = 150, duration = 0.3, sampling_rate = 16000) {
+make_test_formant <- function(frequency = 150, duration = 0.3,
+  sampling_rate = 16000) {
   snd <- generate_sine_wave(frequency = frequency, duration = duration,
                              sampling_rate = sampling_rate, amplitude = 0.8)
   snd$to_formant_burg()
@@ -105,56 +108,72 @@ test_that("RFormant default (no-arg) constructor rejects a NULL xptr cleanly", {
 # (dual-implementation trap -- dead from the public R6 API, live via .cpp$)
 # ============================================================================
 
-test_that("RFormant module time-domain methods not wired into the R6 API are reachable via .cpp$", {
+test_that(
+  "RFormant module time-domain methods not wired into the R6 API are reachable via .cpp$", {
   formant <- make_test_formant()
 
-  expect_equal(formant$.cpp$get_duration(), formant$get_xmax() - formant$get_xmin(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(formant$.cpp$get_duration(),
+    formant$get_xmax(
+      ) - formant$get_xmin(), tolerance = sqrt(.Machine$double.eps))
   expect_type(formant$.cpp$get_x1(), "double")
   # x1 (centre of first analysis frame) should be within the signal's domain
   expect_gte(formant$.cpp$get_x1(), formant$get_xmin())
   expect_lte(formant$.cpp$get_x1(), formant$get_xmax())
 
-  expect_equal(formant$.cpp$get_time_from_frame(1L), formant$.cpp$get_x1(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(formant$.cpp$get_time_from_frame(1L), formant$.cpp$get_x1(),
+    tolerance = sqrt(.Machine$double.eps))
   expect_type(formant$.cpp$get_frame_from_time(0.1), "integer")
   expect_gte(formant$.cpp$get_frame_from_time(0.1), 1L)
 })
 
-test_that("RFormant module query methods (dead via R6, live via .cpp$) match the public wrapper results", {
+test_that(
+  "RFormant module query methods (dead via R6, live via .cpp$) match the public wrapper results", {
   formant <- make_test_formant()
 
   # Same public-API call, just checking the module's own independent
   # implementation (Formant_getValueAtTime etc. called directly from
   # RFormant:: methods) agrees with the public bare-wrapper result.
   expect_equal(formant$.cpp$get_value_at_time(1L, 0.1, 0L),
-               formant$get_value_at_time(1, 0.1, "hertz"), tolerance = sqrt(.Machine$double.eps))
+               formant$get_value_at_time(1, 0.1,
+                 "hertz"), tolerance = sqrt(.Machine$double.eps))
   expect_equal(formant$.cpp$get_bandwidth_at_time(1L, 0.1, 0L),
-               formant$get_bandwidth_at_time(1, 0.1, "hertz"), tolerance = sqrt(.Machine$double.eps))
+               formant$get_bandwidth_at_time(1, 0.1,
+                 "hertz"), tolerance = sqrt(.Machine$double.eps))
   expect_equal(formant$.cpp$get_mean(1L, 0, 0, 0L),
-               formant$get_mean(1, unit = "hertz"), tolerance = sqrt(.Machine$double.eps))
+               formant$get_mean(1,
+                 unit = "hertz"), tolerance = sqrt(.Machine$double.eps))
   expect_equal(formant$.cpp$get_standard_deviation(1L, 0, 0, 0L),
-               formant$get_standard_deviation(1, unit = "hertz"), tolerance = sqrt(.Machine$double.eps))
+               formant$get_standard_deviation(1,
+                 unit = "hertz"), tolerance = sqrt(.Machine$double.eps))
   expect_equal(formant$.cpp$get_quantile(1L, 0.5, 0, 0, 0L),
-               formant$get_quantile(1, 0.5, unit = "hertz"), tolerance = sqrt(.Machine$double.eps))
+               formant$get_quantile(1, 0.5,
+                 unit = "hertz"), tolerance = sqrt(.Machine$double.eps))
   expect_equal(formant$.cpp$get_minimum(1L, 0, 0, 0L, FALSE),
-               formant$get_minimum(1, unit = "hertz"), tolerance = sqrt(.Machine$double.eps))
+               formant$get_minimum(1,
+                 unit = "hertz"), tolerance = sqrt(.Machine$double.eps))
   expect_equal(formant$.cpp$get_maximum(1L, 0, 0, 0L, FALSE),
-               formant$get_maximum(1, unit = "hertz"), tolerance = sqrt(.Machine$double.eps))
+               formant$get_maximum(1,
+                 unit = "hertz"), tolerance = sqrt(.Machine$double.eps))
   expect_type(formant$.cpp$get_time_of_minimum(1L, 0, 0, 0L, FALSE), "double")
   expect_type(formant$.cpp$get_time_of_maximum(1L, 0, 0, 0L, FALSE), "double")
 })
 
-test_that("RFormant module as_data_frame() (dead via R6, live via .cpp$) matches shape of public as_data_frame()", {
+test_that(
+  "RFormant module as_data_frame() (dead via R6, live via .cpp$) matches shape of public as_data_frame()", {
   formant <- make_test_formant()
 
   df_module <- formant$.cpp$as_data_frame(5L)
   df_public <- formant$as_data_frame(5)
 
   expect_s3_class(df_module, "data.frame")
-  expect_setequal(colnames(df_module), c("time", "formant", "frequency", "bandwidth"))
-  expect_equal(nrow(df_module), nrow(df_public), tolerance = sqrt(.Machine$double.eps))
+  expect_setequal(colnames(df_module),
+    c("time", "formant", "frequency", "bandwidth"))
+  expect_equal(nrow(df_module), nrow(df_public),
+    tolerance = sqrt(.Machine$double.eps))
 })
 
-test_that("RFormant module as_matrix() (unreachable from any public method) exports frames x formants", {
+test_that(
+  "RFormant module as_matrix() (unreachable from any public method) exports frames x formants", {
   formant <- make_test_formant()
   nx <- formant$get_number_of_frames()
 
@@ -167,7 +186,8 @@ test_that("RFormant module as_matrix() (unreachable from any public method) expo
   expect_equal(dim(mat_nobw), c(nx, 1L + 3L), tolerance = sqrt(.Machine$double.eps))  # time + 3 freq only
 })
 
-test_that("RFormant module save() (dead via R6, live via .cpp$) writes a readable Praat text file", {
+test_that(
+  "RFormant module save() (dead via R6, live via .cpp$) writes a readable Praat text file", {
   formant <- make_test_formant()
   path <- tempfile(fileext = ".Formant")
   on.exit(unlink(path), add = TRUE)
@@ -195,8 +215,10 @@ test_that("Formant$get_bandwidth_track returns one bandwidth per frame", {
 # formant_wrappers.cpp: creation-method catch blocks (keepall/willems/sl)
 # ============================================================================
 
-test_that("Sound$to_formant_keepall surfaces a Praat analysis failure as a caught R error", {
-  sound <- generate_sine_wave(frequency = 150, duration = 0.3, sampling_rate = 16000,
+test_that(
+  "Sound$to_formant_keepall surfaces a Praat analysis failure as a caught R error", {
+  sound <- generate_sine_wave(frequency = 150, duration = 0.3,
+    sampling_rate = 16000,
                                amplitude = 0.8)
   # max_frequency = 1 passes .check_positive_number() (positive) but is far
   # too low for Sound_to_Formant_keepAll's internal LPC order requirements --
@@ -206,15 +228,19 @@ test_that("Sound$to_formant_keepall surfaces a Praat analysis failure as a caugh
                "Failed to extract formants")
 })
 
-test_that("Sound$to_formant_willems surfaces a Praat analysis failure as a caught R error", {
-  sound <- generate_sine_wave(frequency = 150, duration = 0.3, sampling_rate = 16000,
+test_that(
+  "Sound$to_formant_willems surfaces a Praat analysis failure as a caught R error", {
+  sound <- generate_sine_wave(frequency = 150, duration = 0.3,
+    sampling_rate = 16000,
                                amplitude = 0.8)
   expect_error(sound$to_formant_willems(max_frequency = 1),
                "Failed to extract formants")
 })
 
-test_that("Sound$to_formant_sl surfaces a Praat analysis failure as a caught R error", {
-  sound <- generate_sine_wave(frequency = 150, duration = 0.3, sampling_rate = 16000,
+test_that(
+  "Sound$to_formant_sl surfaces a Praat analysis failure as a caught R error", {
+  sound <- generate_sine_wave(frequency = 150, duration = 0.3,
+    sampling_rate = 16000,
                                amplitude = 0.8)
   expect_error(sound$to_formant_sl(max_frequency = 1),
                "Failed to extract formants")
@@ -224,7 +250,8 @@ test_that("Sound$to_formant_sl surfaces a Praat analysis failure as a caught R e
 # formant_wrappers.cpp: save() catch block
 # ============================================================================
 
-test_that("Formant$save surfaces a write failure (bad path) as a caught R error", {
+test_that(
+  "Formant$save surfaces a write failure (bad path) as a caught R error", {
   formant <- make_test_formant()
   bad_path <- file.path(tempfile(), "nonexistent_subdir", "out.Formant")
   expect_error(formant$save(bad_path), "Failed to save formant")
@@ -240,7 +267,8 @@ test_that("Formant$track re-tracks formants and returns a new valid Formant", {
   tracked <- formant$track(number_of_tracks = 3)
   expect_s3_class(tracked, "Formant")
   expect_true(tracked$is_valid())
-  expect_equal(tracked$get_number_of_frames(), formant$get_number_of_frames(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(tracked$get_number_of_frames(), formant$get_number_of_frames(),
+    tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that("Formant$track accepts custom reference frequencies and costs", {
@@ -259,7 +287,8 @@ test_that("Formant$track accepts custom reference frequencies and costs", {
 # untested
 # ============================================================================
 
-test_that("Formant$down_to_table converts to a Table with the expected default columns", {
+test_that(
+  "Formant$down_to_table converts to a Table with the expected default columns", {
   formant <- make_test_formant()
 
   tbl <- formant$down_to_table()

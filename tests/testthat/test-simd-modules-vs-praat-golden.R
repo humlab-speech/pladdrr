@@ -42,19 +42,23 @@ for (fixture in mono_fixtures) {
   for (simd_enabled in c(FALSE, TRUE)) {
     label <- if (simd_enabled) "SIMD" else "scalar"
 
-    test_that(paste0("Formant matches Praat.app golden (", fixture, ", ", label, ")"), {
-      skip_if_not(file.exists(wav_path), "golden fixture missing; run data-raw/generate_simd_goldens.R")
+    test_that(
+      paste0("Formant matches Praat.app golden (", fixture, ", ", label, ")"), {
+      skip_if_not(file.exists(wav_path),
+        "golden fixture missing; run data-raw/generate_simd_goldens.R")
       with_simd(simd_enabled, {
         snd <- Sound(wav_path)
         formant <- snd$to_formant()
         golden <- read_golden_numeric(golden_path(fixture, "formant"))
 
-        expect_equal(formant$get_number_of_frames(), nrow(golden), tolerance = sqrt(.Machine$double.eps))
+        expect_equal(formant$get_number_of_frames(), nrow(golden),
+          tolerance = sqrt(.Machine$double.eps))
 
         for (col in c("f1", "f2", "f3")) {
           fnum <- match(col, c("f1", "f2", "f3"))
           vals <- vapply(seq_len(nrow(golden)), function(i) {
-            formant$get_value_at_time(fnum, golden$time[i], unit = "hertz", interpolation = "linear")
+            formant$get_value_at_time(fnum, golden$time[i], unit = "hertz",
+              interpolation = "linear")
           }, numeric(1))
           defined <- !is.na(golden[[col]])
           expect_equal(vals[defined], golden[[col]][defined], tolerance = 1e-3)
@@ -62,14 +66,18 @@ for (fixture in mono_fixtures) {
       })
     })
 
-    test_that(paste0("Harmonicity matches Praat.app golden (", fixture, ", ", label, ")"), {
-      skip_if_not(file.exists(wav_path), "golden fixture missing; run data-raw/generate_simd_goldens.R")
+    test_that(
+      paste0("Harmonicity matches Praat.app golden (", fixture, ", ", label,
+        ")"), {
+      skip_if_not(file.exists(wav_path),
+        "golden fixture missing; run data-raw/generate_simd_goldens.R")
       with_simd(simd_enabled, {
         snd <- Sound(wav_path)
         harm <- snd$to_harmonicity_cc()
         golden <- read_golden_numeric(golden_path(fixture, "harmonicity"))
 
-        expect_equal(harm$get_number_of_frames(), nrow(golden), tolerance = sqrt(.Machine$double.eps))
+        expect_equal(harm$get_number_of_frames(), nrow(golden),
+          tolerance = sqrt(.Machine$double.eps))
 
         hnr <- vapply(seq_len(nrow(golden)), function(i) {
           harm$get_value_at_time(golden$time[i], interpolation = "none")
@@ -78,14 +86,17 @@ for (fixture in mono_fixtures) {
       })
     })
 
-    test_that(paste0("MFCC matches Praat.app golden (", fixture, ", ", label, ")"), {
-      skip_if_not(file.exists(wav_path), "golden fixture missing; run data-raw/generate_simd_goldens.R")
+    test_that(
+      paste0("MFCC matches Praat.app golden (", fixture, ", ", label, ")"), {
+      skip_if_not(file.exists(wav_path),
+        "golden fixture missing; run data-raw/generate_simd_goldens.R")
       with_simd(simd_enabled, {
         snd <- Sound(wav_path)
         mfcc <- snd$to_mfcc(13, 0.025, 0.01, 100, 7800, 100)
         golden <- read_golden_numeric(golden_path(fixture, "mfcc"))
 
-        expect_equal(mfcc$get_number_of_frames(), nrow(golden), tolerance = sqrt(.Machine$double.eps))
+        expect_equal(mfcc$get_number_of_frames(), nrow(golden),
+          tolerance = sqrt(.Machine$double.eps))
 
         for (col in c("c1", "c2", "c3")) {
           idx <- match(col, c("c1", "c2", "c3"))
@@ -97,8 +108,11 @@ for (fixture in mono_fixtures) {
       })
     })
 
-    test_that(paste0("Spectrogram matches Praat.app golden (", fixture, ", ", label, ")"), {
-      skip_if_not(file.exists(wav_path), "golden fixture missing; run data-raw/generate_simd_goldens.R")
+    test_that(
+      paste0("Spectrogram matches Praat.app golden (", fixture, ", ", label,
+        ")"), {
+      skip_if_not(file.exists(wav_path),
+        "golden fixture missing; run data-raw/generate_simd_goldens.R")
       with_simd(simd_enabled, {
         snd <- Sound(wav_path)
         spec <- snd$to_spectrogram()
@@ -115,8 +129,11 @@ for (fixture in mono_fixtures) {
       })
     })
 
-    test_that(paste0("PowerCepstrogram CPPS matches Praat.app golden (", fixture, ", ", label, ")"), {
-      skip_if_not(file.exists(wav_path), "golden fixture missing; run data-raw/generate_simd_goldens.R")
+    test_that(
+      paste0("PowerCepstrogram CPPS matches Praat.app golden (", fixture,
+        ", ", label, ")"), {
+      skip_if_not(file.exists(wav_path),
+        "golden fixture missing; run data-raw/generate_simd_goldens.R")
       with_simd(simd_enabled, {
         snd <- Sound(wav_path)
         pcep <- snd$to_powercepstrogram(60, 0.002, 5000, 50)
@@ -135,8 +152,11 @@ for (fixture in mono_fixtures) {
       })
     })
 
-    test_that(paste0("Resample matches Praat.app golden (", fixture, ", ", label, ")"), {
-      skip_if_not(file.exists(wav_path), "golden fixture missing; run data-raw/generate_simd_goldens.R")
+    test_that(
+      paste0("Resample matches Praat.app golden (", fixture, ", ", label,
+        ")"), {
+      skip_if_not(file.exists(wav_path),
+        "golden fixture missing; run data-raw/generate_simd_goldens.R")
       with_simd(simd_enabled, {
         snd <- Sound(wav_path)
         rs <- snd$resample(8000, 50)
@@ -146,8 +166,11 @@ for (fixture in mono_fixtures) {
       })
     })
 
-    test_that(paste0("Scale peak matches Praat.app golden (", fixture, ", ", label, ")"), {
-      skip_if_not(file.exists(wav_path), "golden fixture missing; run data-raw/generate_simd_goldens.R")
+    test_that(
+      paste0("Scale peak matches Praat.app golden (", fixture, ", ", label,
+        ")"), {
+      skip_if_not(file.exists(wav_path),
+        "golden fixture missing; run data-raw/generate_simd_goldens.R")
       with_simd(simd_enabled, {
         snd <- Sound(wav_path)
         snd$scale_peak(0.99)
@@ -157,8 +180,11 @@ for (fixture in mono_fixtures) {
       })
     })
 
-    test_that(paste0("Pre-emphasis matches Praat.app golden (", fixture, ", ", label, ")"), {
-      skip_if_not(file.exists(wav_path), "golden fixture missing; run data-raw/generate_simd_goldens.R")
+    test_that(
+      paste0("Pre-emphasis matches Praat.app golden (", fixture, ", ", label,
+        ")"), {
+      skip_if_not(file.exists(wav_path),
+        "golden fixture missing; run data-raw/generate_simd_goldens.R")
       with_simd(simd_enabled, {
         # Praat's scripting command "Pre-emphasize (in-place)" bundles a
         # Scale peak: 0.99 after the filter (see fon/praat_Sound.cpp);
@@ -180,14 +206,18 @@ for (fixture in mono_fixtures) {
 for (simd_enabled in c(FALSE, TRUE)) {
   label <- if (simd_enabled) "SIMD" else "scalar"
 
-  test_that(paste0("Stereo-to-mono conversion matches Praat.app golden (", label, ")"), {
+  test_that(
+    paste0("Stereo-to-mono conversion matches Praat.app golden (", label,
+      ")"), {
     stereo_wav <- file.path(fixture_dir, "stereo_test.wav")
-    skip_if_not(file.exists(stereo_wav), "golden fixture missing; run data-raw/generate_simd_goldens.R")
+    skip_if_not(file.exists(stereo_wav),
+      "golden fixture missing; run data-raw/generate_simd_goldens.R")
     with_simd(simd_enabled, {
       snd <- Sound(stereo_wav)
       mono <- snd$convert_to_mono()
       vals <- mono$get_values(channel = 1)
-      golden <- read.csv(file.path(fixture_dir, "stereo_test_mono_conversion_golden.csv"))
+      golden <- read.csv(
+        file.path(fixture_dir, "stereo_test_mono_conversion_golden.csv"))
       expect_equal(vals[golden$sample], golden$value, tolerance = 1e-6)
     })
   })

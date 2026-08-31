@@ -22,25 +22,30 @@
 #'   \item \code{get_number_of_frames()} - number of analysis frames
 #'   \item \code{get_time_step()} - time step between frames
 #'   \item \code{get_sampling_period()} - sampling period of the original sound
-#'   \item \code{get_max_num_coefficients()} - maximum number of LPC coefficients
+#' \item \code{get_max_num_coefficients()} - maximum number of LPC coefficients
 #'   \item \code{get_gain_at_frame(frame)} - gain value for a specific frame
-#'   \item \code{get_coefficients_at_frame(frame)} - LPC coefficients for a specific frame
+#' \item \code{get_coefficients_at_frame(frame)} - LPC coefficients for a
+#  specific frame
 #'   \item \code{get_all_gains()} - vector of all gain values
 #'   \item \code{get_all_coefficients()} - matrix of all LPC coefficients
 #' }
 #'
 #' @section Conversion methods:
 #' \itemize{
-#'   \item \code{to_formant(margin)} - not available in this build (requires CLAPACK);
+#' \item \code{to_formant(margin)} - not available in this build (requires
+#  CLAPACK);
 #'     use \code{Sound$to_formant_burg()} for formant extraction instead
-#'   \item \code{to_spectrum(time, ...)} - convert to a Spectrum at a specific time
+#' \item \code{to_spectrum(time, ...)} - convert to a Spectrum at a specific
+#  time
 #'   \item \code{to_matrix()} - convert to a Matrix object
 #' }
 #'
 #' @section Voice source extraction (inverse filtering):
 #' \itemize{
-#'   \item \code{filter_inverse(sound)} - extract glottal flow by inverse filtering
-#'   \item \code{filter_inverse_at_time(sound, time, channel)} - use the filter from a specific time
+#' \item \code{filter_inverse(sound)} - extract glottal flow by inverse
+#  filtering
+#' \item \code{filter_inverse_at_time(sound, time, channel)} - use the filter
+#  from a specific time
 #' }
 #' These methods remove vocal tract resonances to reveal the voice source
 #' (glottal flow waveform), useful for voice quality research and vocal fold
@@ -48,8 +53,10 @@
 #'
 #' @param .xptr Not for direct use. External pointer to the underlying C++ LPC
 #'   object; set internally when a method returns a new LPC.
-#' @return An \code{LPC} object with methods for linear predictive coding analysis and inverse filtering.
-#' @seealso \code{\link{Sound}}, \code{\link{Formant}}, \code{\link{Spectrum}}, \code{\link{LFCC}}
+#' @return An \code{LPC} object with methods for linear predictive coding
+#  analysis and inverse filtering.
+#' @seealso \code{\link{Sound}}, \code{\link{Formant}}, \code{\link{Spectrum}},
+#  \code{\link{LFCC}}
 #'
 #' @examples
 #' # Load sound
@@ -88,10 +95,13 @@ NULL
 .lpc_methods <- new.env(hash = TRUE, parent = emptyenv())
 
 # Query - Basic properties
-.lpc_methods$get_number_of_frames <- function(.self) .self$.cpp$get_number_of_frames()
+.lpc_methods$get_number_of_frames <- function(
+  .self) .self$.cpp$get_number_of_frames()
 .lpc_methods$get_time_step <- function(.self) .self$.cpp$get_time_step()
-.lpc_methods$get_sampling_period <- function(.self) .self$.cpp$get_sampling_period()
-.lpc_methods$get_max_num_coefficients <- function(.self) .self$.cpp$get_max_num_coefficients()
+.lpc_methods$get_sampling_period <- function(
+  .self) .self$.cpp$get_sampling_period()
+.lpc_methods$get_max_num_coefficients <- function(
+  .self) .self$.cpp$get_max_num_coefficients()
 
 # Query - LPC values
 .lpc_methods$get_gain_at_frame <- function(.self, frame_number) {
@@ -101,7 +111,8 @@ NULL
   .self$.cpp$get_coefficients_at_frame(as.integer(frame_number))
 }
 .lpc_methods$get_all_gains <- function(.self) .self$.cpp$get_all_gains()
-.lpc_methods$get_all_coefficients <- function(.self) .self$.cpp$get_all_coefficients()
+.lpc_methods$get_all_coefficients <- function(
+  .self) .self$.cpp$get_all_coefficients()
 
 # Conversion methods
 .lpc_methods$to_formant <- function(.self, margin = 50.0) {
@@ -123,7 +134,8 @@ NULL
   Matrix(.xptr = matrix_ptr)
 }
 
-.lpc_methods$to_spectrogram <- function(.self, df_min = 20.0, bandwidth_reduction = 0.0,
+.lpc_methods$to_spectrogram <- function(.self, df_min = 20.0,
+  bandwidth_reduction = 0.0,
                                          de_emphasis_frequency = 50.0) {
   spec_ptr <- .lpc_to_spectrogram(
     .self$.xptr, df_min, bandwidth_reduction, de_emphasis_frequency
@@ -145,9 +157,12 @@ NULL
   Sound(.xptr = source_ptr)
 }
 
-.lpc_methods$filter_inverse_at_time <- function(.self, sound, time, channel = 1) {
+.lpc_methods$filter_inverse_at_time <- function(.self, sound, time,
+  channel = 1) {
   if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
-  if (!is.numeric(time) || length(time) != 1) stop("time must be a single numeric value")
+  if (
+    !is.numeric(
+      time) || length(time) != 1) stop("time must be a single numeric value")
   if (!is.numeric(channel) || length(channel) != 1 || channel < 1) {
     stop("channel must be a positive integer")
   }
@@ -165,7 +180,8 @@ NULL
   cat("<Praat LPC>\n")
   cat(sprintf("  Number of frames: %d\n", .self$.cpp$get_number_of_frames()))
   cat(sprintf("  Time step: %.6f s\n", .self$.cpp$get_time_step()))
-  cat(sprintf("  Max coefficients: %d\n", .self$.cpp$get_max_num_coefficients()))
+  cat(
+    sprintf("  Max coefficients: %d\n", .self$.cpp$get_max_num_coefficients()))
   cat(sprintf("  Sampling period: %.6f s\n", .self$.cpp$get_sampling_period()))
   invisible(.self)
 }
@@ -194,7 +210,8 @@ lockEnvironment(.lpc_methods, bindings = TRUE)
 #' @export
 LPC <- function(.xptr = NULL) {
   if (is.null(.xptr)) {
-    stop("LPC objects must be created from a Sound object using sound$to_lpc_burg() or similar methods")
+    stop(
+      "LPC objects must be created from a Sound object using sound$to_lpc_burg() or similar methods")
   }
   
   lpc_mod <- get_module("lpc_module")

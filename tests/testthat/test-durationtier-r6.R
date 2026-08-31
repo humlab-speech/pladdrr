@@ -1,4 +1,5 @@
-# test-durationtier-r6.R - Tests for R/durationtier-wrapper.R (DurationTier object)
+# test-durationtier-r6.R - Tests for R/durationtier-wrapper.R (DurationTier
+#  object)
 
 test_that("DurationTier constructs and reports start/end/points", {
   dt <- DurationTier(0, 1)
@@ -34,7 +35,8 @@ test_that("DurationTier add_point/remove_point/value queries work", {
   # (get_xmin()/get_xmax()), not just the point range; for this linear tier
   # the curve mean equals the midpoint value
   expect_equal(dt$get_mean(), 1.25)
-  expect_equal(dt$get_mean(0, 1), dt$get_mean(), tolerance = sqrt(.Machine$double.eps))
+  expect_equal(dt$get_mean(0, 1), dt$get_mean(),
+    tolerance = sqrt(.Machine$double.eps))
   expect_equal(dt$get_mean(0.25, 0.75), 1.25)
 
   # remove_point() returns self invisibly
