@@ -111,8 +111,15 @@ analyze_files_parallel <- function(files, analysis_func, n_cores = NULL,
     }))
   }
 
-  # Parallel processing. Cap each worker's C++ threads so N workers x cores
-  # threads don't oversubscribe the machine (see .pladdrr_worker_thread_budget).
+  # Parallel dispatch
+  .run_files_parallel(files, analysis_func, n_cores, threads_per_worker, ...)
+}
+
+# Distribute batch analysis across worker processes. Called with n_cores >= 2;
+# caps each worker's C++ threads so N workers x cores threads don't
+# oversubscribe the machine (see .pladdrr_worker_thread_budget).
+.run_files_parallel <- function(files, analysis_func, n_cores,
+                                threads_per_worker, ...) {
   tpw <- .pladdrr_worker_thread_budget(n_cores, threads_per_worker)
   message(sprintf("Processing %d files using %d cores (%d thread(s)/worker)",
                   length(files), n_cores, tpw))
@@ -121,7 +128,7 @@ analyze_files_parallel <- function(files, analysis_func, n_cores = NULL,
   # macOS fork has known issues with R's event loop; PSOCK is safer
   is_macos <- Sys.info()[["sysname"]] == "Darwin"
   if (.Platform$OS.type == "unix" && !is_macos) {
-    results <- parallel::mclapply(files, .analyze_one_file,
+    parallel::mclapply(files, .analyze_one_file,
       tpw, analysis_func, ..., mc.cores = n_cores)
   } else {
     # Windows: use PSOCK cluster
@@ -132,11 +139,9 @@ analyze_files_parallel <- function(files, analysis_func, n_cores = NULL,
     # -- on success, error, or interrupt.
     on.exit(parallel::stopCluster(cl), add = TRUE)
 
-    results <- parallel::parLapply(cl, files, .analyze_one_file,
+    parallel::parLapply(cl, files, .analyze_one_file,
       tpw, analysis_func, ...)
   }
-
-  results
 }
 
 

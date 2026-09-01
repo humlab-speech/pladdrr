@@ -766,42 +766,52 @@ plot.PointProcess <- function(x, from_time = NULL, to_time = NULL,
 #' @export
 #' @param ... Additional arguments passed to the underlying function or ignored.
 plot.Matrix <- function(x, from_x = NULL, to_x = NULL,
-                       from_y = NULL, to_y = NULL,
-                       garnish = TRUE, title = "Matrix",
-                       x_label = "X", y_label = "Y",
-                       color_scale = "viridis", ...) {
-  
+                        from_y = NULL, to_y = NULL,
+                        garnish = TRUE, title = "Matrix",
+                        x_label = "X", y_label = "Y",
+                        color_scale = "viridis", ...) {
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
     stop("Package 'ggplot2' is required for plotting. Please install it.")
   }
-  
   if (!inherits(x, "Matrix")) {
     stop("x must be a Matrix object")
   }
 
-  # Convert to long-format data frame (Matrix has no as_data_frame(); build
-  # it from the raw matrix plus its axis metadata)
   df <- .matrix_plot_data(x, from_x, to_x, from_y, to_y)
-  
-  # Determine column names (flexible for different matrix types)
-  x_col <- if (
-    "time" %in% names(
-      df)) "time" else if ("x" %in% names(df)) "x" else names(df)[1]
-  y_col <- if (
-    "frequency" %in% names(
-      df)) "frequency" else if ("y" %in% names(df)) "y" else names(df)[2]
-  val_col <- if (
-    "value" %in% names(
-      df)) "value" else if ("amplitude" %in% names(df)) "amplitude" else names(
-          df)[3]
-  
-  # Create base plot
-  p <- ggplot2::ggplot(df, ggplot2::aes(x = .data[[x_col]], y = .data[[y_col]], 
-                                        fill = .data[[val_col]])) +
+  cols <- .matrix_plot_cols(df)
+
+  p <- ggplot2::ggplot(df,
+    ggplot2::aes(x = .data[[cols$x_col]], y = .data[[cols$y_col]],
+      fill = .data[[cols$val_col]])) +
     ggplot2::geom_tile()
-  
-  # Apply color scale
-  p <- switch(color_scale,
+  p <- .matrix_plot_scale(p, color_scale)
+
+  if (garnish) {
+    p <- p + ggplot2::labs(title = title, x = x_label, y = y_label,
+      fill = "Value") + ggplot2::theme_minimal()
+  }
+  p
+}
+
+# Resolve data-frame column names used by plot.Matrix, tolerating the
+# different conventions of Matrix subclasses (time/x, frequency/y,
+# value/amplitude).
+.matrix_plot_cols <- function(df) {
+  nm <- names(df)
+  pick <- function(candidates, fallback) {
+    hit <- candidates[candidates %in% nm]
+    if (length(hit)) hit[1] else fallback
+  }
+  list(
+    x_col = pick(c("time", "x"), nm[1]),
+    y_col = pick(c("frequency", "y"), nm[2]),
+    val_col = pick(c("value", "amplitude"), nm[3])
+  )
+}
+
+# Map the color_scale argument to a ggplot2 fill scale.
+.matrix_plot_scale <- function(p, color_scale) {
+  switch(color_scale,
     "viridis" = p + ggplot2::scale_fill_viridis_c(),
     "magma" = p + ggplot2::scale_fill_viridis_c(option = "magma"),
     "plasma" = p + ggplot2::scale_fill_viridis_c(option = "plasma"),
@@ -811,20 +821,6 @@ plot.Matrix <- function(x, from_x = NULL, to_x = NULL,
       high = "black"),
     p + ggplot2::scale_fill_viridis_c()  # default
   )
-  
-  # Add garnish
-  if (garnish) {
-    p <- p + 
-      ggplot2::labs(
-        title = title,
-        x = x_label,
-        y = y_label,
-        fill = "Value"
-      ) + 
-      ggplot2::theme_minimal()
-  }
-  
-  p
 }
 
 
@@ -879,58 +875,42 @@ plot.Matrix <- function(x, from_x = NULL, to_x = NULL,
 #'
 #' @export
 #' @param ... Additional arguments passed to the underlying function or ignored.
-plot.PowerCepstrum <- function(x, from_quefrency = NULL, to_quefrency = NULL,
-                               garnish = TRUE, title = "Power Cepstrum",
-                               color = "darkblue", mark_peak = TRUE, ...) {
-  
+plot.PowerCepstrum <- function(x, from_quefrency = NULL,
+                               to_quefrency = NULL, garnish = TRUE,
+                               title = "Power Cepstrum", color = "darkblue",
+                               mark_peak = TRUE, ...) {
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
     stop("Package 'ggplot2' is required for plotting. Please install it.")
   }
-  
   if (!inherits(x, "PowerCepstrum")) {
     stop("x must be a PowerCepstrum object")
   }
-  
-  # Convert to data frame
-  df <- x$as_data_frame()
-  
-  if (nrow(df) == 0) {
+
+  df <- .powercepstrum_plot_data(x, from_quefrency, to_quefrency)
+  if (is.null(df)) {
     warning("PowerCepstrum contains no data")
     return(ggplot2::ggplot() + ggplot2::theme_void())
   }
-  
-  # as_data_frame() returns raw linear power in a "power" column; convert
-  # explicitly so the y-axis and peak marker are real dB.
-  df$power_db <- 10 * log10(pmax(df$power, 1e-20))
-  
-  # Filter quefrency range
-  if (!is.null(from_quefrency)) {
-    df <- df[df$quefrency >= from_quefrency, ]
-  }
-  if (!is.null(to_quefrency)) {
-    df <- df[df$quefrency <= to_quefrency, ]
-  }
-  
-  # Create plot
-  p <- ggplot2::ggplot(df,
-    ggplot2::aes(x = .data$quefrency, y = .data$power_db)) +
-    ggplot2::geom_line(color = color, linewidth = 0.8)
 
-  # Optionally mark peak
+  p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$quefrency,
+    y = .data$power_db)) + ggplot2::geom_line(color = color, linewidth = 0.8)
   p <- .mark_df_peak(p, df, mark_peak)
-
-  # Add garnish
   if (garnish) {
-    p <- p +
-      ggplot2::labs(
-        title = title,
-        x = "Quefrency (s)",
-        y = "Power (dB)"
-      ) +
-      ggplot2::theme_minimal()
+    p <- p + ggplot2::labs(title = title, x = "Quefrency (s)",
+      y = "Power (dB)") + ggplot2::theme_minimal()
   }
-
   p
+}
+
+# Prepare PowerCepstrum plot data: convert to dB and apply quefrency range.
+# Returns NULL when the object has no data.
+.powercepstrum_plot_data <- function(x, from_quefrency, to_quefrency) {
+  df <- x$as_data_frame()
+  if (nrow(df) == 0) return(NULL)
+  df$power_db <- 10 * log10(pmax(df$power, 1e-20))
+  if (!is.null(from_quefrency)) df <- df[df$quefrency >= from_quefrency, ]
+  if (!is.null(to_quefrency)) df <- df[df$quefrency <= to_quefrency, ]
+  df
 }
 
 

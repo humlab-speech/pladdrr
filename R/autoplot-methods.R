@@ -649,39 +649,51 @@ autolayer.TextGrid <- function(object, tier = 1, from_time = NULL,
     stop("Tier ", tier, " out of range (1-", n_tiers, ")")
   }
 
-  is_interval <- object$tier_is_interval_tier(tier)
-
-  if (is_interval) {
-    tier_data <- .textgrid_interval_data(object, tier, from_time, to_time)
-
-    list(
-      ggplot2::geom_rect(
-        data = tier_data,
-        ggplot2::aes(xmin = .data$start, xmax = .data$end, ymin = -Inf,
-          ymax = Inf),
-        fill = color, alpha = alpha, color = "black", inherit.aes = FALSE, ...
-      ),
-      ggplot2::geom_text(
-        data = tier_data[tier_data$label != "", ],
-        ggplot2::aes(x = (.data$start + .data$end) / 2, y = Inf,
-          label = .data$label),
-        vjust = 1.5, size = 3, inherit.aes = FALSE
-      )
-    )
+  if (object$tier_is_interval_tier(tier)) {
+    .textgrid_interval_layer(object, tier, from_time, to_time,
+      color = color, alpha = alpha, ...)
   } else {
-    tier_data <- .textgrid_point_data(object, tier, from_time, to_time)
-
-    list(
-      ggplot2::geom_vline(
-        data = tier_data,
-        ggplot2::aes(xintercept = .data$time),
-        color = color, linewidth = 0.5, inherit.aes = FALSE, ...
-      ),
-      ggplot2::geom_text(
-        data = tier_data[tier_data$label != "", ],
-        ggplot2::aes(x = .data$time, y = Inf, label = .data$label),
-        vjust = 1.5, angle = 90, hjust = 0, size = 3, inherit.aes = FALSE
-      )
-    )
+    .textgrid_point_layer(object, tier, from_time, to_time,
+      color = color, ...)
   }
+}
+
+# ggplot layers for an interval tier: filled rectangles plus centered labels
+.textgrid_interval_layer <- function(object, tier, from_time, to_time,
+                                     color, alpha, ...) {
+  tier_data <- .textgrid_interval_data(object, tier, from_time, to_time)
+
+  list(
+    ggplot2::geom_rect(
+      data = tier_data,
+      ggplot2::aes(xmin = .data$start, xmax = .data$end, ymin = -Inf,
+        ymax = Inf),
+      fill = color, alpha = alpha, color = "black", inherit.aes = FALSE, ...
+    ),
+    ggplot2::geom_text(
+      data = tier_data[tier_data$label != "", ],
+      ggplot2::aes(x = (.data$start + .data$end) / 2, y = Inf,
+        label = .data$label),
+      vjust = 1.5, size = 3, inherit.aes = FALSE
+    )
+  )
+}
+
+# ggplot layers for a point tier: vertical lines plus labels
+.textgrid_point_layer <- function(object, tier, from_time, to_time,
+                                  color, ...) {
+  tier_data <- .textgrid_point_data(object, tier, from_time, to_time)
+
+  list(
+    ggplot2::geom_vline(
+      data = tier_data,
+      ggplot2::aes(xintercept = .data$time),
+      color = color, linewidth = 0.5, inherit.aes = FALSE, ...
+    ),
+    ggplot2::geom_text(
+      data = tier_data[tier_data$label != "", ],
+      ggplot2::aes(x = .data$time, y = Inf, label = .data$label),
+      vjust = 1.5, angle = 90, hjust = 0, size = 3, inherit.aes = FALSE
+    )
+  )
 }

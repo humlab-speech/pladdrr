@@ -1053,19 +1053,17 @@ pp_get_stdev_period_direct <- function(pointprocess,
 #'
 #' @export
 two_pass_adaptive_pitch <- function(sound,
-
-
-                                     time_step = 0,
-                                     initial_floor = 50,
-                                     initial_ceiling = 800,
-                                     voicing_threshold = 0.45,
-                                     silence_threshold = 0.03,
-                                     octave_cost = 0.01,
-                                     octave_jump_cost = 0.35,
-                                     voiced_unvoiced_cost = 0.14,
-                                     q1_factor = 0.75,
-                                     q3_factor = 1.5,
-                                     method = c("cc", "ac")) {
+                                    time_step = 0,
+                                    voicing_threshold = 0.45,
+                                    silence_threshold = 0.03,
+                                    initial_floor = 50,
+                                    initial_ceiling = 800,
+                                    octave_cost = 0.01,
+                                    octave_jump_cost = 0.35,
+                                    voiced_unvoiced_cost = 0.14,
+                                    q1_factor = 0.75,
+                                    q3_factor = 1.5,
+                                    method = c("cc", "ac")) {
   # Extract pointer from R6 or use directly
   sound_ptr <- if (inherits(sound, "Sound")) sound$.xptr else sound
 
@@ -1076,20 +1074,14 @@ two_pass_adaptive_pitch <- function(sound,
 
   # Pass 1: Wide range
   pitch_rough <- .run_pitch_pass(pitch_fn, sound_ptr, initial_floor,
-    initial_ceiling,
-                                  time_step, voicing_threshold,
-                                      silence_threshold,
-                                  octave_cost, octave_jump_cost,
-                                      voiced_unvoiced_cost)
+    initial_ceiling, time_step, voicing_threshold, silence_threshold,
+    octave_cost, octave_jump_cost, voiced_unvoiced_cost)
 
-  # Get quartiles + adaptive range in single C++ call
-  range <- pitch_get_adaptive_range(pitch_rough, q1_factor = q1_factor,
-                                     q3_factor = q3_factor, unit = 0L)
-  q1 <- range$q1
-  q3 <- range$q3
-
-  # Handle case where no voiced frames found
-  if (is.na(q1) || is.na(q3) || q1 <= 0 || q3 <= 0) {
+  # Adapt the analysis range from the rough pitch; fall back to the initial
+  # range when no voiced frames were found.
+  range <- .adaptive_pitch_range(pitch_rough, q1_factor, q3_factor,
+    initial_floor, initial_ceiling)
+  if (range$fallback) {
     return(list(
       pitch = pitch_rough,
       min_pitch = initial_floor,
@@ -1099,21 +1091,35 @@ two_pass_adaptive_pitch <- function(sound,
     ))
   }
 
-  min_pitch <- range$min_pitch
-  max_pitch <- range$max_pitch
-
   # Pass 2: Refined range
-  pitch_refined <- .run_pitch_pass(pitch_fn, sound_ptr, min_pitch, max_pitch,
-                                    time_step, voicing_threshold,
-                                        silence_threshold,
-                                    octave_cost, octave_jump_cost,
-                                        voiced_unvoiced_cost)
+  pitch_refined <- .run_pitch_pass(pitch_fn, sound_ptr, range$min_pitch,
+    range$max_pitch, time_step, voicing_threshold, silence_threshold,
+    octave_cost, octave_jump_cost, voiced_unvoiced_cost)
 
   list(
     pitch = pitch_refined,
-    min_pitch = min_pitch,
-    max_pitch = max_pitch,
+    min_pitch = range$min_pitch,
+    max_pitch = range$max_pitch,
+    q1 = range$q1,
+    q3 = range$q3
+  )
+}
+
+# Compute the adaptive pitch range for the second pass. Returns a list with
+# min_pitch/max_pitch/q1/q3 plus a fallback flag set when no voiced frames
+# were found (q1/q3 missing or non-positive).
+.adaptive_pitch_range <- function(pitch_rough, q1_factor, q3_factor,
+                                  initial_floor, initial_ceiling) {
+  range <- pitch_get_adaptive_range(pitch_rough, q1_factor = q1_factor,
+    q3_factor = q3_factor, unit = 0L)
+  q1 <- range$q1
+  q3 <- range$q3
+  fallback <- is.na(q1) || is.na(q3) || q1 <= 0 || q3 <= 0
+  list(
+    min_pitch = if (fallback) initial_floor else range$min_pitch,
+    max_pitch = if (fallback) initial_ceiling else range$max_pitch,
     q1 = q1,
-    q3 = q3
+    q3 = q3,
+    fallback = fallback
   )
 }
