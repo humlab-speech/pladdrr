@@ -205,6 +205,7 @@ utils::globalVariables(c(".data", "formant_number", "cpp", "quefrency",
 
 #' @keywords internal
 #'
+# nocov start
 #' @rdname pladdrr_shared_params
 pladdrr_shared_params <- function(
     sound = NULL, from_time = NULL, to_time = NULL, garnish = NULL,
@@ -344,3 +345,4 @@ pladdrr_shared_analysis <- function(
     max_frequency = 5000, pitch_floor = 75, pitch_ceiling = 600,
     channel = 1, silence_threshold = NULL, max_formants = NULL,
     start_time = 0.0, numberOfRows = NULL) invisible(NULL)
+# nocov end

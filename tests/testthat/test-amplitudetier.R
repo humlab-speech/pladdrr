@@ -51,3 +51,21 @@ test_that("intensity_tier_to_amplitude_tier rejects non-IntensityTier", {
   expect_error(intensity_tier_to_amplitude_tier("x"),
                "intensity_tier must be an IntensityTier")
 })
+
+test_that("amplitude_tier_from_point_process validates inputs", {
+  sound <- Sound$create_tone(frequency = 150, duration = 0.5,
+    sampling_rate = 16000)
+  pp <- sound$to_point_process_periodic_cc(75, 600)
+
+  expect_error(amplitude_tier_from_point_process(list(), sound),
+    "point_process must be a PointProcess object")
+  expect_error(amplitude_tier_from_point_process(pp, list()),
+    "sound must be a Sound object")
+})
+
+test_that("AmplitudeTier $ dispatch covers .pointer alias and unknown names", {
+  tier <- amplitude_tier_create(0, 1)
+
+  expect_identical(tier$.pointer, tier$.xptr)
+  expect_null(tier$no_such_method)
+})

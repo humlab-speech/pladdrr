@@ -14,8 +14,10 @@ get_module <- function(name) {
     .module_cache[[name]] <- tryCatch(
       Rcpp::Module(name, PACKAGE = "pladdrr"),
       error = function(e) {
+        # nocov start
         stop("pladdrr: failed to load Rcpp module '", name, "' - ",
              conditionMessage(e), call. = FALSE)
+        # nocov end
       }
     )
   }
@@ -26,18 +28,22 @@ get_module <- function(name) {
 .onLoad <- function(libname, pkgname) {
   # Initialize Praat library (CRITICAL: must come first)
   # This initializes memory allocator, encoding, and class registry
+  # nocov start
   tryCatch(
     praat_initialize(),
     error = function(e) stop("Failed to initialize Praat library: ", e$message)
   )
+  # nocov end
   
   # Sync global SIMD toggle from R option (default: TRUE)
   simd_opt <- getOption("pladdrr.use_simd", TRUE)
   tryCatch(
     set_global_simd_enabled(isTRUE(simd_opt)),
     error = function(e) {
+      # nocov start
       warning("pladdrr: SIMD initialization failed: ", conditionMessage(e),
               "; falling back to scalar code", call. = FALSE)
+      # nocov end
     }
   )
   
