@@ -260,10 +260,6 @@ NULL
 # First call fetches all 11 metrics in one C++ call; subsequent calls return
 # from cache when parameters match.  Shimmer cache includes sound identity.
 
-.pp_methods$._bust_cache <- function(.self) {
-  .self$.jscache <- NULL
-}
-
 .pp_methods$._get_js_batch <- function(.self, sound, from_time, to_time,
     period_floor, period_ceiling, max_period_factor, max_amplitude_factor) {
   ckey <- paste(from_time, to_time, period_floor, period_ceiling,
