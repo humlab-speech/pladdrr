@@ -127,6 +127,10 @@ analyze_files_parallel <- function(files, analysis_func, n_cores = NULL,
     # Windows: use PSOCK cluster
     cl <- .make_worker_cluster(n_cores,
       c("analysis_func", "tpw", ".analyze_one_file"))
+    # Orphaned Windows PSOCK workers leave `RscriptXXXXXXXXXX` temp files in
+    # the check's temp dir (detritus NOTE), so always tear the cluster down
+    # -- on success, error, or interrupt.
+    on.exit(parallel::stopCluster(cl), add = TRUE)
 
     results <- parallel::parLapply(cl, files, .analyze_one_file,
       tpw, analysis_func, ...)
@@ -208,6 +212,10 @@ process_sounds_parallel <- function(sounds, analysis_func, n_cores = NULL,
 
     cl <- .make_worker_cluster(n_cores,
       c("analysis_func", "tpw", ".analyze_one_file"))
+    # Orphaned Windows PSOCK workers leave `RscriptXXXXXXXXXX` temp files in
+    # the check's temp dir (detritus NOTE), so always tear the cluster down
+    # -- on success, error, or interrupt.
+    on.exit(parallel::stopCluster(cl), add = TRUE)
     parallel::parLapply(cl, sound_data, function(d) {
       pladdrr_threads(tpw)
       analysis_func(sound_from_values(d$values, d$sr, d$start), ...)
@@ -403,11 +411,14 @@ benchmark_parallel <- function(files, analysis_func,
 # Build a PSOCK worker cluster with pladdrr attached and vars exported.
 .make_worker_cluster <- function(n_cores, export_vars) {
   cl <- parallel::makeCluster(n_cores)
+  ok <- FALSE
+  on.exit(if (!ok) try(parallel::stopCluster(cl), silent = TRUE), add = TRUE)
   parallel::clusterCall(cl, function(lp) .libPaths(lp), .libPaths())
   parallel::clusterEvalQ(cl, {
     loadNamespace("pladdrr")
     attachNamespace("pladdrr")
   })
   parallel::clusterExport(cl, export_vars, envir = parent.frame())
+  ok <- TRUE
   cl
 }
