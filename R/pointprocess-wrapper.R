@@ -132,21 +132,24 @@ NULL
 
 # --- Period statistics ---
 .pp_methods$get_number_of_periods <- function(.self, from_time = 0, to_time = 0,
-                                              period_floor = 0.0001, period_ceiling = 0.02,
+                                              period_floor = 0.0001,
+                                                  period_ceiling = 0.02,
                                               max_period_factor = 1.3) {
   .self$.cpp$get_number_of_periods(as.numeric(from_time), as.numeric(to_time),
     as.numeric(
       period_floor), as.numeric(period_ceiling), as.numeric(max_period_factor))
 }
 .pp_methods$get_mean_period <- function(.self, from_time = 0, to_time = 0,
-                                        period_floor = 0.0001, period_ceiling = 0.02,
+                                        period_floor = 0.0001, period_ceiling =
+                                            0.02,
                                         max_period_factor = 1.3) {
   .self$.cpp$get_mean_period(as.numeric(from_time), as.numeric(to_time),
     as.numeric(
       period_floor), as.numeric(period_ceiling), as.numeric(max_period_factor))
 }
 .pp_methods$get_stdev_period <- function(.self, from_time = 0, to_time = 0,
-                                         period_floor = 0.0001, period_ceiling = 0.02,
+                                         period_floor = 0.0001, period_ceiling =
+                                             0.02,
                                          max_period_factor = 1.3) {
   .self$.cpp$get_stdev_period(as.numeric(from_time), as.numeric(to_time),
     as.numeric(
@@ -225,7 +228,8 @@ NULL
   interpolation = "cubic") {
   if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
   interp_code <- switch(tolower(interpolation),
-    "nearest" = 0L, "linear" = 1L, "cubic" = 2L, "sinc70" = 3L, "sinc700" = 4L, 2L)
+    "nearest" = 0L, "linear" = 1L, "cubic" = 2L, "sinc70" = 3L, "sinc700" = 4L,
+        2L)
   .self$.cpp$get_values_from_sound(sound$.xptr, as.integer(channel),
     interp_code)
 }
@@ -237,7 +241,8 @@ NULL
     as.numeric(max_period))
 }
 .pp_methods$get_jitter_batch <- function(.self, from_time = 0, to_time = 0,
-                                         period_floor = 0.0001, period_ceiling = 0.02,
+                                         period_floor = 0.0001, period_ceiling =
+                                             0.02,
                                          max_period_factor = 1.3) {
   .self$.cpp$get_jitter_batch(as.numeric(from_time), as.numeric(to_time),
     as.numeric(
@@ -339,7 +344,8 @@ NULL
   if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
   .self$.my_scache <- list(sound = sound)
   .pp_methods$._get_js_batch(.self, sound, from_time, to_time,
-    period_floor, period_ceiling, max_period_factor, max_amplitude_factor)$shimmer_local
+    period_floor, period_ceiling, max_period_factor,
+        max_amplitude_factor)$shimmer_local
 }
 .pp_methods$get_shimmer_local_db <- function(.self, sound, from_time = 0,
   to_time = 0,
@@ -347,7 +353,8 @@ NULL
     max_period_factor = 1.3, max_amplitude_factor = 1.6) {
   if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
   .pp_methods$._get_js_batch(.self, sound, from_time, to_time,
-    period_floor, period_ceiling, max_period_factor, max_amplitude_factor)$shimmer_local_db
+    period_floor, period_ceiling, max_period_factor,
+        max_amplitude_factor)$shimmer_local_db
 }
 .pp_methods$get_shimmer_apq3 <- function(.self, sound, from_time = 0,
   to_time = 0,
@@ -355,7 +362,8 @@ NULL
     max_period_factor = 1.3, max_amplitude_factor = 1.6) {
   if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
   .pp_methods$._get_js_batch(.self, sound, from_time, to_time,
-    period_floor, period_ceiling, max_period_factor, max_amplitude_factor)$shimmer_apq3
+    period_floor, period_ceiling, max_period_factor,
+        max_amplitude_factor)$shimmer_apq3
 }
 .pp_methods$get_shimmer_apq5 <- function(.self, sound, from_time = 0,
   to_time = 0,
@@ -363,7 +371,8 @@ NULL
     max_period_factor = 1.3, max_amplitude_factor = 1.6) {
   if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
   .pp_methods$._get_js_batch(.self, sound, from_time, to_time,
-    period_floor, period_ceiling, max_period_factor, max_amplitude_factor)$shimmer_apq5
+    period_floor, period_ceiling, max_period_factor,
+        max_amplitude_factor)$shimmer_apq5
 }
 .pp_methods$get_shimmer_apq11 <- function(.self, sound, from_time = 0,
   to_time = 0,
@@ -371,7 +380,8 @@ NULL
     max_period_factor = 1.3, max_amplitude_factor = 1.6) {
   if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
   .pp_methods$._get_js_batch(.self, sound, from_time, to_time,
-    period_floor, period_ceiling, max_period_factor, max_amplitude_factor)$shimmer_apq11
+    period_floor, period_ceiling, max_period_factor,
+        max_amplitude_factor)$shimmer_apq11
 }
 .pp_methods$get_shimmer_dda <- function(.self, sound, from_time = 0,
   to_time = 0,
@@ -379,15 +389,18 @@ NULL
     max_period_factor = 1.3, max_amplitude_factor = 1.6) {
   if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
   .pp_methods$._get_js_batch(.self, sound, from_time, to_time,
-    period_floor, period_ceiling, max_period_factor, max_amplitude_factor)$shimmer_dda
+    period_floor, period_ceiling, max_period_factor,
+        max_amplitude_factor)$shimmer_dda
 }
 
 # --- Voice report ---
 .pp_methods$voice_report <- function(.self, sound, pitch,
                                      from_time = 0, to_time = 0,
                                      pitch_floor = 75, pitch_ceiling = 600,
-                                     max_period_factor = 1.3, max_amplitude_factor = 1.6,
-                                     silence_threshold = 0.03, voicing_threshold = 0.45) {
+                                     max_period_factor = 1.3,
+                                         max_amplitude_factor = 1.6,
+                                     silence_threshold = 0.03,
+                                         voicing_threshold = 0.45) {
   if (!inherits(sound, "Sound")) stop("sound argument must be a Sound object")
   if (!inherits(pitch, "Pitch")) stop("pitch argument must be a Pitch object")
   .pointprocess_voice_report(
@@ -406,7 +419,8 @@ NULL
   TextGrid(.xptr = tg_ptr)
 }
 .pp_methods$to_sound_pulse_train <- function(.self, sampling_frequency = 44100,
-                                              adapt_factor = 1.0, adapt_time = 0.05,
+                                              adapt_factor = 1.0, adapt_time =
+                                                  0.05,
                                               interpolation_depth = 30L) {
   sound_ptr <- .pointprocess_to_sound_pulse_train(
     .self$.xptr, sampling_frequency, adapt_factor, adapt_time, as.integer(
@@ -453,7 +467,8 @@ PointProcess <- function(tmin = NULL, tmax = NULL, .xptr = NULL) {
   }
 
     stop(
-      "PointProcess objects must be created from a Sound or Pitch object using to_point_process_*()",
+      "PointProcess objects must be created from a Sound or Pitch object ",
+      "using to_point_process_*()",
          "methods, or with PointProcess(tmin, tmax) for an empty object")
 }
 

@@ -153,7 +153,8 @@ lockEnvironment(.amplitudetier_methods, bindings = TRUE)
 AmplitudeTier <- function(.xptr = NULL) {
   if (is.null(.xptr)) {
     stop(
-      "AmplitudeTier objects must be created using amplitude_tier_create() or related functions")
+      "AmplitudeTier objects must be created using amplitude_tier_create() or ",
+        "related functions")
   }
 
   tier_mod <- get_module("amplitudetier_module")

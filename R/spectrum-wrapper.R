@@ -205,7 +205,9 @@ NULL
     stop(sprintf(
 
         paste0("bandwidth (%.2f Hz) must be > frequency step (%.2f Hz). ",
-               "Use bandwidth > %.1f or to_ltas() with no arguments for 1-to-1 mapping."),
+               "Use bandwidth > %.1f or to_ltas() with no arguments for ",
+                 "1-to-1 ",
+                 "mapping."),
       bandwidth, dx, dx
     ))
   }
@@ -218,7 +220,9 @@ NULL
 }
 .spectrum_methods$to_powercepstrum <- function(.self) {
   .Deprecated("to_power_cepstrum", package = "pladdrr",
-              msg = "to_powercepstrum() is deprecated. Use to_power_cepstrum() instead.")
+              msg = paste0(
+                "to_powercepstrum() is deprecated. ",
+                "Use to_power_cepstrum() instead."))
   ptr <- .spectrum_to_powercepstrum(.self$.xptr)
   PowerCepstrum(.xptr = ptr)
 }

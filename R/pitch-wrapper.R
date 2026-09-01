@@ -191,8 +191,7 @@ NULL
                             .pitch_unit_code(unit), as.character(metrics))
 }
 .pitch_methods$get_adaptive_range <- function(.self, q1_factor = 0.75,
-  q3_factor = 1.5,
-                                              from_time = 0, to_time = 0, unit = "hertz") {
+    q3_factor = 1.5, from_time = 0, to_time = 0, unit = "hertz") {
   .self$.cpp$get_adaptive_range(as.numeric(q1_factor), as.numeric(q3_factor),
                                 as.numeric(from_time), as.numeric(to_time),
                                 .pitch_unit_code(unit))
@@ -256,7 +255,8 @@ NULL
 # --- Transformations ---
 .pitch_methods$to_point_process <- function(.self) {
   warning(
-    "pitch$to_point_process() creates PointProcess from Pitch candidates only.\n",
+    "pitch$to_point_process() creates PointProcess from Pitch ",
+    "candidates only.\n",
     "For voice quality analysis (jitter/shimmer), use:\n",
     "  sound$to_point_process_periodic_cc(pitch_floor, pitch_ceiling)\n",
     "This ensures accurate glottal pulse timing with amplitude information.",
@@ -282,8 +282,7 @@ NULL
   TextGrid(.xptr = tg_ptr)
 }
 .pitch_methods$to_dtw <- function(.self, reference, vuv_costs = 24.0,
-  time_weight = 10.0,
-                                  match_start = TRUE, match_end = TRUE, slope = 1) {
+    time_weight = 10.0, match_start = TRUE, match_end = TRUE, slope = 1) {
   if (!inherits(reference, "Pitch")) stop("reference must be a Pitch object")
   pitches_to_dtw(reference, .self, vuv_costs, time_weight, match_start,
     match_end, slope)
@@ -339,7 +338,8 @@ lockEnvironment(.pitch_methods, bindings = TRUE)
 Pitch <- function(.xptr = NULL) {
   if (is.null(.xptr)) {
     stop(
-      "Pitch objects must be created from a Sound object using sound$to_pitch()")
+      "Pitch objects must be created from a Sound object using ",
+        "sound$to_pitch()")
   }
   pitch_mod <- get_module("pitch_module")
   if (is.null(pitch_mod)) {
@@ -370,7 +370,7 @@ Pitch <- function(.xptr = NULL) {
 
 #' @export
 as.data.frame.Pitch <- function(x, row.names = NULL, optional = FALSE,
-                                include_strength = FALSE, include_intensity = FALSE, ...) {
+    include_strength = FALSE, include_intensity = FALSE, ...) {
   x$as_data_frame(include_strength = include_strength,
                   include_intensity = include_intensity)
 }

@@ -18,7 +18,8 @@
 BarkSpectrogram <- function(.xptr = NULL) {
   if (is.null(.xptr)) {
     stop(
-      "BarkSpectrogram objects must be created from Sound$to_bark_spectrogram()")
+      "BarkSpectrogram objects must be created from ",
+        "Sound$to_bark_spectrogram()")
   }
 
   ptr <- .xptr

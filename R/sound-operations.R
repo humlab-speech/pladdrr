@@ -150,7 +150,8 @@ sound_lengthen <- function(sound, fmin = 75, fmax = 600, factor = 1.5) {
 #' enhanced <- sound_deepen_band_modulation(sound, enhancement_db = 10)
 sound_deepen_band_modulation <- function(sound, enhancement_db = 10,
                                          flow = 300, fhigh = 4000,
-                                         slow_modulation = 3, fast_modulation = 30,
+                                         slow_modulation = 3, fast_modulation =
+                                             30,
                                          band_smoothing = 100) {
     mod <- get_module("sound_operations_module")
     

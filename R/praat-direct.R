@@ -502,7 +502,8 @@ to_intensity_direct <- function(sound, minimum_pitch = 100, time_step = 0,
 #'
 #' @export
 to_harmonicity_direct <- function(sound, time_step = 0.01, minimum_pitch = 75,
-                                   silence_threshold = 0.1, periods_per_window = 1.0) {
+                                   silence_threshold = 0.1, periods_per_window =
+                                       1.0) {
   sound_ptr <- if (inherits(sound, "Sound")) {
     sound$.xptr
   } else if (inherits(sound, "externalptr")) {
@@ -815,9 +816,11 @@ to_point_process_direct <- function(sound, pitch_floor = 75.0,
   # Direct .Call path — bypasses R6 module dispatch
   .sound_to_point_process_periodic_cc(sound_ptr, as.numeric(time_step),
                                        as.numeric(
-                                         pitch_floor), as.numeric(pitch_ceiling),
+                                         pitch_floor), as.numeric(pitch_ceiling)
+                                             ,
                                        as.numeric(
-                                         max_period_factor), as.numeric(max_amplitude_factor))
+                                         max_period_factor), as.numeric(
+                                             max_amplitude_factor))
 }
 
 
@@ -1074,8 +1077,10 @@ two_pass_adaptive_pitch <- function(sound,
   # Pass 1: Wide range
   pitch_rough <- .run_pitch_pass(pitch_fn, sound_ptr, initial_floor,
     initial_ceiling,
-                                  time_step, voicing_threshold, silence_threshold,
-                                  octave_cost, octave_jump_cost, voiced_unvoiced_cost)
+                                  time_step, voicing_threshold,
+                                      silence_threshold,
+                                  octave_cost, octave_jump_cost,
+                                      voiced_unvoiced_cost)
 
   # Get quartiles + adaptive range in single C++ call
   range <- pitch_get_adaptive_range(pitch_rough, q1_factor = q1_factor,
@@ -1099,8 +1104,10 @@ two_pass_adaptive_pitch <- function(sound,
 
   # Pass 2: Refined range
   pitch_refined <- .run_pitch_pass(pitch_fn, sound_ptr, min_pitch, max_pitch,
-                                    time_step, voicing_threshold, silence_threshold,
-                                    octave_cost, octave_jump_cost, voiced_unvoiced_cost)
+                                    time_step, voicing_threshold,
+                                        silence_threshold,
+                                    octave_cost, octave_jump_cost,
+                                        voiced_unvoiced_cost)
 
   list(
     pitch = pitch_refined,

@@ -96,8 +96,10 @@ extract_formants <- function(sound,
   .Deprecated(
     "sound$to_formant_burg()",
     package = "pladdrr",
-    msg =
-      "extract_formants() is deprecated and will be removed in v6.0.0. Use the R6 interface: sound$to_formant_burg()"
+    msg = paste0(
+      "extract_formants() is deprecated and will be removed in v6.0.0. ",
+      "Use the R6 interface: sound$to_formant_burg()"
+    )
   )
   
   # Handle both S3 and R6 objects
@@ -156,7 +158,8 @@ extract_formants <- function(sound,
 #' window_length = 0.025, pre_emphasis_from = 50)
 #' @noRd
 .detect_formants_burg <- function(signal, sr, time_step, max_formant,
-                                  n_formants, window_length, pre_emphasis_from) {
+                                  n_formants, window_length,
+                                      pre_emphasis_from) {
   
   # Calculate frame parameters
   n_samples <- length(signal)
@@ -367,14 +370,16 @@ get_formant_at_time <- function(formant, formant_number, time,
     msg =
       paste0(
         "get_formant_at_time() is deprecated and will be removed in v6.0.0. ",
-             "Use the R6 interface: formant$get_value_at_time(formant_number, time)")
+        "Use the R6 interface: formant$get_value_at_time(",
+        "formant_number, time)")
   )
   
   validate_formant_object(formant)
   validate_positive_int(formant_number, "formant_number")
   
   # Filter to requested formant
-  formant_data <- formant$values[formant$values$formant_number == formant_number, ]
+  formant_data <- formant$values[formant$values$formant_number ==
+      formant_number, ]
   
   if (nrow(formant_data) == 0) {
     return(NA_real_)
@@ -446,15 +451,18 @@ get_mean_formant <- function(formant, formant_number, time_range = NULL) {
     "formant$get_mean()",
     package = "pladdrr",
     msg =
-      paste0("get_mean_formant() is deprecated and will be removed in v6.0.0. ",
-             "Use the R6 interface: formant$get_mean(formant_number, from_time, to_time)")
+      paste0(
+        "get_mean_formant() is deprecated and will be removed in v6.0.0. ",
+        "Use the R6 interface: formant$get_mean(formant_number, ",
+        "from_time, to_time)")
   )
   
   validate_formant_object(formant)
   validate_positive_int(formant_number, "formant_number")
   
   # Filter to requested formant
-  formant_data <- formant$values[formant$values$formant_number == formant_number, ]
+  formant_data <- formant$values[formant$values$formant_number ==
+      formant_number, ]
   
   if (!is.null(time_range)) {
     formant_data <- formant_data[

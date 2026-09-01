@@ -43,7 +43,8 @@ NULL
     peak_quefrency <- cepstrum$get_quefrency_of_peak(
       interpolation = "parabolic", qmin = qmin, qmax = qmax)
     cpp <- cepstrum$get_peak_prominence(
-      interpolation = "parabolic", qmin = qmin, qmax = qmax, fit_method = fit_method)
+      interpolation = "parabolic", qmin = qmin, qmax = qmax,
+      fit_method = fit_method)
     peak_value <- cepstrum$get_value_at_quefrency(
       quefrency = peak_quefrency, interpolation = "parabolic",
       qmin = qmin, qmax = qmax, unit = "dB")
@@ -404,7 +405,8 @@ create_cepstrum_report <- function(cepstrogram,
   
   if (!requireNamespace("gridExtra", quietly = TRUE)) {
     stop(
-      "Package 'gridExtra' is required for multi-panel layout. Please install it.")
+      "Package 'gridExtra' is required for multi-panel layout. Please install ",
+        "it.")
   }
   
   format <- match.arg(format)

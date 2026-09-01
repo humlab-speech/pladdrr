@@ -120,8 +120,7 @@ NULL
 # --- Batch/Vectorized ---
 .harmonicity_methods$get_statistics_batch <- function(.self, from_times,
   to_times,
-                                                      metrics = c("mean",
-                                                        "min", "max", "stdev")) {
+  metrics = c("mean", "min", "max", "stdev")) {
   .self$.cpp$get_statistics_batch(as.numeric(from_times),
     as.numeric(to_times), as.character(metrics))
 }
@@ -182,7 +181,8 @@ lockEnvironment(.harmonicity_methods, bindings = TRUE)
 Harmonicity <- function(.xptr = NULL) {
   if (is.null(.xptr)) {
     stop(
-      "Harmonicity objects should be created from Sound objects using to_harmonicity_ac() or to_harmonicity_cc()")
+      "Harmonicity objects should be created from Sound objects using ",
+        "to_harmonicity_ac() or to_harmonicity_cc()")
   }
   harmonicity_mod <- get_module("harmonicity_module")
   cpp_obj <- harmonicity_mod$RHarmonicity$new(.xptr)

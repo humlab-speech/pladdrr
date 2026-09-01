@@ -190,7 +190,8 @@ format_quality_report <- function(quality_metrics, detailed = TRUE) {
 # Intensity statistics via Praat Intensity object.
 .analyze_intensity <- function(sound, intensity_floor, time_step) {
   intensity <- sound$to_intensity(
-    minimum_pitch = intensity_floor, time_step = time_step, subtract_mean = TRUE)
+    minimum_pitch = intensity_floor, time_step = time_step, subtract_mean =
+        TRUE)
   mean_intensity_db <- intensity$get_mean(from_time = 0, to_time = 0,
     averaging_method = "energy")
   min_intensity_db <- intensity$get_minimum(from_time = 0, to_time = 0,

@@ -175,9 +175,9 @@ NULL
 
 # --- Silence detection ---
 .intensity_methods$to_textgrid_silences <- function(.self,
-  silence_threshold = -25,
-                                                     min_silence_duration = 0.3, min_sounding_duration = 0.1,
-                                                     silent_label = "silent", sounding_label = "sounding") {
+    silence_threshold = -25,
+    min_silence_duration = 0.3, min_sounding_duration = 0.1,
+    silent_label = "silent", sounding_label = "sounding") {
   tg_ptr <- .intensity_to_textgrid_silences(
     .self$.xptr, silence_threshold, min_silence_duration,
     min_sounding_duration, silent_label, sounding_label
@@ -208,7 +208,8 @@ lockEnvironment(.intensity_methods, bindings = TRUE)
 Intensity <- function(.xptr = NULL) {
   if (is.null(.xptr)) {
     stop(
-      "Intensity objects should be created from Sound objects using to_intensity()")
+      "Intensity objects should be created from Sound objects using ",
+        "to_intensity()")
   }
   intensity_mod <- get_module("intensity_module")
   cpp_obj <- intensity_mod$RIntensity$new(.xptr)

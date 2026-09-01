@@ -792,7 +792,8 @@ plot.Matrix <- function(x, from_x = NULL, to_x = NULL,
       df)) "frequency" else if ("y" %in% names(df)) "y" else names(df)[2]
   val_col <- if (
     "value" %in% names(
-      df)) "value" else if ("amplitude" %in% names(df)) "amplitude" else names(df)[3]
+      df)) "value" else if ("amplitude" %in% names(df)) "amplitude" else names(
+          df)[3]
   
   # Create base plot
   p <- ggplot2::ggplot(df, ggplot2::aes(x = .data[[x_col]], y = .data[[y_col]], 

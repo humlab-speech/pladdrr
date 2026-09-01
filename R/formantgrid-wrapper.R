@@ -160,8 +160,10 @@ lockEnvironment(.formantgrid_methods, bindings = TRUE)
 
 #' @export
 FormantGrid <- function(tmin = NULL, tmax = NULL, number_of_formants = 10,
-                        initial_first_formant = 550, initial_formant_spacing = 1100,
-                        initial_first_bandwidth = 60, initial_bandwidth_spacing = 50,
+                        initial_first_formant = 550, initial_formant_spacing =
+                            1100,
+                        initial_first_bandwidth = 60,
+                            initial_bandwidth_spacing = 50,
                         .xptr = NULL) {
   if (!is.null(.xptr)) {
     ptr <- .xptr

@@ -159,7 +159,8 @@ lockEnvironment(.cochleagram_methods, bindings = TRUE)
 Cochleagram <- function(.xptr) {
   if (missing(.xptr) || is.null(.xptr)) {
     stop(
-      "Cochleagram objects should be created via Sound$to_cochleagram() or Sound$to_cochleagram_edb()")
+      "Cochleagram objects should be created via Sound$to_cochleagram() or ",
+        "Sound$to_cochleagram_edb()")
   }
   
   coch_mod <- get_module("cochleagram_module")

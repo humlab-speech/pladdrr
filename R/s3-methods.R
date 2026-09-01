@@ -108,7 +108,10 @@ as.data.frame.praat_sound <- function(x, ...) {
   .Deprecated(
     "Sound$as_data_frame()",
     package = "pladdrr",
-    msg = "as.data.frame.praat_sound() is deprecated. Use Sound$as_data_frame() instead."
+    msg = paste0(
+      "as.data.frame.praat_sound() is deprecated. ",
+      "Use Sound$as_data_frame() instead."
+    )
   )
   
   validate_sound_object(x, "x")

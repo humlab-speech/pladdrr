@@ -25,7 +25,7 @@
   `expect_false`, `fixed = TRUE` on literal patterns, `anyNA`).
 * Parallel batch functions (`analyze_files_parallel()`,
   `process_sounds_parallel()`) now cap their automatic core count at 2 under
-  `R CMD check` (honouring `_R_CHECK_LIMIT_CORES_`), so the default-`n_cores`
+  `R CMD check` (honoring `_R_CHECK_LIMIT_CORES_`), so the default-`n_cores`
   tests pass CRAN's process-spawn limit while dev/CI still uses all cores.
 * Fixed a broken example in the `textgrid_create()` docs (an uncommented
   continuation line) that made `R CMD check` fail to run any examples.

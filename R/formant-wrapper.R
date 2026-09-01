@@ -189,7 +189,8 @@ NULL
 .formant_methods$get_time_of_minimum <- function(.self, formant_number,
   from_time = 0, to_time = 0,
                                                   unit = c("hertz",
-                                                    "bark"), interpolate = FALSE) {
+                                                    "bark"), interpolate =
+                                                        FALSE) {
   unit <- match.arg(unit)
   .formant_get_time_of_minimum(.self$.xptr, as.integer(formant_number),
     from_time,
@@ -199,7 +200,8 @@ NULL
 .formant_methods$get_time_of_maximum <- function(.self, formant_number,
   from_time = 0, to_time = 0,
                                                   unit = c("hertz",
-                                                    "bark"), interpolate = FALSE) {
+                                                    "bark"), interpolate =
+                                                        FALSE) {
   unit <- match.arg(unit)
   .formant_get_time_of_maximum(.self$.xptr, as.integer(formant_number),
     from_time,
@@ -256,9 +258,11 @@ NULL
 
 # --- Advanced ---
 .formant_methods$track <- function(.self, number_of_tracks = 3,
-                                   ref_f1 = 550.0, ref_f2 = 1650.0, ref_f3 = 2750.0,
+                                   ref_f1 = 550.0, ref_f2 = 1650.0, ref_f3 =
+                                       2750.0,
                                    ref_f4 = 3850.0, ref_f5 = 4950.0,
-                                   frequency_cost = 1.0, bandwidth_cost = 1.0, transition_cost = 1.0) {
+                                   frequency_cost = 1.0, bandwidth_cost = 1.0,
+                                       transition_cost = 1.0) {
   tracked_ptr <- .formant_tracker(
     .self$.xptr, as.integer(number_of_tracks),
     ref_f1, ref_f2, ref_f3, ref_f4, ref_f5,
@@ -271,9 +275,12 @@ NULL
   FormantGrid(.xptr = grid_ptr)
 }
 .formant_methods$down_to_table <- function(.self, include_frame_numbers = TRUE,
-                                           include_time = TRUE, time_decimals = 6,
-                                           include_intensity = TRUE, intensity_decimals = 3,
-                                           include_number_of_formants = TRUE, frequency_decimals = 3,
+                                           include_time = TRUE, time_decimals =
+                                               6,
+                                           include_intensity = TRUE,
+                                               intensity_decimals = 3,
+                                           include_number_of_formants = TRUE,
+                                               frequency_decimals = 3,
                                            include_bandwidths = TRUE) {
   table_ptr <- .formant_down_to_table(
     .self$.xptr, include_frame_numbers,
@@ -315,7 +322,8 @@ lockEnvironment(.formant_methods, bindings = TRUE)
 Formant <- function(.xptr = NULL) {
   if (is.null(.xptr)) {
     stop(
-      "Formant objects must be created from a Sound object using to_formant_burg() or to_formant_keepall()")
+      "Formant objects must be created from a Sound object using ",
+        "to_formant_burg() or to_formant_keepall()")
   }
   formant_mod <- get_module("formant_module")
   cpp_obj <- formant_mod$RFormant$new(.xptr)

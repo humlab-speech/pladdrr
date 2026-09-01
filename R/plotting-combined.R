@@ -127,7 +127,8 @@ NULL
   intensity_range <- range(intensity_df$intensity_db, na.rm = TRUE)
   scale_factor <- diff(pitch_range) / diff(intensity_range)
   offset <- pitch_range[1] - intensity_range[1] * scale_factor
-  intensity_df$scaled_intensity <- intensity_df$intensity_db * scale_factor + offset
+  intensity_df$scaled_intensity <- intensity_df$intensity_db * scale_factor +
+      offset
   list(df = intensity_df, scale_factor = scale_factor, offset = offset)
 }
 
@@ -181,7 +182,8 @@ plot_textgrid_sound <- function(textgrid, sound, tier = NULL,
   
   if (!requireNamespace("patchwork", quietly = TRUE)) {
     warning(
-      "Package 'patchwork' recommended for better layout. Installing it is recommended.")
+      "Package 'patchwork' recommended for better layout. Installing it is ",
+        "recommended.")
   }
   
   if (!inherits(textgrid, "TextGrid")) {
@@ -356,7 +358,8 @@ plot_pitch_intensity <- function(pitch, intensity,
   
   # Filter time ranges
   pitch_df <- pitch_df[pitch_df$time >= from_time & pitch_df$time <= to_time, ]
-  intensity_df <- intensity_df[intensity_df$time >= from_time & intensity_df$time <= to_time, ]
+  intensity_df <- intensity_df[intensity_df$time >= from_time &
+      intensity_df$time <= to_time, ]
   
   s <- .scale_intensity_to_pitch(pitch_df, intensity_df)
   intensity_df <- s$df
@@ -619,14 +622,16 @@ plot_sound_pitch <- function(sound, pitch,
     return(combined)
   } else {
     stop(
-      "Either 'patchwork' or 'gridExtra' package is required for combined plots. Please install one.")
+      "Either 'patchwork' or 'gridExtra' package is required for combined ",
+      "plots. Please install one.")
   }
 }
 
 
 # Build the pitch/intensity dual-axis combined plot.
 .build_pitch_intensity_plot <- function(pitch_df, intensity_df, pitch_color,
-                                        intensity_color, scale_factor, offset, title) {
+                                        intensity_color, scale_factor, offset,
+                                            title) {
   ggplot2::ggplot() +
     ggplot2::geom_line(data = pitch_df,
       ggplot2::aes(x = .data$time, y = .data$frequency),
@@ -657,7 +662,8 @@ plot_sound_pitch <- function(sound, pitch,
       pitch_floor)) pitch_df <- pitch_df[pitch_df$frequency >= pitch_floor, ]
   if (
     !is.null(
-      pitch_ceiling)) pitch_df <- pitch_df[pitch_df$frequency <= pitch_ceiling, ]
+      pitch_ceiling)) pitch_df <- pitch_df[pitch_df$frequency <= pitch_ceiling,
+          ]
   pitch_df[!is.na(pitch_df$frequency) & pitch_df$frequency > 0, ]
 }
 

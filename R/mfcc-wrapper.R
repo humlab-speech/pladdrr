@@ -127,7 +127,8 @@ NULL
   last_coefficient = 0,
                                              include_c0 = FALSE) {
   if (
-    last_coefficient == 0) last_coefficient <- .self$.cpp$get_max_num_coefficients()
+    last_coefficient == 0) last_coefficient <-
+        .self$.cpp$get_max_num_coefficients()
   mel_ptr <- .mfcc_to_mel_spectrogram(
     .self$.xptr, as.integer(first_coefficient),
     as.integer(last_coefficient), include_c0

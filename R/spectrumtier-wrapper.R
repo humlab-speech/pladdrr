@@ -108,7 +108,8 @@ lockEnvironment(.spectrumtier_methods, bindings = TRUE)
 SpectrumTier <- function(.xptr = NULL) {
   if (is.null(.xptr)) {
     stop(
-      "SpectrumTier objects must be created from an Ltas object, e.g. ltas$to_spectrum_tier_peaks()")
+      "SpectrumTier objects must be created from an Ltas object, e.g. ",
+        "ltas$to_spectrum_tier_peaks()")
   }
   tier_mod <- get_module("spectrumtier_module")
   cpp_obj <- tier_mod$RSpectrumTier$new(.xptr)

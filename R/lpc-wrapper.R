@@ -211,7 +211,9 @@ lockEnvironment(.lpc_methods, bindings = TRUE)
 LPC <- function(.xptr = NULL) {
   if (is.null(.xptr)) {
     stop(
-      "LPC objects must be created from a Sound object using sound$to_lpc_burg() or similar methods")
+      "LPC objects must be created from a Sound object using ",
+        "sound$to_lpc_burg() ",
+        "or similar methods")
   }
   
   lpc_mod <- get_module("lpc_module")

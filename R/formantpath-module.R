@@ -67,10 +67,12 @@ NULL
 # Stress and optimization
 .formantpath_methods$get_stress_of_candidate <- function(.self, tmin = NULL,
   tmax = NULL,
-                                                          from_formant = 1L, to_formant = 5L,
+                                                          from_formant = 1L,
+                                                              to_formant = 5L,
                                                           parameters = c(1L,
                                                             1L, 1L, 1L, 1L),
-                                                          powerf = 1.25, candidate = 1L) {
+                                                          powerf = 1.25,
+                                                              candidate = 1L) {
   if (is.null(tmin)) tmin <- .self$.cpp$get_xmin()
   if (is.null(tmax)) tmax <- .self$.cpp$get_xmax()
   .self$.cpp$get_stress_of_candidate(
@@ -113,7 +115,8 @@ NULL
                                               frequency_change_weight = 1.0,
                                               stress_weight = 1.0,
                                               ceiling_change_weight = 1.0,
-                                              intensity_modulation_step_size = 5.0,
+                                              intensity_modulation_step_size =
+                                                  5.0,
                                               window_length = 0.035,
                                               parameters = c(1L, 1L, 1L, 1L,
                                                 1L),

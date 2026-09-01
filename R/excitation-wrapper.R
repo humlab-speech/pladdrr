@@ -114,7 +114,8 @@ lockEnvironment(.excitation_methods, bindings = TRUE)
 Excitation <- function(.xptr) {
   if (missing(.xptr) || is.null(.xptr)) {
     stop(
-      "Excitation objects should be created via Spectrum$to_excitation() or Cochleagram$to_excitation()")
+      "Excitation objects should be created via Spectrum$to_excitation() or ",
+        "Cochleagram$to_excitation()")
   }
   
   exc_mod <- get_module("excitation_module")

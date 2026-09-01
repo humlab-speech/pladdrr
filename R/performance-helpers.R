@@ -295,7 +295,8 @@ get_cpps_fast <- function(
 ) {
   if (!inherits(powercepstrogram, "externalptr")) {
     stop(
-      "powercepstrogram must be an external pointer from to_powercepstrogram_fast()")
+      "powercepstrogram must be an external pointer from ",
+        "to_powercepstrogram_fast()")
   }
 
   # Map string arguments to integer codes
@@ -497,7 +498,8 @@ apply_transform_xptr <- function(sound, transform_func) {
 #'
 #' @export
 create_window_xptr <- function(type = c("hamming", "hanning", "gaussian",
-                                         "triangular", "blackman", "rectangular"),
+                                         "triangular", "blackman",
+                                             "rectangular"),
                                sigma = 0.25) {
   if (!requireNamespace("RcppXPtrUtils", quietly = TRUE)) {
     stop("RcppXPtrUtils package required for create_window_xptr(). ",
@@ -533,7 +535,10 @@ create_window_xptr <- function(type = c("hamming", "hanning", "gaussian",
   RcppXPtrUtils::cppXPtr(
     window_code,
     depends = character(),
-    includes = "#include <cmath>\n#ifndef M_PI\n#define M_PI 3.14159265358979323846\n#endif"
+    includes = paste0(
+      "#include <cmath>\n#ifndef M_PI\n#define M_PI ",
+      "3.14159265358979323846\n#endif"
+    )
   )
 }
 
@@ -632,13 +637,17 @@ create_window_xptr <- function(type = c("hamming", "hanning", "gaussian",
 #' @export
 calculate_cpps_ultra <- function(
   sound,
-  time_averaging_window = 0.001,        # BUG FIX v4.6.4: match calculate_cpps_fast (was 0.01)
-  quefrency_averaging_window = 0.0005,  # BUG FIX v4.6.4: match calculate_cpps_fast (was 0.001)
+  time_averaging_window = 0.001,
+      # BUG FIX v4.6.4: match calculate_cpps_fast (was 0.01)
+  quefrency_averaging_window = 0.0005,
+      # BUG FIX v4.6.4: match calculate_cpps_fast (was 0.001)
   pitch_floor = 60,
-  pitch_ceiling = 333.3,                # BUG FIX v4.6.4: match calculate_cpps_fast (was 330)
+  pitch_ceiling = 333.3,
+      # BUG FIX v4.6.4: match calculate_cpps_fast (was 330)
   subtract_trend = TRUE,
   time_step = 0.002,
-  max_quefrency = 0.04,                 # BUG FIX v4.9.10: was 0.05, C++ ignored it and hardcoded 0.04
+  max_quefrency = 0.04,
+      # BUG FIX v4.9.10: was 0.05, C++ ignored it and hardcoded 0.04
   tolerance = 0.05,
   interpolation = "parabolic",
   tilt_line_quefrency = 0.003,
@@ -852,7 +861,8 @@ build_multiband_harmonicity <- function(
 ) {
   if (length(bands) != 5) {
     stop(
-      "bands parameter must have exactly 5 elements (e.g., c(0, 500, 1500, 2500, 3500))")
+      "bands parameter must have exactly 5 elements ",
+      "(e.g., c(0, 500, 1500, 2500, 3500))")
   }
 
   sound_ptr <- extract_xptr(sound, "Sound")
@@ -1011,7 +1021,8 @@ calculate_multiband_hnr_ultra <- function(
   # Validate bands parameter
   if (length(bands) != 5) {
     stop(
-      "bands parameter must have exactly 5 elements (e.g., c(0, 500, 1500, 2500, 3500))")
+      "bands parameter must have exactly 5 elements ",
+      "(e.g., c(0, 500, 1500, 2500, 3500))")
   }
 
   sound_ptr <- extract_xptr(sound, "Sound")

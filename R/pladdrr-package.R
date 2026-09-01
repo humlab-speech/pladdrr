@@ -132,7 +132,8 @@ utils::globalVariables(c(".data", "formant_number", "cpp", "quefrency",
 .onAttach <- function(libname, pkgname) {
   packageStartupMessage(
     "pladdrr: direct access to Praat's core algorithms from R.\n",
-    "See ?pladdrr for an overview, or citation(\"pladdrr\") for citation details."
+    "See ?pladdrr for an overview, or citation(\"pladdrr\") for citation ",
+      "details."
   )
   # A -O0/-UNDEBUG shared object (devtools::load_all(), pkgbuild::compile_dll())
   # survives a later `R CMD INSTALL` because make keeps the stale .o files. It
@@ -205,7 +206,18 @@ utils::globalVariables(c(".data", "formant_number", "cpp", "quefrency",
 #' @keywords internal
 #'
 #' @rdname pladdrr_shared_params
-pladdrr_shared_params <- function(sound = NULL, from_time = NULL, to_time = NULL, garnish = NULL, sounds = NULL, time = NULL, sampling_rate = 44100, return_r6 = NULL, time_step = NULL, name = NULL, times = NULL, from_times = NULL, to_times = NULL, intensity = NULL, time_range = NULL, pitch = NULL, pitch_floor = 75, pitch_ceiling = 600, max_candidates = 15, unit = NULL, row.names = NULL, optional = NULL, fmin = NULL, fmax = NULL, x = NULL, smooth = NULL, tmin = NULL, tmax = NULL, title = NULL, tier = NULL, textgrid = NULL, sound1 = NULL, signal_outside = NULL, scaling = NULL, pointprocess = NULL, n_cores = NULL, max_pitch = 600, interpolate = NULL, from_freq = NULL, files = NULL, duration = 1.0, cepstrogram = NULL, max_formant = NULL, ...) invisible(NULL)
+pladdrr_shared_params <- function(
+    sound = NULL, from_time = NULL, to_time = NULL, garnish = NULL,
+    sounds = NULL, time = NULL, sampling_rate = 44100, return_r6 = NULL,
+    time_step = NULL, name = NULL, times = NULL, from_times = NULL,
+    to_times = NULL, intensity = NULL, time_range = NULL, pitch = NULL,
+    pitch_floor = 75, pitch_ceiling = 600, max_candidates = 15, unit = NULL,
+    row.names = NULL, optional = NULL, fmin = NULL, fmax = NULL, x = NULL,
+    smooth = NULL, tmin = NULL, tmax = NULL, title = NULL, tier = NULL,
+    textgrid = NULL, sound1 = NULL, signal_outside = NULL, scaling = NULL,
+    pointprocess = NULL, n_cores = NULL, max_pitch = 600, interpolate = NULL,
+    from_freq = NULL, files = NULL, duration = 1.0, cepstrogram = NULL,
+    max_formant = NULL, ...) invisible(NULL)
 
 #' Shared parameter docs for functions taking a plain Sound object
 #'
@@ -222,7 +234,8 @@ pladdrr_shared_sound <- function(sound = NULL) invisible(NULL)
 #' @keywords internal
 #'
 #' @rdname pladdrr_shared_time0
-pladdrr_shared_time0 <- function(from_time = NULL, to_time = NULL) invisible(NULL)
+pladdrr_shared_time0 <- function(from_time = NULL, to_time = NULL)
+  invisible(NULL)
 
 #' Shared parameter docs for functions taking an R6 Sound object
 #'
@@ -321,4 +334,8 @@ pladdrr_shared_timeauto75 <- function(time_step = NULL) invisible(NULL)
 #' @keywords internal
 #'
 #' @rdname pladdrr_shared_analysis
-pladdrr_shared_analysis <- function(time_step = 0.005, minimum_pitch = 100, data = NULL, max_frequency = 5000, pitch_floor = 75, pitch_ceiling = 600, channel = 1, silence_threshold = NULL, max_formants = NULL, start_time = 0.0, numberOfRows = NULL) invisible(NULL)
+pladdrr_shared_analysis <- function(
+    time_step = 0.005, minimum_pitch = 100, data = NULL,
+    max_frequency = 5000, pitch_floor = 75, pitch_ceiling = 600,
+    channel = 1, silence_threshold = NULL, max_formants = NULL,
+    start_time = 0.0, numberOfRows = NULL) invisible(NULL)

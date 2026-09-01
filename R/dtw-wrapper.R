@@ -105,7 +105,8 @@
       cat(sprintf("  Reference (y): %.3f - %.3f s (%.3f s)\n",
                   info$y_domain$min, info$y_domain$max, info$y_domain$duration))
       cat(sprintf("  Matrix: %d x %d (step: %.4f x %.4f s)\n",
-                  info$matrix$nx, info$matrix$ny, info$matrix$dx, info$matrix$dy))
+                  info$matrix$nx, info$matrix$ny, info$matrix$dx,
+                      info$matrix$dy))
       cat(sprintf("  Path length: %d cells\n", info$path$length))
       cat(sprintf("  Weighted distance: %.4f\n", info$path$weighted_distance))
       invisible(NULL)

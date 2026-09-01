@@ -100,10 +100,13 @@
     .warned_robust_slow$done <- TRUE
     warning(
       "fit_method = \"robust slow\" (Praat's Theil-Sen trend fit) is not ",
-      "reproducible: it draws random samples internally, so repeated runs on the ",
-      "same input differ (~0.8 dB observed) and can return wildly wrong values. ",
+      "reproducible: it draws random samples internally, so repeated ",
+      "runs on the ",
+      "same input differ (~0.8 dB observed) and can return wildly ",
+      "wrong values. ",
       "This is an upstream Praat defect, reproduced faithfully here. Use ",
-      "fit_method = \"robust\" (Siegel) or \"least_squares\" for a deterministic result.",
+      "fit_method = \"robust\" (Siegel) or \"least_squares\" for a ",
+      "deterministic result.",
       call. = FALSE
     )
   }
@@ -173,7 +176,8 @@
       "sound_extract_part",
       sprintf(
         paste0("requested [%g, %g] s extends outside the signal [%g, %g] s; ",
-                     "Praat zero-pads the excess, so part of the returned Sound is ",
+                     "Praat zero-pads the excess, so part of the returned ",
+                     "Sound is ",
                      "silence, not data"),
               lo, hi, xmin, xmax))
   }

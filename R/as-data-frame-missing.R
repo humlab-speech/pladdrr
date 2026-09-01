@@ -166,7 +166,8 @@ as.data.frame.LPC <- function(x, ...) {
 #' @export
 as.data.frame.LongSound <- function(x, ...) {
   stop(
-    "LongSound streams from disk. Use x$extract_part(from, to) to get a Sound, then as.data.frame().")
+    "LongSound streams from disk. Use x$extract_part(from, to) to get a ",
+    "Sound, then as.data.frame().")
 }
 
 #' @rdname as-data-frame-missing

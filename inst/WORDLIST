@@ -228,6 +228,7 @@ darkgreen
 darkorange
 darkred
 darkviolet
+dev
 dda
 ddp
 dereference
@@ -358,6 +359,7 @@ typo'd
 un
 unclassed
 unkeyed
+uncommented
 vectorizable
 vectorization
 vendored

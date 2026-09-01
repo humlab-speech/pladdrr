@@ -173,7 +173,8 @@ NULL
 }
 .ltas_methods$get_local_peak_height <- function(.self, environment_min,
   environment_max,
-                                                peak_min, peak_max, unit = "dB") {
+                                                peak_min, peak_max, unit = "dB")
+                                                    {
   .self$.cpp$get_local_peak_height(environment_min, environment_max, peak_min,
     peak_max,
                                    .ltas_unit_code(unit))
@@ -333,7 +334,8 @@ ltas_average <- function(...) {
   ltas_list <- list(...)
   if (
     length(
-      ltas_list) == 1 && is.list(ltas_list[[1]]) && !inherits(ltas_list[[1]], "Ltas")) {
+      ltas_list) == 1 && is.list(ltas_list[[1]]) && !inherits(ltas_list[[1]],
+          "Ltas")) {
     ltas_list <- ltas_list[[1]]
   }
   stopifnot("Need at least one Ltas object" = length(ltas_list) >= 1)

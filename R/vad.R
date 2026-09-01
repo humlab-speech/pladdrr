@@ -23,7 +23,8 @@ NULL
   if (seg_end - seg_start >= zcr_window) {
     relative_zeros <- segment_zeros - seg_start
     analysis_end <- min(0.0275, (seg_end - seg_start) - 0.0025)
-    zc <- relative_zeros[relative_zeros >= 0.0025 & relative_zeros <= analysis_end]
+    zc <- relative_zeros[relative_zeros >= 0.0025 & relative_zeros <=
+        analysis_end]
   } else {
     zc <- segment_zeros
   }
@@ -35,7 +36,8 @@ NULL
 
 .detect_voiced_intervals <- function(sound, minimum_pitch, time_step,
   silence_threshold,
-                                     min_silent_interval, min_sounding_interval) {
+                                     min_silent_interval, min_sounding_interval)
+                                         {
   vad_grid <- sound_to_textgrid_silences(
     sound, minimum_pitch = minimum_pitch, time_step = time_step,
     silence_threshold = silence_threshold,
@@ -225,7 +227,8 @@ textgrid_get_intervals_where <- function(textgrid,
                                         tier = 1,
                                         condition = c("equals", "contains",
                                                      "does not contain",
-                                                     "starts with", "ends with"),
+                                                     "starts with", "ends with")
+                                                         ,
                                         text) {
 
   if (!inherits(textgrid, "TextGrid")) {
@@ -569,7 +572,8 @@ sound_get_zcr <- function(sound,
   avqi_end_offset <- 0.0275
 
   fr <- .compute_zcr_frames(zero_times, start_time, n_frames, window_duration,
-                            hop_duration, avqi_compatible, avqi_start_offset, avqi_end_offset)
+                            hop_duration, avqi_compatible, avqi_start_offset,
+                                avqi_end_offset)
   list(times = fr$times, zcr = fr$zcr,
        window_duration = window_duration, hop_duration = hop_duration)
 }
@@ -580,7 +584,8 @@ sound_get_zcr <- function(sound,
                        avqi_compatible, avqi_start_offset, avqi_end_offset) {
   if (avqi_compatible && window_duration >= 0.03) {
     relative_zeros <- frame_zeros - frame_start
-    zc <- relative_zeros[relative_zeros >= avqi_start_offset & relative_zeros <= avqi_end_offset]
+    zc <- relative_zeros[relative_zeros >= avqi_start_offset & relative_zeros <=
+        avqi_end_offset]
   } else {
     zc <- frame_zeros
   }
@@ -612,14 +617,16 @@ sound_get_zcr <- function(sound,
 # Compute per-frame ZCR time series from zero-crossing times.
 .compute_zcr_frames <- function(zero_times, start_time, n_frames,
   window_duration,
-                                hop_duration, avqi_compatible, avqi_start_offset, avqi_end_offset) {
+                                hop_duration, avqi_compatible,
+                                    avqi_start_offset, avqi_end_offset) {
   times <- numeric(n_frames)
   zcr <- numeric(n_frames)
   for (i in seq_len(n_frames)) {
     frame_start <- start_time + (i - 1L) * hop_duration
     frame_end <- frame_start + window_duration
     times[i] <- frame_start + window_duration / 2
-    frame_zeros <- zero_times[zero_times >= frame_start & zero_times < frame_end]
+    frame_zeros <- zero_times[zero_times >= frame_start & zero_times <
+        frame_end]
     zcr[i] <- .frame_zcr(frame_zeros, frame_start, window_duration,
                          avqi_compatible, avqi_start_offset, avqi_end_offset)
   }

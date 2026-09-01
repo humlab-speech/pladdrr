@@ -70,8 +70,7 @@ NULL
   .self$.cpp$get_residual_sum_of_squares(as.integer(track))
 }
 .formantmodeler_methods$get_stress <- function(.self, from_track = 1,
-  to_track = 0,
-                                                num_params_per_track = 5, power = 1.25) {
+    to_track = 0, num_params_per_track = 5, power = 1.25) {
   if (to_track == 0) to_track <- .self$.cpp$get_number_of_tracks()
   .self$.cpp$get_stress(as.integer(from_track), as.integer(to_track),
                         as.integer(num_params_per_track), power)
@@ -167,7 +166,8 @@ lockEnvironment(.formantmodeler_methods, bindings = TRUE)
 FormantModeler <- function(.xptr = NULL) {
   if (is.null(.xptr)) {
     stop(
-      "FormantModeler objects must be created from a Formant object using formant$to_formant_modeler()")
+      "FormantModeler objects must be created from a Formant object using ",
+        "formant$to_formant_modeler()")
   }
 
   fm_mod <- get_module("formantmodeler_module")

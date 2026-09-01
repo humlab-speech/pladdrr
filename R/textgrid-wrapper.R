@@ -244,7 +244,8 @@ NULL
 }
 .textgrid_methods$extract_intervals_batch <- function(.self, tier,
   comparison_type = "equals",
-                                                      target_value = "", sound = NULL,
+                                                      target_value = "", sound =
+                                                          NULL,
                                                       extract_sounds = FALSE) {
   tier_num <- .textgrid_resolve_tier(.self$.cpp, tier)
   if (extract_sounds && is.null(sound)) {
@@ -264,8 +265,11 @@ NULL
   return(result)
 }
 .textgrid_methods$extract_intervals_where <- function(.self, sound, tier_number,
-                                                       criterion = "is equal to",
-                                                       text = "", preserve_times = FALSE) {
+                                                       criterion =
+                                                           "is equal to",
+                                                       text = "",
+                                                           preserve_times =
+                                                           FALSE) {
   if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
 
   criterion_map <- c(

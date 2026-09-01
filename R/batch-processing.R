@@ -138,9 +138,11 @@ NULL
   if ("pitch" %in% measurements) pitch_obj <- do.call(sound$to_pitch,
     pitch_params)
   if (
-    "formants" %in% measurements) formant_obj <- do.call(sound$to_formant_burg, formant_params)
+    "formants" %in% measurements) formant_obj <- do.call(sound$to_formant_burg,
+        formant_params)
   if (
-    "intensity" %in% measurements) intensity_obj <- do.call(sound$to_intensity, intensity_params)
+    "intensity" %in% measurements) intensity_obj <- do.call(sound$to_intensity,
+        intensity_params)
   list(pitch = pitch_obj, formants = formant_obj, intensity = intensity_obj)
 }
 
@@ -564,7 +566,8 @@ extract_measurements <- function(sound,
                                   pitch_floor = 75, pitch_ceiling = 600),
                                 formant_params = list(time_step = 0.01,
                                   max_formants = 5, max_frequency = 5500,
-                                                     window_length = 0.025, pre_emphasis = 50),
+                                                     window_length = 0.025,
+                                                         pre_emphasis = 50),
                                 intensity_params = list(minimum_pitch = 100,
                                   time_step = 0, subtract_mean = TRUE)) {
   
@@ -608,7 +611,8 @@ extract_measurements <- function(sound,
   
   # Batch pitch/formant/intensity measurements
   results <- .apply_batch_measurements(results, meas_times, pitch_obj,
-                                      formant_obj, intensity_obj, formant_params)
+                                      formant_obj, intensity_obj,
+                                          formant_params)
   
   results
 }
@@ -715,7 +719,8 @@ aggregate_measurements <- function(measurements,
   if (parallel) {
     if (
       !requireNamespace("parallel",
-        quietly = TRUE)) stop("Package 'parallel' is required for parallel processing")
+        quietly = TRUE)) stop(
+            "Package 'parallel' is required for parallel processing")
     if (is.null(ncores)) ncores <- parallel::detectCores() - 1
     tpw <- .pladdrr_worker_thread_budget(ncores)
     parallel::mclapply(files, function(f) {

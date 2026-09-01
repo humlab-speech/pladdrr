@@ -135,7 +135,8 @@ lockEnvironment(.manipulation_methods, bindings = TRUE)
 Manipulation <- function(.xptr) {
   if (missing(.xptr) || is.null(.xptr)) {
     stop(
-      "Manipulation objects must be created from a Sound object using sound$to_manipulation()")
+      "Manipulation objects must be created from a Sound object using ",
+        "sound$to_manipulation()")
   }
   
   manip_mod <- get_module("manipulation_module")

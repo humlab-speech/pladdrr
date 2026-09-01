@@ -298,8 +298,10 @@ longsound_set_buffer_size_pref_seconds <- function(seconds) {
 .longsound_static_env <- new.env(parent = emptyenv())
 .longsound_static_env$open <- longsound_open
 .longsound_static_env$new <- LongSound
-.longsound_static_env$get_buffer_size_pref_seconds <- longsound_get_buffer_size_pref_seconds
-.longsound_static_env$set_buffer_size_pref_seconds <- longsound_set_buffer_size_pref_seconds
+.longsound_static_env$get_buffer_size_pref_seconds <-
+    longsound_get_buffer_size_pref_seconds
+.longsound_static_env$set_buffer_size_pref_seconds <-
+    longsound_set_buffer_size_pref_seconds
 
 #' @exportS3Method "$" longsound_constructor
 `$.longsound_constructor` <- function(x, name) {

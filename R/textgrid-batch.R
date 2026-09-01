@@ -103,7 +103,8 @@ extract_textgrid_intervals <- function(textgrid, sound = NULL, tier,
     !is.null(text_starts_with))
   if (n_criteria == 0) {
     stop(
-      "Must specify one comparison criterion: text_equals, text_contains, or text_starts_with")
+      "Must specify one comparison criterion: text_equals, text_contains, or ",
+        "text_starts_with")
   }
   if (n_criteria > 1) {
     stop("Specify only ONE comparison criterion")
@@ -214,7 +215,8 @@ get_textgrid_interval_stats <- function(textgrid, tier) {
   if (is.character(tier)) tier <- textgrid$get_tier_number(tier)
   if (
     !is.numeric(
-      tier) || tier < 1) stop("tier must be a positive integer or valid tier name")
+      tier) || tier < 1) stop("tier must be a positive integer or valid tier ",
+        "name")
   if (extract_sounds) {
     if (
       is.null(sound)) stop("sound argument required when extract_sounds = TRUE")

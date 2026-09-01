@@ -33,7 +33,8 @@ sound_concatenate_all <- function(sounds, overlap = 0, return_r6 = TRUE) {
       #  ways)
       ptr <- s$.xptr  # Primary method for function-based Sound objects
       if (is.null(ptr)) ptr <- s$get_xptr()  # Fallback 1: method call
-      if (is.null(ptr) && !is.null(s$.pointer)) ptr <- s$.pointer  # Fallback 2: alternative name
+      if (is.null(ptr) && !is.null(s$.pointer)) ptr <-
+          s$.pointer  # Fallback 2: alternative name
       if (is.null(ptr)) {
         # Last resort: try private environment (old R6 style)
         tryCatch({
@@ -675,7 +676,8 @@ textgrid_merge <- function(textgrids, equalize_domains = FALSE) {
   if (!is.null(resample_to)) {
     if (
       !.is_numeric_scalar(
-        resample_to) || resample_to <= 0) stop("resample_to must be a positive number or NULL")
+        resample_to) || resample_to <= 0) stop(
+            "resample_to must be a positive number or NULL")
   }
   if (
     !.is_logical_scalar(

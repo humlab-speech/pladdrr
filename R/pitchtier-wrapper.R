@@ -233,7 +233,9 @@ NULL
 
 .pitchtier_methods$to_sound_pulse_train <- function(.self,
   sample_rate = 44100, adaptation_factor = 1.0,
-                                                     adaptation_time = 0.05, interpolation_depth = 2000) {
+                                                     adaptation_time = 0.05,
+                                                         interpolation_depth =
+                                                         2000) {
   snd_ptr <- .pitchtier_to_sound_pulse_train(.self$.xptr,
     as.numeric(sample_rate),
                                               as.numeric(adaptation_factor),
@@ -244,8 +246,11 @@ NULL
 
 .pitchtier_methods$to_sound_phonation <- function(.self, sample_rate = 44100,
   adaptation_factor = 1.0,
-                                                   maximum_period = 0.05, open_phase = 0.7,
-                                                   collision_phase = 0.03, power1 = 3.0, power2 = 4.0) {
+                                                   maximum_period = 0.05,
+                                                       open_phase = 0.7,
+                                                   collision_phase = 0.03,
+                                                       power1 = 3.0, power2 =
+                                                       4.0) {
   snd_ptr <- .pitchtier_to_sound_phonation(.self$.xptr, as.numeric(sample_rate),
                                             as.numeric(adaptation_factor),
                                             as.numeric(maximum_period),
