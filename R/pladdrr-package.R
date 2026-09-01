@@ -219,6 +219,11 @@ pladdrr_shared_params <- function(
     from_freq = NULL, files = NULL, duration = 1.0, cepstrogram = NULL,
     max_formant = NULL, ...) invisible(NULL)
 
+#' Shared parameter docs: static-method access on constructor functions
+#' @param name Name of static method to access
+#' @rdname pladdrr_shared_method_name
+pladdrr_shared_method_name <- function(name = NULL) invisible(NULL)
+
 #' Shared parameter docs for functions taking a plain Sound object
 #'
 #' @param sound Sound object

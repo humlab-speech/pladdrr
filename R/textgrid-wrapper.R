@@ -535,7 +535,7 @@ textgrid_create <- function(tmin, tmax, tier_names = "", point_tiers = "") {
 
 #' $ method for TextGrid constructor (enables TextGrid$new(), TextGrid$create())
 #' @param x The TextGrid constructor function
-#' @param name Name of static method to access
+#' @inheritParams pladdrr_shared_method_name name
 #' @return The requested static method function
 #' @examples
 #' create_fn <- TextGrid$create

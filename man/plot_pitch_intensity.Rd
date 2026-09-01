@@ -30,8 +30,6 @@ plot_pitch_intensity(
 "darkorange")}
 
 \item{title}{Character. Plot title (default: "Pitch and Intensity")}
-
-\item{...}{Additional arguments passed to the underlying function or ignored.}
 }
 \value{
 A ggplot object with dual y-axes

@@ -1334,7 +1334,7 @@ sound_create_tone_complex <- function(frequency_step = 100.0, duration = 1.0,
 
 #' $ method for Sound constructor (enables Sound$create_tone(), etc.)
 #' @param x The Sound constructor function
-#' @param name Name of static method to access
+#' @inheritParams pladdrr_shared_method_name name
 #' @return The requested static method function
 #' @examples
 #' tone_fn <- Sound$create_tone
