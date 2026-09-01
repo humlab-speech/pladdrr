@@ -20,7 +20,8 @@
 # Default core count: n-1 cores, capped at 2 under R CMD check.
 #
 # R CMD check sets _R_CHECK_LIMIT_CORES_ to stop parallel::makeCluster() /
-# mclapply() calls that spawn more than 2 processes (see parallel:::.check_ncores).
+# mclapply() calls that spawn more than 2 processes
+# (see parallel:::.check_ncores).
 # Honor that limit in the default so package checks pass while dev/CI still
 # uses the full machine.
 .default_n_cores <- function() {

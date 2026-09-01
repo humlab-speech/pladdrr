@@ -10,7 +10,7 @@
     `analyze_files_parallel`, `plot.Matrix`, `plot.PowerCepstrum`,
     `two_pass_adaptive_pitch`); the `goodpractice` function-length
     check now passes.
-  * Deduplicated cross-file `@param` blocks: dots docs kept in a single
+  * Consolidated cross-file `@param` blocks: dots docs kept in a single
     canonical file, constructor `name` docs inherited from a new
     `pladdrr_shared_method_name` anchor.
   * Removed the unused `._bust_cache` PointProcess method; the 113
@@ -18,8 +18,8 @@
     false positives (S3 `$` dispatch, S3 generics, roxygen anchors,
     Rcpp export surface) - see `dev/goodpractice-dead-code-triage.md`.
   * Test coverage raised 89.3% to 91.8%: added coverage-gap tests for
-    input validation, empty-data warnings, dispatch fallbacks, and
-    `pladdrr.data_loss` modes; untestable guards (missing-ggplot2
+    input validation, empty-data warnings, dispatch fallback paths, and
+    `pladdrr.data_loss` modes; not-testable guards (missing-ggplot2
     stops, doc anchors, load-time branches) marked `# nocov`.
   * NEWS spelling fixes and `inst/WORDLIST` additions (`dev`,
     `uncommented`).

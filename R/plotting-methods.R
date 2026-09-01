@@ -135,11 +135,9 @@ plot.Pitch <- function(x, from_time = NULL, to_time = NULL,
                       garnish = TRUE, title = "Pitch",
                       color = "darkgreen", show_voicing = TRUE, ...) {
   
-# nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
     stop("Package 'ggplot2' is required for plotting. Please install it.")
   }
-# nocov end
   
   if (!inherits(x, "Pitch")) {
     stop("x must be a Pitch object")
@@ -451,11 +449,9 @@ plot.Spectrum <- function(x, from_freq = NULL, to_freq = NULL,
                          log_freq = FALSE, garnish = TRUE,
                          title = "Spectrum", color = "navy", ...) {
   
-# nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
     stop("Package 'ggplot2' is required for plotting. Please install it.")
   }
-# nocov end
   
   if (!inherits(x, "Spectrum")) {
     stop("x must be a Spectrum object")
@@ -680,11 +676,9 @@ plot.PointProcess <- function(x, from_time = NULL, to_time = NULL,
                              garnish = TRUE, title = "PointProcess",
                              color = "black", ...) {
   
-# nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
     stop("Package 'ggplot2' is required for plotting. Please install it.")
   }
-# nocov end
   
   if (!inherits(x, "PointProcess")) {
     stop("x must be a PointProcess object")

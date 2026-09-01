@@ -589,11 +589,9 @@ plot_sound_pitch <- function(sound, pitch,
                             pitch_color = "darkblue",
                             title = NULL, ...) {
   
-# nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
     stop("Package 'ggplot2' is required for plotting. Please install it.")
   }
-# nocov end
   
   if (!inherits(sound, "Sound")) {
     stop("sound must be a Sound object")
