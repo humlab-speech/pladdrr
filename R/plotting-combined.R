@@ -334,6 +334,7 @@ plot_textgrid_pitch <- function(textgrid, pitch, tier = NULL,
 #'                     from_time = 0.2, to_time = 0.8)
 #'
 #' @export
+#' @param ... Additional arguments passed to the underlying function or ignored.
 plot_pitch_intensity <- function(pitch, intensity,
                                 from_time = NULL, to_time = NULL,
                                 pitch_color = "darkgreen",
@@ -581,6 +582,7 @@ plot_spectrogram_pitch <- function(spectrogram, pitch,
 #' }
 #'
 #' @export
+#' @param ... Additional arguments passed to the underlying function or ignored.
 plot_sound_pitch <- function(sound, pitch,
                             from_time = NULL, to_time = NULL,
                             waveform_color = "steelblue",

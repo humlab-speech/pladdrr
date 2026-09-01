@@ -17,6 +17,7 @@
 #' print(sound)
 #'
 #' @export
+#' @param ... Additional arguments passed to the underlying function or ignored.
 print.praat_sound <- function(x, ...) {
   cat("Praat Sound Object\n")
   cat("==================\n")
@@ -57,6 +58,7 @@ print.praat_sound <- function(x, ...) {
 #' summary(sound)
 #'
 #' @export
+#' @param ... Additional arguments passed to the underlying function or ignored.
 summary.praat_sound <- function(object, ...) {
   cat("Praat Sound Object - Summary\n")
   cat("============================\n\n")
@@ -101,6 +103,7 @@ summary.praat_sound <- function(object, ...) {
 #' head(df)
 #'
 #' @export
+#' @param ... Additional arguments passed to the underlying function or ignored.
 as.data.frame.praat_sound <- function(x, ...) {
   .Deprecated(
     "Sound$as_data_frame()",
@@ -139,6 +142,7 @@ as.data.frame.praat_sound <- function(x, ...) {
 #' df <- as.data.frame(sound)
 #' head(df)
 #' @export
+#' @param ... Additional arguments passed to the underlying function or ignored.
 as.data.frame.Sound <- function(x, row.names = NULL, optional = FALSE, ...) {
   # R6 Sound object - delegate to R6 method
   x$as_data_frame()
@@ -163,6 +167,7 @@ as.data.frame.Sound <- function(x, row.names = NULL, optional = FALSE, ...) {
 #' print(x)
 #'
 #' @export
+#' @param ... Additional arguments passed to the underlying function or ignored.
 print.praat_pitch <- function(x, ...) {
   cat("Praat Pitch Object\n")
   cat("==================\n")
@@ -208,6 +213,7 @@ print.praat_pitch <- function(x, ...) {
 #' summary(x)
 #'
 #' @export
+#' @param ... Additional arguments passed to the underlying function or ignored.
 summary.praat_pitch <- function(object, ...) {
   cat("Praat Pitch Object - Summary\n")
   cat("============================\n\n")
@@ -497,6 +503,7 @@ as.data.frame.Formant <- function(x, row.names = NULL, optional = FALSE, ...) {
 #' df <- as.data.frame(intensity)
 #' head(df)
 #' @export
+#' @param ... Additional arguments passed to the underlying function or ignored.
 as.data.frame.Intensity <- function(x, row.names = NULL, optional = FALSE,
   ...) {
   x$as_data_frame()
@@ -519,6 +526,7 @@ as.data.frame.Intensity <- function(x, row.names = NULL, optional = FALSE,
 #' df <- as.data.frame(pitch)
 #' head(df)
 #' @export
+#' @param ... Additional arguments passed to the underlying function or ignored.
 as.data.frame.Pitch <- function(x, row.names = NULL, optional = FALSE, ...) {
   x$as_data_frame()
 }

@@ -12,6 +12,8 @@
 \item{row.names}{Ignored}
 
 \item{optional}{Ignored}
+\item{...}{Additional arguments passed to the underlying function or ignored.}
+
 }
 \value{
 A data.table (inherits from data.frame) with time, channel, and value

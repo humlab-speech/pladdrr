@@ -7,10 +7,10 @@
 two_pass_adaptive_pitch(
   sound,
   time_step = 0,
-  initial_floor = 50,
-  initial_ceiling = 800,
   voicing_threshold = 0.45,
   silence_threshold = 0.03,
+  initial_floor = 50,
+  initial_ceiling = 800,
   octave_cost = 0.01,
   octave_jump_cost = 0.35,
   voiced_unvoiced_cost = 0.14,

@@ -1,5 +1,31 @@
 # pladdrr 5.0.5
 
+## Code quality
+
+* `goodpractice` style pass:
+  * Wrapped all >80-character code lines in hand-written `R/` files
+    (auto-generated `RcppExports.R` unchanged); long string literals
+    split into concatenated fragments with identical values.
+  * Split five over-long functions into helpers (`autolayer.TextGrid`,
+    `analyze_files_parallel`, `plot.Matrix`, `plot.PowerCepstrum`,
+    `two_pass_adaptive_pitch`); the `goodpractice` function-length
+    check now passes.
+  * Deduplicated cross-file `@param` blocks: dots docs kept in a single
+    canonical file, constructor `name` docs inherited from a new
+    `pladdrr_shared_method_name` anchor.
+  * Removed the unused `._bust_cache` PointProcess method; the 113
+    remaining `complexity_unused_internal` findings are documented
+    false positives (S3 `$` dispatch, S3 generics, roxygen anchors,
+    Rcpp export surface) - see `dev/goodpractice-dead-code-triage.md`.
+  * Test coverage raised 89.3% to 91.8%: added coverage-gap tests for
+    input validation, empty-data warnings, dispatch fallbacks, and
+    `pladdrr.data_loss` modes; untestable guards (missing-ggplot2
+    stops, doc anchors, load-time branches) marked `# nocov`.
+  * NEWS spelling fixes and `inst/WORDLIST` additions (`dev`,
+    `uncommented`).
+
+# pladdrr 5.0.5
+
 ## CRAN compliance
 
 * Removed the last two `R CMD check` warnings:
