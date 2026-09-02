@@ -222,6 +222,8 @@ pladdrr_shared_params <- function(
 
 #' Shared parameter docs: static-method access on constructor functions
 #' @param name Name of static method to access
+#' @keywords internal
+#'
 #' @rdname pladdrr_shared_method_name
 pladdrr_shared_method_name <- function(name = NULL) invisible(NULL)
 

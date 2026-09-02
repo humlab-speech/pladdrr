@@ -12,3 +12,4 @@ pladdrr_shared_method_name(name = NULL)
 \description{
 Shared parameter docs: static-method access on constructor functions
 }
+\keyword{internal}
