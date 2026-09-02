@@ -54,7 +54,7 @@ NULL
 #'   ggplot2::geom_hline(yintercept = 0, linetype = "dashed", alpha = 0.5)
 #'
 #' @export
-#' @param ... Additional arguments passed to the underlying function or ignored.
+#' @inheritParams pladdrr_shared_dots_plot
 plot.Sound <- function(x, from_time = NULL, to_time = NULL,
                       garnish = TRUE, title = "Sound", 
                       color = "steelblue", ...) {
@@ -128,7 +128,7 @@ plot.Sound <- function(x, from_time = NULL, to_time = NULL,
 #'   ggplot2::geom_hline(yintercept = 120, linetype = "dashed")
 #'
 #' @export
-#' @param ... Additional arguments passed to the underlying function or ignored.
+#' @inheritParams pladdrr_shared_dots_plot
 plot.Pitch <- function(x, from_time = NULL, to_time = NULL,
                       garnish = TRUE, title = "Pitch",
                       color = "darkgreen", show_voicing = TRUE, ...) {
@@ -221,7 +221,7 @@ plot.Pitch <- function(x, from_time = NULL, to_time = NULL,
 #'      colors = c("red", "blue"))
 #'
 #' @export
-#' @param ... Additional arguments passed to the underlying function or ignored.
+#' @inheritParams pladdrr_shared_dots_plot
 plot.Formant <- function(x, from_time = NULL, to_time = NULL,
                         max_formant = 3, garnish = TRUE, 
                         title = "Formant", colors = NULL, ...) {
@@ -296,7 +296,7 @@ plot.Formant <- function(x, from_time = NULL, to_time = NULL,
 #' plot(intensity, from_time = 0.2, to_time = 0.8)
 #'
 #' @export
-#' @param ... Additional arguments passed to the underlying function or ignored.
+#' @inheritParams pladdrr_shared_dots_plot
 plot.Intensity <- function(x, from_time = NULL, to_time = NULL,
                           garnish = TRUE, title = "Intensity",
                           color = "darkorange", ...) {
@@ -368,7 +368,7 @@ plot.Intensity <- function(x, from_time = NULL, to_time = NULL,
 #' plot(spectrogram, to_freq = 5000)
 #'
 #' @export
-#' @param ... Additional arguments passed to the underlying function or ignored.
+#' @inheritParams pladdrr_shared_dots_plot
 plot.Spectrogram <- function(x, from_time = NULL, to_time = NULL,
                             from_freq = NULL, to_freq = NULL,
                             garnish = TRUE, title = "Spectrogram",
@@ -438,7 +438,7 @@ plot.Spectrogram <- function(x, from_time = NULL, to_time = NULL,
 #' plot(spectrum, log_freq = TRUE)
 #'
 #' @export
-#' @param ... Additional arguments passed to the underlying function or ignored.
+#' @inheritParams pladdrr_shared_dots_plot
 plot.Spectrum <- function(x, from_freq = NULL, to_freq = NULL,
                          log_freq = FALSE, garnish = TRUE,
                          title = "Spectrum", color = "navy", ...) {
@@ -517,7 +517,7 @@ plot.Spectrum <- function(x, from_freq = NULL, to_freq = NULL,
 #' plot(ltas, to_freq = 5000)
 #'
 #' @export
-#' @param ... Additional arguments passed to the underlying function or ignored.
+#' @inheritParams pladdrr_shared_dots_plot
 plot.Ltas <- function(x, from_freq = NULL, to_freq = NULL,
                      log_freq = FALSE, garnish = TRUE,
                      title = "LTAS", color = "darkred", ...) {
@@ -592,7 +592,7 @@ plot.Ltas <- function(x, from_freq = NULL, to_freq = NULL,
 #' plot(harmonicity, from_time = 0.2, to_time = 0.8)
 #'
 #' @export
-#' @param ... Additional arguments passed to the underlying function or ignored.
+#' @inheritParams pladdrr_shared_dots_plot
 plot.Harmonicity <- function(x, from_time = NULL, to_time = NULL,
                             garnish = TRUE, title = "Harmonicity (HNR)",
                             color = "darkviolet", ...) {
@@ -662,7 +662,7 @@ plot.Harmonicity <- function(x, from_time = NULL, to_time = NULL,
 #' plot(pulses, from_time = 0.2, to_time = 0.5)
 #'
 #' @export
-#' @param ... Additional arguments passed to the underlying function or ignored.
+#' @inheritParams pladdrr_shared_dots_plot
 plot.PointProcess <- function(x, from_time = NULL, to_time = NULL,
                              garnish = TRUE, title = "PointProcess",
                              color = "black", ...) {
@@ -766,7 +766,7 @@ plot.PointProcess <- function(x, from_time = NULL, to_time = NULL,
 #' plot(m, color_scale = "magma", title = "My Matrix")
 #'
 #' @export
-#' @param ... Additional arguments passed to the underlying function or ignored.
+#' @inheritParams pladdrr_shared_dots_plot
 plot.Matrix <- function(x, from_x = NULL, to_x = NULL,
                         from_y = NULL, to_y = NULL,
                         garnish = TRUE, title = "Matrix",
@@ -877,7 +877,7 @@ plot.Matrix <- function(x, from_x = NULL, to_x = NULL,
 #' plot(pc, color = "red", title = "Cepstral Analysis")
 #'
 #' @export
-#' @param ... Additional arguments passed to the underlying function or ignored.
+#' @inheritParams pladdrr_shared_dots_plot
 plot.PowerCepstrum <- function(x, from_quefrency = NULL,
                                to_quefrency = NULL, garnish = TRUE,
                                title = "Power Cepstrum", color = "darkblue",
@@ -970,7 +970,7 @@ plot.PowerCepstrum <- function(x, from_quefrency = NULL,
 #' @export
 #' @method plot TextGrid
 
-#' @param ... Additional arguments passed to the underlying function or ignored.
+#' @inheritParams pladdrr_shared_dots_plot
 plot.TextGrid <- function(x, tier = NULL, from_time = NULL, to_time = NULL,
   ...) {
 

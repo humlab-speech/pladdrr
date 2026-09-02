@@ -317,6 +317,14 @@ pladdrr_shared_pitch_a <- function(pitch = NULL) invisible(NULL)
 #' @rdname pladdrr_shared_maxformant
 pladdrr_shared_maxformant <- function(max_formant = 3) invisible(NULL)
 
+#' Shared parameter docs for dots forwarded to an underlying plot method
+#'
+#' @param ... Additional arguments passed to the underlying function or ignored.
+#' @keywords internal
+#'
+#' @rdname pladdrr_shared_dots_plot
+pladdrr_shared_dots_plot <- function(...) invisible(NULL)
+
 #' Shared parameter docs for functions using the 0.75/pitch_floor auto time-step
 #'
 #' @param time_step Time step (0 = auto, typically 0.75/pitch_floor)
