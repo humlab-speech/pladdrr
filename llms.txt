@@ -1479,8 +1479,6 @@ Helper functions and S3 methods
   : Create PCA from data matrix
 - [`pitches_to_dtw()`](https://humlab-speech.github.io/pladdrr/reference/pitches_to_dtw.md)
   : Create DTW from two Pitch objects
-- [`pladdrr_shared_method_name()`](https://humlab-speech.github.io/pladdrr/reference/pladdrr_shared_method_name.md)
-  : Shared parameter docs: static-method access on constructor functions
 - [`pladdrr_simd()`](https://humlab-speech.github.io/pladdrr/reference/pladdrr_simd.md)
   : Get or set runtime SIMD usage
 - [`pladdrr_threads()`](https://humlab-speech.github.io/pladdrr/reference/pladdrr_threads.md)
