@@ -38,14 +38,6 @@ two_pass_adaptive_pitch(
 
   Time step (0 = auto, typically 0.75/pitch_floor)
 
-- initial_floor:
-
-  Initial pitch floor for pass 1 (default 50 Hz)
-
-- initial_ceiling:
-
-  Initial pitch ceiling for pass 1 (default 800 Hz)
-
 - voicing_threshold:
 
   Voicing threshold (default 0.45)
@@ -53,6 +45,14 @@ two_pass_adaptive_pitch(
 - silence_threshold:
 
   Silence threshold (default 0.03)
+
+- initial_floor:
+
+  Initial pitch floor for pass 1 (default 50 Hz)
+
+- initial_ceiling:
+
+  Initial pitch ceiling for pass 1 (default 800 Hz)
 
 - octave_cost:
 
