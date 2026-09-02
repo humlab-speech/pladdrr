@@ -317,7 +317,6 @@ plot_textgrid_pitch <- function(textgrid, pitch, tier = NULL,
 #' @param intensity_color Character. Intensity line color (default:
 #'  "darkorange")
 #' @param title Character. Plot title (default: "Pitch and Intensity")
-#' @inheritParams pladdrr_shared_params ...
 #'
 #' @return A ggplot object with dual y-axes
 #'
@@ -561,7 +560,6 @@ plot_spectrogram_pitch <- function(spectrogram, pitch,
 #' @param waveform_color Character. Waveform color (default: "steelblue")
 #' @param pitch_color Character. Pitch color (default: "darkblue")
 #' @param title Character. Overall plot title (default: NULL)
-#' @inheritParams pladdrr_shared_params ...
 #'
 #' @return A combined plot object (requires patchwork or gridExtra)
 #'

@@ -8,8 +8,8 @@
 }
 \arguments{
 \item{x}{A praat_pitch object}
-\item{...}{Additional arguments passed to the underlying function or ignored.}
 
+\item{...}{Additional arguments passed to the underlying function or ignored.}
 }
 \value{
 The object x, invisibly

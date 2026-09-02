@@ -8,8 +8,8 @@
 }
 \arguments{
 \item{x}{A praat_sound object}
-\item{...}{Additional arguments passed to the underlying function or ignored.}
 
+\item{...}{Additional arguments passed to the underlying function or ignored.}
 }
 \value{
 A data.table (inherits from data.frame) with two columns:

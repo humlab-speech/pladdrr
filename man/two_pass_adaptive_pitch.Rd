@@ -24,13 +24,13 @@ two_pass_adaptive_pitch(
 
 \item{time_step}{Time step (0 = auto, typically 0.75/pitch_floor)}
 
-\item{initial_floor}{Initial pitch floor for pass 1 (default 50 Hz)}
-
-\item{initial_ceiling}{Initial pitch ceiling for pass 1 (default 800 Hz)}
-
 \item{voicing_threshold}{Voicing threshold (default 0.45)}
 
 \item{silence_threshold}{Silence threshold (default 0.03)}
+
+\item{initial_floor}{Initial pitch floor for pass 1 (default 50 Hz)}
+
+\item{initial_ceiling}{Initial pitch ceiling for pass 1 (default 800 Hz)}
 
 \item{octave_cost}{Octave cost (default 0.01)}
 
