@@ -370,9 +370,9 @@ loudness_time_series <- vapply(seq(0, 0.5, by = 0.01),
 # Remove large object if no longer needed
 rm(cochlea)
 gc()  # Force garbage collection
-#>           used  (Mb) gc trigger (Mb) max used  (Mb)
-#> Ncells 1881042 100.5    3163405  169  3163405 169.0
-#> Vcells 3201294  24.5    8388608   64  7275619  55.6
+#>           used  (Mb) gc trigger  (Mb) max used  (Mb)
+#> Ncells 1881679 100.5    3165854 169.1  3165854 169.1
+#> Vcells 3202445  24.5    8388608  64.0  7277774  55.6
 ```
 
 ## Comparison with Traditional Analysis
@@ -439,6 +439,6 @@ sessionInfo()
 #> [34] digest_0.6.39       grid_4.6.1          lifecycle_1.0.5    
 #> [37] vctrs_0.7.3         evaluate_1.0.5      glue_1.8.1         
 #> [40] data.table_1.18.6.1 farver_2.1.2        codetools_0.2-20   
-#> [43] ragg_1.5.2          rmarkdown_2.31      tools_4.6.1        
+#> [43] ragg_1.5.2          rmarkdown_2.32      tools_4.6.1        
 #> [46] pkgconfig_2.0.3     htmltools_0.5.9
 ```

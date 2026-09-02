@@ -249,12 +249,12 @@ runtime so you can A/B your own workload:</p>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">scalar_time</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Unit: milliseconds</span></span>
-<span><span class="co">#&gt;              expr      min       lq     mean   median       uq      max neval</span></span>
-<span><span class="co">#&gt;  sound$to_pitch() 3.778647 4.100629 7.618968 4.140859 4.174236 179.2154    50</span></span>
+<span><span class="co">#&gt;              expr      min       lq    mean   median       uq      max neval</span></span>
+<span><span class="co">#&gt;  sound$to_pitch() 3.965275 4.274947 7.43851 4.309988 4.355416 160.5653    50</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">simd_time</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Unit: milliseconds</span></span>
-<span><span class="co">#&gt;              expr      min       lq     mean   median      uq      max neval</span></span>
-<span><span class="co">#&gt;  sound$to_pitch() 3.840884 4.098204 4.159466 4.144691 4.17095 5.382263    50</span></span></code></pre></div>
+<span><span class="co">#&gt;              expr      min       lq     mean   median       uq      max neval</span></span>
+<span><span class="co">#&gt;  sound$to_pitch() 4.149554 4.317619 4.363769 4.346488 4.375185 5.183399    50</span></span></code></pre></div>
 <p>Gains vary by routine, CPU, compiler, and vector length — there is no
 single number that applies across machines, so measure on the routine
 and hardware you actually care about.</p>
@@ -922,7 +922,7 @@ instead of an R callback evaluated once per sample:</p>
 <span><span class="co">#&gt; [31] magrittr_2.0.5      digest_0.6.39       grid_4.6.1         </span></span>
 <span><span class="co">#&gt; [34] lifecycle_1.0.5     vctrs_0.7.3         evaluate_1.0.5     </span></span>
 <span><span class="co">#&gt; [37] glue_1.8.1          data.table_1.18.6.1 farver_2.1.2       </span></span>
-<span><span class="co">#&gt; [40] codetools_0.2-20    ragg_1.5.2          rmarkdown_2.31     </span></span>
+<span><span class="co">#&gt; [40] codetools_0.2-20    ragg_1.5.2          rmarkdown_2.32     </span></span>
 <span><span class="co">#&gt; [43] tools_4.6.1         pkgconfig_2.0.3     htmltools_0.5.9</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

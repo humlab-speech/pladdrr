@@ -800,6 +800,6 @@ sessionInfo()
 #> [31] magrittr_2.0.5      digest_0.6.39       grid_4.6.1         
 #> [34] lifecycle_1.0.5     vctrs_0.7.3         evaluate_1.0.5     
 #> [37] glue_1.8.1          data.table_1.18.6.1 farver_2.1.2       
-#> [40] codetools_0.2-20    ragg_1.5.2          rmarkdown_2.31     
+#> [40] codetools_0.2-20    ragg_1.5.2          rmarkdown_2.32     
 #> [43] tools_4.6.1         pkgconfig_2.0.3     htmltools_0.5.9
 ```

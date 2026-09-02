@@ -127,12 +127,12 @@ simd_time <- microbenchmark(sound$to_pitch(), times = 50)
 
 print(scalar_time)
 #> Unit: milliseconds
-#>              expr      min       lq     mean   median       uq      max neval
-#>  sound$to_pitch() 3.778647 4.100629 7.618968 4.140859 4.174236 179.2154    50
+#>              expr      min       lq    mean   median       uq      max neval
+#>  sound$to_pitch() 3.965275 4.274947 7.43851 4.309988 4.355416 160.5653    50
 print(simd_time)
 #> Unit: milliseconds
-#>              expr      min       lq     mean   median      uq      max neval
-#>  sound$to_pitch() 3.840884 4.098204 4.159466 4.144691 4.17095 5.382263    50
+#>              expr      min       lq     mean   median       uq      max neval
+#>  sound$to_pitch() 4.149554 4.317619 4.363769 4.346488 4.375185 5.183399    50
 ```
 
 Gains vary by routine, CPU, compiler, and vector length — there is no
@@ -740,6 +740,6 @@ sessionInfo()
 #> [31] magrittr_2.0.5      digest_0.6.39       grid_4.6.1         
 #> [34] lifecycle_1.0.5     vctrs_0.7.3         evaluate_1.0.5     
 #> [37] glue_1.8.1          data.table_1.18.6.1 farver_2.1.2       
-#> [40] codetools_0.2-20    ragg_1.5.2          rmarkdown_2.31     
+#> [40] codetools_0.2-20    ragg_1.5.2          rmarkdown_2.32     
 #> [43] tools_4.6.1         pkgconfig_2.0.3     htmltools_0.5.9
 ```

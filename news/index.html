@@ -69,6 +69,21 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="5.0.5" id="pladdrr-505">pladdrr 5.0.5<a class="anchor" aria-label="anchor" href="#pladdrr-505"></a></h2>
 <div class="section level3">
+<h3 id="code-quality-5-0-5">Code quality<a class="anchor" aria-label="anchor" href="#code-quality-5-0-5"></a></h3>
+<ul><li>
+<code>goodpractice</code> style pass:
+<ul><li>Wrapped all &gt;80-character code lines in hand-written <code>R/</code> files (auto-generated <code>RcppExports.R</code> unchanged); long string literals split into concatenated fragments with identical values.</li>
+<li>Split five over-long functions into helpers (<code>autolayer.TextGrid</code>, <code>analyze_files_parallel</code>, <code>plot.Matrix</code>, <code>plot.PowerCepstrum</code>, <code>two_pass_adaptive_pitch</code>); the <code>goodpractice</code> function-length check now passes.</li>
+<li>Consolidated cross-file <code>@param</code> blocks: dots docs kept in a single canonical file, constructor <code>name</code> docs inherited from a new <code>pladdrr_shared_method_name</code> anchor.</li>
+<li>Removed the unused <code>._bust_cache</code> PointProcess method; the 113 remaining <code>complexity_unused_internal</code> findings are documented false positives (S3 <code>$</code> dispatch, S3 generics, roxygen anchors, Rcpp export surface) - see <code>dev/goodpractice-dead-code-triage.md</code>.</li>
+<li>Test coverage raised 89.3% to 91.8%: added coverage-gap tests for input validation, empty-data warnings, dispatch fallback paths, and <code>pladdrr.data_loss</code> modes; not-testable guards (missing-ggplot2 stops, doc anchors, load-time branches) marked <code># nocov</code>.</li>
+<li>NEWS spelling fixes and <code>inst/WORDLIST</code> additions (<code>dev</code>, <code>uncommented</code>).</li>
+</ul></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="5.0.5" id="pladdrr-505-1">pladdrr 5.0.5<a class="anchor" aria-label="anchor" href="#pladdrr-505-1"></a></h2>
+<div class="section level3">
 <h3 id="cran-compliance-5-0-5">CRAN compliance<a class="anchor" aria-label="anchor" href="#cran-compliance-5-0-5"></a></h3>
 <ul><li>Removed the last two <code>R CMD check</code> warnings:
 <ul><li>The compiled-code warning (<code>stderr</code>/<code>stdout</code>/<code>_exit</code> symbols in the vendored Praat objects): <code>melder_console.cpp</code> now routes console output through the R API (<code>Rprintf</code>/<code>REprintf</code>), gated to the main thread (R’s console API is unsafe off-main-thread, and <code>Melder_casual</code> can fire inside threaded DSP frame loops; worker-thread messages are dropped). All <code>exit()</code> call sites in Praat’s CLI paths throw a <code>MelderError</code> under <code>PRAAT_LIB</code> instead of terminating the process.</li>
@@ -77,7 +92,7 @@
 <li>Removed the R-devel “package has both <code>src/Makevars.in</code> and <code>src/Makevars</code>” NOTE: the <code>cleanup</code> script now deletes the configure-generated <code>src/Makevars</code> from the build copy.</li>
 <li>Expanded <code>inst/WORDLIST</code> and fixed a typo; the documentation now passes <code>spelling::spell_check_package()</code>.</li>
 <li>Modernized the test suite (~440 assertion conversions: <code>expect_gt/gte/ lt/lte</code>, <code>expect_length</code>, <code>expect_named</code>, <code>expect_type</code>, <code>expect_s3_class</code>, <code>expect_identical</code> for exact integer comparisons, <code>expect_false</code>, <code>fixed = TRUE</code> on literal patterns, <code>anyNA</code>).</li>
-<li>Parallel batch functions (<code><a href="../reference/analyze_files_parallel.html">analyze_files_parallel()</a></code>, <code><a href="../reference/process_sounds_parallel.html">process_sounds_parallel()</a></code>) now cap their automatic core count at 2 under <code>R CMD check</code> (honouring <code>_R_CHECK_LIMIT_CORES_</code>), so the default-<code>n_cores</code> tests pass CRAN’s process-spawn limit while dev/CI still uses all cores.</li>
+<li>Parallel batch functions (<code><a href="../reference/analyze_files_parallel.html">analyze_files_parallel()</a></code>, <code><a href="../reference/process_sounds_parallel.html">process_sounds_parallel()</a></code>) now cap their automatic core count at 2 under <code>R CMD check</code> (honoring <code>_R_CHECK_LIMIT_CORES_</code>), so the default-<code>n_cores</code> tests pass CRAN’s process-spawn limit while dev/CI still uses all cores.</li>
 <li>Fixed a broken example in the <code><a href="../reference/textgrid_create.html">textgrid_create()</a></code> docs (an uncommented continuation line) that made <code>R CMD check</code> fail to run any examples.</li>
 <li>Documented the <code>...</code> argument on <code>plot.*</code>, <code>as.data.frame.*</code>, <code>print.*</code>, and <code>summary.*</code> methods, and synced the shared <code>pladdrr_shared_*</code> parameter docs with their usage — clears the “Rd sections” warning.</li>
 </ul></div>
