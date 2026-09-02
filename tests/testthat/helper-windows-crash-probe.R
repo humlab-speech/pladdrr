@@ -45,6 +45,7 @@ windows_crash_probe <- function(desc, code_expr, preamble = NULL,
   script <- tempfile(fileext = ".R")
   writeLines(c(
     "library(testthat)",
+    "library(methods)",
     "library(pladdrr)",
     pre,
     sprintf("testthat::test_that(%s, {\n%s\n})", deparse(desc), body)
