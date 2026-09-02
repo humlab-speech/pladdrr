@@ -181,8 +181,11 @@ utils::globalVariables(c(".data", "formant_number", "cpp", "quefrency",
 #' @param fmax High frequency cutoff (Hz)
 #' @param x Object to check
 #' @param smooth Smoothing bandwidth (Hz)
+#' @param bandwidth Smoothing bandwidth (Hz)
 #' @param tmin Start time in seconds
+#' @param xmin Start time in seconds
 #' @param tmax End time in seconds
+#' @param xmax End time in seconds
 #' @param title Character. Plot title (default: auto-generated)
 #' @param tier Tier number (1-based) or tier name
 #' @param textgrid TextGrid object
@@ -190,6 +193,7 @@ utils::globalVariables(c(".data", "formant_number", "cpp", "quefrency",
 #' @param signal_outside Signal outside time domain: 1=zero, 2=similar
 #' @param scaling Scaling: 1=integral, 2=sum, 3=normalize, 4=peak_0.99
 #' @param pointprocess A PointProcess object
+#' @param point_process A PointProcess object
 #' @param n_cores Integer. Number of cores (default: auto)
 #' @param max_pitch Pitch ceiling in Hz (default: 600)
 #' @param interpolate Whether to interpolate
@@ -214,9 +218,11 @@ pladdrr_shared_params <- function(
     to_times = NULL, intensity = NULL, time_range = NULL, pitch = NULL,
     pitch_floor = 75, pitch_ceiling = 600, max_candidates = 15, unit = NULL,
     row.names = NULL, optional = NULL, fmin = NULL, fmax = NULL, x = NULL,
-    smooth = NULL, tmin = NULL, tmax = NULL, title = NULL, tier = NULL,
+    smooth = NULL, bandwidth = NULL, tmin = NULL, xmin = NULL, tmax = NULL,
+    xmax = NULL, title = NULL, tier = NULL,
     textgrid = NULL, sound1 = NULL, signal_outside = NULL, scaling = NULL,
-    pointprocess = NULL, n_cores = NULL, max_pitch = 600, interpolate = NULL,
+    pointprocess = NULL, point_process = NULL, n_cores = NULL,
+    max_pitch = 600, interpolate = NULL,
     from_freq = NULL, files = NULL, duration = 1.0, cepstrogram = NULL,
     max_formant = NULL, ...) invisible(NULL)
 
@@ -230,10 +236,11 @@ pladdrr_shared_method_name <- function(name = NULL) invisible(NULL)
 #' Shared parameter docs for functions taking a plain Sound object
 #'
 #' @param sound Sound object
+#' @param x Sound object
 #' @keywords internal
 #'
 #' @rdname pladdrr_shared_sound
-pladdrr_shared_sound <- function(sound = NULL) invisible(NULL)
+pladdrr_shared_sound <- function(sound = NULL, x = NULL) invisible(NULL)
 
 #' Shared parameter docs for functions using 0-based time conventions
 #'
@@ -248,10 +255,11 @@ pladdrr_shared_time0 <- function(from_time = NULL, to_time = NULL)
 #' Shared parameter docs for functions taking an R6 Sound object
 #'
 #' @param sound A Sound R6 object
+#' @param x A Sound R6 object
 #' @keywords internal
 #'
 #' @rdname pladdrr_shared_sound_r6
-pladdrr_shared_sound_r6 <- function(sound = NULL) invisible(NULL)
+pladdrr_shared_sound_r6 <- function(sound = NULL, x = NULL) invisible(NULL)
 
 #' Shared parameter docs for functions taking an R6 Sound object (alternate)
 #'
@@ -264,18 +272,20 @@ pladdrr_shared_sound_a <- function(sound = NULL) invisible(NULL)
 #' Shared parameter docs for functions taking a plain Pitch object
 #'
 #' @param pitch Pitch object
+#' @param x Pitch object
 #' @keywords internal
 #'
 #' @rdname pladdrr_shared_pitch
-pladdrr_shared_pitch <- function(pitch = NULL) invisible(NULL)
+pladdrr_shared_pitch <- function(pitch = NULL, x = NULL) invisible(NULL)
 
 #' Shared parameter docs for functions taking an R6 Pitch object
 #'
 #' @param pitch A Pitch R6 object
+#' @param x A Pitch R6 object
 #' @keywords internal
 #'
 #' @rdname pladdrr_shared_pitch_r6
-pladdrr_shared_pitch_r6 <- function(pitch = NULL) invisible(NULL)
+pladdrr_shared_pitch_r6 <- function(pitch = NULL, x = NULL) invisible(NULL)
 
 #' Shared parameter docs for functions taking an S3/R6 Sound
 #'
@@ -296,10 +306,12 @@ pladdrr_shared_timeauto <- function(time_step = NULL) invisible(NULL)
 #' Shared parameter docs for functions taking a TextGrid R6 object
 #'
 #' @param textgrid A TextGrid object
+#' @param x A TextGrid object
 #' @keywords internal
 #'
 #' @rdname pladdrr_shared_textgrid_r6
-pladdrr_shared_textgrid_r6 <- function(textgrid = NULL) invisible(NULL)
+pladdrr_shared_textgrid_r6 <- function(textgrid = NULL, x = NULL)
+  invisible(NULL)
 
 #' Shared parameter docs for functions taking an R6 Pitch object (alt)
 #'
@@ -347,6 +359,7 @@ pladdrr_shared_timeauto75 <- function(time_step = NULL) invisible(NULL)
 #' @param max_formants Maximum number of formants
 #' @param start_time Start time in seconds (default: 0.0)
 #' @param numberOfRows Number of rows
+#' @param ny Number of rows
 #' @keywords internal
 #'
 #' @rdname pladdrr_shared_analysis
@@ -354,5 +367,144 @@ pladdrr_shared_analysis <- function(
     time_step = 0.005, minimum_pitch = 100, data = NULL,
     max_frequency = 5000, pitch_floor = 75, pitch_ceiling = 600,
     channel = 1, silence_threshold = NULL, max_formants = NULL,
-    start_time = 0.0, numberOfRows = NULL) invisible(NULL)
+    start_time = 0.0, numberOfRows = NULL, ny = NULL) invisible(NULL)
+
+#' Shared parameter docs for minimum-pitch-in-Hz-only functions
+#'
+#' @param pitch_floor Minimum pitch (Hz)
+#' @param minimum_pitch Minimum pitch (Hz)
+#' @param fmin Minimum pitch (Hz)
+#' @keywords internal
+#'
+#' @rdname pladdrr_shared_minpitch
+pladdrr_shared_minpitch <- function(pitch_floor = NULL, minimum_pitch = NULL,
+    fmin = NULL) invisible(NULL)
+
+#' Shared parameter docs for maximum-pitch-in-Hz-only functions
+#'
+#' @param pitch_ceiling Maximum pitch (Hz)
+#' @param fmax Maximum pitch (Hz)
+#' @keywords internal
+#'
+#' @rdname pladdrr_shared_maxpitch
+pladdrr_shared_maxpitch <- function(pitch_ceiling = NULL, fmax = NULL)
+  invisible(NULL)
+
+#' Shared parameter docs for functions taking a Formant object
+#'
+#' @param formant Formant object
+#' @param x Formant object
+#' @keywords internal
+#'
+#' @rdname pladdrr_shared_formant_obj
+pladdrr_shared_formant_obj <- function(formant = NULL, x = NULL)
+  invisible(NULL)
+
+#' Shared parameter docs for functions taking a Harmonicity object
+#'
+#' @param x Harmonicity object
+#' @keywords internal
+#'
+#' @rdname pladdrr_shared_harmonicity_obj
+pladdrr_shared_harmonicity_obj <- function(x = NULL) invisible(NULL)
+
+#' Shared parameter docs for functions taking an Intensity object
+#'
+#' @param intensity Intensity object
+#' @param x Intensity object
+#' @keywords internal
+#'
+#' @rdname pladdrr_shared_intensity_obj
+pladdrr_shared_intensity_obj <- function(intensity = NULL, x = NULL)
+  invisible(NULL)
+
+#' Shared parameter docs for functions taking an R6 Intensity object
+#'
+#' @param intensity An Intensity R6 object
+#' @param x An Intensity R6 object
+#' @keywords internal
+#'
+#' @rdname pladdrr_shared_intensity_r6
+pladdrr_shared_intensity_r6 <- function(intensity = NULL, x = NULL)
+  invisible(NULL)
+
+#' Shared parameter docs for functions taking an Ltas object
+#'
+#' @param x Ltas object
+#' @keywords internal
+#'
+#' @rdname pladdrr_shared_ltas_obj
+pladdrr_shared_ltas_obj <- function(x = NULL) invisible(NULL)
+
+#' Shared parameter docs for functions taking a PointProcess object
+#'
+#' @param x PointProcess object
+#' @keywords internal
+#'
+#' @rdname pladdrr_shared_pointprocess_obj
+pladdrr_shared_pointprocess_obj <- function(x = NULL) invisible(NULL)
+
+#' Shared parameter docs for functions taking a PowerCepstrum object
+#'
+#' @param cepstrum PowerCepstrum object
+#' @param x PowerCepstrum object
+#' @keywords internal
+#'
+#' @rdname pladdrr_shared_powercepstrum_obj
+pladdrr_shared_powercepstrum_obj <- function(cepstrum = NULL, x = NULL)
+  invisible(NULL)
+
+#' Shared parameter docs for functions taking a Spectrogram object
+#'
+#' @param spectrogram Spectrogram object
+#' @param x Spectrogram object
+#' @keywords internal
+#'
+#' @rdname pladdrr_shared_spectrogram_obj
+pladdrr_shared_spectrogram_obj <- function(spectrogram = NULL, x = NULL)
+  invisible(NULL)
+
+#' Shared parameter docs for functions taking a Spectrum object
+#'
+#' @param spectrum Spectrum object
+#' @param x Spectrum object
+#' @keywords internal
+#'
+#' @rdname pladdrr_shared_spectrum_obj
+pladdrr_shared_spectrum_obj <- function(spectrum = NULL, x = NULL)
+  invisible(NULL)
+
+#' Shared parameter docs for functions taking a TextGrid object (plain)
+#'
+#' @param x TextGrid object
+#' @keywords internal
+#'
+#' @rdname pladdrr_shared_textgrid_obj
+pladdrr_shared_textgrid_obj <- function(x = NULL) invisible(NULL)
+
+#' Shared parameter docs for the dispatch object in autoplot.* methods
+#'
+#' All \code{autoplot.*} methods share a single \code{@@rdname} (and thus one
+#' merged Rd topic), so per-type \code{@@param object} text collapses to
+#' whichever block roxygen2 resolves last; a shared, type-neutral
+#' description avoids that silent collision.
+#'
+#' @param object A pladdrr S3 analysis object (Sound, Pitch, Formant,
+#'   Intensity, Spectrogram, Spectrum, Ltas, Harmonicity, PointProcess,
+#'   PowerCepstrum, or TextGrid)
+#' @keywords internal
+#'
+#' @rdname pladdrr_shared_autoplot_object
+pladdrr_shared_autoplot_object <- function(object = NULL) invisible(NULL)
+
+#' Shared parameter docs for functions taking a praat_sound (S3) object
+#'
+#' @param x A praat_sound object
+#' @param object A praat_sound object
+#' @param sound A praat_sound object
+#' @keywords internal
+#'
+#' @rdname pladdrr_shared_praat_sound_obj
+pladdrr_shared_praat_sound_obj <- function(x = NULL, object = NULL,
+    sound = NULL) invisible(NULL)
 # nocov end

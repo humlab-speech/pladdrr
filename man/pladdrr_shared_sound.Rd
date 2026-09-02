@@ -4,10 +4,12 @@
 \alias{pladdrr_shared_sound}
 \title{Shared parameter docs for functions taking a plain Sound object}
 \usage{
-pladdrr_shared_sound(sound = NULL)
+pladdrr_shared_sound(sound = NULL, x = NULL)
 }
 \arguments{
 \item{sound}{Sound object}
+
+\item{x}{Sound object}
 }
 \description{
 Shared parameter docs for functions taking a plain Sound object

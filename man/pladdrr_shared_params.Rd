@@ -31,8 +31,11 @@ pladdrr_shared_params(
   fmax = NULL,
   x = NULL,
   smooth = NULL,
+  bandwidth = NULL,
   tmin = NULL,
+  xmin = NULL,
   tmax = NULL,
+  xmax = NULL,
   title = NULL,
   tier = NULL,
   textgrid = NULL,
@@ -40,6 +43,7 @@ pladdrr_shared_params(
   signal_outside = NULL,
   scaling = NULL,
   pointprocess = NULL,
+  point_process = NULL,
   n_cores = NULL,
   max_pitch = 600,
   interpolate = NULL,
@@ -104,9 +108,15 @@ pladdrr_shared_params(
 
 \item{smooth}{Smoothing bandwidth (Hz)}
 
+\item{bandwidth}{Smoothing bandwidth (Hz)}
+
 \item{tmin}{Start time in seconds}
 
+\item{xmin}{Start time in seconds}
+
 \item{tmax}{End time in seconds}
+
+\item{xmax}{End time in seconds}
 
 \item{title}{Character. Plot title (default: auto-generated)}
 
@@ -121,6 +131,8 @@ pladdrr_shared_params(
 \item{scaling}{Scaling: 1=integral, 2=sum, 3=normalize, 4=peak_0.99}
 
 \item{pointprocess}{A PointProcess object}
+
+\item{point_process}{A PointProcess object}
 
 \item{n_cores}{Integer. Number of cores (default: auto)}
 

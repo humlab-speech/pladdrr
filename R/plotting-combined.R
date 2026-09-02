@@ -310,7 +310,7 @@ plot_textgrid_pitch <- function(textgrid, pitch, tier = NULL,
 #' This replicates Praat's Pitch_Intensity_draw() function.
 #'
 #' @inheritParams pladdrr_shared_pitch pitch
-#' @param intensity Intensity object
+#' @inheritParams pladdrr_shared_intensity_obj intensity
 #' @inheritParams pladdrr_shared_params from_time
 #' @inheritParams pladdrr_shared_params to_time
 #' @param pitch_color Character. Pitch line color (default: "darkgreen")
@@ -382,8 +382,8 @@ plot_pitch_intensity <- function(pitch, intensity,
 #' Creates a spectrogram heatmap with formant trajectories overlaid.
 #' This is a common visualization pattern in Praat for vowel analysis.
 #'
-#' @param spectrogram Spectrogram object
-#' @param formant Formant object
+#' @inheritParams pladdrr_shared_spectrogram_obj spectrogram
+#' @inheritParams pladdrr_shared_formant_obj formant
 #' @inheritParams pladdrr_shared_params from_time
 #' @inheritParams pladdrr_shared_params to_time
 #' @inheritParams pladdrr_shared_maxformant max_formant
@@ -467,7 +467,7 @@ plot_spectrogram_formants <- function(spectrogram, formant,
 #' overlaid. This is one of the most common Praat visualizations for voice
 #'  analysis.
 #'
-#' @param spectrogram Spectrogram object
+#' @inheritParams pladdrr_shared_spectrogram_obj spectrogram
 #' @inheritParams pladdrr_shared_pitch pitch
 #' @inheritParams pladdrr_shared_params from_time
 #' @inheritParams pladdrr_shared_params to_time

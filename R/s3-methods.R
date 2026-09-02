@@ -7,7 +7,7 @@
 #'
 #' Provides a concise, informative display of a praat_sound object.
 #'
-#' @param x A praat_sound object
+#' @inheritParams pladdrr_shared_praat_sound_obj x
 #'
 #' @return The object x, invisibly
 #'
@@ -42,7 +42,7 @@ print.praat_sound <- function(x, ...) {
 #' Provides a statistical summary of a praat_sound object, including amplitude
 #' statistics and metadata.
 #'
-#' @param object A praat_sound object
+#' @inheritParams pladdrr_shared_praat_sound_obj object
 #'
 #' @return The object, invisibly
 #'
@@ -85,7 +85,7 @@ summary.praat_sound <- function(object, ...) {
 #'  columns.
 #' This is useful for plotting and further analysis in R.
 #'
-#' @param x A praat_sound object
+#' @inheritParams pladdrr_shared_praat_sound_obj x
 #'
 #' @return A data.table (inherits from data.frame) with two columns:
 #'   \describe{
@@ -127,7 +127,7 @@ as.data.frame.praat_sound <- function(x, ...) {
 #' S3 method for converting R6 Sound objects to data frames.
 #' Delegates to the R6 `$as_data_frame()` method.
 #' 
-#' @param x A Sound R6 object
+#' @inheritParams pladdrr_shared_sound_r6 x
 #' @inheritParams pladdrr_shared_params row.names
 #' @inheritParams pladdrr_shared_params optional
 #' @return A data.table (inherits from data.frame) with time, channel, and value
@@ -484,7 +484,7 @@ as.data.frame.Formant <- function(x, row.names = NULL, optional = FALSE, ...) {
 #' S3 method for converting R6 Intensity objects to data frames.
 #' Delegates to the R6 `$as_data_frame()` method.
 #' 
-#' @param x An Intensity R6 object
+#' @inheritParams pladdrr_shared_intensity_r6 x
 #' @inheritParams pladdrr_shared_params row.names
 #' @inheritParams pladdrr_shared_params optional
 #' @return A data.table (inherits from data.frame) with time and intensity
@@ -507,7 +507,7 @@ as.data.frame.Intensity <- function(x, row.names = NULL, optional = FALSE,
 #' S3 method for converting R6 Pitch objects to data frames.
 #' Delegates to the R6 `$as_data_frame()` method.
 #' 
-#' @param x A Pitch R6 object
+#' @inheritParams pladdrr_shared_pitch_r6 x
 #' @inheritParams pladdrr_shared_params row.names
 #' @inheritParams pladdrr_shared_params optional
 #' @return A data.table (inherits from data.frame) with pitch measurements

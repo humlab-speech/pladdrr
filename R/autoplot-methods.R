@@ -36,7 +36,7 @@ NULL
 # ============================================================================
 
 #' @rdname autoplot-methods
-#' @param object Sound object
+#' @inheritParams pladdrr_shared_autoplot_object object
 #' @inheritParams pladdrr_shared_params from_time
 #' @inheritParams pladdrr_shared_params to_time
 #' @param color Line color (default: "steelblue")
@@ -84,7 +84,7 @@ autolayer.Sound <- function(object, from_time = NULL, to_time = NULL,
 # ============================================================================
 
 #' @rdname autoplot-methods
-#' @param object Pitch object
+#' @inheritParams pladdrr_shared_autoplot_object object
 #' @param show_voicing Color by voicing strength (default: FALSE)
 #' @export
 autoplot.Pitch <- function(object, from_time = NULL, to_time = NULL,
@@ -161,7 +161,7 @@ autolayer.Pitch <- function(object, from_time = NULL, to_time = NULL,
 # ============================================================================
 
 #' @rdname autoplot-methods
-#' @param object Formant object
+#' @inheritParams pladdrr_shared_autoplot_object object
 #' @inheritParams pladdrr_shared_maxformant max_formant
 #' @param colors Colors for each formant track
 #' @export
@@ -245,7 +245,7 @@ autolayer.Formant <- function(object, from_time = NULL, to_time = NULL,
 # ============================================================================
 
 #' @rdname autoplot-methods
-#' @param object Intensity object
+#' @inheritParams pladdrr_shared_autoplot_object object
 #' @export
 autoplot.Intensity <- function(object, from_time = NULL, to_time = NULL,
                                color = "darkorange", ...) {
@@ -287,7 +287,7 @@ autolayer.Intensity <- function(object, from_time = NULL, to_time = NULL,
 # ============================================================================
 
 #' @rdname autoplot-methods
-#' @param object Spectrogram object
+#' @inheritParams pladdrr_shared_autoplot_object object
 #' @param from_freq Start frequency in Hz
 #' @param to_freq End frequency in Hz
 #' @param dynamic_range Dynamic range in dB (default: 70)
@@ -355,7 +355,7 @@ autolayer.Spectrogram <- function(object, from_time = NULL, to_time = NULL,
 # ============================================================================
 
 #' @rdname autoplot-methods
-#' @param object Spectrum object
+#' @inheritParams pladdrr_shared_autoplot_object object
 #' @param log_freq Use logarithmic frequency scale (default: FALSE)
 #' @export
 autoplot.Spectrum <- function(object, from_freq = NULL, to_freq = NULL,
@@ -413,7 +413,7 @@ autolayer.Spectrum <- function(object, from_freq = NULL, to_freq = NULL,
 # ============================================================================
 
 #' @rdname autoplot-methods
-#' @param object Ltas object
+#' @inheritParams pladdrr_shared_autoplot_object object
 #' @export
 autoplot.Ltas <- function(object, from_freq = NULL, to_freq = NULL,
                           log_freq = FALSE, color = "darkred", ...) {
@@ -462,7 +462,7 @@ autolayer.Ltas <- function(object, from_freq = NULL, to_freq = NULL,
 # ============================================================================
 
 #' @rdname autoplot-methods
-#' @param object Harmonicity object
+#' @inheritParams pladdrr_shared_autoplot_object object
 #' @export
 autoplot.Harmonicity <- function(object, from_time = NULL, to_time = NULL,
                                  color = "darkviolet", ...) {
@@ -505,7 +505,7 @@ autolayer.Harmonicity <- function(object, from_time = NULL, to_time = NULL,
 # ============================================================================
 
 #' @rdname autoplot-methods
-#' @param object PointProcess object
+#' @inheritParams pladdrr_shared_autoplot_object object
 #' @export
 autoplot.PointProcess <- function(object, from_time = NULL, to_time = NULL,
                                   color = "black", ...) {
@@ -563,7 +563,7 @@ autolayer.PointProcess <- function(object, from_time = NULL, to_time = NULL,
 # ============================================================================
 
 #' @rdname autoplot-methods
-#' @param object PowerCepstrum object
+#' @inheritParams pladdrr_shared_autoplot_object object
 #' @param from_quefrency Start quefrency in seconds
 #' @param to_quefrency End quefrency in seconds
 #' @param mark_peak Mark the cepstral peak (default: TRUE)
@@ -648,7 +648,7 @@ autoplot.TextGrid <- function(object, ...) {
 }
 
 #' @rdname autoplot-methods
-#' @param object TextGrid object
+#' @inheritParams pladdrr_shared_autoplot_object object
 #' @param tier Tier number or name to display (default: 1)
 #' @param alpha Fill transparency (default: 0.3)
 #' @export

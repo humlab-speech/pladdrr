@@ -473,7 +473,9 @@
 )
 }
 \arguments{
-\item{object}{TextGrid object}
+\item{object}{A pladdrr S3 analysis object (Sound, Pitch, Formant,
+Intensity, Spectrogram, Spectrum, Ltas, Harmonicity, PointProcess,
+PowerCepstrum, or TextGrid)}
 
 \item{from_time}{Start time in seconds (NULL = from beginning)}
 

@@ -15,7 +15,8 @@ pladdrr_shared_analysis(
   silence_threshold = NULL,
   max_formants = NULL,
   start_time = 0,
-  numberOfRows = NULL
+  numberOfRows = NULL,
+  ny = NULL
 )
 }
 \arguments{
@@ -41,6 +42,8 @@ variables}
 \item{start_time}{Start time in seconds (default: 0.0)}
 
 \item{numberOfRows}{Number of rows}
+
+\item{ny}{Number of rows}
 }
 \description{
 Shared parameter docs for analysis defaults (batch/parallel wrappers)

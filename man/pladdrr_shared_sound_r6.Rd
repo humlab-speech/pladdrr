@@ -4,10 +4,12 @@
 \alias{pladdrr_shared_sound_r6}
 \title{Shared parameter docs for functions taking an R6 Sound object}
 \usage{
-pladdrr_shared_sound_r6(sound = NULL)
+pladdrr_shared_sound_r6(sound = NULL, x = NULL)
 }
 \arguments{
 \item{sound}{A Sound R6 object}
+
+\item{x}{A Sound R6 object}
 }
 \description{
 Shared parameter docs for functions taking an R6 Sound object

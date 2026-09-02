@@ -160,7 +160,7 @@ as.matrix.Matrix <- function(x, ...) x$as_matrix()
 #' @param x1 X value of first column
 #' @param ymin Minimum y value (start of y domain)
 #' @param ymax Maximum y value (end of y domain)
-#' @param ny Number of rows
+#' @inheritParams pladdrr_shared_analysis ny
 #' @param dy Y sampling period (step between rows)
 #' @param y1 Y value of first row
 #' @return A Matrix object

@@ -172,8 +172,8 @@ Electroglottogram <- function(.xptr = NULL) {
 
 #' Create an Electroglottogram object
 #'
-#' @param xmin Start time in seconds
-#' @param xmax End time in seconds
+#' @inheritParams pladdrr_shared_params xmin
+#' @inheritParams pladdrr_shared_params xmax
 #' @param nx Number of samples
 #' @param dx Sampling period in seconds
 #' @param x1 Time of first sample in seconds

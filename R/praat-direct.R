@@ -145,8 +145,8 @@ get_formants_direct <- function(formant, time, unit = c("hertz", "bark")) {
 #'
 #' @inheritParams pladdrr_shared_params sound
 #' @inheritParams pladdrr_shared_timeauto time_step
-#' @param pitch_floor Minimum pitch (Hz)
-#' @param pitch_ceiling Maximum pitch (Hz)
+#' @inheritParams pladdrr_shared_minpitch pitch_floor
+#' @inheritParams pladdrr_shared_maxpitch pitch_ceiling
 #'
 #' @return External pointer to Pitch (NOT R6 object)
 #'
@@ -458,7 +458,7 @@ to_formant_direct <- function(sound, time_step = 0, max_formants = 5,
 #' Create Intensity from Sound Directly (returns XPtr)
 #'
 #' @inheritParams pladdrr_shared_params sound
-#' @param minimum_pitch Minimum pitch (Hz)
+#' @inheritParams pladdrr_shared_minpitch minimum_pitch
 #' @inheritParams pladdrr_shared_timeauto time_step
 #' @param subtract_mean Whether to subtract mean
 #'
@@ -488,7 +488,7 @@ to_intensity_direct <- function(sound, minimum_pitch = 100, time_step = 0,
 #'
 #' @inheritParams pladdrr_shared_params sound
 #' @param time_step Time step
-#' @param minimum_pitch Minimum pitch (Hz)
+#' @inheritParams pladdrr_shared_minpitch minimum_pitch
 #' @inheritParams pladdrr_shared_analysis silence_threshold
 #' @param periods_per_window Periods per window
 #'

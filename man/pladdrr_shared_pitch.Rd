@@ -4,10 +4,12 @@
 \alias{pladdrr_shared_pitch}
 \title{Shared parameter docs for functions taking a plain Pitch object}
 \usage{
-pladdrr_shared_pitch(pitch = NULL)
+pladdrr_shared_pitch(pitch = NULL, x = NULL)
 }
 \arguments{
 \item{pitch}{Pitch object}
+
+\item{x}{Pitch object}
 }
 \description{
 Shared parameter docs for functions taking a plain Pitch object

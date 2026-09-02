@@ -31,7 +31,7 @@ NULL
 #' @description
 #' Creates a waveform visualization of a Sound object.
 #'
-#' @param x Sound object
+#' @inheritParams pladdrr_shared_sound x
 #' @inheritParams pladdrr_shared_params from_time
 #' @inheritParams pladdrr_shared_params to_time
 #' @inheritParams pladdrr_shared_params garnish
@@ -103,7 +103,7 @@ plot.Sound <- function(x, from_time = NULL, to_time = NULL,
 #' @description
 #' Creates a pitch (F0) contour visualization of a Pitch object.
 #'
-#' @param x Pitch object
+#' @inheritParams pladdrr_shared_pitch x
 #' @inheritParams pladdrr_shared_params from_time
 #' @inheritParams pladdrr_shared_params to_time
 #' @inheritParams pladdrr_shared_params garnish
@@ -196,7 +196,7 @@ plot.Pitch <- function(x, from_time = NULL, to_time = NULL,
 #' @description
 #' Creates a formant trajectory visualization showing F1, F2, F3, etc.
 #'
-#' @param x Formant object
+#' @inheritParams pladdrr_shared_formant_obj x
 #' @inheritParams pladdrr_shared_params from_time
 #' @inheritParams pladdrr_shared_params to_time
 #' @inheritParams pladdrr_shared_maxformant max_formant
@@ -276,7 +276,7 @@ plot.Formant <- function(x, from_time = NULL, to_time = NULL,
 #' @description
 #' Creates an intensity (loudness) contour visualization.
 #'
-#' @param x Intensity object
+#' @inheritParams pladdrr_shared_intensity_obj x
 #' @inheritParams pladdrr_shared_params from_time
 #' @inheritParams pladdrr_shared_params to_time
 #' @inheritParams pladdrr_shared_params garnish
@@ -346,7 +346,7 @@ plot.Intensity <- function(x, from_time = NULL, to_time = NULL,
 #' @description
 #' Creates a time-frequency heatmap visualization of a Spectrogram.
 #'
-#' @param x Spectrogram object
+#' @inheritParams pladdrr_shared_spectrogram_obj x
 #' @inheritParams pladdrr_shared_params from_time
 #' @inheritParams pladdrr_shared_params to_time
 #' @inheritParams pladdrr_shared_params from_freq
@@ -417,7 +417,7 @@ plot.Spectrogram <- function(x, from_time = NULL, to_time = NULL,
 #' @description
 #' Creates a frequency spectrum visualization.
 #'
-#' @param x Spectrum object
+#' @inheritParams pladdrr_shared_spectrum_obj x
 #' @inheritParams pladdrr_shared_params from_freq
 #' @param to_freq End frequency in Hz (NULL = to Nyquist)
 #' @param log_freq Logical. Use logarithmic frequency scale (default: FALSE)
@@ -496,7 +496,7 @@ plot.Spectrum <- function(x, from_freq = NULL, to_freq = NULL,
 #' @description
 #' Creates a LTAS (long-term average spectrum) visualization.
 #'
-#' @param x Ltas object
+#' @inheritParams pladdrr_shared_ltas_obj x
 #' @inheritParams pladdrr_shared_params from_freq
 #' @param to_freq End frequency in Hz (NULL = to maximum)
 #' @param log_freq Logical. Use logarithmic frequency scale (default: FALSE)
@@ -572,7 +572,7 @@ plot.Ltas <- function(x, from_freq = NULL, to_freq = NULL,
 #' @description
 #' Creates a harmonics-to-noise ratio contour visualization.
 #'
-#' @param x Harmonicity object
+#' @inheritParams pladdrr_shared_harmonicity_obj x
 #' @inheritParams pladdrr_shared_params from_time
 #' @inheritParams pladdrr_shared_params to_time
 #' @inheritParams pladdrr_shared_params garnish
@@ -642,7 +642,7 @@ plot.Harmonicity <- function(x, from_time = NULL, to_time = NULL,
 #' @description
 #' Creates a visualization of PointProcess events (e.g., glottal pulses).
 #'
-#' @param x PointProcess object
+#' @inheritParams pladdrr_shared_pointprocess_obj x
 #' @inheritParams pladdrr_shared_params from_time
 #' @inheritParams pladdrr_shared_params to_time
 #' @inheritParams pladdrr_shared_params garnish
@@ -851,7 +851,7 @@ plot.Matrix <- function(x, from_x = NULL, to_x = NULL,
 #' coefficients as a function of quefrency. Optionally highlights the peak
 #' related to pitch.
 #'
-#' @param x PowerCepstrum object
+#' @inheritParams pladdrr_shared_powercepstrum_obj x
 #' @param from_quefrency Start quefrency in seconds (NULL = from beginning)
 #' @param to_quefrency End quefrency in seconds (NULL = to end)
 #' @inheritParams pladdrr_shared_params garnish
@@ -953,7 +953,7 @@ plot.PowerCepstrum <- function(x, from_quefrency = NULL,
 #'
 #' Visualize tier labels and boundaries as a standalone plot.
 #'
-#' @param x A TextGrid object
+#' @inheritParams pladdrr_shared_textgrid_r6 x
 #' @param tier Integer or character specifying which tier to plot (default: all
 #'  tiers)
 #' @param from_time Start time in seconds (NULL = beginning)

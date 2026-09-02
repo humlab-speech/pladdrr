@@ -114,8 +114,8 @@ sound_extract_part <- function(sound, t1, t2, window_shape = 1L,
 #' Time-stretch a sound using overlap-add
 #'
 #' @inheritParams pladdrr_shared_sound sound
-#' @param fmin Minimum pitch (Hz)
-#' @param fmax Maximum pitch (Hz)
+#' @inheritParams pladdrr_shared_minpitch fmin
+#' @inheritParams pladdrr_shared_maxpitch fmax
 #' @param factor Lengthening factor (>1 = slower, <1 = faster)
 #' @return New Sound object
 #' @export

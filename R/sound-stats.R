@@ -90,7 +90,7 @@ sound_max <- function(sound) {
 #' Calculates the RMS amplitude of a sound object. RMS is a measure of the
 #' signal's power and is computed as sqrt(mean(x^2)).
 #'
-#' @param sound A praat_sound object
+#' @inheritParams pladdrr_shared_praat_sound_obj sound
 #'
 #' @return RMS amplitude (numeric scalar)
 #'

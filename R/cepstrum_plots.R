@@ -98,7 +98,7 @@ NULL
 #' Creates a visualization of a power cepstrum showing the cepstral values
 #' across quefrencies, with optional peak and trend line annotations.
 #'
-#' @param cepstrum PowerCepstrum object
+#' @inheritParams pladdrr_shared_powercepstrum_obj cepstrum
 #' @param show_peak Logical. Highlight the cepstral peak (default: TRUE)
 #' @param show_trendline Logical. Show regression trend line (default: TRUE)
 #' @param qmin Numeric. Minimum quefrency for peak search (seconds, default:

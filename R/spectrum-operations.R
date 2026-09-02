@@ -4,8 +4,8 @@
 
 #' Apply cepstral smoothing to spectrum
 #'
-#' @param spectrum Spectrum object
-#' @param bandwidth Smoothing bandwidth (Hz)
+#' @inheritParams pladdrr_shared_spectrum_obj spectrum
+#' @inheritParams pladdrr_shared_params bandwidth
 #' @return New Spectrum object with smoothing applied
 #' @export
 #' @examples
