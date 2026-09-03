@@ -34,8 +34,11 @@ pladdrr_shared_params(
   fmax = NULL,
   x = NULL,
   smooth = NULL,
+  bandwidth = NULL,
   tmin = NULL,
+  xmin = NULL,
   tmax = NULL,
+  xmax = NULL,
   title = NULL,
   tier = NULL,
   textgrid = NULL,
@@ -43,6 +46,7 @@ pladdrr_shared_params(
   signal_outside = NULL,
   scaling = NULL,
   pointprocess = NULL,
+  point_process = NULL,
   n_cores = NULL,
   max_pitch = 600,
   interpolate = NULL,
@@ -161,11 +165,23 @@ pladdrr_shared_params(
 
   Smoothing bandwidth (Hz)
 
+- bandwidth:
+
+  Smoothing bandwidth (Hz)
+
 - tmin:
 
   Start time in seconds
 
+- xmin:
+
+  Start time in seconds
+
 - tmax:
+
+  End time in seconds
+
+- xmax:
 
   End time in seconds
 
@@ -194,6 +210,10 @@ pladdrr_shared_params(
   Scaling: 1=integral, 2=sum, 3=normalize, 4=peak_0.99
 
 - pointprocess:
+
+  A PointProcess object
+
+- point_process:
 
   A PointProcess object
 

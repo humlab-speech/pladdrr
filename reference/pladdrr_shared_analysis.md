@@ -16,7 +16,8 @@ pladdrr_shared_analysis(
   silence_threshold = NULL,
   max_formants = NULL,
   start_time = 0,
-  numberOfRows = NULL
+  numberOfRows = NULL,
+  ny = NULL
 )
 ```
 
@@ -63,5 +64,9 @@ pladdrr_shared_analysis(
   Start time in seconds (default: 0.0)
 
 - numberOfRows:
+
+  Number of rows
+
+- ny:
 
   Number of rows

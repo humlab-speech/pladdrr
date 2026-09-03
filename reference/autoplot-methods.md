@@ -480,7 +480,9 @@ autolayer(
 
 - object:
 
-  TextGrid object
+  A pladdrr S3 analysis object (Sound, Pitch, Formant, Intensity,
+  Spectrogram, Spectrum, Ltas, Harmonicity, PointProcess, PowerCepstrum,
+  or TextGrid)
 
 - from_time:
 
