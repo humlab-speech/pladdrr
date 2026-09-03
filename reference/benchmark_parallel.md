@@ -50,7 +50,7 @@ results <- benchmark_parallel(
 #> Processing 1 files using 2 cores (2 thread(s)/worker)
 print(results)
 #>   cores    time_sec   speedup
-#> 1     1 0.001976490 1.0000000
-#> 2     2 0.005029678 0.3929655
+#> 1     1 0.002286673 1.0000000
+#> 2     2 0.005687952 0.4020204
 # }
 ```
