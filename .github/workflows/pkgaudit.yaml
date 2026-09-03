@@ -1,0 +1,167 @@
+name: pkgaudit
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pkgaudit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: r-lib/actions/setup-r@v2.12.1
+        with:
+          r-version: "release"
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2.12.1
+        with:
+          extra-packages: |
+            github::tylerjssmith/pkgaudit
+          needs: check
+
+      - name: Run pkgaudit
+        shell: bash
+        run: |
+          Rscript - <<'RS'
+          auto_phases <- c(
+            "at_autoconf",
+            "at_build",
+            "at_check",
+            "at_install_src",
+            "at_install_bin",
+            "at_load",
+            "at_attach",
+            "at_unload",
+            "at_detach"
+          )
+
+          audit_fun <- get0("pkgaudit", envir = asNamespace("pkgaudit"), mode = "function")
+          if (is.null(audit_fun)) {
+            audit_fun <- pkgaudit::audit_package
+          }
+
+          result <- audit_fun(".")
+          summary_lines <- capture.output(print(summary(result, path = FALSE)))
+          cat(paste(summary_lines, collapse = "\n"), "\n")
+
+          automatic_findings <- function(df) {
+            if (nrow(df) == 0L) {
+              return(df)
+            }
+            df[rowSums(df[, auto_phases, drop = FALSE]) > 0L, , drop = FALSE]
+          }
+
+          format_findings <- function(df) {
+            if (nrow(df) == 0L) {
+              return("None.")
+            }
+
+            phases <- apply(df[, auto_phases, drop = FALSE], 1L, function(x) {
+              paste(auto_phases[as.logical(x)], collapse = ", ")
+            })
+
+            preview <- if ("preview" %in% names(df)) df$preview else rep("", nrow(df))
+            code_context <- if ("code_context" %in% names(df)) df$code_context else rep("", nrow(df))
+
+            out <- data.frame(
+              phase = phases,
+              rule = df$rule,
+              file = df$file_context,
+              line = if ("line_number" %in% names(df)) df$line_number else NA_integer_,
+              context = code_context,
+              preview = preview,
+              stringsAsFactors = FALSE
+            )
+
+            paste(capture.output(print(out, row.names = FALSE, right = FALSE)), collapse = "\n")
+          }
+
+          serious_patterns <- automatic_findings(result$patterns)
+          serious_matches <- automatic_findings(result$matches)
+
+          summary_path <- Sys.getenv("GITHUB_STEP_SUMMARY")
+          writeLines(
+            c(
+              "## pkgaudit summary",
+              "",
+              "```text",
+              summary_lines,
+              "```",
+              "",
+              "## Automatic-phase findings",
+              "",
+              "These findings run without an explicit package function call and fail this workflow.",
+              "",
+              "### R patterns",
+              "",
+              "```text",
+              format_findings(serious_patterns),
+              "```",
+              "",
+              "### Shell / Make matches",
+              "",
+              "```text",
+              format_findings(serious_matches),
+              "```",
+              "",
+              "### Scan errors",
+              "",
+              "```text",
+              if (nrow(result$errors) == 0L) "None." else
+                paste(capture.output(print(result$errors, row.names = FALSE, right = FALSE)),
+                      collapse = "\n"),
+              "```"
+            ),
+            summary_path
+          )
+
+          report_annotations <- function(df, kind) {
+            if (nrow(df) == 0L) {
+              return(invisible(NULL))
+            }
+
+            for (i in seq_len(nrow(df))) {
+              line <- if ("line_number" %in% names(df) && !is.na(df$line_number[[i]])) {
+                paste0(",line=", df$line_number[[i]])
+              } else {
+                ""
+              }
+
+              message <- sprintf(
+                "::error file=%s%s,title=pkgaudit %s: %s::%s",
+                df$file_context[[i]],
+                line,
+                kind,
+                df$rule[[i]],
+                if ("message" %in% names(df)) df$message[[i]] else "Requires review."
+              )
+              cat(message, "\n", sep = "")
+            }
+          }
+
+          report_annotations(serious_patterns, "pattern")
+          report_annotations(serious_matches, "match")
+
+          if (nrow(result$errors) > 0L) {
+            cat("::error::pkgaudit reported recoverable scan errors; review the workflow summary.\n")
+          }
+
+          if (nrow(serious_patterns) > 0L || nrow(serious_matches) > 0L || nrow(result$errors) > 0L) {
+            stop(
+              sprintf(
+                "pkgaudit found %d automatic R pattern(s), %d automatic shell/Make match(es), and %d scan error(s).",
+                nrow(serious_patterns),
+                nrow(serious_matches),
+                nrow(result$errors)
+              ),
+              call. = FALSE
+            )
+          }
+          RS
