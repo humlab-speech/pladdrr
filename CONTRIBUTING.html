@@ -84,7 +84,7 @@
 <h2 id="setting-up-a-development-environment">Setting up a development environment<a class="anchor" aria-label="anchor" href="#setting-up-a-development-environment"></a></h2>
 <div class="section level3">
 <h3 id="id_1-clone-with-submodules">1. Clone with submodules<a class="anchor" aria-label="anchor" href="#id_1-clone-with-submodules"></a></h3>
-<p>The vendored Praat sources and the two FFT libraries are git submodules. A clone without them will not build.</p>
+<p>The vendored Praat sources (<code>src/praat.github.io/</code>) are a git submodule. A clone without it will not build. <code>src/pocketfft/</code> (the FFT backend) is a regular tracked directory, not a submodule — a plain clone or <code><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">remotes::install_github()</a></code> pulls it in automatically.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">git</span> clone <span class="at">--recursive</span> https://github.com/humlab-speech/pladdrr.git</span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="co"># or, if you already cloned:</span></span>
 <span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">git</span> submodule update <span class="at">--init</span> <span class="at">--recursive</span></span></code></pre></div>
@@ -147,7 +147,7 @@
 </ul></div>
 <div class="section level2">
 <h2 id="third-party-code">Third-party code<a class="anchor" aria-label="anchor" href="#third-party-code"></a></h2>
-<p>Changes under <code>src/praat.github.io/</code>, <code>src/pffft/</code>, and <code>src/pocketfft/</code> are vendored upstream sources. Patches there must be recorded in <code>inst/PRAAT_MODIFICATIONS.md</code> so the delta against upstream stays auditable, and any new bundled component must be added to <code>inst/COPYRIGHTS</code> <strong>and</strong> to the <code>cph</code> entries in <code>Authors@R</code>.</p>
+<p>Changes under <code>src/praat.github.io/</code> and <code>src/pocketfft/</code> are vendored upstream sources. Patches there must be recorded in <code>inst/PRAAT_MODIFICATIONS.md</code> so the delta against upstream stays auditable, and any new bundled component must be added to <code>inst/COPYRIGHTS</code> <strong>and</strong> to the <code>cph</code> entries in <code>Authors@R</code>.</p>
 </div>
 <div class="section level2">
 <h2 id="release-checklist">Release checklist<a class="anchor" aria-label="anchor" href="#release-checklist"></a></h2>
