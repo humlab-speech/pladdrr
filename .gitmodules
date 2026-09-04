@@ -1,9 +1,3 @@
 [submodule "src/praat.github.io"]
 	path = src/praat.github.io
 	url = https://github.com/humlab-speech/praat.github.io.git
-[submodule "src/pffft"]
-	path = src/pffft
-	url = https://github.com/cpuimage/pffft.git
-[submodule "src/pocketfft"]
-	path = src/pocketfft
-	url = https://github.com/mreineck/pocketfft.git

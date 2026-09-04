@@ -29,8 +29,10 @@ the approach before you invest the effort.
 
 ### 1. Clone with submodules
 
-The vendored Praat sources and the two FFT libraries are git submodules. A
-clone without them will not build.
+The vendored Praat sources (`src/praat.github.io/`) are a git submodule. A
+clone without it will not build. `src/pocketfft/` (the FFT backend) is a
+regular tracked directory, not a submodule — a plain clone or
+`remotes::install_github()` pulls it in automatically.
 
 ```bash
 git clone --recursive https://github.com/humlab-speech/pladdrr.git
@@ -118,7 +120,7 @@ Subsequent builds only recompile what changed.
 
 ## Third-party code
 
-Changes under `src/praat.github.io/`, `src/pffft/`, and `src/pocketfft/` are
+Changes under `src/praat.github.io/` and `src/pocketfft/` are
 vendored upstream sources. Patches there must be recorded in
 `inst/PRAAT_MODIFICATIONS.md` so the delta against upstream stays auditable, and
 any new bundled component must be added to `inst/COPYRIGHTS` **and** to the

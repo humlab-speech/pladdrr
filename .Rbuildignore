@@ -95,13 +95,8 @@ manual_.*\.cpp$
 # Bundled external libraries: keep the referenced headers, drop the (stubbed) sources
 ^src/praat\.github\.io/external/.*\.(c|cc|cpp)$
 
-# pffft: submodule that is not compiled, not on any -I path, and referenced by
-# no source file. Shipping it would distribute unattributed, unused C sources.
-^src/pffft/
-
 # pocketfft: only pocketfft_hdronly.h is used (by dwsys/NUMFourier.cpp);
 # the demo and build files are not. LICENSE.md and README.md are kept.
-^src/pocketfft/\.git$
 ^src/pocketfft/pocketfft_demo\.cc$
 ^src/pocketfft/meson\.build$
 
