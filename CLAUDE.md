@@ -29,7 +29,7 @@ install.
       *_wrappers.cpp        # Praat object wrappers
       *_stubs.cpp           # Minimal stubs for unused Praat code
       *_simd.cpp            # SIMD-optimized paths
-    praat.github.io/        # Praat source (submodule)
+    praat.github.io/        # Praat source (vendored, tracked directly)
     R/
       performance-helpers.R # get_cpps_fast(), to_powercepstrogram_fast()
       *.R                   # R6 class definitions

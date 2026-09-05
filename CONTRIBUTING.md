@@ -29,18 +29,16 @@ agree on the approach before you invest the effort.
 
 ## Setting up a development environment
 
-### 1. Clone with submodules
+### 1. Clone
 
-The vendored Praat sources (`src/praat.github.io/`) are a git submodule.
-A clone without it will not build. `src/pocketfft/` (the FFT backend) is
-a regular tracked directory, not a submodule — a plain clone or
+Both `src/praat.github.io/` (the vendored Praat sources) and
+`src/pocketfft/` (the FFT backend) are ordinary tracked directories, not
+git submodules. A plain clone or
 [`remotes::install_github()`](https://remotes.r-lib.org/reference/install_github.html)
-pulls it in automatically.
+pulls in everything needed to build.
 
 ``` bash
-git clone --recursive https://github.com/humlab-speech/pladdrr.git
-# or, if you already cloned:
-git submodule update --init --recursive
+git clone https://github.com/humlab-speech/pladdrr.git
 ```
 
 ### 2. System requirements
