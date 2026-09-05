@@ -2,8 +2,8 @@
 
 **Last Updated:** 2026-09-04
 **Package Version:** 5.0.5
-**Praat Base Version:** 6.4.x (submodule at src/praat.github.io, fork `humlab-speech/praat.github.io`)
-**Upstream merge-base:** `b1b3199a3` (praat/praat.github.io master, 2025-11-22) — `git diff b1b3199a3..HEAD` in the submodule is the authoritative full divergence (39 modified source files + CRAN deletions/additions)
+**Praat Base Version:** 6.4.x (vendored, tracked directly in this repo at src/praat.github.io as of 2026-09-05; previously a submodule pinned to fork `humlab-speech/praat.github.io`)
+**Upstream merge-base:** `b1b3199a3` (praat/praat.github.io master, 2025-11-22) — the submodule's own git history is no longer checked out locally, so per-commit divergence against upstream must be reconstructed by cloning `humlab-speech/praat.github.io` separately and diffing against the commit SHAs recorded in this document
 
 ## Overview
 
@@ -1255,32 +1255,38 @@ submodule. Also diverged vs upstream: deleted external-library sources
 
 ## Maintenance: Updating Praat Source
 
-### Step 1: Save Current Patch
+As of 2026-09-05, `src/praat.github.io/` is an ordinary tracked directory in
+this repo, not a git submodule — it has no independent git history to `git
+diff`/`fetch`/`merge` against. To pull in new upstream changes:
+
+### Step 1: Get a reference checkout of upstream
 ```bash
-cd src/praat.github.io
-git diff > ../../docs/praat_modifications_$(date +%Y-%m-%d).patch
+git clone https://github.com/humlab-speech/praat.github.io.git /tmp/praat-upstream
+cd /tmp/praat-upstream
+git checkout <previous merge-base SHA, e.g. b1b3199a3>
 ```
 
-### Step 2: Update Submodule
+### Step 2: Diff previous merge-base against the new upstream target
 ```bash
-git fetch origin
-git merge origin/master  # or specific tag
+git diff <previous merge-base SHA> <new target SHA> -- . > /tmp/upstream.patch
 ```
 
-### Step 3: Reapply Modifications
+### Step 3: Apply upstream's delta, then reapply pladdrr's own modifications
 ```bash
-# Try automatic patch
-git apply ../../docs/praat_modifications.patch
-
-# If fails, manually reapply using this document as reference
+cd /path/to/pladdrr
+git apply --directory=src/praat.github.io /tmp/upstream.patch
+# If it fails, manually merge using this document's per-entry commit
+# descriptions as reference — each entry lists the exact file(s) and change.
 ```
 
 ### Step 4: Verify
 ```bash
-cd ../..
 R CMD INSTALL --preclean .
 Rscript -e "testthat::test_dir('tests/testthat')"
 ```
+
+### Step 5: Record the new merge-base
+Update the **Upstream merge-base** SHA at the top of this document.
 
 ---
 

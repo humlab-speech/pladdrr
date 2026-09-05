@@ -106,7 +106,7 @@ later `R CMD INSTALL` only relinked them. Every measurement from such a build is
 v4.9.22 entry under "What's New" for the full diagnosis.
 
 Static SIMD + threading inventory: `tools/perf_inventory.sh` walks `src/` and
-the Praat submodule and emits `inst/agents/PERFORMANCE_INVENTORY.md`. Use it
+the vendored Praat tree and emits `inst/agents/PERFORMANCE_INVENTORY.md`. Use it
 to find wrappers that lack an accompanying `*_simd.cpp` (Phase F SIMD
 candidates) and to enumerate every `MelderThread_PARALLELIZE` call site.
 
@@ -2785,7 +2785,7 @@ pladdrr. It distils lessons from the 2026 developer report and prior SIMD/thread
 
 ### Step 1 — Find the Praat source
 
-Every Praat menu action maps to a C++ function in the submodule:
+Every Praat menu action maps to a C++ function in the vendored Praat tree:
 
 ```
 src/praat.github.io/fon/          ← core audio analysis (Pitch, Formant, Intensity, etc.)

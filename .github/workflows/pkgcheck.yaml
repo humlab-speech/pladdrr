@@ -27,7 +27,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: recursive
           fetch-depth: 0
       # pkgcheck-action's docker step runs as root, but the workspace is
       # owned by the runner user, so libgit2 refuses to open it ("dubious

@@ -89,7 +89,6 @@
 ^src/praat\.github\.io/gram/
 ^src/praat\.github\.io/main/
 ^src/praat\.github\.io/makefiles/
-^src/praat\.github\.io/\.git
 manual_.*\.cpp$
 
 # Bundled external libraries: keep the referenced headers, drop the (stubbed) sources
