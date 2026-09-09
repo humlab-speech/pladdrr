@@ -5,6 +5,9 @@ Version: 5.0.5
 Authors@R: c(
     person("Fredrik", "Nylén", , "fredrik.nylen@umu.se", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-3373-0934")),
+    person("Tomas", "Skotare", role = "ctb",
+           comment = c(ORCID = "0000-0001-8445-0559")),
+    person("Johan", "von Boer", role = "ctb"),
     person("Paul", "Boersma", role = "cph",
            comment = "Author of the bundled Praat sources in src/praat.github.io"),
     person("David", "Weenink", role = "cph",

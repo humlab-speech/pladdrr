@@ -103,3 +103,4 @@ manual_.*\.cpp$
 
 # Compiled/editor-junk build artefacts anywhere under src/
 ^src/.*\.(o|o\.tmp|so|la|exe|backup.*|bak.*|tmp.*|before.*|beforesed|dup|fix|future|rcpp|static|init|with_duplicate|clang-format)$
+^paper$

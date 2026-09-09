@@ -11,7 +11,7 @@
 [![License: GPL v3](https://img.shields.io/badge/license-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 ![GitHub R package version](https://img.shields.io/github/r-package/v/humlab-speech/pladdrr?label=version)
 ![Rcpp Modules](https://img.shields.io/badge/modules-38-blue)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21949439.svg)](https://doi.org/10.5281/zenodo.21949439) 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21884217.svg)](https://doi.org/10.5281/zenodo.21884217) 
 
 <!-- badges: end -->
 
@@ -412,8 +412,9 @@ sound_segment <- longsound$extract_part(tmin = 0, tmax = 10)
 
 To cite **pladdrr** in publications, run `citation("pladdrr")` in R, or use:
 
-> Nylén, Fredrik (2026). *pladdrr: Direct Access to the Core Algorithms of
-> Praat*. R package version 5.0.3. <https://doi.org/10.5281/zenodo.21884218>
+> Nylén, Fredrik, Skotare, Tomas & von Boer, Johan (2026). *pladdrr: Direct
+> Access to the Core Algorithms of Praat*. R package version 5.0.5.
+> <https://doi.org/10.5281/zenodo.21884217>
 
 Please also cite Praat itself:
 

@@ -8,9 +8,9 @@ abstract: >-
   cepstral, voice-quality and synthesis routines can be called directly from R
   without an external Praat installation.
 type: software
-version: 5.0.2
-date-released: "2026-08-14"
-doi: 10.5281/zenodo.21884218
+version: 5.0.5
+date-released: "2026-09-05"
+doi: 10.5281/zenodo.21884217
 license: GPL-3.0-or-later
 repository-code: "https://github.com/humlab-speech/pladdrr"
 url: "https://humlab-speech.github.io/pladdrr/"
@@ -26,6 +26,12 @@ authors:
     given-names: "Fredrik"
     email: "fredrik.nylen@umu.se"
     orcid: "https://orcid.org/0000-0003-3373-0934"
+  - family-names: "Skotare"
+    given-names: "Tomas"
+    orcid: "https://orcid.org/0000-0001-8445-0559"
+  - name-particle: "von"
+    family-names: "Boer"
+    given-names: "Johan"
 references:
   - type: software
     title: "Praat: doing phonetics by computer"
