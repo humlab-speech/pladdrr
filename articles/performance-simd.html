@@ -92,7 +92,7 @@
       <h1>Performance Optimization and SIMD in pladdrr</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/humlab-speech/pladdrr/blob/main/vignettes/performance-simd.Rmd" class="external-link"><code>vignettes/performance-simd.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/humlab-speech/pladdrr/blob/v5.0.5/vignettes/performance-simd.Rmd" class="external-link"><code>vignettes/performance-simd.Rmd</code></a></small>
       <div class="d-none name"><code>performance-simd.Rmd</code></div>
     </div>
 
@@ -249,12 +249,12 @@ runtime so you can A/B your own workload:</p>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">scalar_time</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Unit: milliseconds</span></span>
-<span><span class="co">#&gt;              expr      min       lq     mean   median       uq      max neval</span></span>
-<span><span class="co">#&gt;  sound$to_pitch() 3.749761 4.091629 7.607619 4.125648 4.156581 179.1898    50</span></span>
+<span><span class="co">#&gt;              expr     min       lq     mean   median       uq      max neval</span></span>
+<span><span class="co">#&gt;  sound$to_pitch() 4.03982 4.281037 7.371911 4.314491 4.348346 157.5773    50</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">simd_time</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Unit: milliseconds</span></span>
-<span><span class="co">#&gt;              expr      min       lq   mean   median       uq      max neval</span></span>
-<span><span class="co">#&gt;  sound$to_pitch() 3.807328 4.127225 4.1552 4.149121 4.180384 4.755979    50</span></span></code></pre></div>
+<span><span class="co">#&gt;              expr      min       lq     mean   median      uq      max neval</span></span>
+<span><span class="co">#&gt;  sound$to_pitch() 4.104735 4.244202 4.283113 4.277426 4.30389 4.996495    50</span></span></code></pre></div>
 <p>Gains vary by routine, CPU, compiler, and vector length — there is no
 single number that applies across machines, so measure on the routine
 and hardware you actually care about.</p>
@@ -620,7 +620,7 @@ with your own <code>~/.R/Makevars</code>:</p>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"pladdrr"</span>, type <span class="op">=</span> <span class="st">"source"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Or from GitHub</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"humlab-speech/pladdrr"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"humlab-speech/pladdrr"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="binary-packages">Binary Packages<a class="anchor" aria-label="anchor" href="#binary-packages"></a>
