@@ -117,46 +117,45 @@ of the package, depending on the user's specific needs:
 2. A direct API with functions that take and returns external pointers, and that bypasses
    wrapper construction inside important, tight, loops.
 3. Prepared batch operations many queries resolved in a single C++ call, aimed at minimizing 
-    R to C++ transition of data when the same procedure is applied to many input signals.
+   R to C++ transition of data when the same procedure is applied to many input signals.
 4. Entire key pipelines involving many Praat objects that have fully been implmented inside of C++
-  
+  for efficient processing without transfer of data between R and C++. 
 
-Selected inner loops are multi-threaded (cepstrogram computation, harmonicity)
+Selected inner loops have been made multi-threaded (cepstrogram computation, harmonicity)
 and some kernels have SIMD paths, both gated on producing output identical to
 the scalar reference.
 
 # Development history
 
-The package's recorded history begins in December 2025 with version 1.2.0,
-itself already a rewrite onto the Rcpp-based object interface. Early 2026 saw
-rapid expansion to 31 Praat modules, adding FormantPath's Viterbi-style
-selection across formant-ceiling candidates, KlattGrid synthesis
-[@klatt1990analysis], ComplexSpectrogram, and Polygon-based vowel-space
-geometry, followed immediately by a breaking release that removed unused and
-deprecated surface.
+Package development started in 2025 with the initial implementation strategy being
+to provide a thin Rcpp translation layer for exposing key Praat objects to R as S3 and later R7 objects. The translation layer
+was observed to introduce a considerable bottleneck in performance when the implmentation reached the maturity and breath that was sufficient to start re-implementing simple Praat code using `pladdrr` and compare them in terms of  
+performance and analysis output. The performance penalty and cumbersome development of the 
+chosen strategy resulted in a strategy shift in early 2026 to the use of Rcpp modules to expose 
+Praat classes, with S3 method dispatch. The strategy shift resulted in a 
+rapid expansion to 38 Praat modules that is currently in the package in version 5.0.5, with the 
+only remaining R6 class being the exposure of the Praat interpreter that require a persistant state across 
+method calls.
 
-The tiered API described above emerged over versions 4.0–4.4, driven by
-concrete pressure: the reference AVQI implementation in the project's benchmark
-harness shrank from 210 lines to 14. In parallel, the per-instance closure lists
-originally used for wrapper objects (roughly 107 closures per object) were
-replaced by the shared method environment, making object construction about
-nine times faster and cutting per-object memory roughly 160-fold, at the cost of
-a small per-call dispatch overhead that is negligible next to the underlying
-Praat computation.
+Further development was guided by an informal analysis of Praat scripts available 
+on github of sufficient complexity for them to be associated with a research publication. 
+Often used patterns in Praat code were extracted, and from version 4.0.0, Praat object 
+exposure to the package was expanded in parallell with an associated C++ level 
+implmentation batching patterns (Tier 3 implmentations) and of the identified common
+instances where two or more praat objects are used together to perform the analysis (Tier 4), 
+which was given fast implmentations in C++ code to reduce object conversion in intermediate steps.
+In parallel, a shared method environment was introduced, decreasing object construction speed to approximately 1/9th 
+of the previous closure based implementation for Praat objects of the size often encountered, and reduced per-object memory roughly 160-fold, at the cost of
+a small per-call dispatch overhead that would only come into play in situations with repeated creation of small objects, with was reasoned to not occur often in digital speech proceeding workflows.
 
-Two episodes shaped the project's methodology more than any feature did. First,
-two separate SIMD optimisations were withdrawn after measurement: one for
-`Sound` power/RMS/energy because it was fast but *not* bit-exact against Praat,
-and one for the repeated-median trend fit [@siegel1982robust] in the cepstral
-peak prominence pipeline because, once benchmarked properly rather than assumed,
-it was 1.7–2.4× *slower* than the scalar path it replaced. Second, a long
-investigation into why the package appeared 2.5× slower than the Praat binary at
-cepstral peak prominence [@hillenbrand1994acoustic] found no defect in the code
-at all: development-time loading had produced unoptimised object files that a
-subsequent install silently reused, so every published timing had been measured
-on a debug build. A clean rebuild made the benchmarked routines two to seven
-times faster with byte-identical output, and a build-mode check with a startup
-warning was added so the failure cannot recur silently.
+In addition to the change in focus to Rcpp modules, a second pivot in the developmental direction
+was spurred by the effort to utilize SIMD optimization to improve performance. 
+Two separate SIMD optimisations were withdrawn after emitical evaluation. First, the 
+`Sound` power, RMS, and energy measurement was found to not retain fidelity to the output 
+of Praat with SIMD optimized, and was therefore reverted. Second, a repeated-median trend 
+fit [@siegel1982robust] SIMD optimization in the cepstral peak prominence pipeline was
+discarded due to benchmarking showing a 1.7–2.4× decrease in performance compared to the 
+scalar based computation it replaced when the Xsimd library was avaliable. 
 
 These episodes hardened into three house rules that the codebase now follows:
 parity with Praat outranks speed wherever the two conflict; performance claims
@@ -165,18 +164,16 @@ adding narrower tiers rather than by compromising a single interface.
 
 # Quality control
 
-`pladdrr` ships 167 test files exercising the wrapper classes, the tiered APIs,
-and numerical agreement with reference values; continuous integration runs
-`R CMD check` on Linux, macOS, and Windows, together with `pkgcheck`, `lintr`,
-coverage reporting, and vulnerability scanning of the vendored sources.
-Seventeen vignettes document task-oriented workflows, including migration guides
-for users coming from Praat scripts or from `parselmouth`.
+Version 5.0.5 of the package has 1401 tests and currently an 82% test coverage. Continiuos integration 
+ensure successful package checks including testing on on Linux, macOS, and Windows, 
+and the package is also checked using a linter (`lintr`) and the rOpenSci `pkgcheck` on each commit.
+Core principles guiding package development include faithfulness tests of re-implmentations of Praat code using the interface exposed by `pladdrr`. 
 
 # Acknowledgements
 
-`pladdrr` bundles and builds upon the Praat source code by Paul Boersma and
-David Weenink, without which the package would not exist. It also vendors
+The `pladdrr` package builds upon the Praat source code by Paul Boersma and
+David Weenink, without which the package would not exist. It also uses 
 pocketfft (Max-Planck-Society) and the Xiph.Org Vorbis, Ogg, and Opusfile
-sources, and links against the GNU Scientific Library.
+sources, and links against the GNU Scientific Library to provide the exposed functionality of Praat.
 
 # References
