@@ -331,7 +331,7 @@ system.time({
   pitches <- lapply(sounds, function(s) s$to_pitch())
 })
 #>    user  system elapsed 
-#>   0.212   0.010   0.104
+#>   0.205   0.010   0.103
 # measure on your own data
 
 # Tier 3: Batch
@@ -340,7 +340,7 @@ system.time({
   pitches <- sound_to_pitch_batch(sounds)
 })
 #>    user  system elapsed 
-#>   0.209   0.008   0.098
+#>   0.205   0.005   0.097
 # scales with cores; measure on your own data
 
 # Tier 3: Parallel (2 cores)
@@ -349,7 +349,7 @@ system.time({
 })
 #> Processing 20 files using 2 cores (2 thread(s)/worker)
 #>    user  system elapsed 
-#>   0.081   0.108   0.388
+#>   0.099   0.085   0.372
 # includes file I/O; measure on your own data
 ```
 
@@ -368,7 +368,7 @@ system.time({
   }, numeric(1))
 })
 #>    user  system elapsed 
-#>   0.011   0.000   0.012
+#>   0.012   0.000   0.013
 # one R->C crossing per time point
 
 # Tier 3: Vectorized
@@ -467,8 +467,8 @@ benchmark_results <- benchmark_parallel(
 
 print(benchmark_results)
 #>   cores   time_sec   speedup
-#> 1     1 0.05395436 1.0000000
-#> 2     2 0.06326032 0.8528943
+#> 1     1 0.05213761 1.0000000
+#> 2     2 0.06123567 0.8514256
 # Inspect the returned table to see where returns diminish on your machine
 ```
 
