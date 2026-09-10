@@ -765,7 +765,7 @@ validation
 sessionInfo()
 #> R version 4.6.1 (2026-06-24)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.4 LTS
+#> Running under: Ubuntu 24.04.5 LTS
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -791,7 +791,7 @@ sessionInfo()
 #>  [4] compiler_4.6.1      tidyselect_1.2.1    Rcpp_1.1.2         
 #>  [7] jquerylib_0.1.4     systemfonts_1.3.2   scales_1.4.0       
 #> [10] textshaping_1.0.5   yaml_2.3.12         fastmap_1.2.0      
-#> [13] R6_2.6.1            generics_0.1.4      knitr_1.51         
+#> [13] R6_2.6.1            generics_0.1.4      knitr_1.52         
 #> [16] tibble_3.3.1        desc_1.4.3          bslib_0.12.0       
 #> [19] pillar_1.11.1       RColorBrewer_1.1-3  rlang_1.3.0        
 #> [22] cachem_1.1.0        xfun_0.60           fs_2.1.0           

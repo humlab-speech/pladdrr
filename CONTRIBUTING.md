@@ -33,9 +33,8 @@ agree on the approach before you invest the effort.
 
 Both `src/praat.github.io/` (the vendored Praat sources) and
 `src/pocketfft/` (the FFT backend) are ordinary tracked directories, not
-git submodules. A plain clone or
-[`remotes::install_github()`](https://remotes.r-lib.org/reference/install_github.html)
-pulls in everything needed to build.
+git submodules. A plain clone or `remotes::install_github()` pulls in
+everything needed to build.
 
 ``` bash
 git clone https://github.com/humlab-speech/pladdrr.git
