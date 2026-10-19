@@ -13,30 +13,6 @@ point_process_sound_to_amplitude_tier_point_cpp <- function(pp_xptr, sound_xptr)
     .Call(`_pladdrr_point_process_sound_to_amplitude_tier_point_cpp`, pp_xptr, sound_xptr)
 }
 
-.autocorrelation_simd <- function(data, max_lag) {
-    .Call(`_pladdrr_autocorrelation_simd`, data, max_lag)
-}
-
-.autocorrelation_normalized_simd <- function(data, max_lag) {
-    .Call(`_pladdrr_autocorrelation_normalized_simd`, data, max_lag)
-}
-
-.lpc_autocorrelation_simd <- function(data, num_coefficients) {
-    .Call(`_pladdrr_lpc_autocorrelation_simd`, data, num_coefficients)
-}
-
-.autocorrelation_scalar <- function(data, max_lag) {
-    .Call(`_pladdrr_autocorrelation_scalar`, data, max_lag)
-}
-
-.autocorrelation_normalized_scalar <- function(data, max_lag) {
-    .Call(`_pladdrr_autocorrelation_normalized_scalar`, data, max_lag)
-}
-
-.lpc_autocorrelation_scalar <- function(data, num_coefficients) {
-    .Call(`_pladdrr_lpc_autocorrelation_scalar`, data, num_coefficients)
-}
-
 #' Batch query MULTIPLE formant frequencies at multiple time points
 #' 
 #' @param formant_xptr External pointer to Formant object
@@ -1870,11 +1846,9 @@ sound_pool_release <- function(sound_xptr) {
 #' @return List of external pointers to extracted Sound segments
 #'
 #' @details
-#' When use_pool is TRUE, Sound objects are acquired from a pool and
-#' should be released back with sound_pool_release() when done.
-#'
-#' **Important:** Pool-acquired Sounds should not be modified as they
-#' may be reused. Copy if modification is needed.
+#' Each segment is an independent Sound owned by R and freed by the garbage
+#' collector. \code{use_pool} is accepted for backward compatibility and has
+#' no effect; calling \code{sound_pool_release()} on a segment is a no-op.
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 200, duration = 2.0)
@@ -1884,10 +1858,6 @@ sound_pool_release <- function(sound_xptr) {
 #' # Batch extraction with pooling
 #' segments <- sound_extract_parts_pooled(sound$.xptr, starts, ends)
 #'
-#' # Release back to pool when done
-#' for (seg in segments) {
-#'   pladdrr:::sound_pool_release(seg)
-#' }
 #'
 #' @export
 sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_pool = TRUE) {
@@ -3275,30 +3245,6 @@ praat_error_to_r <- function(error_msg) {
 #' @noRd
 .vocaltract_create_from_phone <- function(phone) {
     .Call(`_pladdrr_vocaltract_create_from_phone`, phone)
-}
-
-.apply_hamming_window_simd <- function(data) {
-    .Call(`_pladdrr_apply_hamming_window_simd`, data)
-}
-
-.apply_hanning_window_simd <- function(data) {
-    .Call(`_pladdrr_apply_hanning_window_simd`, data)
-}
-
-.apply_gaussian_window_simd <- function(data, sigma = 0.4) {
-    .Call(`_pladdrr_apply_gaussian_window_simd`, data, sigma)
-}
-
-.apply_hamming_window_scalar <- function(data) {
-    .Call(`_pladdrr_apply_hamming_window_scalar`, data)
-}
-
-.apply_hanning_window_scalar <- function(data) {
-    .Call(`_pladdrr_apply_hanning_window_scalar`, data)
-}
-
-.apply_gaussian_window_scalar <- function(data, sigma = 0.4) {
-    .Call(`_pladdrr_apply_gaussian_window_scalar`, data, sigma)
 }
 
 # Register entry points for exported C++ functions

@@ -24,13 +24,6 @@
 #include "enums_getValue.h"
 #include "Sound_and_Spectrogram_enums.h"
 
-// SIMD Phase 1.4: Window function optimization
-#ifdef HAVE_XSIMD
-extern "C" void apply_window_simd_bridge(VEC const& data, kSound_to_Spectrogram_windowShape windowShape);
-extern "C" void compute_window_simd_bridge(VEC const& window, kSound_to_Spectrogram_windowShape windowShape);
-extern bool should_use_simd_for_windowing();
-#endif
-
 // SIMD Phase 2.1: Spectrogram generation optimization
 #ifdef HAVE_XSIMD
 extern "C" void extract_and_window_frame_simd_bridge(

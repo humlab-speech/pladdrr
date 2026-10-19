@@ -21,23 +21,6 @@
 #include "PermutationInversionCounter.h"
 #include "SlopeSelector.h"
 
-// SIMD fast paths for the two hottest per-frame loops (Siegel pairwise
-// slopes, intercept residuals). Value-identical to the scalar loops below -
-// see slopeselector_simd.cpp for the correctness argument. Falls back to the
-// scalar loop whenever xp/yp aren't stride-1 or the row is too small to
-// amortize SIMD setup.
-#ifdef HAVE_XSIMD
-extern "C" {
-	bool should_use_simd_for_slopeselector ();
-	void siegel_row_slopes_simd (
-		const double* xp, const double* yp, integer n, integer irow, double* out
-	);
-	void intercept_terms_simd (
-		const double* xp, const double* yp, double slope, integer n, double* out
-	);
-}
-static const bool pladdrr_slopeSelector_useSimd = should_use_simd_for_slopeselector ();
-#endif
 
 #include "oo_DESTROY.h"
 #include "SlopeSelector_def.h"
@@ -94,16 +77,6 @@ void structSlopeSelector :: getSlopeAndIntercept_leastSquares (double &slope, do
 
 double structSlopeSelector :: getIntercept (double slope) {
 	buffer.resize (numberOfPoints);
-#ifdef HAVE_XSIMD
-	if (pladdrr_slopeSelector_useSimd && numberOfPoints >= 8) {
-		intercept_terms_simd (
-			xp.asArgumentToFunctionThatExpectsZeroBasedArray (),
-			yp.asArgumentToFunctionThatExpectsZeroBasedArray (),
-			slope, numberOfPoints,
-			buffer.asArgumentToFunctionThatExpectsZeroBasedArray ()
-		);
-	} else
-#endif
 	{
 		for (integer i = 1; i <= numberOfPoints; i ++) {
 			buffer [i] = yp [i] - slope * xp [i];
@@ -119,20 +92,7 @@ double structSlopeSelector :: getSlope_Siegel () {
 	const integer siegelSize = numberOfPoints - 1;
 	VEC siegelSlopes = buffer.part (1, siegelSize);
 	VEC siegelMedians = buffer.part (siegelSize + 1, 2 * siegelSize);
-#ifdef HAVE_XSIMD
-	const bool useSimdHere = pladdrr_slopeSelector_useSimd && numberOfPoints >= 8;
-#endif
 	for (integer i = 1; i <= numberOfPoints; i ++) {
-#ifdef HAVE_XSIMD
-		if (useSimdHere) {
-			siegel_row_slopes_simd (
-				xp.asArgumentToFunctionThatExpectsZeroBasedArray (),
-				yp.asArgumentToFunctionThatExpectsZeroBasedArray (),
-				numberOfPoints, i,
-				siegelSlopes.asArgumentToFunctionThatExpectsZeroBasedArray ()
-			);
-		} else
-#endif
 		{
 			integer iline = 0;
 			for (integer j = 1; j <= numberOfPoints; j ++) {
