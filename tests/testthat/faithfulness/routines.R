@@ -418,5 +418,33 @@ FAITHFULNESS_ROUTINES <- list(
     ',
     parse_praat = function(lines) as.numeric(tail(lines, 1)),
     pladdrr     = function(path) pladdrr::Sound(path)$get_rms()
+  ),
+
+  # FormantPath Viterbi path finder. Guards the removed SIMD branch that
+  # clamped the frequency-change cost twice (capped at 0.01 instead of 1),
+  # which shifted the chosen path by >1 kHz on this fixture.
+  list(
+    name        = "Sound -> FormantPath -> Path finder -> mean F1, F2 (Hz)",
+    fixture     = "signalfiles/DSI/input/mpt2.wav",
+    tolerance   = 1e-6,
+    rationale   = "Same Burg candidates and serial Viterbi; FP noise only.",
+    praat_script = '
+      sound = Read from file: "{path}"
+      fp = To FormantPath (burg): 0.005, 5, 5500, 0.025, 50, 0.05, 4
+      Path finder: 1, 1, 1, 1, 5, 0.035, "1 1 1 1 1", 1.25
+      f = Extract Formant
+      f1 = Get mean: 1, 0, 0, "hertz"
+      f2 = Get mean: 2, 0, 0, "hertz"
+      writeInfoLine: f1
+      appendInfoLine: f2
+    ',
+    parse_praat = function(lines) as.numeric(tail(lines, 2)),
+    pladdrr     = function(path) {
+      fp <- pladdrr::Sound(path)$to_formant_path(0.005, 5, 5500, 0.025, 50,
+                                                  0.05, 4L)
+      fp$path_finder(1, 1, 1, 1, 5, 0.035, c(1, 1, 1, 1, 1), 1.25)
+      f <- fp$extract_formant()
+      c(f$get_mean(1, 0, 0, "hertz"), f$get_mean(2, 0, 0, "hertz"))
+    }
   )
 )
