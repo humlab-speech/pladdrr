@@ -240,13 +240,17 @@ public:
 
     DataFrame as_data_frame() {
         VALIDATE_PTR(ptr, Spectrogram);
-        std::vector<double> times, freqs, powers;
+        // Preallocate R vectors: push_back growth + the std::vector -> R copy
+        // peaked at ~2-3x the final size for long sounds.
+        const R_xlen_t n = (R_xlen_t) ptr->nx * ptr->ny;
+        NumericVector times(n), freqs(n), powers(n);
+        R_xlen_t k = 0;
         for (integer col = 1; col <= ptr->nx; col++) {
             double time = Matrix_columnToX(ptr.get(), col);
-            for (integer row = 1; row <= ptr->ny; row++) {
-                times.push_back(time);
-                freqs.push_back(Matrix_rowToY(ptr.get(), row));
-                powers.push_back(ptr->z[row][col]);
+            for (integer row = 1; row <= ptr->ny; row++, k++) {
+                times[k] = time;
+                freqs[k] = Matrix_rowToY(ptr.get(), row);
+                powers[k] = ptr->z[row][col];
             }
         }
         return pladdrr::dt::create_datatable(

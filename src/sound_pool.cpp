@@ -27,6 +27,7 @@
 
 #include <Rcpp.h>
 #include "praat.github.io/fon/Sound.h"
+#include "praat_xptr_utils.h"
 
 using namespace Rcpp;
 
@@ -119,6 +120,14 @@ public:
         } catch (...) {
             return nullptr;
         }
+    }
+
+    // Is this Sound tracked by the pool? (Untracked = acquired while full.)
+    bool owns(structSound* sound) {
+        std::lock_guard<std::mutex> lock(pool_mutex);
+        for (auto& entry : pool)
+            if (entry.sound == sound) return true;
+        return false;
     }
 
     // Release a Sound back to pool
@@ -301,6 +310,10 @@ SEXP sound_pool_acquire(double xmin, double xmax, int nx, double dx, double x1, 
         Rcpp::stop("Failed to acquire Sound from pool");
     }
 
+    // Pool-tracked Sounds are owned by the pool; one created while the pool was
+    // full is owned by nobody else, so R must free it.
+    if (!g_sound_pool.owns(sound))
+        return make_praat_xptr<structSound>(sound);
     return XPtr<structSound>(sound, false);  // Don't register destructor - pool manages
 }
 
@@ -344,11 +357,9 @@ void sound_pool_release(SEXP sound_xptr) {
 //' @return List of external pointers to extracted Sound segments
 //'
 //' @details
-//' When use_pool is TRUE, Sound objects are acquired from a pool and
-//' should be released back with sound_pool_release() when done.
-//'
-//' **Important:** Pool-acquired Sounds should not be modified as they
-//' may be reused. Copy if modification is needed.
+//' Each segment is an independent Sound owned by R and freed by the garbage
+//' collector. \code{use_pool} is accepted for backward compatibility and has
+//' no effect; calling \code{sound_pool_release()} on a segment is a no-op.
 //'
 //' @examples
 //' sound <- Sound$create_tone(frequency = 200, duration = 2.0)
@@ -358,10 +369,6 @@ void sound_pool_release(SEXP sound_xptr) {
 //' # Batch extraction with pooling
 //' segments <- sound_extract_parts_pooled(sound$.xptr, starts, ends)
 //'
-//' # Release back to pool when done
-//' for (seg in segments) {
-//'   pladdrr:::sound_pool_release(seg)
-//' }
 //'
 //' @export
 // [[Rcpp::export]]
@@ -410,32 +417,13 @@ List sound_extract_parts_pooled(
                 false  // preserveTimes
             );
 
-            if (use_pool && part) {
-                // Copy to pooled Sound
-                integer nx = part->nx;
-                double dx = part->dx;
-                double x1 = part->x1;
-                integer ny = part->ny;
-
-                structSound* pooled = g_sound_pool.acquire(
-                    part->xmin, part->xmax, nx, dx, x1, ny
-                );
-
-                if (pooled) {
-                    // Copy sample data
-                    for (integer ich = 1; ich <= ny; ich++) {
-                        for (integer isamp = 1; isamp <= nx; isamp++) {
-                            pooled->z[ich][isamp] = part->z[ich][isamp];
-                        }
-                    }
-                    result[i] = XPtr<structSound>(pooled, false);
-                } else {
-                    // Pool failed, use original
-                    result[i] = XPtr<structSound>(part.releaseToAmbiguousOwner());
-                }
-            } else {
-                result[i] = XPtr<structSound>(part.releaseToAmbiguousOwner());
-            }
+            // pladdrr: return the extracted part itself, owned by R. Copying it
+            // into a pooled buffer cost an extra zero-fill + copy per segment,
+            // and pooled XPtrs had no finalizer (leaked once the pool was full).
+            // `use_pool` is kept for API compatibility; sound_pool_release() on
+            // these is a harmless no-op.
+            (void) use_pool;
+            result[i] = make_praat_xptr<structSound>(part.releaseToAmbiguousOwner());
         } catch (...) {
             result[i] = R_NilValue;
         }

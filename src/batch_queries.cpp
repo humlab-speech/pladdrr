@@ -1614,6 +1614,7 @@ SEXP extract_voiced_segments_ultra_cpp(
         } else {
             loud_sound = Sounds_concatenate(sounding_sounds.get(), 0.0);
         }
+        sounding_sounds.reset();   // parts are now copied into loud_sound
 
         // Both v2.03 and v3.01 use the same algorithm: windowed power + ZCR filtering
         // This matches both AVQI203.praat and AVQI301.praat specifications
