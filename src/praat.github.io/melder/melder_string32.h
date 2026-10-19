@@ -74,7 +74,7 @@ class _autostring {
 	T *ptr;
 public:
 	#if 1
-	_autostring () : ptr (nullptr) {
+	constexpr _autostring () : ptr (nullptr) {   // pladdrr: constexpr allows constant-init of big globals (theForegroundPraatObjects)
 		//if (Melder_debug == 39) Melder_casual (U"autostring: zero constructor");
 	}
 	#else
