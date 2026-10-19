@@ -16,6 +16,46 @@ This document details all modifications made to the Praat source code to enable 
 
 ---
 
+### Unreleased — Load-time RSS, FormantPath SIMD bug, dead SIMD hooks (2026-10-19)
+
+#### `melder/melder_string32.h` + `sys/praat.cpp` — constant-initialise the object list
+
+`theForegroundPraatObjects` is ~42 MB (10001 `structPraat_Object`, each
+holding a 4 KB `structMelderFile` path). `_autostring()` was not `constexpr`,
+so the global was dynamically initialised at `dyn.load`, dirtying every page.
+`_autostring()` is now `constexpr` and the global is value-initialised
+(`theForegroundPraatObjects {}`), so it is constant-initialised into zero
+pages that are never touched. Both are required; either alone keeps dynamic
+init. `dyn.load(pladdrr.so)` RSS: +48 MB -> +7 MB (macOS arm64). Semantics
+unchanged (statics were already zero-initialised).
+
+#### `LPC/FormantPath.cpp` — removed SIMD frequency-change-cost branch (bug)
+
+The branch called the kernel with cutoff 1 (kernel clamps to 1), then divided
+by the real cutoff (default 100) and clamped again, capping the term at 0.01
+instead of 1. `$path_finder()` picked different paths (F1 off by up to
+1.7 kHz on DSI fixtures vs Praat 6.4.47). Upstream scalar loop restored;
+now matches Praat to ~1e-12 (faithfulness registry row added).
+`src/formantpath_simd.cpp` deleted.
+
+#### `fon/Sound_to_Pitch.cpp`, `dwsys/SlopeSelector.cpp`, `fon/Sound_and_Spectrogram.cpp`, `fon/Sound_to_Formant.cpp` — SIMD hooks removed
+
+Upstream scalar code restored for the filtered-AC/CC low-pass (had no R
+entry point; SIMD used `xsimd::exp`, not bit-exact) and SlopeSelector (SIMD
+was slower and already off). Dangling `extern` declarations for never-defined
+or never-called bridges removed. Deleted pladdrr sources: `pitch_simd_bridge`,
+`pitch_filter_simd`, `autocorrelation_simd`, `window_functions_simd`,
+`slopeselector_simd`, `cochleagram_simd`, `excitation_simd` (last two were
+not even compiled).
+
+#### `fon/Sound.cpp` — `Sound_resample` sinc loop threaded
+
+`MelderThread_PARALLELIZE (numberOfSamples, 2000)` over output samples; each
+sample's arithmetic is unchanged, so output is bit-identical to the serial
+loop (verified with 1 vs 10 threads). 6 s 44.1 kHz -> 11 kHz: 25 -> 10 ms.
+Every Burg formant analysis resamples first.
+
+
 ### Unreleased — FP contraction disabled at source level in melder.h (2026-08-26)
 
 Submodule commit `7fa2e9aae`.

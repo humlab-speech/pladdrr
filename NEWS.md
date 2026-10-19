@@ -1,3 +1,39 @@
+# pladdrr (development version)
+
+## Bug fixes
+
+* `FormantPath$path_finder()` now matches Praat. A SIMD branch clamped the
+  frequency-change cost twice (capped at 0.01 instead of 1), so the Viterbi
+  path, and the formants of `extract_formant()` after it, could differ from
+  Praat by more than 1 kHz.
+* `sound_extract_parts_pooled()` no longer leaks segments: they are now
+  ordinary R-owned Sounds (`use_pool` is accepted but ignored). A Sound from
+  `sound_pool_acquire()` while the pool is full is now freed by R.
+
+## Performance and memory
+
+* Loading the package uses ~40 MB less resident memory per R process
+  (including every parallel worker): Praat's 42 MB object list is now
+  constant-initialised instead of being written at load time.
+* `Sound$resample()` (and therefore every Burg formant analysis) runs its
+  sinc interpolation on multiple threads; output is bit-identical.
+* `process_sounds_parallel()` on PSOCK clusters (Windows) no longer ships
+  every Sound's samples to every worker with each task.
+* `as_data_frame()` for Spectrogram, ComplexSpectrogram and Matrix fills
+  preallocated vectors (peak memory roughly halved for long sounds).
+* `sound_mean()`, `sound_min()`, `sound_max()`, `sound_rms()` and
+  `sound_statistics()` read channel 1 directly instead of exporting all
+  channels.
+* Voice activity ZCR framing is O(frames + crossings) instead of
+  O(frames x crossings).
+* AVQI frees the per-interval Sounds once they are concatenated.
+
+## Internal
+
+* Removed unused or unreachable SIMD code (pitch bridge, pitch filter,
+  autocorrelation, window functions, SlopeSelector, cochleagram, excitation,
+  FormantPath) and their internal test-only bindings.
+
 # pladdrr 5.0.5
 
 ## Code quality
