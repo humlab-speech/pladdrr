@@ -17,3 +17,5 @@
 "Sound$get_number_of_channels","pass",1,1,0,0
 "Sound$get_mean","pass",0,0,0,1e-12
 "Sound$get_rms","pass",0.353525056170642,0.353525056170642,0,1e-12
+"Sound -> FormantPath -> Path finder -> mean F1, F2 (Hz)","pass",598.510192782362,598.510192782362,1.36424205265939e-12,1e-06
+"Sound -> FormantPath -> Path finder -> mean F1, F2 (Hz)","pass",1033.69993314347,1033.69993314347,1.36424205265939e-12,1e-06

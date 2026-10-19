@@ -55,8 +55,7 @@ FAITHFULNESS_ROUTINES <- list(
     rationale   = "Pitch CC pipeline; FP noise from FFT + interpolation. 0.0001 Hz is below any phonetic threshold.",
     praat_script = '
       sound = Read from file: "{path}"
-      pitch = To Pitch (
-        cc): 0.0, 75, 15, "no", 0.03, 0.45, 0.01, 0.35, 0.14, 600
+      pitch = To Pitch (cc): 0.0, 75, 15, "no", 0.03, 0.45, 0.01, 0.35, 0.14, 600
       mean_f0 = Get mean: 0, 0, "Hertz"
       writeInfoLine: mean_f0
     ',
@@ -156,8 +155,7 @@ FAITHFULNESS_ROUTINES <- list(
     rationale   = "Pitch AC pipeline; FP noise from autocorrelation + interpolation.",
     praat_script = '
       sound = Read from file: "{path}"
-      pitch = To Pitch (
-        ac): 0.0, 75, 15, "no", 0.03, 0.45, 0.01, 0.35, 0.14, 600
+      pitch = To Pitch (ac): 0.0, 75, 15, "no", 0.03, 0.45, 0.01, 0.35, 0.14, 600
       mean_f0 = Get mean: 0, 0, "Hertz"
       writeInfoLine: mean_f0
     ',

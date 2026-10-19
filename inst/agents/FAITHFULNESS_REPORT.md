@@ -1,6 +1,6 @@
 # Faithfulness Report (pladdrr vs Praat)
 
-_Generated: 2026-08-19 17:10:44 CEST_
+_Generated: 2026-10-19 20:25:52 CEST_
 
 Each row is one Praat DSP routine. Praat output is the oracle; pladdrr
 is checked against it at the documented tolerance. `pass` = within
@@ -26,6 +26,8 @@ tolerance, `fail` = drift (open an issue or document the rationale).
 | Sound$get_number_of_channels | pass | 1 | 1 | 0 | 0 |
 | Sound$get_mean | pass | 0 | 0 | 0 | 1e-12 |
 | Sound$get_rms | pass | 0.3535251 | 0.3535251 | 0 | 1e-12 |
+| Sound -> FormantPath -> Path finder -> mean F1, F2 (Hz) | pass | 598.5102 | 598.5102 | 1.364242e-12 | 1e-06 |
+| Sound -> FormantPath -> Path finder -> mean F1, F2 (Hz) | pass | 1033.7 | 1033.7 | 1.364242e-12 | 1e-06 |
 
 **Non-determinism caveat (CPPS row above):** the tolerance reported for
 `CPPS (calculate_cpps_ultra)` reflects the deterministic fast/default
