@@ -33,11 +33,9 @@ List of external pointers to extracted Sound segments
 
 ## Details
 
-When use_pool is TRUE, Sound objects are acquired from a pool and should
-be released back with sound_pool_release() when done.
-
-\*\*Important:\*\* Pool-acquired Sounds should not be modified as they
-may be reused. Copy if modification is needed.
+Each segment is an independent Sound owned by R and freed by the garbage
+collector. `use_pool` is accepted for backward compatibility and has no
+effect; calling `sound_pool_release()` on a segment is a no-op.
 
 ## Examples
 
@@ -49,8 +47,4 @@ ends <- c(0.3, 0.7, 1.2)
 # Batch extraction with pooling
 segments <- sound_extract_parts_pooled(sound$.xptr, starts, ends)
 
-# Release back to pool when done
-for (seg in segments) {
-  pladdrr:::sound_pool_release(seg)
-}
 ```

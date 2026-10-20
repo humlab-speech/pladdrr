@@ -128,11 +128,11 @@ simd_time <- microbenchmark(sound$to_pitch(), times = 50)
 print(scalar_time)
 #> Unit: milliseconds
 #>              expr      min       lq     mean   median       uq      max neval
-#>  sound$to_pitch() 3.447402 3.470857 5.923701 3.500021 3.528143 124.3747    50
+#>  sound$to_pitch() 3.436872 3.471553 5.905017 3.495004 3.517642 123.5766    50
 print(simd_time)
 #> Unit: milliseconds
-#>              expr      min       lq    mean   median       uq      max neval
-#>  sound$to_pitch() 3.450357 3.487212 3.51717 3.506521 3.526851 4.108758    50
+#>              expr      min       lq     mean   median      uq      max neval
+#>  sound$to_pitch() 3.434899 3.471613 3.545749 3.502388 3.53668 5.177881    50
 ```
 
 Gains vary by routine, CPU, compiler, and vector length — there is no
@@ -724,7 +724,7 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] RcppXPtrUtils_0.1.3  microbenchmark_1.5.0 pladdrr_5.0.5       
+#> [1] RcppXPtrUtils_0.1.3  microbenchmark_1.5.0 pladdrr_5.0.6       
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] gtable_0.3.6        jsonlite_2.0.0      dplyr_1.2.1        
@@ -734,7 +734,7 @@ sessionInfo()
 #> [13] ggplot2_4.0.3       R6_2.6.1            generics_0.1.4     
 #> [16] knitr_1.52          tibble_3.3.1        desc_1.4.3         
 #> [19] bslib_0.12.0        pillar_1.11.1       RColorBrewer_1.1-3 
-#> [22] rlang_1.3.0         cachem_1.1.0        xfun_0.60          
+#> [22] rlang_1.3.0         cachem_1.1.0        xfun_0.62          
 #> [25] fs_2.1.0            sass_0.4.10         S7_0.2.2           
 #> [28] otel_0.2.0          cli_3.6.6           pkgdown_2.2.1      
 #> [31] magrittr_2.0.5      digest_0.6.39       grid_4.6.1         

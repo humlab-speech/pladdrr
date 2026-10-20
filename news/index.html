@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">pladdrr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.0.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.0.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -66,6 +66,35 @@
       <small>Source: <a href="https://github.com/humlab-speech/pladdrr/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="5.0.6" id="pladdrr-506">pladdrr 5.0.6<a class="anchor" aria-label="anchor" href="#pladdrr-506"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes-5-0-6">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-5-0-6"></a></h3>
+<ul><li>
+<code>FormantPath$path_finder()</code> now matches Praat. A SIMD branch clamped the frequency-change cost twice (capped at 0.01 instead of 1), so the Viterbi path, and the formants of <code>extract_formant()</code> after it, could differ from Praat by more than 1 kHz.</li>
+<li>
+<code><a href="../reference/sound_extract_parts_pooled.html">sound_extract_parts_pooled()</a></code> no longer leaks segments: they are now ordinary R-owned Sounds (<code>use_pool</code> is accepted but ignored). A Sound from <code>sound_pool_acquire()</code> while the pool is full is now freed by R.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="performance-and-memory-5-0-6">Performance and memory<a class="anchor" aria-label="anchor" href="#performance-and-memory-5-0-6"></a></h3>
+<ul><li>Loading the package uses ~40 MB less resident memory per R process (including every parallel worker): Praat’s 42 MB object list is now constant-initialised instead of being written at load time.</li>
+<li>
+<code>Sound$resample()</code> (and therefore every Burg formant analysis) runs its sinc interpolation on multiple threads; output is bit-identical.</li>
+<li>
+<code><a href="../reference/process_sounds_parallel.html">process_sounds_parallel()</a></code> on PSOCK clusters (Windows) no longer ships every Sound’s samples to every worker with each task.</li>
+<li>
+<code><a href="https://tibble.tidyverse.org/reference/deprecated.html" class="external-link">as_data_frame()</a></code> for Spectrogram, ComplexSpectrogram and Matrix fills preallocated vectors (peak memory roughly halved for long sounds).</li>
+<li>
+<code><a href="../reference/sound_mean.html">sound_mean()</a></code>, <code><a href="../reference/sound_min.html">sound_min()</a></code>, <code><a href="../reference/sound_max.html">sound_max()</a></code>, <code><a href="../reference/sound_rms.html">sound_rms()</a></code> and <code><a href="../reference/sound_statistics.html">sound_statistics()</a></code> read channel 1 directly instead of exporting all channels.</li>
+<li>Voice activity ZCR framing is O(frames + crossings) instead of O(frames x crossings).</li>
+<li>AVQI frees the per-interval Sounds once they are concatenated.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="internal-5-0-6">Internal<a class="anchor" aria-label="anchor" href="#internal-5-0-6"></a></h3>
+<ul><li>Removed unused or unreachable SIMD code (pitch bridge, pitch filter, autocorrelation, window functions, SlopeSelector, cochleagram, excitation, FormantPath) and their internal test-only bindings.</li>
+<li>Faithfulness registry: the <code>Pitch (cc)</code> and <code>Pitch (AC)</code> rows had been failing silently in the Praat oracle (a line wrap split the Praat command); fixed, and a FormantPath path-finder row was added.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="5.0.5" id="pladdrr-505">pladdrr 5.0.5<a class="anchor" aria-label="anchor" href="#pladdrr-505"></a></h2>
 <div class="section level3">

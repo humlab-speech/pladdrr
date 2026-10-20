@@ -784,7 +784,7 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] ggplot2_4.0.3 pladdrr_5.0.5
+#> [1] ggplot2_4.0.3 pladdrr_5.0.6
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] gtable_0.3.6        jsonlite_2.0.0      dplyr_1.2.1        
@@ -794,7 +794,7 @@ sessionInfo()
 #> [13] R6_2.6.1            generics_0.1.4      knitr_1.52         
 #> [16] tibble_3.3.1        desc_1.4.3          bslib_0.12.0       
 #> [19] pillar_1.11.1       RColorBrewer_1.1-3  rlang_1.3.0        
-#> [22] cachem_1.1.0        xfun_0.60           fs_2.1.0           
+#> [22] cachem_1.1.0        xfun_0.62           fs_2.1.0           
 #> [25] sass_0.4.10         S7_0.2.2            otel_0.2.0         
 #> [28] cli_3.6.6           pkgdown_2.2.1       withr_3.0.3        
 #> [31] magrittr_2.0.5      digest_0.6.39       grid_4.6.1         

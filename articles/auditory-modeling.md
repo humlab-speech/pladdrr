@@ -370,9 +370,9 @@ loudness_time_series <- vapply(seq(0, 0.5, by = 0.01),
 # Remove large object if no longer needed
 rm(cochlea)
 gc()  # Force garbage collection
-#>           used  (Mb) gc trigger (Mb) max used  (Mb)
-#> Ncells 1889262 100.9    3182982  170  3182982 170.0
-#> Vcells 3212973  24.6    8388608   64  7264761  55.5
+#>           used  (Mb) gc trigger  (Mb) max used  (Mb)
+#> Ncells 1889020 100.9    3183465 170.1  3183465 170.1
+#> Vcells 3212422  24.6    8388608  64.0  7264278  55.5
 ```
 
 ## Comparison with Traditional Analysis
@@ -422,7 +422,7 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] ggplot2_4.0.3 pladdrr_5.0.5
+#> [1] ggplot2_4.0.3 pladdrr_5.0.6
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] gtable_0.3.6        jsonlite_2.0.0      dplyr_1.2.1        
@@ -432,7 +432,7 @@ sessionInfo()
 #> [13] R6_2.6.1            labeling_0.4.3      generics_0.1.4     
 #> [16] knitr_1.52          tibble_3.3.1        desc_1.4.3         
 #> [19] bslib_0.12.0        pillar_1.11.1       RColorBrewer_1.1-3 
-#> [22] rlang_1.3.0         cachem_1.1.0        xfun_0.60          
+#> [22] rlang_1.3.0         cachem_1.1.0        xfun_0.62          
 #> [25] fs_2.1.0            sass_0.4.10         S7_0.2.2           
 #> [28] otel_0.2.0          viridisLite_0.4.3   cli_3.6.6          
 #> [31] pkgdown_2.2.1       withr_3.0.3         magrittr_2.0.5     

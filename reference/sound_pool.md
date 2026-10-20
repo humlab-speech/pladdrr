@@ -52,7 +52,7 @@ stats <- sound_pool_stats()
 stats$hits
 #> [1] 0
 stats$misses
-#> [1] 3
+#> [1] 0
 
 # Clear pool to free memory
 sound_pool_clear()
