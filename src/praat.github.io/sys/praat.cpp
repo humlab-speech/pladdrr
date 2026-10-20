@@ -69,7 +69,7 @@ Thing_implement (Praat_Command, Thing, 0);
 */
 structPraatApplication theForegroundPraatApplication;
 PraatApplication theCurrentPraatApplication = & theForegroundPraatApplication;
-structPraatObjects theForegroundPraatObjects;
+structPraatObjects theForegroundPraatObjects {};   // pladdrr: value-init + constexpr autostring => constant-init, keeps 42 MB as untouched zero pages
 PraatObjects theCurrentPraatObjects = & theForegroundPraatObjects;
 structPraatPicture theForegroundPraatPicture;
 PraatPicture theCurrentPraatPicture = & theForegroundPraatPicture;

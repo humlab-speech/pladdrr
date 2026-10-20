@@ -68,7 +68,8 @@ mkdir -p "$(dirname "$OUT")"
   printf -- '- `PowerCepstrogram_to_Matrix_CPP` — `SampledIntoSampled_mt`\n'
   printf -- '- `PowerCepstrogram_smooth_fast` — parallelised `Sampled_getMean`\n'
   printf -- '- `Sound_to_Harmonicity_GNE` (v4.8.30) — Loops B and C parallelised\n'
-  printf -- '- `Sound_to_Pitch` (v4.8.30) — FCC path SIMD re-enabled (Fixes 1–5)\n'
+  printf -- '- `Sound_to_Pitch` — per-frame `MelderThread_PARALLELIZE` (upstream); pladdrr SIMD pitch hooks removed in the 2026-10 audit\n'
+  printf -- '- `Sound_resample` (2026-10) — sinc interpolation per channel, threshold=2000 samples\n'
 } > "$OUT"
 
 printf 'Wrote %s\n' "$OUT"

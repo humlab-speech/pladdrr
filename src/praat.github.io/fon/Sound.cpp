@@ -444,11 +444,19 @@ autoSound Sound_resample (constSound me, double samplingFrequency, integer preci
 							(1 - fraction) * my z [ichan] [leftSample] + fraction * my z [ichan] [leftSample + 1] );
 				}
 			} else {
-				for (integer i = 1; i <= numberOfSamples; i ++) {
+				/*
+					pladdrr: output samples are independent (each is one sinc sum over
+					the input), so split them across threads; per-sample arithmetic is
+					unchanged, hence bit-identical to the serial loop.
+					~100 taps per sample at precision 50, so 2000 samples per thread
+					amortizes the thread start.
+				*/
+				MelderThread_PARALLELIZE (numberOfSamples, 2000)
+				MelderThread_FOR (i) {
 					const double x = Sampled_indexToX (thee.get(), i);
 					const double index = Sampled_xToIndex (me, x);
 					thy z [ichan] [i] = NUM_interpolate_sinc (my z.row (ichan), index, precision);
-				}
+				} MelderThread_ENDFOR
 			}
 		}
 		return thee;

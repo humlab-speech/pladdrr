@@ -231,19 +231,19 @@ public:
     DataFrame as_data_frame() {
         VALIDATE_PTR(ptr, ComplexSpectrogram);
         
-        std::vector<double> times;
-        std::vector<double> frequencies;
-        std::vector<double> amplitudes;
-        std::vector<double> phases;
+        // Preallocated (see Spectrogram as_data_frame).
+        const R_xlen_t n = (R_xlen_t) ptr->nx * ptr->ny;
+        NumericVector times(n), frequencies(n), amplitudes(n), phases(n);
+        R_xlen_t k = 0;
 
         for (integer itime = 1; itime <= ptr->nx; itime++) {
             double time = Matrix_columnToX(ptr, itime);
-            for (integer ifreq = 1; ifreq <= ptr->ny; ifreq++) {
+            for (integer ifreq = 1; ifreq <= ptr->ny; ifreq++, k++) {
                 double freq = Matrix_rowToY(ptr, ifreq);
-                times.push_back(time);
-                frequencies.push_back(freq);
-                amplitudes.push_back(ptr->z[ifreq][itime]);
-                phases.push_back(ptr->phase[ifreq][itime]);
+                times[k] = time;
+                frequencies[k] = freq;
+                amplitudes[k] = ptr->z[ifreq][itime];
+                phases[k] = ptr->phase[ifreq][itime];
             }
         }
 

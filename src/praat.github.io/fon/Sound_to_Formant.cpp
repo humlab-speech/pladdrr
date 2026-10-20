@@ -34,13 +34,6 @@
 #include "Roots.h"
 #include "../../polynomial_roots_laguerre.h"
 
-// SIMD Phase 1.3: Formant extraction optimization
-#ifdef HAVE_XSIMD
-extern "C" double VECburg_simd_bridge(VEC const& lpc_coeffs, constVEC const& signal);
-extern "C" void apply_preemphasis_simd_bridge(VEC const& signal, double preemphasis_frequency, double sampling_rate);
-extern bool should_use_simd_for_formants();
-#endif
-
 static void burg (constVEC samples, VEC coefficients,
 	Formant_Frame frame, double nyquistFrequency, double safetyMargin)
 {

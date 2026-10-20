@@ -222,10 +222,11 @@ process_sounds_parallel <- function(sounds, analysis_func, n_cores = NULL,
     # the check's temp dir (detritus NOTE), so always tear the cluster down
     # -- on success, error, or interrupt.
     on.exit(parallel::stopCluster(cl), add = TRUE)
-    parallel::parLapply(cl, sound_data, function(d) {
-      pladdrr_threads(tpw)
-      analysis_func(sound_from_values(d$values, d$sr, d$start), ...)
-    })
+    # Namespace-level worker, not an inline closure: a closure's enclosing
+    # frame (holding all of `sound_data` and `sounds`) would be serialised
+    # with every chunk sent to every worker.
+    parallel::parLapply(cl, sound_data, .analyze_one_sound_data,
+      tpw = tpw, analysis_func = analysis_func, ...)
   }
 }
 
@@ -407,11 +408,15 @@ benchmark_parallel <- function(files, analysis_func,
 
 # Serialize a Sound to worker-safe data (raw samples + metadata).
 .sound_to_worker_data <- function(s) {
-  nch <- s$get_number_of_channels()
-  values <- t(
-    vapply(seq_len(nch), s$get_values, numeric(s$get_number_of_samples())))
-  list(values = values, sr = s$get_sampling_frequency(),
+  # as_matrix() is one allocation, already channels x samples.
+  list(values = s$as_matrix(), sr = s$get_sampling_frequency(),
     start = s$get_start_time())
+}
+
+# Rebuild a Sound from worker data on a PSOCK worker and analyse it.
+.analyze_one_sound_data <- function(d, tpw, analysis_func, ...) {
+  pladdrr_threads(tpw)
+  analysis_func(sound_from_values(d$values, d$sr, d$start), ...)
 }
 
 # Build a PSOCK worker cluster with pladdrr attached and vars exported.

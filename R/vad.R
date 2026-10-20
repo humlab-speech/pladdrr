@@ -619,16 +619,18 @@ sound_get_zcr <- function(sound,
   window_duration,
                                 hop_duration, avqi_compatible,
                                     avqi_start_offset, avqi_end_offset) {
-  times <- numeric(n_frames)
+  frame_start <- start_time + (seq_len(n_frames) - 1L) * hop_duration
+  frame_end <- frame_start + window_duration
+  # zero_times come from a PointProcess (sorted), so each frame's crossings
+  # are a contiguous run: count of z < start .. count of z < end. Avoids an
+  # O(frames x crossings) scan.
+  lo <- findInterval(frame_start, zero_times, left.open = TRUE)
+  hi <- findInterval(frame_end, zero_times, left.open = TRUE)
   zcr <- numeric(n_frames)
   for (i in seq_len(n_frames)) {
-    frame_start <- start_time + (i - 1L) * hop_duration
-    frame_end <- frame_start + window_duration
-    times[i] <- frame_start + window_duration / 2
-    frame_zeros <- zero_times[zero_times >= frame_start & zero_times <
-        frame_end]
-    zcr[i] <- .frame_zcr(frame_zeros, frame_start, window_duration,
+    frame_zeros <- zero_times[seq.int(lo[i] + 1L, length.out = hi[i] - lo[i])]
+    zcr[i] <- .frame_zcr(frame_zeros, frame_start[i], window_duration,
                          avqi_compatible, avqi_start_offset, avqi_end_offset)
   }
-  list(times = times, zcr = zcr)
+  list(times = frame_start + window_duration / 2, zcr = zcr)
 }

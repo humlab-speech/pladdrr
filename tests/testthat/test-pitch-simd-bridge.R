@@ -1,33 +1,7 @@
-# Exercises the pitch SIMD bridge (src/pitch_simd_bridge.cpp) end-to-end
-# through the public Sound$to_pitch_ac()/to_pitch_cc() API with SIMD forced
-# on, rather than testing the isolated autocorrelation helper directly.
-# `NUMautocorrelation*_simd_bridge` is called from Sound_to_Pitch_any(),
-# which both to_pitch_ac() (method = AC_HANNING/AC_GAUSS) and to_pitch_cc()
-# (method = FCC_NORMAL/FCC_ACCURATE) route through -- see
-# src/praat.github.io/fon/Sound_to_Pitch.cpp:108-141.
-#
-# NOTE on src/pitch_filter_simd.cpp (the Gaussian-lowpass-on-spectrum SIMD
-# bridge gated by should_use_simd_for_pitch_filter(), used inside
-# Sound_to_Pitch_filteredAc/filteredCc at Sound_to_Pitch.cpp:577-696):
-# this branch has NO R-reachable entry point in pladdrr. The R API only
-# exposes to_pitch()/to_pitch_ac()/to_pitch_cc()/to_pitch_shs() (see
-# R/sound-wrapper.R), none of which call Sound_to_Pitch_filteredAc/Cc.
-# Those two Praat functions are only invoked from Praat's own GUI command
-# layer (praat.github.io/fon/praat_Sound.cpp's
-# CONVERT_EACH_TO_ONE__Sound_to_Pitch_filtered{Autocorrelation,
-# CrossCorrelation} forms, dispatched only through Praat's interactive
-# script interpreter) and from praat.github.io/foned/SoundAnalysisArea.cpp
-# (Praat's GUI pitch display) -- neither of which pladdrr's Rcpp layer
-# drives. There is no "fcc" method argument anywhere in the R API (checked
-# R/pitch-wrapper.R and R/sound-wrapper.R): to_pitch()'s only tunables are
-# time_step/pitch_floor/pitch_ceiling, and to_pitch_cc() already reaches
-# Sound_to_Pitch_any()'s FCC_NORMAL/FCC_ACCURATE branch on its own -- that
-# is the "raw" cross-correlation method, not the "filtered" one that owns
-# pitch_filter_simd.cpp. So pitch_filter_simd.cpp is dead code from the R
-# surface as things stand; it cannot be exercised by any test written
-# against the public API without adding a new R-level wrapper for
-# Sound_to_Pitch_filteredAc/Cc, which is out of scope here. See the task-3
-# report for this finding.
+# End-to-end pitch checks through the public Sound$to_pitch_ac()/
+# to_pitch_cc() API with the SIMD toggle on. The pitch SIMD bridge and the
+# filtered-AC/CC low-pass SIMD were removed (2026-10, never called /
+# not bit-exact); these tests now guard the plain Praat pitch paths.
 
 test_that(
   "Pitch AC/CC SIMD path (pitch_simd_bridge.cpp) matches scalar for a real signal", {

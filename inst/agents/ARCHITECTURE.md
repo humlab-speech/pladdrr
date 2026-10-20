@@ -99,6 +99,12 @@ efficiency-core straggler. Measured on an M1 Pro (8P+2E) with v4.9.19 this no
 longer costs anything — 10 threads is the fastest point and CPU time is flat
 above 8 — but the risk is latent if you change chunk sizes or thresholds.
 
+**pladdrr-added parallel regions** (not upstream; Praat-tree ones logged in `PRAAT_MODIFICATIONS.md`):
+`Sound_resample` sinc branch (`fon/Sound.cpp`, threshold 2000 samples, per channel,
+2026-10) and `PowerCepstrogram_smooth_fast` (`batch_queries.cpp`). Only add one where
+each element writes a disjoint output slot and reads shared input only — that keeps
+results bit-identical at any thread count.
+
 ### Custom `parallel_for_range` (REMOVED v4.9.18)
 
 The former custom thread pool in `batch_queries.cpp` (`parallel_for_range` template) has been replaced with `MelderThread_PARALLELIZE`. This eliminates:
@@ -115,7 +121,7 @@ The former custom thread pool in `batch_queries.cpp` (`parallel_for_range` templ
 ```
 -O2 (CRAN floor) — default, full speed
 -O3 -march=native (embedder option) — byte-identical objects, no measurable gain (see v4.9.22 in AGENT_GUIDE.md)
--ffp-contract=off — required for CPPS bit-exactness with Praat
+#pragma STDC FP_CONTRACT OFF in melder.h — required for bit-exactness (replaced -ffp-contract=off, 2026-08)
 -DHAVE_XSIMD — unconditional; RcppXsimd is a LinkingTo dependency
 ```
 
@@ -142,11 +148,15 @@ The `FLAC_SRC` / `MP3_SRC` variables were removed in v4.9.19: they named a
 
 ### SIMD Configuration
 
-26 SIMD files compile by default (`-DHAVE_XSIMD`, unconditional in `PKG_CPPFLAGS` —
+`SIMD_SRC` compiles 10 `*_simd*.cpp` kernels/bridges plus `simd_utils`/`simd_info` (`-DHAVE_XSIMD`, unconditional in `PKG_CPPFLAGS` —
 RcppXsimd is a `LinkingTo` dependency, so the build cannot run without it). Six
 files with no externally referenced symbols were deleted in v4.9.19
 (`num_distance`, `num_filtering`, `num_matrix`, `pitch_processing`,
-`sound_convolution`, `sound_statistics` — 1,174 lines).
+`sound_convolution`, `sound_statistics` — 1,174 lines). The 2026-10 audit deleted 8 more
+(pitch, pitch filter, autocorrelation, window functions, FormantPath, SlopeSelector,
+cochleagram, excitation): dead, default-off, or not bit-exact; the FormantPath kernel
+was a real `path_finder()` bug. **`pladdrr_simd(FALSE)` gates only `sound_mix`/`scale_peak`**;
+other SIMD paths ignore it.
 
 **Instruction set is chosen at compile time, and there is no runtime dispatch.**
 This is the most commonly misunderstood part of the build:
@@ -176,6 +186,15 @@ effect; a v4.9.18 zero-copy fix landed there and did nothing. Bridges pass R's
 storage straight through as `values.begin() - 1` (the same `ptr - 1` idiom as
 Praat's `asArgumentToFunctionThatExpectsOneBasedArray()`); every kernel takes
 `const double*` and none writes through it.
+
+### Static Initialisation (load-time memory)
+
+Praat globals are linked into `pladdrr.so`. A big global with a non-`constexpr`
+constructor is initialised at `dyn.load`, dirtying every page. `theForegroundPraatObjects`
+(42 MB) did this until 2026-10 (+48 MB RSS per R process/PSOCK worker → now +7 MB).
+Constant-init needs **both** `constexpr _autostring()` (`melder/melder_string32.h`) and
+value-init `structPraatObjects theForegroundPraatObjects {};` (`sys/praat.cpp`). Check
+with RSS before/after `dyn.load` when touching `structPraatObjects` or `_autostring`.
 
 ### Stale-Binary Trap
 

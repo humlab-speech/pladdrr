@@ -1,8 +1,8 @@
 # pladdrr Agent Guide
 
-**Version:** 5.0.5 guide refresh (2026-09-04)
+**Version:** 5.0.5 guide refresh (2026-09-04; perf/memory audit notes 2026-10-19)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** Current through package 5.0.3. Shared-dispatch wrappers + threaded Praat backend + xsimd acceleration (enabled at build time, runtime toggle via `pladdrr_simd()`) + clinical Tier 4 helpers + wrapper dispatch migration (Sound/Formant/Spectrum/Spectrogram queries now use direct `.Call()` instead of Rcpp module dispatch) + current `praat.github.io/` build prefix guidance + current CPPS/CPP usage notes + macOS PSOCK parallelism + unified SIMD bridge header (`simd_bridge.h`) + GitHub Actions CI + code coverage + spectral-moments/data-frame allocation cleanup (v4.9.24) + CRAN pre-submission hygiene and full man/ coverage (v5.0.0) + Ltas full Praat-parity query coverage and new SpectrumTier peak-picking class (v5.0.3).
+**Status:** Current through package 5.0.3. Shared-dispatch wrappers + threaded Praat backend + xsimd acceleration (enabled at build time, runtime toggle via `pladdrr_simd()`) + clinical Tier 4 helpers + wrapper dispatch migration (Sound/Formant/Spectrum/Spectrogram queries now use direct `.Call()` instead of Rcpp module dispatch) + current `praat.github.io/` build prefix guidance + current CPPS/CPP usage notes + macOS PSOCK parallelism + unified SIMD bridge header (`simd_bridge.h`) + GitHub Actions CI + code coverage + spectral-moments/data-frame allocation cleanup (v4.9.24) + CRAN pre-submission hygiene and full man/ coverage (v5.0.0) + Ltas full Praat-parity query coverage and new SpectrumTier peak-picking class (v5.0.3) + perf/memory audit: load-time RSS fix, FormantPath parity fix, 8 SIMD files removed (development version, 2026-10).
 - **v4.9.18 — Performance + docs + CI (2026-08-05 assessment, Phases 1-4):**
   - **PointProcess jitter/shimmer batch cache:** First shimmer call fetches all 11 jitter+shimmer metrics via `get_jitter_shimmer_batch_cpp()`. Subsequent jitter or shimmer calls with matching parameters return from cache — no additional C++ crossing. Backward compatible: jitter methods unchanged (no Sound required); cache activates automatically after first shimmer call.
   - **Formant `get_all_values_at_time` — single C++ call:** Added `formant_get_all_values_at_time()` export; replaces `vapply` loop over N module calls with one direct wrapper call.
@@ -129,6 +129,18 @@ output to the matching pladdrr call at a per-routine tolerance, and emits
 When porting a new Praat routine into pladdrr, add a registry row. Default
 tolerance is `0` for exact-arithmetic routines; looser tolerances require a
 written rationale in the row. Failing rows are first-class regressions.
+
+## What's New in the development version (2026-10 perf/memory audit)
+
+- **Load-time RSS 48 MB → 7 MB per R process / PSOCK worker.** Praat's `theForegroundPraatObjects` (10001 × ~4.2 KB) was *dynamically* initialised because `_autostring()` was not `constexpr`, so `dyn.load` dirtied all 42 MB. Fix needs **both** `constexpr _autostring()` (`melder_string32.h`) and value-init `structPraatObjects theForegroundPraatObjects {};` (`praat.cpp`); `constexpr` alone changed nothing. Never add a non-constexpr member/ctor to `structPraatObjects`.
+- **`FormantPath$path_finder()` bug fixed.** `formantpath_simd.cpp` clamped the frequency-change cost to 1, then the caller divided by the cutoff again (default 100) → cost capped at 0.01, wrong Viterbi path, F1 off by up to 1.7 kHz vs Praat. SIMD branch deleted; upstream scalar loop restored. New faithfulness row (`mpt2.wav`, mean F1/F2, tolerance 1e-6) passes at ~1e-12.
+- **8 SIMD files deleted** (`pitch_simd_bridge`, `pitch_filter_simd`, `autocorrelation_simd`, `window_functions_simd`, `formantpath_simd`, `slopeselector_simd`, `cochleagram_simd`, `excitation_simd`) plus their `#ifdef HAVE_XSIMD` hooks in `Sound_to_Pitch.cpp`, `SlopeSelector.cpp`, `Sound_and_Spectrogram.cpp`, `Sound_to_Formant.cpp`; 12 internal test-only Rcpp exports gone (none were in `NAMESPACE`). `PLADDRR_{EN,DIS}ABLE_SLOPESELECTOR_SIMD` env vars no longer exist. Remaining SIMD: spectrogram, preemphasis, sound mixing, MFCC, powercepstrogram, batch-stat bridges, textgrid.
+- **`pladdrr_simd(FALSE)` only gates `sound_mix`/`scale_peak`** (`use_simd()` in `sound_wrappers.cpp`). All other SIMD paths ignore it. PowerCepstrogram/MFCC kernels (`xsimd::log`, FMA) not yet verified bit-exact.
+- **`Sound_resample` sinc loop threaded** (`Sound.cpp`, `MelderThread_PARALLELIZE(numberOfSamples, 2000)` per channel): 25 → 10 ms for 6 s @ 44.1 kHz, bit-identical. Every Burg formant analysis resamples first.
+- **R/C++ boundary copies cut:** `as_data_frame()` of Spectrogram/ComplexSpectrogram/Matrix modules preallocates (peak ~1× not 2–3×); PSOCK `process_sounds_parallel()` ships one sound per task, not the whole `sound_data` list in a closure (`.analyze_one_sound_data` helper); `sound_mean/min/max/rms/statistics` read channel 1 via `get_values(1)`; VAD zero-crossing count O(n) via `findInterval`; AVQI frees sounding parts after concatenation.
+- **Sound pool:** `sound_extract_parts_pooled()` returns ordinary finalized Sounds (`use_pool` ignored) — it previously leaked every part. `sound_pool_acquire()` on a full pool returns a finalized XPtr.
+- **Faithfulness harness:** `Pitch (cc)`/`Pitch (AC)` rows had silently reported `praat-error` (a reflow split `To Pitch (cc)` across two lines); fixed. Harness still does **not** fail on `praat-error` rows — check the report.
+- **Still open:** MFCC/Intensity frame threading, pitch-cc centring hoist, `Sound_findMaximumCorrelation` norm1 hoist, per-table pocketfft plan, honouring `pladdrr_simd()` everywhere, `Makevars.win` unbuilt since the SIMD removal.
 
 ## What's New in v5.0.4
 
@@ -373,8 +385,8 @@ This guide provides the **complete API reference** for pladdrr, an R package tha
 │ Praat C++ Layer (src/praat.github.io/)                      │
 │   - 1,254 headers from Praat codebase                      │
 │   - Direct calls: Sound_to_Pitch(), Formant_getValueAtTime()│
-│   - Build flags come from R Makeconf; pladdrr keeps        │
-│     `-ffp-contract=off` and optional xsimd detection       │
+│   - Build flags come from R Makeconf; FP contraction off   │
+│     via pragma in melder.h; -DHAVE_XSIMD unconditional     │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -916,7 +928,7 @@ intensities <- extract_intensity_parallel(files, n_cores = 4)
 
 **Best practices:**
 - Use `n_cores = parallel::detectCores() - 1` to leave one core for system
-- On Windows, uses `parLapply`; on Unix/Mac, uses `mclapply`
+- `analyze_files_parallel()`: PSOCK (`parLapply`) on Windows and macOS, `mclapply` on Linux. `process_sounds_parallel()` on PSOCK sends one sound's samples per task (2026-10; previously the whole list went to every worker)
 - For very large files, consider batch processing + parallel combined
 
 ### Pattern 2g: Direct API Functions (v2.3.0)
@@ -2949,7 +2961,7 @@ upstream Praat. It must be updated before committing any change to `src/praat.gi
 
 ### Memory Pooling API
 
-For batch segment extraction, reuses Sound allocations for 20-30% speedup:
+Pool of reusable Sound allocations. **Since 2026-10, `sound_extract_parts_pooled()` does not use it** (`use_pool` ignored; parts are ordinary R-owned Sounds — the pooled path leaked them). The stats/clear/resize API is kept for compatibility:
 
 ```r
 # Check pool efficiency
@@ -3064,11 +3076,11 @@ batch_process("~/audio/", pattern = "\\.wav$", func = my_analysis, parallel = TR
 
 ### SIMD Information
 
-SIMD acceleration is **enabled at build time** (`-DHAVE_XSIMD` in `Makevars.in`). Runtime
-detection selects the best instruction set per architecture (NEON on arm64, AVX2/SSE4.2
-on x86_64). All 32 SIMD files in `src/` are active; output is bit-identical to scalar paths.
-A new bridge header `src/simd_bridge.h` provides `simd_bridge_stat<T>()` and
-`simd_bridge_binary<T>()` templates for the common R→C SIMD adapter pattern.
+SIMD acceleration is **enabled at build time** (`-DHAVE_XSIMD` in `Makevars.in`). The
+instruction set is fixed at compile time, no runtime dispatch: CRAN builds get NEON on
+arm64 and SSE2 on x86_64. After the 2026-10 audit, 10 `*_simd*.cpp` files remain
+(spectrogram, preemphasis, sound mixing, MFCC, powercepstrogram, batch-stat bridges,
+textgrid); see `PERFORMANCE_INVENTORY.md`.
 
 Check capabilities:
 
@@ -3081,12 +3093,13 @@ info <- simd_info()
 # - SSE4.2: 2 doubles/operation (older x86_64)
 # - NEON: 2 doubles/operation (ARM/Apple Silicon)
 
-# Disable SIMD at runtime for testing
+# Disable SIMD at runtime -- only affects sound_mix / scale_peak (2026-10)
 pladdrr_simd(FALSE)
 ```
 
-New SIMD functions should follow the bridge template in `simd_bridge.h` rather than
-copying the R→C array conversion pattern manually.
+`simd_bridge.h` is included by no translation unit (dead); real bridges are the
+hand-written `src/*_simd_bridge.cpp` files. CRAN builds reach SSE2/NEON only
+(2 doubles per batch) -- the AVX2 lines above apply only to `-march=native` builds.
 
 ---
 
@@ -3499,7 +3512,7 @@ Also do NOT commit `src/Makevars` — verify with `git diff src/Makevars` before
 
 **libc++ note:** `PKG_CPPFLAGS` in `Makevars.in` carries `-D_LIBCPP_DISABLE_DEPRECATION_WARNINGS` — silences C++17 allocator-member deprecations inside RcppXsimd's `xsimd_aligned_allocator.hpp` under `--as-cran`; portable define, inert on libstdc++ (so not needed in `Makevars.win`).
 
-**CRAN-forbidden flags:** Do NOT add `-O3`, `-flto`, `-march=native`, or `-ffp-contract=off` to Makevars.in — R provides its own optimization via `Makeconf`. Do NOT re-add `-Wno-*` suppressions (all were removed in v4.9.6). FP contraction is disabled at source level: `#pragma STDC FP_CONTRACT OFF` in the vendored `melder.h` (included by every DSP translation unit; GCC and Clang both honour it) — see PRAAT_MODIFICATIONS.md. Never restore a compiler-flag version: R CMD check flags `-ffp-contract=off` in `PKG_CXXFLAGS` as non-portable. The `@XSIMD_FLAG@` mechanism handles SIMD detection without architecture-specific flags; xsimd auto-detects the best instruction set at compile time.
+**CRAN-forbidden flags:** Do NOT add `-O3`, `-flto`, `-march=native`, or `-ffp-contract=off` to Makevars.in — R provides its own optimization via `Makeconf`. Do NOT re-add `-Wno-*` suppressions (all were removed in v4.9.6). FP contraction is disabled at source level: `#pragma STDC FP_CONTRACT OFF` in the vendored `melder.h` (included by every DSP translation unit; GCC and Clang both honour it) — see PRAAT_MODIFICATIONS.md. Never restore a compiler-flag version: R CMD check flags `-ffp-contract=off` in `PKG_CXXFLAGS` as non-portable. `-DHAVE_XSIMD` is unconditional (no `@XSIMD_FLAG@` substitution any more); xsimd picks the instruction set at compile time from the compiler's default target (SSE2/NEON on CRAN).
 
 The former bundled GSL trees (`src/gsl-2.8/`, `src/praat/external/gsl/`, `src/build_gsl.sh`) were removed in the v4.9.5 slimming — only Praat's GSL 1.10 *headers* under `praat.github.io/external/gsl/` remain in the tarball.
 

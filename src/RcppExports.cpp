@@ -49,78 +49,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// autocorrelation_simd
-NumericVector autocorrelation_simd(NumericVector data, int max_lag);
-RcppExport SEXP _pladdrr_autocorrelation_simd(SEXP dataSEXP, SEXP max_lagSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< int >::type max_lag(max_lagSEXP);
-    rcpp_result_gen = Rcpp::wrap(autocorrelation_simd(data, max_lag));
-    return rcpp_result_gen;
-END_RCPP
-}
-// autocorrelation_normalized_simd
-NumericVector autocorrelation_normalized_simd(NumericVector data, int max_lag);
-RcppExport SEXP _pladdrr_autocorrelation_normalized_simd(SEXP dataSEXP, SEXP max_lagSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< int >::type max_lag(max_lagSEXP);
-    rcpp_result_gen = Rcpp::wrap(autocorrelation_normalized_simd(data, max_lag));
-    return rcpp_result_gen;
-END_RCPP
-}
-// lpc_autocorrelation_simd
-NumericVector lpc_autocorrelation_simd(NumericVector data, int num_coefficients);
-RcppExport SEXP _pladdrr_lpc_autocorrelation_simd(SEXP dataSEXP, SEXP num_coefficientsSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< int >::type num_coefficients(num_coefficientsSEXP);
-    rcpp_result_gen = Rcpp::wrap(lpc_autocorrelation_simd(data, num_coefficients));
-    return rcpp_result_gen;
-END_RCPP
-}
-// autocorrelation_scalar
-NumericVector autocorrelation_scalar(NumericVector data, int max_lag);
-RcppExport SEXP _pladdrr_autocorrelation_scalar(SEXP dataSEXP, SEXP max_lagSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< int >::type max_lag(max_lagSEXP);
-    rcpp_result_gen = Rcpp::wrap(autocorrelation_scalar(data, max_lag));
-    return rcpp_result_gen;
-END_RCPP
-}
-// autocorrelation_normalized_scalar
-NumericVector autocorrelation_normalized_scalar(NumericVector data, int max_lag);
-RcppExport SEXP _pladdrr_autocorrelation_normalized_scalar(SEXP dataSEXP, SEXP max_lagSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< int >::type max_lag(max_lagSEXP);
-    rcpp_result_gen = Rcpp::wrap(autocorrelation_normalized_scalar(data, max_lag));
-    return rcpp_result_gen;
-END_RCPP
-}
-// lpc_autocorrelation_scalar
-NumericVector lpc_autocorrelation_scalar(NumericVector data, int num_coefficients);
-RcppExport SEXP _pladdrr_lpc_autocorrelation_scalar(SEXP dataSEXP, SEXP num_coefficientsSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< int >::type num_coefficients(num_coefficientsSEXP);
-    rcpp_result_gen = Rcpp::wrap(lpc_autocorrelation_scalar(data, num_coefficients));
-    return rcpp_result_gen;
-END_RCPP
-}
 // formant_get_multiple_formants_at_times
 List formant_get_multiple_formants_at_times(SEXP formant_xptr, NumericVector times, IntegerVector formant_numbers, int unit);
 RcppExport SEXP _pladdrr_formant_get_multiple_formants_at_times(SEXP formant_xptrSEXP, SEXP timesSEXP, SEXP formant_numbersSEXP, SEXP unitSEXP) {
@@ -7584,74 +7512,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// apply_hamming_window_simd
-NumericVector apply_hamming_window_simd(NumericVector data);
-RcppExport SEXP _pladdrr_apply_hamming_window_simd(SEXP dataSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type data(dataSEXP);
-    rcpp_result_gen = Rcpp::wrap(apply_hamming_window_simd(data));
-    return rcpp_result_gen;
-END_RCPP
-}
-// apply_hanning_window_simd
-NumericVector apply_hanning_window_simd(NumericVector data);
-RcppExport SEXP _pladdrr_apply_hanning_window_simd(SEXP dataSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type data(dataSEXP);
-    rcpp_result_gen = Rcpp::wrap(apply_hanning_window_simd(data));
-    return rcpp_result_gen;
-END_RCPP
-}
-// apply_gaussian_window_simd
-NumericVector apply_gaussian_window_simd(NumericVector data, double sigma);
-RcppExport SEXP _pladdrr_apply_gaussian_window_simd(SEXP dataSEXP, SEXP sigmaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< double >::type sigma(sigmaSEXP);
-    rcpp_result_gen = Rcpp::wrap(apply_gaussian_window_simd(data, sigma));
-    return rcpp_result_gen;
-END_RCPP
-}
-// apply_hamming_window_scalar
-NumericVector apply_hamming_window_scalar(NumericVector data);
-RcppExport SEXP _pladdrr_apply_hamming_window_scalar(SEXP dataSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type data(dataSEXP);
-    rcpp_result_gen = Rcpp::wrap(apply_hamming_window_scalar(data));
-    return rcpp_result_gen;
-END_RCPP
-}
-// apply_hanning_window_scalar
-NumericVector apply_hanning_window_scalar(NumericVector data);
-RcppExport SEXP _pladdrr_apply_hanning_window_scalar(SEXP dataSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type data(dataSEXP);
-    rcpp_result_gen = Rcpp::wrap(apply_hanning_window_scalar(data));
-    return rcpp_result_gen;
-END_RCPP
-}
-// apply_gaussian_window_scalar
-NumericVector apply_gaussian_window_scalar(NumericVector data, double sigma);
-RcppExport SEXP _pladdrr_apply_gaussian_window_scalar(SEXP dataSEXP, SEXP sigmaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< double >::type sigma(sigmaSEXP);
-    rcpp_result_gen = Rcpp::wrap(apply_gaussian_window_scalar(data, sigma));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 // validate (ensure exported C++ functions exist before calling them)
 static int _pladdrr_RcppExport_validate(const char* sig) { 
@@ -7913,12 +7773,6 @@ extern const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_amplitude_tier_create_cpp", (DL_FUNC) &_pladdrr_amplitude_tier_create_cpp, 2},
     {"_pladdrr_intensity_tier_to_amplitude_tier_cpp", (DL_FUNC) &_pladdrr_intensity_tier_to_amplitude_tier_cpp, 1},
     {"_pladdrr_point_process_sound_to_amplitude_tier_point_cpp", (DL_FUNC) &_pladdrr_point_process_sound_to_amplitude_tier_point_cpp, 2},
-    {"_pladdrr_autocorrelation_simd", (DL_FUNC) &_pladdrr_autocorrelation_simd, 2},
-    {"_pladdrr_autocorrelation_normalized_simd", (DL_FUNC) &_pladdrr_autocorrelation_normalized_simd, 2},
-    {"_pladdrr_lpc_autocorrelation_simd", (DL_FUNC) &_pladdrr_lpc_autocorrelation_simd, 2},
-    {"_pladdrr_autocorrelation_scalar", (DL_FUNC) &_pladdrr_autocorrelation_scalar, 2},
-    {"_pladdrr_autocorrelation_normalized_scalar", (DL_FUNC) &_pladdrr_autocorrelation_normalized_scalar, 2},
-    {"_pladdrr_lpc_autocorrelation_scalar", (DL_FUNC) &_pladdrr_lpc_autocorrelation_scalar, 2},
     {"_pladdrr_formant_get_multiple_formants_at_times", (DL_FUNC) &_pladdrr_formant_get_multiple_formants_at_times, 4},
     {"_pladdrr_formant_get_multiple_bandwidths_at_times", (DL_FUNC) &_pladdrr_formant_get_multiple_bandwidths_at_times, 4},
     {"_pladdrr_pitch_get_strengths_at_times", (DL_FUNC) &_pladdrr_pitch_get_strengths_at_times, 4},
@@ -8273,12 +8127,6 @@ extern const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_praat_error_to_r", (DL_FUNC) &_pladdrr_praat_error_to_r, 1},
     {"_pladdrr_vocaltract_create", (DL_FUNC) &_pladdrr_vocaltract_create, 2},
     {"_pladdrr_vocaltract_create_from_phone", (DL_FUNC) &_pladdrr_vocaltract_create_from_phone, 1},
-    {"_pladdrr_apply_hamming_window_simd", (DL_FUNC) &_pladdrr_apply_hamming_window_simd, 1},
-    {"_pladdrr_apply_hanning_window_simd", (DL_FUNC) &_pladdrr_apply_hanning_window_simd, 1},
-    {"_pladdrr_apply_gaussian_window_simd", (DL_FUNC) &_pladdrr_apply_gaussian_window_simd, 2},
-    {"_pladdrr_apply_hamming_window_scalar", (DL_FUNC) &_pladdrr_apply_hamming_window_scalar, 1},
-    {"_pladdrr_apply_hanning_window_scalar", (DL_FUNC) &_pladdrr_apply_hanning_window_scalar, 1},
-    {"_pladdrr_apply_gaussian_window_scalar", (DL_FUNC) &_pladdrr_apply_gaussian_window_scalar, 2},
     {"_pladdrr_RcppExport_registerCCallable", (DL_FUNC) &_pladdrr_RcppExport_registerCCallable, 0},
     {NULL, NULL, 0}
 };

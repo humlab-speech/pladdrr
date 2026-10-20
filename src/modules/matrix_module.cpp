@@ -148,12 +148,15 @@ public:
     DataFrame as_data_frame() {
         VALIDATE_PTR(ptr, Matrix);
         // Flatten matrix to long format
-        std::vector<double> rows, cols, values;
+        // Preallocated (see Spectrogram as_data_frame).
+        const R_xlen_t n = (R_xlen_t) ptr->nx * ptr->ny;
+        NumericVector rows(n), cols(n), values(n);
+        R_xlen_t k = 0;
         for (integer i = 1; i <= ptr->ny; i++) {
-            for (integer j = 1; j <= ptr->nx; j++) {
-                rows.push_back(Matrix_rowToY(ptr.get(), i));
-                cols.push_back(Matrix_columnToX(ptr.get(), j));
-                values.push_back(ptr->z[i][j]);
+            for (integer j = 1; j <= ptr->nx; j++, k++) {
+                rows[k] = Matrix_rowToY(ptr.get(), i);
+                cols[k] = Matrix_columnToX(ptr.get(), j);
+                values[k] = ptr->z[i][j];
             }
         }
         return DataFrame::create(
