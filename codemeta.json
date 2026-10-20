@@ -8,7 +8,7 @@
   "codeRepository": "https://github.com/humlab-speech/pladdrr",
   "issueTracker": "https://github.com/humlab-speech/pladdrr/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "5.0.5",
+  "version": "5.0.6",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -391,7 +391,7 @@
       ],
       "name": "pladdrr: Direct Access to the Core Algorithms of Praat",
       "identifier": "10.5281/zenodo.21884217",
-      "description": "R package version 5.0.5",
+      "description": "R package version 5.0.6",
       "@id": "https://doi.org/10.5281/zenodo.21884217",
       "sameAs": "https://doi.org/10.5281/zenodo.21884217"
     },

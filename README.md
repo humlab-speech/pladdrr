@@ -413,7 +413,7 @@ sound_segment <- longsound$extract_part(tmin = 0, tmax = 10)
 To cite **pladdrr** in publications, run `citation("pladdrr")` in R, or use:
 
 > Nylén, Fredrik, Skotare, Tomas & von Boer, Johan (2026). *pladdrr: Direct
-> Access to the Core Algorithms of Praat*. R package version 5.0.5.
+> Access to the Core Algorithms of Praat*. R package version 5.0.6.
 > <https://doi.org/10.5281/zenodo.21884217>
 
 Please also cite Praat itself:

@@ -8,7 +8,7 @@ abstract: >-
   cepstral, voice-quality and synthesis routines can be called directly from R
   without an external Praat installation.
 type: software
-version: 5.0.5
+version: 5.0.6
 date-released: "2026-09-05"
 doi: 10.5281/zenodo.21884217
 license: GPL-3.0-or-later

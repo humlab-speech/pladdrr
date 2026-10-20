@@ -1,4 +1,4 @@
-# pladdrr (development version)
+# pladdrr 5.0.6
 
 ## Bug fixes
 
@@ -33,6 +33,9 @@
 * Removed unused or unreachable SIMD code (pitch bridge, pitch filter,
   autocorrelation, window functions, SlopeSelector, cochleagram, excitation,
   FormantPath) and their internal test-only bindings.
+* Faithfulness registry: the `Pitch (cc)` and `Pitch (AC)` rows had been
+  failing silently in the Praat oracle (a line wrap split the Praat command);
+  fixed, and a FormantPath path-finder row was added.
 
 # pladdrr 5.0.5
 
