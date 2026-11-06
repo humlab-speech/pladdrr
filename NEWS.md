@@ -2,6 +2,13 @@
 
 ## Bug fixes
 
+* `Ltas$get_value_at_frequency()`, `$get_minimum()` and `$get_maximum()` took a
+  `unit` argument and ignored it, so `unit = "energy"` or `"sones"` silently
+  returned dB. They answer in the bins' own dB (Praat's dialogs for them have no
+  unit), so they now accept only `"dB"` (any case) and raise a
+  `pladdrr_input_error` for anything else. **Behaviour change to expect:** a call
+  that passed another unit used to return the dB number and now raises.
+
 * `batch_process()` rows for files that failed now carry `error_class` next to
   `error` (the first class of the condition, e.g. `pladdrr_input_error`). A worker
   turns a condition into a row so one bad file cannot lose the run, which means a

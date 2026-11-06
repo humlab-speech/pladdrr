@@ -44,8 +44,9 @@ energy sums. Spelling is case-insensitive, and an unrecognised \code{unit}
 is an error naming the accepted spellings (in the queries that average:
 \code{get_mean()}, \code{get_means_batch()}, \code{get_standard_deviation()},
 \code{get_slope()}, \code{get_local_peak_height()}). The peak/trough and
-value-at-frequency locators take a \code{unit} argument but answer in the
-bins' own dB, so they do not validate it. Averages cover the whole bins between the two frequencies, weighting
+value-at-frequency locators take a \code{unit} argument for compatibility but
+answer in the bins' own dB, so they accept only \code{"dB"} and raise a
+\code{pladdrr_input_error} for anything else. Averages cover the whole bins between the two frequencies, weighting
 the two bins at an incomplete range edge by the fraction of the bin inside
 the range (Praat's non-interpolating averaging window). Methods that locate
 a peak or trough take an \code{interpolation} of

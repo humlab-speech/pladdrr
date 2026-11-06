@@ -32,8 +32,9 @@
 #' is an error naming the accepted spellings (in the queries that average:
 #' \code{get_mean()}, \code{get_means_batch()}, \code{get_standard_deviation()},
 #' \code{get_slope()}, \code{get_local_peak_height()}). The peak/trough and
-#' value-at-frequency locators take a \code{unit} argument but answer in the
-#' bins' own dB, so they do not validate it. Averages cover the whole bins between the two frequencies, weighting
+#' value-at-frequency locators take a \code{unit} argument for compatibility but
+#' answer in the bins' own dB, so they accept only \code{"dB"} and raise a
+#' \code{pladdrr_input_error} for anything else. Averages cover the whole bins between the two frequencies, weighting
 #' the two bins at an incomplete range edge by the fraction of the bin inside
 #' the range (Praat's non-interpolating averaging window). Methods that locate
 #' a peak or trough take an \code{interpolation} of
@@ -146,6 +147,22 @@ NULL
       paste0('must be one of "energy", "sones", "dB": ', unit)))
 }
 
+# The locators (get_value_at_frequency, get_minimum, get_maximum) read bins that
+# are already in dB; Praat's own dialogs for them have no unit at all. pladdrr
+# kept a `unit` argument, which used to be ignored, so unit = "energy" silently
+# returned dB. Refuse anything but dB rather than answer in a unit that was not
+# the one asked for.
+.check_ltas_db_unit <- function(unit, routine) {
+  if (!.is_string_scalar(unit) || is.na(unit) || tolower(unit) != "db") {
+    .stop_input(routine, "unit",
+      paste0('this query always answers in dB, so unit must be "dB"; the ',
+        '"energy" and "sones" domains belong to get_mean(), ',
+        'get_standard_deviation(), get_slope() and get_local_peak_height(): ',
+        deparse(unit)))
+  }
+  invisible(TRUE)
+}
+
 
 # ============================================================================
 # Shared Method Dispatch Table
@@ -171,6 +188,7 @@ NULL
 # --- Query values ---
 .ltas_methods$get_value_at_frequency <- function(.self, frequency,
   unit = "dB", interpolate = TRUE) {
+  .check_ltas_db_unit(unit, "get_value_at_frequency")
   .self$.cpp$get_value_at_frequency(as.numeric(frequency),
     if (interpolate) 2 else 0)
 }
@@ -179,11 +197,13 @@ NULL
 }
 .ltas_methods$get_minimum <- function(.self, fmin = 0, fmax = 0, unit = "dB",
   interpolation = "parabolic") {
+  .check_ltas_db_unit(unit, "get_minimum")
   .self$.cpp$get_minimum(fmin, fmax,
     .praat_peak_interpolation_code(interpolation))
 }
 .ltas_methods$get_maximum <- function(.self, fmin = 0, fmax = 0, unit = "dB",
   interpolation = "parabolic") {
+  .check_ltas_db_unit(unit, "get_maximum")
   .self$.cpp$get_maximum(fmin, fmax,
     .praat_peak_interpolation_code(interpolation))
 }
