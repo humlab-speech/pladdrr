@@ -325,7 +325,7 @@ Ltas <- function(.xptr = NULL) {
     stop("Ltas objects must be created from a Sound or Spectrum object")
   }
   ltas_mod <- get_module("ltas_module")
-  cpp_obj <- ltas_mod$RLtas$new(.xptr)
+  cpp_obj <- with_pladdrr_errors(ltas_mod$RLtas$new(.xptr))
   structure(list(.xptr = .xptr, .cpp = cpp_obj),
     class = c("Ltas", "PraatObject"))
 }

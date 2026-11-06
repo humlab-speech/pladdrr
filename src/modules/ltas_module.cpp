@@ -34,7 +34,9 @@ private:
 
 public:
     RLtas() : ptr(R_NilValue) {}
-    RLtas(XPtr<structLtas> xptr) : ptr(xptr) {}
+    RLtas(XPtr<structLtas> xptr) : ptr(xptr) {
+        require_praat_class(ptr.get(), classLtas, "Not a Ltas", "Ltas", ".xptr");
+    }
 
     bool is_valid() { return ptr.get() != nullptr; }
 

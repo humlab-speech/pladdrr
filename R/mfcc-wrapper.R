@@ -188,7 +188,7 @@ MFCC <- function(.xptr = NULL) {
       "MFCC objects must be created from a Sound object using sound$to_mfcc()")
   }
   mfcc_mod <- get_module("mfcc_module")
-  cpp_obj <- mfcc_mod$RMFCC$new(.xptr)
+  cpp_obj <- with_pladdrr_errors(mfcc_mod$RMFCC$new(.xptr))
   structure(list(.xptr = .xptr, .cpp = cpp_obj),
     class = c("MFCC", "PraatObject"))
 }
@@ -329,7 +329,7 @@ LFCC <- function(.xptr = NULL) {
     stop("LFCC objects must be created from an LPC object using lpc$to_lfcc()")
   }
   mfcc_mod <- get_module("mfcc_module")
-  cpp_obj <- mfcc_mod$RLFCC$new(.xptr)
+  cpp_obj <- with_pladdrr_errors(mfcc_mod$RLFCC$new(.xptr))
   structure(list(.xptr = .xptr, .cpp = cpp_obj),
     class = c("LFCC", "PraatObject"))
 }

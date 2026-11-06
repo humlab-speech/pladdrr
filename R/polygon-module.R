@@ -143,7 +143,7 @@ Polygon <- function(x, y, .xptr = NULL) {
     xptr <- poly_mod$polygon_create_xptr(as.numeric(x), as.numeric(y))
   }
 
-  cpp_obj <- poly_mod$RPolygon$new(xptr)
+  cpp_obj <- with_pladdrr_errors(poly_mod$RPolygon$new(xptr))
 
   structure(list(
     .xptr = xptr,

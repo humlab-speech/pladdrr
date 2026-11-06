@@ -20,6 +20,7 @@
 // Rcpp Module exposing Formant functionality (pladdrr 2.0)
 
 #include <Rcpp.h>
+#include "praat_xptr_utils.h"
 #include "module_common.h"
 #include "../datatable_utils.h"
 
@@ -41,7 +42,9 @@ public:
     RFormant() : ptr(R_NilValue) {}
 
     // Constructor from XPtr
-    RFormant(XPtr<structFormant> xptr) : ptr(xptr) {}
+    RFormant(XPtr<structFormant> xptr) : ptr(xptr) {
+        require_praat_class(ptr.get(), classFormant, "Not a Formant", "Formant", ".xptr");
+    }
 
     // =========================================================================
     // Validation

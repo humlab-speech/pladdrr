@@ -1249,7 +1249,7 @@ Sound <- function(path = NULL, .xptr = NULL) {
 
   # Load Rcpp Module and create C++ wrapper
   snd_mod <- get_module("sound_module")
-  cpp_snd <- snd_mod$RSound$new(ptr)
+  cpp_snd <- with_pladdrr_errors(snd_mod$RSound$new(ptr))
 
   # Minimal object: just fields, no closures. Methods via $.Sound dispatch.
   structure(list(.xptr = ptr, .cpp = cpp_snd),

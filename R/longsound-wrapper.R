@@ -227,7 +227,7 @@ LongSound <- function(.xptr = NULL) {
   }
 
   mod <- get_module("longsound_module")
-  cpp_obj <- mod$RLongSound$new(.xptr)
+  cpp_obj <- with_pladdrr_errors(mod$RLongSound$new(.xptr))
 
   structure(list(
     .cpp = cpp_obj,

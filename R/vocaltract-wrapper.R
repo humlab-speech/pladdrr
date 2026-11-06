@@ -152,7 +152,7 @@ VocalTract <- function(nx = 17L, dx = 0.01, .xptr = NULL) {
   }
 
   vt_mod <- get_module("vocaltract_module")
-  cpp_obj <- vt_mod$RVocalTract$new(ptr)
+  cpp_obj <- with_pladdrr_errors(vt_mod$RVocalTract$new(ptr))
 
   structure(list(
     .cpp = cpp_obj,

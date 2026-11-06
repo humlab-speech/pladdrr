@@ -38,7 +38,9 @@ private:
 
 public:
     RManipulation() : ptr(R_NilValue) {}
-    RManipulation(XPtr<structManipulation> xptr) : ptr(xptr) {}
+    RManipulation(XPtr<structManipulation> xptr) : ptr(xptr) {
+        require_praat_class(ptr.get(), classManipulation, "Not a Manipulation", "Manipulation", ".xptr");
+    }
 
     bool is_valid() { return ptr.get() != nullptr; }
 

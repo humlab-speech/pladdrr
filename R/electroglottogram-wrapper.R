@@ -162,7 +162,7 @@ Electroglottogram <- function(.xptr = NULL) {
   }
   
   egg_mod <- get_module("electroglottogram_module")
-  cpp_obj <- egg_mod$RElectroglottogram$new(.xptr)
+  cpp_obj <- with_pladdrr_errors(egg_mod$RElectroglottogram$new(.xptr))
   
   structure(list(
     .cpp = cpp_obj,

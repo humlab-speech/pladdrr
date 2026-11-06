@@ -119,7 +119,7 @@ Excitation <- function(.xptr) {
   }
   
   exc_mod <- get_module("excitation_module")
-  cpp_obj <- exc_mod$RExcitation$new(.xptr)
+  cpp_obj <- with_pladdrr_errors(exc_mod$RExcitation$new(.xptr))
   
   structure(list(
     .cpp = cpp_obj,

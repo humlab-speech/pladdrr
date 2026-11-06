@@ -37,7 +37,9 @@ private:
 
 public:
     RFormantGrid() : ptr(R_NilValue) {}
-    RFormantGrid(XPtr<structFormantGrid> xptr) : ptr(xptr) {}
+    RFormantGrid(XPtr<structFormantGrid> xptr) : ptr(xptr) {
+        require_praat_class(ptr.get(), classFormantGrid, "Not a FormantGrid", "FormantGrid", ".xptr");
+    }
 
     bool is_valid() { return ptr.get() != nullptr; }
 

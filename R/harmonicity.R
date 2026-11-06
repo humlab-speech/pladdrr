@@ -185,7 +185,7 @@ Harmonicity <- function(.xptr = NULL) {
         "to_harmonicity_ac() or to_harmonicity_cc()")
   }
   harmonicity_mod <- get_module("harmonicity_module")
-  cpp_obj <- harmonicity_mod$RHarmonicity$new(.xptr)
+  cpp_obj <- with_pladdrr_errors(harmonicity_mod$RHarmonicity$new(.xptr))
   structure(list(.xptr = .xptr, .cpp = cpp_obj),
     class = c("Harmonicity", "PraatObject"))
 }

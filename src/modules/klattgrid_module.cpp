@@ -21,6 +21,7 @@
 // Phase 2.3 - Articulatory speech synthesis with Klatt formant synthesizer
 
 #include <Rcpp.h>
+#include "praat_xptr_utils.h"
 #include "module_common.h"
 
 // Praat headers
@@ -140,7 +141,9 @@ public:
     
     // Constructors
     RKlattGrid() : ptr(R_NilValue) {}
-    RKlattGrid(Rcpp::XPtr<structKlattGrid> p) : ptr(p) {}
+    RKlattGrid(Rcpp::XPtr<structKlattGrid> p) : ptr(p) {
+        require_praat_class(ptr.get(), classKlattGrid, "Not a KlattGrid", "KlattGrid", ".xptr");
+    }
     
     // Validation
     bool is_valid() const {

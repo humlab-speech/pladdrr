@@ -229,7 +229,7 @@ Intensity <- function(.xptr = NULL) {
         "to_intensity()")
   }
   intensity_mod <- get_module("intensity_module")
-  cpp_obj <- intensity_mod$RIntensity$new(.xptr)
+  cpp_obj <- with_pladdrr_errors(intensity_mod$RIntensity$new(.xptr))
   structure(list(.xptr = .xptr, .cpp = cpp_obj),
     class = c("Intensity", "PraatObject"))
 }

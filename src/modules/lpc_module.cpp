@@ -40,7 +40,9 @@ private:
 
 public:
     RLPC() : ptr(R_NilValue) {}
-    RLPC(XPtr<structLPC> xptr) : ptr(xptr) {}
+    RLPC(XPtr<structLPC> xptr) : ptr(xptr) {
+        require_praat_class(ptr.get(), classLPC, "Not a LPC", "LPC", ".xptr");
+    }
 
     bool is_valid() { return ptr.get() != nullptr; }
 

@@ -171,7 +171,7 @@ FormantModeler <- function(.xptr = NULL) {
   }
 
   fm_mod <- get_module("formantmodeler_module")
-  cpp_obj <- fm_mod$RFormantModeler$new(.xptr)
+  cpp_obj <- with_pladdrr_errors(fm_mod$RFormantModeler$new(.xptr))
 
   structure(list(
     .cpp = cpp_obj,

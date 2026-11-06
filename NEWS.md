@@ -2,6 +2,16 @@
 
 ## Bug fixes
 
+* Every class constructor that takes `.xptr` now refuses a pointer to a Praat
+  object of another class with a `pladdrr_input_error` ("Not a Sound (found
+  TextGrid)"), the check `Matrix` and `PitchTier` already had. Before, 10
+  constructors (`Sound`, `Pitch`, `Formant`, `FormantTier`, `Intensity`,
+  `IntensityTier`, `Excitation`, `MFCC`, `LFCC`, `TextGrid`) re-interpreted the
+  foreign object and the first query killed the R session (SIGSEGV, exit 139),
+  and 21 more answered with another class's numbers. Subclasses still pass (a
+  `Sound` is a valid `Matrix`). Not covered yet: `PowerCepstrogram`, which has no
+  module constructor.
+
 * `Sound$to_cochleagram()`, `$to_cochleagram_edb()` and `Spectrum$to_excitation()`
   refuse a step size that cannot describe the result instead of asking Praat for
   it. `df = 1e-9` is a 2.5 TB request: Linux answered with an allocation error,

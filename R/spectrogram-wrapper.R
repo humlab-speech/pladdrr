@@ -200,7 +200,7 @@ Spectrogram <- function(.xptr = NULL) {
     stop("Spectrogram objects must be created from Sound$to_spectrogram()")
   }
   spectrogram_mod <- get_module("spectrogram_module")
-  cpp_obj <- spectrogram_mod$RSpectrogram$new(.xptr)
+  cpp_obj <- with_pladdrr_errors(spectrogram_mod$RSpectrogram$new(.xptr))
   structure(list(.xptr = .xptr, .cpp = cpp_obj),
     class = c("Spectrogram", "PraatObject"))
 }

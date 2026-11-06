@@ -38,7 +38,9 @@ private:
 
 public:
     RPointProcess() : ptr(R_NilValue) {}
-    RPointProcess(XPtr<structPointProcess> xptr) : ptr(xptr) {}
+    RPointProcess(XPtr<structPointProcess> xptr) : ptr(xptr) {
+        require_praat_class(ptr.get(), classPointProcess, "Not a PointProcess", "PointProcess", ".xptr");
+    }
 
     bool is_valid() { return ptr.get() != nullptr; }
 

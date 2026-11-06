@@ -209,7 +209,7 @@ FormantPath <- function(sound,
         as.integer(num_steps_up_down)
     )
     
-    cpp_obj <- mod$RFormantPath$new(xptr)
+    cpp_obj <- with_pladdrr_errors(mod$RFormantPath$new(xptr))
     
     structure(list(
         .cpp = cpp_obj

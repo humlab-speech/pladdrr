@@ -164,7 +164,7 @@ Cochleagram <- function(.xptr) {
   }
   
   coch_mod <- get_module("cochleagram_module")
-  cpp_obj <- coch_mod$RCochleagram$new(.xptr)
+  cpp_obj <- with_pladdrr_errors(coch_mod$RCochleagram$new(.xptr))
   
   structure(list(
     .cpp = cpp_obj,

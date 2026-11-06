@@ -47,7 +47,9 @@ private:
 
 public:
     RDiscriminant() : ptr(R_NilValue) {}
-    RDiscriminant(XPtr<structDiscriminant> xptr) : ptr(xptr) {}
+    RDiscriminant(XPtr<structDiscriminant> xptr) : ptr(xptr) {
+        require_praat_class(ptr.get(), classDiscriminant, "Not a Discriminant", "Discriminant", ".xptr");
+    }
 
     bool is_valid() { return ptr.get() != nullptr; }
 

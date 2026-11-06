@@ -33,7 +33,9 @@ private:
 
 public:
     RLongSound() : ptr(R_NilValue) {}
-    RLongSound(XPtr<structLongSound> xptr) : ptr(xptr) {}
+    RLongSound(XPtr<structLongSound> xptr) : ptr(xptr) {
+        require_praat_class(ptr.get(), classLongSound, "Not a LongSound", "LongSound", ".xptr");
+    }
 
     bool is_valid() { return ptr.get() != nullptr; }
 

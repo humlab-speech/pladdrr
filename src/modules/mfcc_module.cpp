@@ -49,7 +49,9 @@ private:
 
 public:
     RMFCC() : ptr(R_NilValue) {}
-    RMFCC(XPtr<structMFCC> xptr) : ptr(xptr) {}
+    RMFCC(XPtr<structMFCC> xptr) : ptr(xptr) {
+        require_praat_class(ptr.get(), classMFCC, "Not a MFCC", "MFCC", ".xptr");
+    }
 
     bool is_valid() { return ptr.get() != nullptr; }
 
@@ -253,7 +255,9 @@ private:
 
 public:
     RLFCC() : ptr(R_NilValue) {}
-    RLFCC(XPtr<structLFCC> xptr) : ptr(xptr) {}
+    RLFCC(XPtr<structLFCC> xptr) : ptr(xptr) {
+        require_praat_class(ptr.get(), classLFCC, "Not a LFCC", "LFCC", ".xptr");
+    }
 
     bool is_valid() { return ptr.get() != nullptr; }
 

@@ -35,7 +35,9 @@ private:
 
 public:
     RSpectrogram() : ptr(R_NilValue) {}
-    RSpectrogram(XPtr<structSpectrogram> xptr) : ptr(xptr) {}
+    RSpectrogram(XPtr<structSpectrogram> xptr) : ptr(xptr) {
+        require_praat_class(ptr.get(), classSpectrogram, "Not a Spectrogram", "Spectrogram", ".xptr");
+    }
 
     bool is_valid() { return ptr.get() != nullptr; }
 

@@ -34,7 +34,9 @@ private:
 
 public:
     RDurationTier() : ptr(R_NilValue) {}
-    RDurationTier(XPtr<structDurationTier> xptr) : ptr(xptr) {}
+    RDurationTier(XPtr<structDurationTier> xptr) : ptr(xptr) {
+        require_praat_class(ptr.get(), classDurationTier, "Not a DurationTier", "DurationTier", ".xptr");
+    }
 
     bool is_valid() { return ptr.get() != nullptr; }
 

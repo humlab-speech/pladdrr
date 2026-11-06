@@ -39,7 +39,9 @@ private:
 
 public:
     RTextGrid() : ptr(R_NilValue) {}
-    RTextGrid(XPtr<structTextGrid> xptr) : ptr(xptr) {}
+    RTextGrid(XPtr<structTextGrid> xptr) : ptr(xptr) {
+        require_praat_class(ptr.get(), classTextGrid, "Not a TextGrid", "TextGrid", ".xptr");
+    }
 
     bool is_valid() { return ptr.get() != nullptr; }
 

@@ -158,7 +158,7 @@ AmplitudeTier <- function(.xptr = NULL) {
   }
 
   tier_mod <- get_module("amplitudetier_module")
-  cpp_obj <- tier_mod$RAmplitudeTier$new(.xptr)
+  cpp_obj <- with_pladdrr_errors(tier_mod$RAmplitudeTier$new(.xptr))
 
   structure(list(
     .cpp = cpp_obj,

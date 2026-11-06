@@ -292,7 +292,7 @@ Spectrum <- function(.xptr = NULL) {
     stop("Spectrum objects must be created from Sound using to_spectrum()")
   }
   spectrum_mod <- get_module("spectrum_module")
-  cpp_obj <- spectrum_mod$RSpectrum$new(.xptr)
+  cpp_obj <- with_pladdrr_errors(spectrum_mod$RSpectrum$new(.xptr))
   structure(list(.xptr = .xptr, .cpp = cpp_obj),
     class = c("Spectrum", "PraatObject"))
 }

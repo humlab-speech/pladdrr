@@ -184,7 +184,7 @@ KlattGrid <- function(tmin = 0.0,
     as.integer(numberOfFricationFormants),
     as.integer(numberOfDeltaFormants)
   )
-  cpp_obj <- mod$RKlattGrid$new(xptr)
+  cpp_obj <- with_pladdrr_errors(mod$RKlattGrid$new(xptr))
 
   structure(list(
     .cpp = cpp_obj
@@ -228,7 +228,7 @@ klattgrid_create_from_vowel <- function(duration = 0.5,
     bandWidthFraction,
     formantFrequencyInterval
   )
-  cpp_obj <- mod$RKlattGrid$new(xptr)
+  cpp_obj <- with_pladdrr_errors(mod$RKlattGrid$new(xptr))
 
   structure(list(
     .cpp = cpp_obj
@@ -248,7 +248,7 @@ klattgrid_create_from_vowel <- function(duration = 0.5,
 klattgrid_create_example <- function() {
   mod <- get_module("klattgrid_module")
   xptr <- mod$klattgrid_create_example()
-  cpp_obj <- mod$RKlattGrid$new(xptr)
+  cpp_obj <- with_pladdrr_errors(mod$RKlattGrid$new(xptr))
 
   structure(list(
     .cpp = cpp_obj

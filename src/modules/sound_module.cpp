@@ -57,7 +57,9 @@ public:
     RSound() : ptr(R_NilValue) {}
 
     // Constructor from XPtr
-    RSound(XPtr<structSound> xptr) : ptr(xptr) {}
+    RSound(XPtr<structSound> xptr) : ptr(xptr) {
+        require_praat_class(ptr.get(), classSound, "Not a Sound", "Sound", ".xptr");
+    }
 
     // =========================================================================
     // Validation

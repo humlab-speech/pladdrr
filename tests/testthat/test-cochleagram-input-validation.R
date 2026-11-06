@@ -38,6 +38,9 @@ test_that("a step size that asks for an impossible tensor is refused in C++", {
   expect_error(praat_run_script(sprintf(
     'sound = Create Sound from formula: "t", 1, 0, 1, 44100, "sin(2*pi*440*x)"\nTo Cochleagram: 0.01, 0.000000001, 0.03, 0.03')),
     "not allowed")
+  # The script created a Sound before it failed; do not leave it in Praat's
+  # global object list for later tests (test-interpreter-bridge.R counts it).
+  PraatInterpreter$new()$clear_objects()
 })
 
 test_that("the default steps still produce the documented shape", {

@@ -138,7 +138,7 @@ PCA <- function(.xptr = NULL) {
   }
 
   pca_mod <- get_module("pca_module")
-  cpp_obj <- pca_mod$RPCA$new(.xptr)
+  cpp_obj <- with_pladdrr_errors(pca_mod$RPCA$new(.xptr))
 
   structure(list(
     .cpp = cpp_obj,

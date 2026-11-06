@@ -35,7 +35,9 @@ private:
 
 public:
     RSpectrumTier() : ptr(R_NilValue) {}
-    RSpectrumTier(XPtr<structSpectrumTier> xptr) : ptr(xptr) {}
+    RSpectrumTier(XPtr<structSpectrumTier> xptr) : ptr(xptr) {
+        require_praat_class(ptr.get(), classSpectrumTier, "Not a SpectrumTier", "SpectrumTier", ".xptr");
+    }
 
     bool is_valid() { return ptr.get() != nullptr; }
 

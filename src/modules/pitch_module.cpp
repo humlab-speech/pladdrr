@@ -21,6 +21,7 @@
 // Part of the pladdrr package - 2.0 module-based architecture
 
 #include <Rcpp.h>
+#include "praat_xptr_utils.h"
 #include "module_common.h"
 #include "../datatable_utils.h"
 #include "../datatable_utils.h"
@@ -57,7 +58,9 @@ public:
     RPitch() : ptr(R_NilValue) {}
 
     // Constructor from external pointer
-    RPitch(Rcpp::XPtr<structPitch> p) : ptr(p) {}
+    RPitch(Rcpp::XPtr<structPitch> p) : ptr(p) {
+        require_praat_class(ptr.get(), classPitch, "Not a Pitch", "Pitch", ".xptr");
+    }
 
     // ========================================================================
     // Factory: Create from Sound

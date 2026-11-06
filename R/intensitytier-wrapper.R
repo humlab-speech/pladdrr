@@ -117,7 +117,7 @@ IntensityTier <- function(tmin = NULL, tmax = NULL, .xptr = NULL) {
   }
 
   tier_mod <- get_module("intensitytier_module")
-  cpp_obj <- tier_mod$RIntensityTier$new(ptr)
+  cpp_obj <- with_pladdrr_errors(tier_mod$RIntensityTier$new(ptr))
 
   structure(list(
     .cpp = cpp_obj,

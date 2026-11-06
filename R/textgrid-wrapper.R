@@ -476,7 +476,7 @@ TextGrid <- function(path = NULL, .xptr = NULL) {
     stop("Must provide either path or .xptr")
   }
   tg_mod <- get_module("textgrid_module")
-  cpp_tg <- tg_mod$RTextGrid$new(ptr)
+  cpp_tg <- with_pladdrr_errors(tg_mod$RTextGrid$new(ptr))
   structure(list(.xptr = ptr, .cpp = cpp_tg),
     class = c("TextGrid", "PraatObject"))
 }

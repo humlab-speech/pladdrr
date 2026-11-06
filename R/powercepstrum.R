@@ -278,7 +278,7 @@ PowerCepstrum <- function(.xptr = NULL) {
     stop(".xptr must be an external pointer")
   }
   pc_mod <- get_module("powercepstrum_module")
-  cpp_pc <- pc_mod$RPowerCepstrum$new(.xptr)
+  cpp_pc <- with_pladdrr_errors(pc_mod$RPowerCepstrum$new(.xptr))
   structure(list(.xptr = .xptr, .cpp = cpp_pc),
     class = c("PowerCepstrum", "PraatObject"))
 }
