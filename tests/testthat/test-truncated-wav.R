@@ -94,20 +94,118 @@ test_that("a lying data chunk does not allocate from the claim (subprocess)", {
     "s <- withCallingHandlers(",
     sprintf('  pladdrr::Sound(path = "%s"),', path),
     '  pladdrr_data_loss = function(w) { seen <<- 1L; invokeRestart("muffleWarning") })',
-    'rss <- grep("^VmHWM", readLines("/proc/self/status"), value = TRUE)',
-    'mb <- as.numeric(gsub("[^0-9]", "", rss)) / 1024',
-    'cat(sprintf("NX=%s RSS=%.0f CONDITIONS=%s\\n",',
-    '  format(s$get_number_of_samples()), mb, seen))'
+    'st <- readLines("/proc/self/status")',
+    'mb <- function(k) as.numeric(gsub("[^0-9]", "", grep(k, st, value = TRUE))) / 1024',
+    'cat(sprintf("NX=%s PEAK=%.0f HWM=%.0f CONDITIONS=%s\\n",',
+    '  format(s$get_number_of_samples()), mb("^VmPeak"), mb("^VmHWM"), seen))'
   ), script)
   out <- system2(file.path(R.home("bin"), "Rscript"), shQuote(script),
     stdout = TRUE, stderr = TRUE)
   hit <- grep("NX=", out, value = TRUE)
   expect_length(hit, 1L)   # child must report, not die
-  kv <- regmatches(hit[1], regexec("NX=([0-9]+) RSS=([0-9]+) CONDITIONS=([0-9]+)",
+  kv <- regmatches(hit[1], regexec(
+    "NX=([0-9]+) PEAK=([0-9]+) HWM=([0-9]+) CONDITIONS=([0-9]+)",
     hit[1]))[[1]]
   expect_identical(kv[2], "1")        # one sample present: 45 bytes - 44 header
-  expect_lt(as.numeric(kv[3]), 200)   # MB; the claim alone must not cost 8 GB
-  expect_identical(kv[4], "1")        # ... and the loss was catchable in R
+  # VmPeak, not VmHWM, is what the header claim buys: Praat calloc's the buffer,
+  # so the 8 GB of address space stay untouched (resident 124 MB on both builds)
+  # until something reads the samples. Measured on /root/rlib-base: 7877 MB; on
+  # the fixed build 312 MB, which is R + pladdrr and nothing else.
+  expect_lt(as.numeric(kv[3]), 1500)  # MB of address space
+  expect_lt(as.numeric(kv[4]), 200)   # MB resident
+  expect_identical(kv[5], "1")        # ... and the loss was catchable in R
+})
+
+# Review round (sufficiency reviewer): the clamp must stop at the end of the
+# `data` chunk, not at the end of the file. A real chunk after the samples
+# (LIST/INFO metadata, common in recorded files) is not audio; counting to EOF
+# read its 104 header bytes back as 52 extra samples.
+test_that("a lying data chunk stops at the samples; a chunk after them is not audio", {
+  sound <- Sound$create_tone(frequency = 440, duration = 0.2,
+    sampling_rate = 22050)
+  path <- file.path(tempdir(), "trailer_after_lie.wav")
+  sound$save(path)
+  pristine <- as.numeric(Sound(path = path)$get_values())
+  bytes <- readBin(path, "raw", file.size(path))
+  present <- (length(bytes) - 44L) %/% 2L
+  trailer <- c(charToRaw("LIST"), .i32(96L), charToRaw("INFO"), raw(92L))
+  bytes[41:44] <- .i32(4L * present)   # lie: four times the samples that exist
+  bytes[5:8] <- .i32(length(bytes) + length(trailer) - 8L)   # RIFF keeps the truth
+  writeBin(c(bytes, trailer), path)
+
+  expect_warning(read <- Sound(path = path), class = "pladdrr_data_loss")
+  expect_identical(as.integer(read$get_number_of_samples()), present)
+  # All of it is the signal that was written, including the last sample; none of
+  # it came from the metadata chunk.
+  expect_identical(as.numeric(read$get_values()), pristine)
+})
+
+test_that("several chunks after a lying data chunk are all skipped", {
+  sound <- Sound$create_tone(frequency = 440, duration = 0.2,
+    sampling_rate = 22050)
+  path <- file.path(tempdir(), "two_trailers_after_lie.wav")
+  sound$save(path)
+  pristine <- as.numeric(Sound(path = path)$get_values())
+  bytes <- readBin(path, "raw", file.size(path))
+  present <- (length(bytes) - 44L) %/% 2L
+  trailer <- c(
+    charToRaw("LIST"), .i32(8L), charToRaw("INFOartx"),
+    charToRaw("INFO"), .i32(12L), charToRaw("pladdrraudit")
+  )
+  bytes[41:44] <- .i32(4L * present)
+  bytes[5:8] <- .i32(length(bytes) + length(trailer) - 8L)
+  writeBin(c(bytes, trailer), path)
+
+  expect_warning(read <- Sound(path = path), class = "pladdrr_data_loss")
+  expect_identical(as.integer(read$get_number_of_samples()), present)
+  expect_identical(as.numeric(read$get_values()), pristine)
+})
+
+test_that("an honest data chunk followed by metadata reads in full and silently", {
+  # The other side of the same walk: metadata after the samples must neither be
+  # read as audio nor make an intact file warn.
+  sound <- Sound$create_tone(frequency = 440, duration = 0.2,
+    sampling_rate = 22050)
+  path <- file.path(tempdir(), "honest_with_trailer.wav")
+  sound$save(path)
+  pristine <- as.numeric(Sound(path = path)$get_values())
+  bytes <- readBin(path, "raw", file.size(path))
+  trailer <- c(charToRaw("LIST"), .i32(96L), charToRaw("INFO"), raw(92L))
+  bytes[5:8] <- .i32(length(bytes) + length(trailer) - 8L)
+  writeBin(c(bytes, trailer), path)
+
+  expect_silent(read <- Sound(path = path))
+  expect_identical(as.numeric(read$get_values()), pristine)
+})
+
+# The mirror image of a truncated file: a `data` chunk that declares FEWER
+# samples than the file holds. Praat reads the declared count and announces the
+# rest in console text only (6.4.27 returns nx=4410 for a file holding 1750
+# samples), so design goal 1 (fidelity) keeps that count; design principle 6
+# (report loss of data) requires the condition, which Praat has no channel for.
+test_that("an understated data chunk keeps Praat's count but reports the audio it drops", {
+  sound <- Sound$create_tone(frequency = 440, duration = 0.2,
+    sampling_rate = 22050)
+  path <- file.path(tempdir(), "understated.wav")
+  sound$save(path)
+  bytes <- readBin(path, "raw", file.size(path))
+  declared <- 100L   # bytes: 50 samples, while the file holds 4410
+  following <- (length(bytes) - 44L) %/% 2L
+  bytes[41:44] <- .i32(declared)
+  writeBin(bytes, path)
+
+  w <- expect_warning(read <- Sound(path = path), class = "pladdrr_data_loss")
+  # Praat's answer, pinned: the declared samples only, no more than today.
+  expect_identical(as.integer(read$get_number_of_samples()), declared %/% 2L)
+  expect_match(conditionMessage(w), basename(path), fixed = TRUE)
+  expect_match(conditionMessage(w), as.character(declared %/% 2L), fixed = TRUE)
+  expect_match(conditionMessage(w), as.character(following), fixed = TRUE)
+  expect_identical(w$routine, "sound_read_from_file")
+
+  old <- options(pladdrr.data_loss = "silent")
+  on.exit(options(old), add = TRUE)
+  expect_silent(quiet <- Sound(path = path))
+  expect_identical(as.integer(quiet$get_number_of_samples()), declared %/% 2L)
 })
 
 test_that("options(pladdrr.data_loss=) controls the reaction to truncation", {

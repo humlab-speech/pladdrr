@@ -73,6 +73,37 @@ autoSound Sound_changeSpeaker(Sound me, double pitchMin, double pitchMax,
     double pitchRangeMultiplier, double durationMultiplier);
 extern void NUMrandom_initializeSafelyAndUnpredictably();  // RNG initialization
 
+// Little-endian RIFF readers for the WAV clamp below. Praat's own walker
+// (Melder_checkWavFile) stops at the `data` chunk and reports the length that
+// chunk declares, so the positions the clamp needs are re-read here; nothing is
+// reimplemented beyond reading id + size at a position.
+static bool wav_read_at(FILE* file, int64 position, void* buffer, size_t size) {
+    if (position < 0 || fseeko(file, (off_t) position, SEEK_SET) != 0) return false;
+    return fread(buffer, 1, size, file) == size;
+}
+
+// Chunk header at `position`: four-tag id and 32-bit little-endian size.
+static bool wav_chunk_header_at(FILE* file, int64 position, int64 end, char* id,
+    int64* size) {
+    unsigned char header[8];
+    if (position < 0 || position + 8 > end || !wav_read_at(file, position, header, 8)) {
+        return false;
+    }
+    for (int i = 0; i < 4; i++) id[i] = (char) header[i];
+    *size = (int64) header[4] | ((int64) header[5] << 8)
+        | ((int64) header[6] << 16) | ((int64) header[7] << 24);
+    return true;
+}
+
+// RIFF chunk ids are printable ASCII padded with spaces; sample bytes rarely
+// are, which is what makes a lying chunk list recoverable at all.
+static bool wav_plausible_chunk_id(const char* id) {
+    for (int i = 0; i < 4; i++) {
+        if (id[i] < 0x20 || id[i] > 0x7E) return false;
+    }
+    return true;
+}
+
 // Helper function to ensure all numeric libraries are initialized
 static void ensure_numeric_libs_initialized() {
     static bool initialized = false;
@@ -105,10 +136,12 @@ XPtr<structSound> sound_read_from_file_native(std::string path) {
         // actually holds (interrupted download, malformed header). Praat sizes
         // its buffer from that claim, so 45 bytes on disk become gigabytes of
         // allocation and the samples the file lacks read back as fabricated
-        // silence. For WAV only, size from the bytes that exist and report the
-        // loss (reclassified into a pladdrr_data_loss condition by
+        // silence. For WAV only, walk the chunk list to find out how many
+        // samples are really decodable, read exactly those, and report the loss
+        // (reclassified into a pladdrr_data_loss condition by
         // .sound_ptr_from_path, which is also what honours
-        // options(pladdrr.data_loss =)).
+        // options(pladdrr.data_loss =)). The same walk reports the mirror case:
+        // a header that understates the audio that follows it.
         {
             autoMelderFile probe = MelderFile_open(&file);
             char magic[12];
@@ -124,14 +157,108 @@ XPtr<structSound> sound_read_from_file_native(std::string path) {
                     &sampleRate, &startOfData, &claimedSamples);
                 const integer bytesPerFrame = numberOfChannels > 0 && sampleRate > 0.0
                     ? numberOfChannels * Melder_bytesPerSamplePoint(encoding) : 0;
+                int64 physicalEnd = 0;
                 if (bytesPerFrame > 0 && fseeko(file.filePointer, 0, SEEK_END) == 0) {
-                    const integer presentSamples = (integer) (
-                        ((int64) ftello(file.filePointer) - (int64) startOfData) / bytesPerFrame);
+                    physicalEnd = (int64) ftello(file.filePointer);
+                }
+                if (bytesPerFrame > 0) {
+                    /*
+                     * What is decodable audio: the lesser of the byte count the
+                     * `data` chunk declares, the byte count the RIFF header
+                     * declares and the physical end of the file. Counting to EOF
+                     * instead would read a chunk that follows the samples (LIST /
+                     * INFO metadata) back as audio.
+                     */
+                    const int64 endOfFile = physicalEnd;
+                    int64 declaredDataEnd = endOfFile;   // unknown: no cap from `data`
+                    int64 paddedEndOfData = endOfFile + bytesPerFrame;   // nothing known to follow
+                    int64 riffEnd = endOfFile;
+                    char id[4];
+                    int64 chunkSize = 0;
+                    if (wav_chunk_header_at(file.filePointer, 0, endOfFile, id, &chunkSize)
+                        && memcmp(id, "RIFF", 4) == 0
+                        && chunkSize <= (int64) UINT32_MAX - 100) {   // 0xFFFFFFFF = streamed
+                        riffEnd = 8 + chunkSize;
+                    }
+                    for (int64 position = 12;   // past "RIFF", its size, "WAVE"
+                        wav_chunk_header_at(file.filePointer, position, endOfFile, id, &chunkSize); ) {
+                        if (memcmp(id, "data", 4) == 0) {
+                            // Same repair as Melder_checkWavFile: a size of
+                            // about UINT32_MAX is a streamed file meaning "the
+                            // data runs to the end of the file", not a lie.
+                            if (chunkSize <= (int64) UINT32_MAX - 100) {
+                                declaredDataEnd = position + 8 + chunkSize;
+                            }
+                            paddedEndOfData = position + 8 + chunkSize + (chunkSize & 1);
+                            break;
+                        }
+                        if (!wav_plausible_chunk_id(id)) break;   // the list stops making sense
+                        position += 8 + chunkSize + (chunkSize & 1);
+                    }
+                    // Does the file hold a whole frame more than the chunk
+                    // declares, and is what follows the samples another chunk
+                    // header (fine) or audio (a header that understates)?
+                    const bool audioFollowsData =
+                        endOfFile - paddedEndOfData >= bytesPerFrame;
+                    const bool chunkFollowsData = wav_chunk_header_at(file.filePointer,
+                            paddedEndOfData, endOfFile, id, &chunkSize)
+                        && wav_plausible_chunk_id(id);
+
+                    int64 extentEnd = std::min(endOfFile, declaredDataEnd);
+                    if (riffEnd > (int64) startOfData) {
+                        extentEnd = std::min(extentEnd, riffEnd);
+                    }
+                    // shortcut: when `data` overshoots what the file or the RIFF
+                    // header can back up, the tail may belong to a chunk the lie
+                    // hid; only the last 8 KiB are searched for its header, and at
+                    // most 8 chunks are chained back, so a lying header followed
+                    // by a bigger trailing chunk still reads that chunk's bytes as
+                    // audio. Upgrade to a full scan if such a file shows up.
+                    if (declaredDataEnd > extentEnd) {
+                        const int64 windowStart =
+                            std::max((int64) startOfData, extentEnd - 8192);
+                        std::vector<unsigned char> tail((size_t) (extentEnd - windowStart));
+                        bool scanned = !tail.empty() && wav_read_at(file.filePointer,
+                            windowStart, tail.data(), tail.size());
+                        for (int chain = 0; scanned && chain < 8; chain++) {
+                            int64 found = -1;
+                            for (int64 position = extentEnd - 8; position >= windowStart; position--) {
+                                const size_t offset = (size_t) (position - windowStart);
+                                for (int i = 0; i < 4; i++) id[i] = (char) tail[offset + i];
+                                if (!wav_plausible_chunk_id(id)) continue;
+                                const int64 size = (int64) tail[offset + 4]
+                                    | ((int64) tail[offset + 5] << 8)
+                                    | ((int64) tail[offset + 6] << 16)
+                                    | ((int64) tail[offset + 7] << 24);
+                                // A candidate is only convincing if its own length
+                                // ends the list: at the extent found so far, or at
+                                // the end the RIFF header declares (a file shorter
+                                // than its own header stops there).
+                                const int64 chunkEnd = position + 8 + size + (size & 1);
+                                if (chunkEnd == extentEnd || chunkEnd == riffEnd) {
+                                    found = position;
+                                    break;
+                                }
+                            }
+                            if (found < 0) break;
+                            extentEnd = found;   // the audio stops at that header
+                            scanned = extentEnd - windowStart >= 8;
+                        }
+                    }
+
+                    integer presentSamples = (integer) (extentEnd > (int64) startOfData
+                        ? (extentEnd - (int64) startOfData) / bytesPerFrame : 0);
+                    if (presentSamples < 0) presentSamples = 0;
+                    // startOfData is a position the header walk actually reached, so
+                    // the quotient cannot go negative while `integer` is 64-bit; on a
+                    // 32-bit build a data chunk over 2 GB could, and a negative count
+                    // must never reach the allocator.
                     if (presentSamples < claimedSamples) {
-                        // Exactly the samples that are in the file, no zero padding.
-                        // A file with no sample data at all yields a 0-sample Sound
-                        // (analyses then fail on it) rather than an error, so that
-                        // the data-loss report stays the single signal.
+                        // Exactly the samples that are in the file, no zero padding
+                        // and no bytes from a chunk that follows them. A file with no
+                        // sample data at all yields a 0-sample Sound (analyses then
+                        // fail on it) rather than an error, so that the data-loss
+                        // report stays the single signal.
                         autoSound sound = Sound_createSimple(numberOfChannels,
                             presentSamples / sampleRate, sampleRate);
                         MelderFile_seek(&file, startOfData, SEEK_SET);
@@ -142,6 +269,23 @@ XPtr<structSound> sound_read_from_file_native(std::string path) {
                             << "; read the " << presentSamples << " samples present";
                         PLADDRR_WARN_DATA_LOSS("sound_read_from_file", msg.str());
                         return create_xptr_from_auto<structSound>(sound);
+                    }
+                    if (audioFollowsData && !chunkFollowsData && claimedSamples > 0) {
+                        // The header understates: whole frames of audio follow the
+                        // declared chunk and are not another chunk's header. Praat
+                        // reads the declared count and says so in console text only
+                        // (6.4.27 returns nx=4410 for a file holding 1750 samples),
+                        // and design goal 1 keeps that answer; design principle 6
+                        // requires that the discarded audio be reported, so this is
+                        // the one place pladdrr deviates from Praat by talking.
+                        const integer samplesInFile = (integer) (
+                            (endOfFile - (int64) startOfData) / bytesPerFrame);
+                        std::ostringstream msg;
+                        msg << path << ": the data chunk declares " << claimedSamples
+                            << " samples but " << samplesInFile
+                            << " samples physically follow; read the "
+                            << claimedSamples << " samples declared";
+                        PLADDRR_WARN_DATA_LOSS("sound_read_from_file", msg.str());
                     }
                 }
             }

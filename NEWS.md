@@ -54,10 +54,16 @@
 * A WAV whose `data` chunk declares more bytes than the file holds (truncated
   download, malformed header) no longer allocates from that claim and pads the
   rest with zeros. `Sound(path = )` now returns exactly the samples that are in
-  the file and raises a `pladdrr_data_loss` condition naming the file and the
-  real count, so `options(pladdrr.data_loss = "error")` turns a truncated file
-  into an error and `"silent"` silences it. A 46-byte file used to arrive as a
-  4.2 GB object; it now reads 130 MB.
+  the file, up to the end of the `data` chunk: a metadata chunk that follows the
+  samples is no longer read back as audio either. It raises a
+  `pladdrr_data_loss` condition naming the file and the real count, so
+  `options(pladdrr.data_loss = "error")` turns a truncated file into an error
+  and `"silent"` silences it. A 46-byte file whose header claimed 536 870 912
+  samples used to arrive as a 4.3 GB object; it now yields the one
+  sample that is physically in it. The mirror case, a `data` chunk that
+  understates the audio that follows it, still returns the shorter count Praat
+  returns (design goal 1), but now reports the discarded samples through the
+  same condition instead of only in Praat's console text.
 * `batch_process()` no longer loses the whole run to one bad file. A file that
   cannot be read (a 0-byte `.wav` from an aborted download) or on which `func`
   fails produced a row with different columns from the measured rows, and the

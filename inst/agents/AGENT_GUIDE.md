@@ -67,6 +67,13 @@ Praat zero-pads a window that runs past the signal; goal 1 says reproduce the
 value, goal 6 says report the fabrication. Controlled by
 `options(pladdrr.data_loss = "warn" | "error" | "silent")`; default `"warn"`.
 
+A **file** can raise it too: `src/sound_wrappers.cpp` reports a WAV whose `data`
+chunk does not match the bytes that follow it — more, and the load returns
+exactly the samples that exist; fewer, and the load keeps Praat's shorter count
+(Praat 6.4.27 answers `nx = 4410` for a file holding 1750 samples) while naming
+the discarded ones. Reached by any file load (`Sound(path = )`, `Sound$new()`,
+deprecated `read_sound()`); locked in `tests/testthat/test-truncated-wav.R`.
+
 **C++ tags (partially wired).** Wrappers can emit tagged messages that
 `with_pladdrr_errors(expr)` reclassifies:
 
@@ -78,18 +85,32 @@ PLADDRR_STOP_PRAAT("routine_name", "Praat raised an error doing X");
 PLADDRR_WARN_DATA_LOSS("routine_name", "n of m values undefined");
 ```
 
-Only `src/batch_queries.cpp` uses them today. **Every other C++ wrapper still
+`src/batch_queries.cpp` and `src/sound_wrappers.cpp` use them today (the latter
+`PLADDRR_WARN_DATA_LOSS`, for a WAV shorter than its own `data` chunk; the R
+side muffles it and re-raises it through `.warn_data_loss()`, which is what
+applies `options(pladdrr.data_loss = )`). **Every other C++ wrapper still
 raises a plain `simpleError`**, so do not assume a `pladdrr_praat_error` will
 arrive from an arbitrary routine — check before you rely on it.
 
-| Class                 | Meaning                              | Where it comes from       |
-|-----------------------|--------------------------------------|---------------------------|
-| `pladdrr_input_error` | invalid argument / precondition fail | R validators (live)       |
-| `pladdrr_praat_error` | Praat internal failure               | C++ macros (2 sites only) |
-| `pladdrr_data_loss`   | output incomplete vs request         | R + C++ (live)            |
+| Class                       | Meaning                                       | Where it comes from             |
+|-----------------------------|-----------------------------------------------|---------------------------------|
+| `pladdrr_input_error`       | invalid argument / precondition fail          | R validators (live)             |
+| `pladdrr_praat_error`       | Praat internal failure                        | C++ macros (2 sites only)       |
+| `pladdrr_data_loss`         | output incomplete vs request, or input shorter than its own header | R + C++ (live) |
+| `pladdrr_decoder_fallback`  | native reader refused the file; `av` decoded it | R (`av` fallback in `.sound_ptr_from_path`) |
 
-All inherit from `pladdrr_error` → `error` → `condition`, so one
-`tryCatch(pladdrr_error = ...)` catches them all.
+The error classes inherit from `pladdrr_error` → `error` → `condition`, so one
+`tryCatch(pladdrr_error = ...)` catches them all; `pladdrr_data_loss` as a
+warning and `pladdrr_decoder_fallback` inherit from `pladdrr_warning` →
+`warning` → `condition` instead, so catch those as warnings. Both R-level
+classes are already classed and need no `with_pladdrr_errors()`:
+
+```r
+tryCatch(Sound(path = "truncated.wav"),
+  pladdrr_data_loss = function(w) conditionMessage(w))       # read N of M samples
+suppressWarnings(Sound(path = "song.mp3"))                   # hides pladdrr_decoder_fallback
+options(pladdrr.data_loss = "error")                         # does NOT affect decoder_fallback
+```
 
 When porting a new wrapper: call the shared validators at R level, replace bare
 `stop("...")` in C++ with the macros above, and emit `WARN_DATA_LOSS` whenever
@@ -263,7 +284,7 @@ written rationale in the row. Failing rows are first-class regressions.
 - **v4.9.3 — Willems/split-Levinson crash fixed:** `Sound$to_formant_willems()` and `to_formant_sl()` no longer segfault on pure tones or silence. Root cause was a null console stream in the embedded build (`MelderConsole::write` → `fputc(NULL)`); guarded to fall back to libc `stderr`/`stdout` (see `PRAAT_MODIFICATIONS.md` v4.9.3). Formant values are unchanged. Both methods now reject `number_of_formants`/`number_of_poles < 1` with a clear R-level error. Also fixed `sound_extract_parts()` (was passing a dead R6 private pointer → NULL; now uses `$.xptr`).
 - **v4.9.2 — Thread control:** `pladdrr_threads(n)` caps or disables Praat's multi-threaded analyses at runtime. `pladdrr_threads(1)` forces single-threaded (use inside `parallel::mclapply()` workers so cores aren't oversubscribed); `pladdrr_threads(0)` restores automatic (all cores); `pladdrr_threads()` with no argument returns the current state (`processors`, `enabled`, `max_threads`, `min_elements_per_thread`). Threading never changes results — threads only partition analysis frames.
 
-- **v4.9.2 — Data-loss policy:** `options(pladdrr.data_loss=)` controls how routines that return NA for undefined values react: `"warn"` (default, classed warning per incident), `"error"` (stop at first incident), `"silent"` (only attach `attr(., "pladdrr_data_loss")`). Set `"error"` in batch pipelines where silent NA truncation would corrupt aggregates.
+- **v4.9.2 — Data-loss policy:** `options(pladdrr.data_loss=)` controls how routines that report incomplete output react — NA for undefined values, a result shorter than the requested range, or a sound file read shorter than its own header (`Sound()` / `Sound$new()` on a truncated or malformed WAV): `"warn"` (default, classed warning per incident), `"error"` (stop at first incident), `"silent"` (only attach `attr(., "pladdrr_data_loss")`, and only where `with_pladdrr_errors()` returns a value that takes attributes). Set `"error"` in batch pipelines where silent truncation would corrupt aggregates — note that this then aborts a corpus loop on the first truncated file, which is the point: before the clamp such a loop completed on fabricated samples with no signal at all. Reading a file through the `av` fallback is reported by the separate `pladdrr_decoder_fallback` class, which this option deliberately does not govern.
 
 - **v4.9.2 — Input validation:** `Sound$to_pitch*/to_manipulation/to_ltas_pitch_corrected/change_speaker/to_point_process_periodic_*` now reject `pitch_floor <= 0` or `pitch_ceiling <= pitch_floor` with a clear R-level error instead of a generic "Failed to create ..." from C++.
 
