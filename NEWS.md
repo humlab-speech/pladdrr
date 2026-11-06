@@ -46,8 +46,7 @@
   `IntensityTier`, `Excitation`, `MFCC`, `LFCC`, `TextGrid`) re-interpreted the
   foreign object and the first query killed the R session (SIGSEGV, exit 139),
   and 21 more answered with another class's numbers. Subclasses still pass (a
-  `Sound` is a valid `Matrix`). Not covered yet: `PowerCepstrogram`, which has no
-  module constructor.
+  `Sound` is a valid `Matrix`), and `PowerCepstrogram` does the same.
 
 * `Sound$to_cochleagram()`, `$to_cochleagram_edb()` and `Spectrum$to_excitation()`
   refuse a step size that cannot describe the result instead of asking Praat for

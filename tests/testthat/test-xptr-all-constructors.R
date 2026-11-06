@@ -10,16 +10,13 @@
 foreign <- TextGrid(
   path = system.file("extdata/test.TextGrid", package = "pladdrr"))$.xptr
 
-# PowerCepstrogram is deliberately absent: it is a plain function wrapper with no
-# Rcpp module constructor, so there is no single place to guard it yet.
-#
 # Constructors whose class is not an ancestor of TextGrid, so a TextGrid pointer
 # is a genuine foreign object for each. (Thing_isa is a subclass test: Matrix
 # accepts a Sound, which is deliberate, and is covered by test-xptr-constructor-class.R.)
 constructors <- c("Sound", "Pitch", "Formant", "FormantTier", "Intensity",
   "IntensityTier", "Excitation", "MFCC", "LFCC", "Spectrum", "Ltas", "Table",
   "PointProcess", "DurationTier", "AmplitudeTier", "LPC", "Cepstrum",
-  "PowerCepstrum", "Spectrogram", "SpectrumTier",
+  "PowerCepstrum", "PowerCepstrogram", "Spectrogram", "SpectrumTier",
   "Cochleagram", "Electroglottogram", "FormantGrid", "Manipulation", "Polygon",
   "DTW", "Discriminant", "PCA", "FormantModeler", "VocalTract", "Harmonicity")
 
