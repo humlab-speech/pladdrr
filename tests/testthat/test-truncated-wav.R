@@ -94,8 +94,10 @@ test_that("a lying data chunk does not allocate from the claim (subprocess)", {
     "s <- withCallingHandlers(",
     sprintf('  pladdrr::Sound(path = "%s"),', path),
     '  pladdrr_data_loss = function(w) { seen <<- 1L; invokeRestart("muffleWarning") })',
-    'st <- readLines("/proc/self/status")',
-    'mb <- function(k) as.numeric(gsub("[^0-9]", "", grep(k, st, value = TRUE))) / 1024',
+    'st <- if (file.exists("/proc/self/status"))',
+    '  readLines("/proc/self/status") else character()',
+    'mb <- function(k) if (!length(st)) -1 else',
+    '  as.numeric(gsub("[^0-9]", "", grep(k, st, value = TRUE))) / 1024',
     'cat(sprintf("NX=%s PEAK=%.0f HWM=%.0f CONDITIONS=%s\\n",',
     '  format(s$get_number_of_samples()), mb("^VmPeak"), mb("^VmHWM"), seen))'
   ), script)
@@ -111,8 +113,14 @@ test_that("a lying data chunk does not allocate from the claim (subprocess)", {
   # so the 8 GB of address space stay untouched (resident 124 MB on both builds)
   # until something reads the samples. Measured on /root/rlib-base: 7877 MB; on
   # the fixed build 312 MB, which is R + pladdrr and nothing else.
-  expect_lt(as.numeric(kv[3]), 1500)  # MB of address space
-  expect_lt(as.numeric(kv[4]), 200)   # MB resident
+  # /proc/self/status exists only on Linux, and the CI matrix builds macOS and
+  # Windows jobs: off Linux the child reports -1 and the memory bound is simply
+  # not measured (it was a Linux measurement either way). The sample count and the
+  # catchable condition are still asserted everywhere.
+  if (kv[3] != "-1") {
+    expect_lt(as.numeric(kv[3]), 1500)  # MB of address space
+    expect_lt(as.numeric(kv[4]), 200)   # MB resident
+  }
   expect_identical(kv[5], "1")        # ... and the loss was catchable in R
 })
 
