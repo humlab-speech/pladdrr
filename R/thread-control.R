@@ -17,6 +17,10 @@
 #' quota (Windows, macOS), it is the number of logical cores.
 #' Sizing the pool from the machine instead would leave threads with no CPU to
 #' run on, which costs both time and energy.
+#' When the environment variable \code{_R_CHECK_LIMIT_CORES_} is set to anything
+#' but \code{false} (as \code{R CMD check --as-cran} does), the automatic
+#' default is capped at two threads, the same limit \code{parallel} applies; an
+#' explicit \code{n} still wins.
 #'
 #' The package's own batch helpers (\code{analyze_files_parallel()},
 #' \code{process_sounds_parallel()}, \code{batch_process()}) already cap each

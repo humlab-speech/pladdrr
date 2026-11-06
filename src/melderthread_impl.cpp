@@ -34,6 +34,9 @@
 #include "praat.github.io/dwsys/NUMlapack.h"
 #include "praat.github.io/melder/NUMrandom.h"
 #include <atomic>
+#include <cctype>
+#include <cstdlib>
+#include <string>
 
 #ifndef PLADDRR_FULL_PRAAT
 // ManPage enum implementations (needed by ManPages class)
@@ -356,6 +359,22 @@ static integer cgroupQuotaMicroseconds (integer *periodMicroseconds) {
 }
 #endif
 
+/*
+    R CMD check --as-cran sets _R_CHECK_LIMIT_CORES_ (anything but "false") to say
+    "use at most two cores"; parallel:::.check_ncores applies the same test on the
+    R side. Without it the default pool here is every core, and CRAN's timing check
+    (CPU time more than 2.5x elapsed) notes the CPPS examples at 4-6x.
+    shortcut: only the automatic default is capped; an explicit pladdrr_threads(n)
+    still wins, as everywhere else.
+*/
+static bool checkLimitsCores () {
+    const char *value = std::getenv ("_R_CHECK_LIMIT_CORES_");
+    if (value == nullptr || value [0] == '\0') return false;
+    std::string text (value);
+    for (char &c : text) c = (char) std::tolower ((unsigned char) c);
+    return text != "false";
+}
+
 static integer availableProcessors () {
     integer affinityCores = 0, quotaMicroseconds = 0, periodMicroseconds = 0;
     #if defined (__linux__)
@@ -365,9 +384,11 @@ static integer availableProcessors () {
             affinityCores = (integer) CPU_COUNT (& set);
         quotaMicroseconds = cgroupQuotaMicroseconds (& periodMicroseconds);
     #endif
-    return MelderThread_availableProcessorsForLimits (
+    integer numberOfProcessors = MelderThread_availableProcessorsForLimits (
         (integer) std::thread::hardware_concurrency (),
         affinityCores, quotaMicroseconds, periodMicroseconds);
+    if (checkLimitsCores () && numberOfProcessors > 2) numberOfProcessors = 2;
+    return numberOfProcessors;
 }
 
 integer MelderThread_getNumberOfProcessors () {

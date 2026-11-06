@@ -2,6 +2,15 @@
 
 ## Bug fixes
 
+* The automatic thread count is capped at two when `_R_CHECK_LIMIT_CORES_` is set
+  to anything but `false`, the way `R CMD check --as-cran` sets it and the way
+  `parallel` already honours it. Before, only the R-level worker default
+  followed it, so the C++ pool still used every core and CRAN's timing check
+  (CPU time over 2.5x elapsed) flagged the CPPS examples: a 3 s
+  `to_powercepstrogram_fast()` + `get_cpps_fast()` ran at a CPU/elapsed ratio of
+  7.7 and now 2.0 under the variable. Outside `R CMD check` nothing changes, and
+  an explicit `pladdrr_threads(n)` still wins.
+
 * Every class constructor that takes `.xptr` now refuses a pointer to a Praat
   object of another class with a `pladdrr_input_error` ("Not a Sound (found
   TextGrid)"), the check `Matrix` and `PitchTier` already had. Before, 10
