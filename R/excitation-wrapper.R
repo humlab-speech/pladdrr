@@ -60,6 +60,7 @@ NULL
 
 # Conversion
 .excitation_methods$to_formant <- function(.self, max_formants = 20) {
+  .check_positive_count(max_formants, "max_formants")
   ptr <- .excitation_to_formant(.self$.xptr, as.integer(max_formants))
   Formant(.xptr = ptr)
 }

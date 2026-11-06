@@ -2,6 +2,16 @@
 
 ## Bug fixes
 
+* Sizes that become allocations are validated up front. `sound_create_tone()`,
+  `sound_create_pure_tone()` and `sound_create_tone_complex()` refuse a
+  non-positive, non-finite or absurd `duration` / `sampling_rate` (a negative
+  duration used to return a Sound with `nx = -16000`; 1e9 s asked for 4.4e13
+  samples), `Matrix()` / `matrix_create_simple()` refuse non-positive or
+  oversized dimensions (a negative count built a corrupt object), and
+  `Excitation$to_formant()` needs `max_formants >= 1`. All raise a classed
+  `pladdrr_input_error` naming the argument. The limit is 2^29 cells (4 GiB of
+  doubles), the same as the cochleagram bound.
+
 * The automatic thread count is capped at two when `_R_CHECK_LIMIT_CORES_` is set
   to anything but `false`, the way `R CMD check --as-cran` sets it and the way
   `parallel` already honours it. Before, only the R-level worker default

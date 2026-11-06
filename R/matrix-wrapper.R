@@ -131,9 +131,16 @@ Matrix <- function(xmin = NULL, xmax = NULL, nx = NULL, dx = NULL, x1 = NULL,
   if (!is.null(.xptr)) {
     ptr <- .xptr
   } else if (!is.null(numberOfRows) && !is.null(numberOfColumns)) {
+    .check_positive_count(numberOfRows, "numberOfRows")
+    .check_positive_count(numberOfColumns, "numberOfColumns")
+    .check_cell_count(as.numeric(numberOfRows) * as.numeric(numberOfColumns),
+      "Matrix", numberOfRows = numberOfRows)
     ptr <- .matrix_create_simple(numberOfRows, numberOfColumns)
   } else if (
     .matrix_has_full_params(xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1)) {
+    .check_positive_count(nx, "nx")
+    .check_positive_count(ny, "ny")
+    .check_cell_count(as.numeric(nx) * as.numeric(ny), "Matrix", nx = nx)
     ptr <- .matrix_create(xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1)
   } else {
     stop(

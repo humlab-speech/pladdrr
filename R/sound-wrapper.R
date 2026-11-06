@@ -1291,6 +1291,14 @@ sound_from_values <- function(values, sampling_rate = 44100, start_time = 0.0) {
   Sound(.xptr = ptr)
 }
 
+# Shared by the create_* factories: duration and rate are positive and finite and
+# their product is a sample count the allocator can be asked for.
+.check_sound_size <- function(routine, duration, sampling_rate) {
+  .check_positive_finite(duration, "duration", routine)
+  .check_positive_finite(sampling_rate, "sampling_rate", routine)
+  .check_cell_count(duration * sampling_rate, routine, duration = duration)
+}
+
 #' Create a pure tone Sound
 #'
 #' Factory function to generate a pure sine wave tone.
@@ -1310,6 +1318,7 @@ sound_from_values <- function(values, sampling_rate = 44100, start_time = 0.0) {
 #' sound <- Sound$create_tone(frequency = 440, duration = 1.0)
 sound_create_tone <- function(duration = 1.0, sampling_rate = 44100,
                               frequency = 440.0, amplitude = 0.99) {
+  .check_sound_size("sound_create_tone", duration, sampling_rate)
   ptr <- .sound_create_tone(duration, sampling_rate, frequency, amplitude)
   Sound(.xptr = ptr)
 }
@@ -1335,6 +1344,7 @@ sound_create_pure_tone <- function(frequency = 440.0, duration = 1.0,
                                     fade_in_duration = 0.01, fade_out_duration =
                                         0.01,
                                     channels = 1L) {
+  .check_sound_size("sound_create_pure_tone", duration, sampling_rate)
   ptr <- .sound_create_pure_tone(as.integer(channels), 0.0, duration,
     sampling_rate,
     frequency, amplitude, fade_in_duration, fade_out_duration)
@@ -1369,6 +1379,7 @@ sound_create_tone_complex <- function(frequency_step = 100.0, duration = 1.0,
                                        ceiling = 0.0,
                                        number_of_components = 0L) {
   phase <- match.arg(phase)
+  .check_sound_size("sound_create_tone_complex", duration, sampling_rate)
   phase_code <- if (phase == "sine") 0L else 1L
   if (ceiling <= 0.0) ceiling <- sampling_rate / 2.0
   if (first_frequency <= 0.0) first_frequency <- frequency_step
