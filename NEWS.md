@@ -67,6 +67,19 @@
   `error` column and `NA` where the other rows have a measurement. That includes
   the `pladdrr_data_loss` error of a truncated WAV under
   `options(pladdrr.data_loss = "error")`, which used to abort the batch too.
+* Reading FLAC, MP3, OGG and other `av`-decoded files no longer changes the
+  level or folds the channels. The fallback reader divided the decoded samples
+  by their own peak instead of the format's full scale, so the same tone came
+  back 6.02 dB hotter from a lossless FLAC than from the WAV it was converted
+  from, and it ignored the channel count, so a 2 x N stereo file arrived as a
+  1 x 2N mono Sound of twice the length. It now scales by full scale (2^31, the
+  S32LE that `av::read_audio_bin()` hands back) and de-interleaves into one row
+  per channel. The substitution itself is announced with a catchable
+  `pladdrr_decoder_fallback` warning instead of a console message, so a script
+  that insists on the native reader can turn it into an error. Known limit,
+  documented in `?Sound`: AAC/MP4 encoder delay is not trimmed (Praat has no
+  reader for those containers, so there is no oracle behaviour to reproduce).
+
 * `FormantPath$path_finder()` now matches Praat. A SIMD branch clamped the
   frequency-change cost twice (capped at 0.01 instead of 1), so the Viterbi
   path, and the formants of `extract_formant()` after it, could differ from

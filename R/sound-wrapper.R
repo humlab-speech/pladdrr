@@ -21,10 +21,17 @@
 #'     were dropped from the vendored Praat tree in v4.9.5 to keep the CRAN
 #'     tarball within limits, so those formats need \code{av} installed
 #'     (\code{install.packages("av")}). Without it, reading a FLAC or MP3
-#'     file raises an error naming the missing package. The fallback reports
-#'     itself with one message per file read; sample values, channel count and
-#'     duration are then those of the file (a multichannel file comes back as a
-#'     multichannel Sound), so a lossless FLAC reads like the WAV it came from.
+#'     file raises an error naming the missing package. The fallback announces
+#'     itself once per file read with a \code{pladdrr_decoder_fallback}
+#'     warning (a warning rather than a console message, so a caller can catch
+#'     it, filter it or turn it into an error); sample values, channel count
+#'     and duration are then those of the file (a multichannel file comes back
+#'     as a multichannel Sound), so a lossless FLAC reads like the WAV it came
+#'     from. AAC/MP4 containers carry an encoder delay that libav does not
+#'     trim, so such a file comes back a few milliseconds longer than what was
+#'     written (the 2026-11 audit measured 8000 samples written, 8192 read at
+#'     8 kHz): trim with \code{Sound$extract()} when you need sample-exact
+#'     alignment.
 #' }
 #'
 #' Convert to WAV up front if you want to avoid the \code{av} dependency
@@ -1182,9 +1189,18 @@ lockEnvironment(.sound_methods, bindings = TRUE)
              "Install av: install.packages('av')\n",
              "Native error: ", e$message)
       }
-      message("pladdrr: '", path, "' decoded with the av (libav) fallback reader;",
-              " amplitudes are the file's own, channels and length come from",
-              " the container. Native reader said: ", e$message)
+      # A warning, not a console message: "you asked for a sound file and got
+      # it through another decoder" is exactly what a caller must be able to
+      # catch (house convention: warning = not what you asked for, see
+      # R/validators.R). Once per load, classed so it can be filtered.
+      warning(pladdrr_warning_cond("pladdrr_decoder_fallback", "Sound",
+        NA_character_,
+        paste0("'", path, "' decoded with the av (libav) fallback reader;",
+          " amplitudes are the file's own, channels and length come from",
+          " the container. Native reader said: ", e$message)))
+      # shortcut: AAC/MP4 encoder delay is left in (Praat has no reader for
+      # these, so there is no oracle behaviour to reproduce); the upgrade path
+      # is av's start_pts, dropping that many samples.
       audio_info <- av::av_media_info(path)
       channels <- audio_info$audio$channels
       if (is.null(channels)) channels <- 1L

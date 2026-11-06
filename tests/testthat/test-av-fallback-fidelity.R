@@ -20,7 +20,7 @@ av_right <- 0.25 * sin(2 * pi * 660 * av_t)
 # samples as the native fixture.
 av_convert <- function(from, format) {
   out <- tempfile(fileext = paste0(".", format))
-  suppressMessages(av::av_audio_convert(from, out, format = format,
+  suppressWarnings(av::av_audio_convert(from, out, format = format,
     verbose = FALSE))
   out
 }
@@ -32,7 +32,7 @@ sound_from_values(rbind(av_left, av_right), av_sr)$save(av_wav_stereo)
 # fixtures live in tempdir(); R removes them at the end of the test session
 
 test_that("native WAV load stays quiet and keeps the file's level", {
-  msgs <- capture_messages(wav_mono <- Sound(av_wav_mono))
+  msgs <- capture_warnings(wav_mono <- Sound(av_wav_mono))
   expect_length(msgs, 0L)
   expect_equal(max(abs(wav_mono$get_values(1))), max(abs(av_left)),
     tolerance = 1e-4)
@@ -42,7 +42,7 @@ test_that("native WAV load stays quiet and keeps the file's level", {
 
 test_that("FLAC (lossless, av fallback) reads back at the file's own level", {
   flac <- av_convert(av_wav_mono, "flac")
-  msgs <- capture_messages(s <- Sound(flac))
+  msgs <- capture_warnings(s <- Sound(flac))
   expect_length(msgs, 1L) # one notice per load, naming the decoder
   expect_match(paste(msgs, collapse = " "), "av")
   wav <- Sound(av_wav_mono)
@@ -59,13 +59,14 @@ test_that("FLAC (lossless, av fallback) reads back at the file's own level", {
 
 test_that("OGG Vorbis (lossy, av fallback) reads back near the file's level", {
   ogg <- av_convert(av_wav_mono, "ogg")
-  s <- suppressMessages(Sound(ogg))
+  s <- suppressWarnings(Sound(ogg))
   wav <- Sound(av_wav_mono)
   wav_peak <- max(abs(wav$get_values(1)))
   peak <- max(abs(s$get_values(1)))
   # Vorbis is lossy, so no exactness is claimed — but the level must be the
-  # file's own, i.e. much closer to the WAV peak than to the normalised 1.0.
-  expect_lt(abs(peak - wav_peak), abs(1 - peak))
+  # file's own. This 0.05 bound is what carries that claim; the old "closer to
+  # the WAV peak than to 1.0" line beside it was implied by it and passed even
+  # when the decoded signal was all zeros, so it is gone.
   expect_lt(abs(peak - wav_peak), 0.05)
   expect_lt(abs(s$get_rms(0, 1) - wav$get_rms(0, 1)), 0.02)
   expect_equal(s$get_nx(), wav$get_nx())
@@ -73,7 +74,7 @@ test_that("OGG Vorbis (lossy, av fallback) reads back near the file's level", {
 
 test_that("stereo through the av fallback returns 2 channels, not 2x mono", {
   flac <- av_convert(av_wav_stereo, "flac")
-  s <- suppressMessages(Sound(flac))
+  s <- suppressWarnings(Sound(flac))
   wav <- Sound(av_wav_stereo)
   expect_equal(s$get_number_of_channels(), 2L)
   expect_equal(s$get_nx(), av_n) # not 2 * n: interleaving must be undone

@@ -33,10 +33,16 @@ The constructor tries two readers in order:
     were dropped from the vendored Praat tree in v4.9.5 to keep the CRAN
     tarball within limits, so those formats need \code{av} installed
     (\code{install.packages("av")}). Without it, reading a FLAC or MP3
-    file raises an error naming the missing package. The fallback reports
-    itself with one message per file read; sample values, channel count and
-    duration are then those of the file (a multichannel file comes back as a
-    multichannel Sound), so a lossless FLAC reads like the WAV it came from.
+    file raises an error naming the missing package. The fallback announces
+    itself once per file read with a \code{pladdrr_decoder_fallback} warning
+    (a warning rather than a console message, so a caller can catch it, filter
+    it or turn it into an error); sample values, channel count and duration are
+    then those of the file (a multichannel file comes back as a multichannel
+    Sound), so a lossless FLAC reads like the WAV it came from. AAC/MP4
+    containers carry an encoder delay that libav does not trim, so such a file
+    comes back a few milliseconds longer than what was written (the 2026-11
+    audit measured 8000 samples written, 8192 read at 8 kHz): trim with
+    \code{Sound$extract()} when you need sample-exact alignment.
 }
 
 Convert to WAV up front if you want to avoid the \code{av} dependency
