@@ -2,6 +2,18 @@
 
 ## Bug fixes
 
+* A failed cochleagram or excitation conversion no longer contaminates every
+  later Praat error in the session. Those five `catch (MelderError)` blocks in
+  `src/cochleagram_wrappers.cpp` and `src/excitation_wrappers.cpp` were the only
+  ones in the package that did not call `Melder_clearError()` before
+  `Rcpp::stop()`; Praat's global error buffer accumulates and is only emptied by
+  that call, so after one bad conversion (`Sound$to_cochleagram(df = 1e-9)`,
+  `Spectrum$to_excitation(erb_density = 1e-9)`) every subsequent error in the
+  same R session was prefixed with the stale "not enough room for ... elements"
+  / "not converted to Cochleagram" text. An agent parsing the error text got a
+  message mixing two unrelated calls. The fix is the same four words the other
+  wrappers use.
+
 * `as.matrix()` no longer returns junk for the 39 of 41 object classes that had
   no method of their own. Only `Matrix` and `Polygon` registered one, so R's
   default fired for the rest: it put a `dim` on the 2-element wrapper list

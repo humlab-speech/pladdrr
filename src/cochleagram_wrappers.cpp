@@ -45,6 +45,7 @@ SEXP sound_to_cochleagram(SEXP sound_xptr, double dt, double df,
     Rcpp::XPtr<structCochleagram> ptr(result.releaseToAmbiguousOwner());
     return ptr;
   } catch (MelderError) {
+    Melder_clearError();
     Rcpp::stop("Praat error in Sound_to_Cochleagram");
   }
 }
@@ -72,6 +73,7 @@ SEXP sound_to_cochleagram_edb(SEXP sound_xptr, double dtime, double dfreq,
     Rcpp::XPtr<structCochleagram> ptr(result.releaseToAmbiguousOwner());
     return ptr;
   } catch (MelderError) {
+    Melder_clearError();
     Rcpp::stop("Praat error in Sound_to_Cochleagram_edb");
   }
 }
@@ -93,6 +95,7 @@ SEXP cochleagram_to_excitation(SEXP xptr, double time) {
     Rcpp::XPtr<structExcitation> ptr(result.releaseToAmbiguousOwner());
     return ptr;
   } catch (MelderError) {
+    Melder_clearError();
     Rcpp::stop("Praat error in Cochleagram_to_Excitation");
   }
 }

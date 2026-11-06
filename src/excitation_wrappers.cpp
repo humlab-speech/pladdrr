@@ -43,6 +43,7 @@ SEXP spectrum_to_excitation(SEXP spectrum_xptr, double erb_density) {
     Rcpp::XPtr<structExcitation> ptr(result.releaseToAmbiguousOwner());
     return ptr;
   } catch (MelderError) {
+    Melder_clearError();
     Rcpp::stop("Praat error in Spectrum_to_Excitation");
   }
 }
@@ -64,6 +65,7 @@ SEXP excitation_to_formant(SEXP xptr, int max_formants) {
     Rcpp::XPtr<structFormant> ptr(result.releaseToAmbiguousOwner());
     return ptr;
   } catch (MelderError) {
+    Melder_clearError();
     Rcpp::stop("Praat error in Excitation_to_Formant");
   }
 }
