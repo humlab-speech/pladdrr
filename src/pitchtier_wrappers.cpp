@@ -66,7 +66,14 @@ SEXP pitchtier_read(std::string path) {
     try {
         structMelderFile file = {};
         Melder_relativePathToFile(Melder_peek8to32(path.c_str()), &file);
-        autoPitchTier tier = Data_readFromTextFile(&file).static_cast_move<structPitchTier>();
+        // The file names the class to instantiate, so the result is only known to
+        // be a PitchTier after checking -- casting blindly is layout confusion.
+        autoDaata data = Data_readFromTextFile(&file);
+        if (!Thing_isa(data.get(), classPitchTier)) {
+            Rcpp::stop("File is not a PitchTier: " + path + " (found " +
+                       Melder_peek32to8(Thing_className(data.get())) + ")");
+        }
+        autoPitchTier tier = data.static_cast_move<structPitchTier>();
         return create_xptr_from_auto<structPitchTier>(tier);
     } catch (MelderError) {
         Melder_clearError();

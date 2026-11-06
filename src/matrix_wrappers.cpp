@@ -90,7 +90,14 @@ SEXP matrix_read(std::string path) {
   try {
     structMelderFile file = {};
     Melder_relativePathToFile(Melder_peek8to32(path.c_str()), &file);
-    autoMatrix matrix = Data_readFromTextFile(&file).static_cast_move<structMatrix>();
+    // The file names the class to instantiate, so the result is only known to
+    // be a Matrix after checking -- casting blindly is layout confusion.
+    autoDaata data = Data_readFromTextFile(&file);
+    if (!Thing_isa(data.get(), classMatrix)) {
+      Rcpp::stop("File is not a Matrix: " + path + " (found " +
+                 Melder_peek32to8(Thing_className(data.get())) + ")");
+    }
+    autoMatrix matrix = data.static_cast_move<structMatrix>();
     return create_xptr_from_auto<structMatrix>(matrix);
   } catch (MelderError) {
     Melder_clearError();
