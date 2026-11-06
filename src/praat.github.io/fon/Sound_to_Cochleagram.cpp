@@ -41,6 +41,8 @@ autoCochleagram Sound_to_Cochleagram (Sound me, double dt, double df, double dt_
 		double dampingFactor = forwardMaskingTime > 0.0 ? exp (- dt / forwardMaskingTime) : 0.0;   // default 30 ms
 		double integrationCorrection = 1.0 - dampingFactor;
 
+		if (halfnsamp_window < 2)
+			Melder_throw (U"Analysis window too short.");   // pladdrr: same guard as Sound_to_Pitch.cpp; without it a sampling rate below ~67 Hz makes nsamp_window negative and Sound_and_Spectrum.cpp:30 writes before a 1-cell allocation, aborting the R process
 		nsamp_window = halfnsamp_window * 2;
 		if (nFrames < 2) return autoCochleagram ();
 		double t1 = my x1 + 0.5 * (duration - my dx - (nFrames - 1) * dt);   // centre of first frame

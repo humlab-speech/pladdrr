@@ -2,6 +2,19 @@
 
 ## Bug fixes
 
+* `Sound$to_cochleagram()` on a very low-rate Sound no longer kills the R
+  process. A sampling rate below ~67 Hz (with the default 0.03 s window) made the
+  internal analysis window negative, and the FFT zero-padding step three
+  functions away wrote outside a one-cell allocation: `free(): invalid pointer`,
+  exit code 134, invisible to `tryCatch()` — the whole session died, along with
+  anything an agent had in flight. It now raises, in every door
+  (`Sound$to_cochleagram()`, the `cochleagram_module` door, and a script
+  `To Cochleagram:`), with Praat's own message for the case,
+  "Analysis window too short." — the guard `Sound_to_Pitch` has always had. Note
+  that rates from 67 to 133 Hz, which previously returned an all-NaN cochleagram
+  without complaint, are refused by the same rule; they had no usable output
+  anyway.
+
 * A failed cochleagram or excitation conversion no longer contaminates every
   later Praat error in the session. Six catch blocks — five in
   `src/cochleagram_wrappers.cpp` and `src/excitation_wrappers.cpp`, plus the

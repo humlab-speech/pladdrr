@@ -1449,3 +1449,35 @@ argument handling (this file has to be compared against upstream `Ui.cpp` by
 hand), and `UiForm_addRadio` used to live here as dead code (no declaration in
 `sys/Ui.h`, no caller) and was deleted rather than renamed when the `base` ->
 `subtract` conversion was fixed in F-faith-13b.
+
+## `fon/Sound_to_Cochleagram.cpp` — reject an analysis window shorter than two samples (F-security-08)
+
+`Sound_to_Cochleagram` computed `nsamp_window = floor(dt_window / dx)`, then
+`halfnsamp_window = nsamp_window / 2 - 1`, then `nsamp_window = halfnsamp_window
+* 2` and handed that straight to `Sound_createSimple`. On a Sound sampled below
+~67 Hz (default `window_length` 0.03 s) that value goes **negative**, and the
+damage surfaces three functions away, in the FFT zero-padding step
+(`fon/Sound_and_Spectrum.cpp:30`, `data.part (my nx + 1, …) <<= 0.0`): the
+`part()` bounds check is a `Melder_assert`, which is compiled out under R's
+`-DNDEBUG`, so it writes before a 1-cell allocation and glibc aborts the whole R
+process (`free(): invalid pointer`, exit 134 — not catchable by `tryCatch()`).
+
+Two lines were added, mirroring what upstream already does at
+`fon/Sound_to_Pitch.cpp:356-357` for the identical computation:
+
+```c
+if (halfnsamp_window < 2)
+    Melder_throw (U"Analysis window too short.");
+```
+
+Why this file and not the R wrapper: the same C++ function is reached from the
+R6 door (`Sound$to_cochleagram()`), the module door
+(`cochleagram_module$Sound_to_Cochleagram`) and `praat_run_script()`, so a guard
+in R would leave the others aborting. Behaviour change: rates that used to abort
+now raise (and 67-133 Hz, which used to "succeed" with an all-NaN cochleagram,
+are refused too by Praat's own threshold — nothing useful is lost, but the
+change is user-visible and is in NEWS).
+
+Upstream conflict note: this hunk sits three lines above the frame-count guard
+(`if (nFrames < 2) return autoCochleagram ();`), which is untouched. If upstream
+ever adds its own window guard here, delete ours and keep upstream's.
