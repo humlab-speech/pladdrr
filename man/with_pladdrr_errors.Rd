@@ -2,7 +2,7 @@
 % Please edit documentation in R/error-classes.R
 \name{with_pladdrr_errors}
 \alias{with_pladdrr_errors}
-\title{Run an expression, reclassifying tagged pladdrr C++ errors/warnings.}
+\title{Run an expression, reclassifying tagged pladdrr C++ errors and warnings}
 \usage{
 with_pladdrr_errors(expr)
 }

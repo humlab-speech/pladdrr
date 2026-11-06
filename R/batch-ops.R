@@ -692,7 +692,9 @@ textgrid_merge <- function(textgrids, equalize_domains = FALSE) {
 #' Uses LongSound for lazy loading - only the requested window is loaded from
 #'  disk.
 #'
-#' @param path Path to sound file (WAV, AIFF, FLAC, MP3, etc.)
+#' @param path Path to sound file in a format Praat's own streaming reader
+#'   accepts (WAV, AIFF, NIST). FLAC and MP3 fail here - see
+#'   \code{\link{longsound_open}}.
 #' @param start Start time of window in seconds
 #' @param end End time of window in seconds
 #' @param resample_to Target sampling rate in Hz (optional). If NULL, no

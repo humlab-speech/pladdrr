@@ -7,7 +7,11 @@
 longsound_open(path)
 }
 \arguments{
-\item{path}{Path to audio file (WAV, AIFF, FLAC, MP3, etc.)}
+\item{path}{Path to audio file in a format Praat's own streaming reader
+accepts (WAV, AIFF, NIST). FLAC and MP3 do NOT work here: their decoders
+were dropped from the vendored Praat tree, and the \code{av} fallback that
+covers them exists only in \code{Sound(path = )}, which reads the whole
+file into memory.}
 }
 \value{
 LongSound object

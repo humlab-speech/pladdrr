@@ -81,7 +81,7 @@ pladdrr_warning_cond <- function(klass, routine, param, message,
   )
 }
 
-#' Run an expression, reclassifying tagged pladdrr C++ errors/warnings.
+#' Run an expression, reclassifying tagged pladdrr C++ errors and warnings
 #'
 #' Any error or warning whose message matches the
 #' \code{"[pladdrr_<class>:<routine>:<param>] <message>"} tag is rethrown as a

@@ -1,8 +1,8 @@
 # pladdrr Agent Guide
 
-**Version:** 5.0.5 guide refresh (2026-09-04; perf/memory audit notes 2026-10-19)
+**Version:** 5.0.6 guide refresh (2026-09-04; perf/memory audit notes 2026-10-19)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** Current through package 5.0.3. Shared-dispatch wrappers + threaded Praat backend + xsimd acceleration (enabled at build time, runtime toggle via `pladdrr_simd()`) + clinical Tier 4 helpers + wrapper dispatch migration (Sound/Formant/Spectrum/Spectrogram queries now use direct `.Call()` instead of Rcpp module dispatch) + current `praat.github.io/` build prefix guidance + current CPPS/CPP usage notes + macOS PSOCK parallelism + unified SIMD bridge header (`simd_bridge.h`) + GitHub Actions CI + code coverage + spectral-moments/data-frame allocation cleanup (v4.9.24) + CRAN pre-submission hygiene and full man/ coverage (v5.0.0) + Ltas full Praat-parity query coverage and new SpectrumTier peak-picking class (v5.0.3) + perf/memory audit: load-time RSS fix, FormantPath parity fix, 8 SIMD files removed (development version, 2026-10).
+**Status:** Current through package 5.0.6 (the 2026-11 audit round: 14 fixes, see `NEWS.md`). Shared-dispatch wrappers + threaded Praat backend + xsimd acceleration (enabled at build time, runtime toggle via `pladdrr_simd()`) + clinical Tier 4 helpers + wrapper dispatch migration (Sound/Formant/Spectrum/Spectrogram queries now use direct `.Call()` instead of Rcpp module dispatch) + current `praat.github.io/` build prefix guidance + current CPPS/CPP usage notes + macOS PSOCK parallelism + unified SIMD bridge header (`simd_bridge.h`) + GitHub Actions CI + code coverage + spectral-moments/data-frame allocation cleanup (v4.9.24) + CRAN pre-submission hygiene and full man/ coverage (v5.0.0) + Ltas full Praat-parity query coverage and new SpectrumTier peak-picking class (v5.0.3) + perf/memory audit: load-time RSS fix, FormantPath parity fix, 8 SIMD files removed (development version, 2026-10).
 - **v4.9.18 — Performance + docs + CI (2026-08-05 assessment, Phases 1-4):**
   - **PointProcess jitter/shimmer batch cache:** First shimmer call fetches all 11 jitter+shimmer metrics via `get_jitter_shimmer_batch_cpp()`. Subsequent jitter or shimmer calls with matching parameters return from cache — no additional C++ crossing. Backward compatible: jitter methods unchanged (no Sound required); cache activates automatically after first shimmer call.
   - **Formant `get_all_values_at_time` — single C++ call:** Added `formant_get_all_values_at_time()` export; replaces `vapply` loop over N module calls with one direct wrapper call.
@@ -88,13 +88,18 @@ PLADDRR_WARN_DATA_LOSS("routine_name", "n of m values undefined");
 `src/batch_queries.cpp` and `src/sound_wrappers.cpp` use them today (the latter
 `PLADDRR_WARN_DATA_LOSS`, for a WAV shorter than its own `data` chunk; the R
 side muffles it and re-raises it through `.warn_data_loss()`, which is what
-applies `options(pladdrr.data_loss = )`). **Every other C++ wrapper still
-raises a plain `simpleError`**, so do not assume a `pladdrr_praat_error` will
+applies `options(pladdrr.data_loss = )`), and `src/praat_xptr_utils.h` uses
+`PLADDRR_STOP_INPUT` for the class check behind the `.xptr` constructor door and
+the two file readers. **Every other C++ wrapper still raises an untagged
+error** — measured, a bare `Rcpp::stop()` arrives as `Rcpp::exception` (e.g. the
+channel guards' `Channel out of range [0, 3]: 9`), and `with_pladdrr_errors()`
+cannot class it either because it only reclassifies conditions that carry the
+tag. So do not assume a `pladdrr_praat_error` or a `pladdrr_input_error` will
 arrive from an arbitrary routine — check before you rely on it.
 
-| Class                       | Meaning                                       | Where it comes from             |
-|-----------------------------|-----------------------------------------------|---------------------------------|
-| `pladdrr_input_error`       | invalid argument / precondition fail          | R validators (live)             |
+| Class                       | Meaning                                       | Where it comes from                        |
+|-----------------------------|-----------------------------------------------|--------------------------------------------|
+| `pladdrr_input_error`       | invalid argument / precondition fail          | R validators + C++ `require_praat_class()` |
 | `pladdrr_praat_error`       | Praat internal failure                        | C++ macros (2 sites only)       |
 | `pladdrr_data_loss`         | output incomplete vs request, or input shorter than its own header | R + C++ (live) |
 | `pladdrr_decoder_fallback`  | native reader refused the file; `av` decoded it | R (`av` fallback in `.sound_ptr_from_path`) |

@@ -62,11 +62,11 @@
 #' @param analysis_func Function. Analysis function to apply to each file.
 #'   Should accept a Sound object and return results.
 #' @param n_cores Integer. Number of CPU cores to use (default:
-#'  one worker per usable CPU, minus one; see `pladdrr_threads()`)
-#' @param threads_per_worker Integer or `NULL`. C++ threads each worker may use
-#'   for Praat kernels. `NULL` (default) auto-divides the usable CPUs among
+#'  one worker per usable CPU, minus one; see \code{pladdrr_threads()})
+#' @param threads_per_worker Integer or \code{NULL}. C++ threads each worker may use
+#'   for Praat kernels. \code{NULL} (default) auto-divides the usable CPUs among
 #'   workers so total concurrency stays near what the scheduler will run,
-#'   preventing oversubscription. Set `1` to force strictly single-threaded
+#'   preventing oversubscription. Set \code{1} to force strictly single-threaded
 #'   workers.
 #' @param ... Additional arguments passed to analysis_func
 #'
@@ -172,9 +172,9 @@ analyze_files_parallel <- function(files, analysis_func, n_cores = NULL,
 #' @param analysis_func Function. Analysis function to apply.
 #'   Should accept a Sound object/pointer and return results.
 #' @param n_cores Integer. Number of CPU cores (default: auto)
-#' @param threads_per_worker Integer or `NULL`. C++ threads each worker may use
-#'   for Praat kernels. `NULL` (default) auto-divides cores among workers to
-#'   avoid oversubscription; set `1` to force single-threaded workers.
+#' @param threads_per_worker Integer or \code{NULL}. C++ threads each worker may use
+#'   for Praat kernels. \code{NULL} (default) auto-divides cores among workers to
+#'   avoid oversubscription; set \code{1} to force single-threaded workers.
 #' @param ... Additional arguments passed to analysis_func
 #'
 #' @return List of results
