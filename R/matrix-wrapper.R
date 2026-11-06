@@ -198,7 +198,10 @@ matrix_create_simple <- function(numberOfRows, numberOfColumns) {
 
 #' Read a Matrix from file
 #'
-#' Reads a Praat Matrix object from a text or binary file.
+#' Reads a Praat Matrix object from a text or binary file. A Praat file names
+#' the class to instantiate; if it names a class other than Matrix, an error is
+#' raised naming the class found (casting blindly used to give garbage numbers
+#' or an uncatchable segfault).
 #'
 #' @param path Path to the Matrix file
 #' @return A Matrix object

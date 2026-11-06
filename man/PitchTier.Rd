@@ -22,7 +22,9 @@ Praat PitchTier object: a sequence of time-value points describing a pitch
 \details{
 PitchTiers are used together with Manipulation objects to modify the pitch
 contour of sounds. Unlike Pitch objects, which hold sampled data, PitchTiers
-hold discrete time-value pairs that can be edited directly.
+hold discrete time-value pairs that can be edited directly. Loading a file
+whose \code{Object class} line names another class is an error naming the
+class found (as for \code{\link{matrix_read}}).
 }
 \section{Usage}{
 

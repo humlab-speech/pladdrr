@@ -7,6 +7,32 @@
 
 mat_fix <- function(file) test_path("fixtures/reader-class-guard", file)
 
+# The `*-as-*` fixtures are not Praat output: they are the good files with the
+# `Object class = ` line rewritten, which is what makes them "a valid header
+# naming a class the body does not match". Pinned here so a fixture cannot rot
+# into something that differs in more than line 2 (which would quietly stop
+# testing the guard).
+expect_as_variant_is_line_two_only <- function(variant, original) {
+  a <- readLines(mat_fix(variant))
+  b <- readLines(mat_fix(original))
+  expect_identical(length(a), length(b))
+  expect_identical(a[3:100], b[3:100])   # everything below the header
+  expect_match(a[2], "^Object class = ")
+}
+
+test_that("the wrong-class fixtures differ from the good files in line 2 only", {
+  expect_as_variant_is_line_two_only(
+    "matrix-as-pitch.matrix", "matrix-good.matrix")
+  expect_as_variant_is_line_two_only(
+    "matrix-as-textgrid.matrix", "matrix-good.matrix")
+  expect_as_variant_is_line_two_only(
+    "matrix-as-vector.matrix", "matrix-good.matrix")
+  expect_as_variant_is_line_two_only(
+    "pitchtier-as-matrix.pitchtier", "pitchtier-good.pitchtier")
+  expect_as_variant_is_line_two_only(
+    "pitchtier-as-stylpitch.pitchtier", "pitchtier-good.pitchtier")
+})
+
 test_that("matrix_read rejects a file whose object is another class", {
   # A perfectly valid PitchTier file: used to load, report garbage dimensions,
   # and segfault the R session (uncatchable, exit status 139) on the first

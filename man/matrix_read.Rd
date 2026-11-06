@@ -13,7 +13,10 @@ matrix_read(path)
 A Matrix object
 }
 \description{
-Reads a Praat Matrix object from a text or binary file.
+Reads a Praat Matrix object from a text or binary file. A Praat file names
+the class to instantiate; if it names a class other than Matrix, an error is
+raised naming the class found (casting blindly used to give garbage numbers
+or an uncatchable segfault).
 }
 \examples{
 mat_file <- tempfile(fileext = ".Matrix")

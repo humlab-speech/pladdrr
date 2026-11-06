@@ -2,6 +2,16 @@
 
 ## Bug fixes
 
+* `matrix_read()` and `PitchTier$from_file()` reject a file whose
+  `Object class = ...` line names another class. A Praat text file names the
+  C++ class to instantiate, and both readers cast the result to their own type
+  without checking: loading a PitchTier as a Matrix reported garbage
+  dimensions and then killed the R session uncatchably (SIGSEGV, exit 139) on
+  the first value query, while a TextGrid cast to Matrix returned arbitrary
+  heap values as numbers. They now raise a classed `pladdrr_input_error`
+  naming the file and the class found. Objects of a *derived* class still load
+  (`Sound`/`Ltas` as a `Matrix`, `PointProcessTier` as a `PitchTier`), as does
+  the `Vector` view `Matrix$as_string()` already offered.
 * `FormantPath$path_finder()` now matches Praat. A SIMD branch clamped the
   frequency-change cost twice (capped at 0.01 instead of 1), so the Viterbi
   path, and the formants of `extract_formant()` after it, could differ from
