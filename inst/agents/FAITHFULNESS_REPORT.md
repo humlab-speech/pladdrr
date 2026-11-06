@@ -40,3 +40,18 @@ non-determinism faithfully when `"robust slow"` is requested (see
 `AGENT_GUIDE.md` v4.9.19 entry and `PRAAT_MODIFICATIONS.md` v4.9.19).
 Do not read the row above as evidence that the robust-slow path is
 bit-reproducible — it is not, in Praat or in pladdrr.
+
+**Platform caveat (Intensity row above):** on Apple Silicon the reference
+Praat application and pladdrr can differ by ~2e-6 dB in an energy-averaged
+Intensity mean at the default time step (measured against Praat 6.4.47 with
+byte-identical input: 87.415718735 vs 87.415720871; linear/x86-64 agrees to
+all printed digits, and so does every other step size tried). Frame centres
+`x1 + (i-1)*dx` land exactly on a rounding boundary of
+`Sampled_xToNearestIndex` for the default grid, and a fused multiply-add
+changes the chosen centre sample in 5 of the 117 frames (reproduced with
+`math.fma`). pladdrr disables floating-point contraction on purpose
+(`#pragma STDC FP_CONTRACT OFF` in `melder.h`), so it follows the non-fused
+result. That the app is built with contraction is inferred from the simulation,
+not from its build flags. Treat differences of this size on a frame grid that
+hits exact sample boundaries as a platform artifact, not a pladdrr defect;
+the 1e-05 tolerance above already covers it.
