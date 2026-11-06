@@ -1166,8 +1166,16 @@ lockEnvironment(.sound_methods, bindings = TRUE)
 # Read a sound file: native Praat reader first, av fallback for exotic formats.
 .sound_ptr_from_path <- function(path) {
   if (!file.exists(path)) stop("Sound file not found: ", path)
-  tryCatch(
-    .sound_read_from_file_native(path),
+  loss <- NULL
+  ptr <- tryCatch(
+    withCallingHandlers(
+      .sound_read_from_file_native(path),
+      warning = function(w) {
+        if (!is.null(.parse_pladdrr_tag(conditionMessage(w)))) {
+          loss <<- w
+          invokeRestart("muffleWarning")
+        }
+      }),
     error = function(e) {
       if (!requireNamespace("av", quietly = TRUE)) {
         stop("Native reader failed and 'av' package not available.\n",
@@ -1193,6 +1201,14 @@ lockEnvironment(.sound_methods, bindings = TRUE)
       .sound_create_from_values(audio_data, sampling_rate)
     }
   )
+  # Report a file that was shorter than its own header claims (see
+  # .sound_read_from_file_native). Outside the tryCatch above, so that
+  # options(pladdrr.data_loss = "error") cannot be swallowed by the av retry.
+  if (!is.null(loss)) {
+    tag <- .parse_pladdrr_tag(conditionMessage(loss))
+    .warn_data_loss(tag$routine, tag$message)
+  }
+  ptr
 }
 
 #' @export

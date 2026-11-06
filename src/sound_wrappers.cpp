@@ -29,6 +29,7 @@
 #include "praat_xptr_utils.h"
 #include "praat_error_handling.h"
 #include "simd_utils.h"
+#include "pladdrr_errors.h"   // PLADDRR_WARN_DATA_LOSS
 
 // Praat headers
 #include "fon/Sound.h"
@@ -99,6 +100,53 @@ XPtr<structSound> sound_read_from_file_native(std::string path) {
         // Convert path to MelderFile
         structMelderFile file { };
         Melder_pathToFile(Melder_peek8to32(path.c_str()), &file);
+        
+        // A WAV `data` chunk may declare more sample bytes than the file
+        // actually holds (interrupted download, malformed header). Praat sizes
+        // its buffer from that claim, so 45 bytes on disk become gigabytes of
+        // allocation and the samples the file lacks read back as fabricated
+        // silence. For WAV only, size from the bytes that exist and report the
+        // loss (reclassified into a pladdrr_data_loss condition by
+        // .sound_ptr_from_path, which is also what honours
+        // options(pladdrr.data_loss =)).
+        {
+            autoMelderFile probe = MelderFile_open(&file);
+            char magic[12];
+            if (file.filePointer != nullptr &&
+                fread(magic, 1, sizeof magic, file.filePointer) == sizeof magic &&
+                memcmp(magic, "RIFF", 4) == 0 &&
+                (memcmp(magic + 8, "WAVE", 4) == 0 || memcmp(magic + 8, "CDDA", 4) == 0)) {
+                rewind(file.filePointer);   // MelderFile_checkSoundFile reads its own tag
+                integer numberOfChannels = 0, startOfData = 0, claimedSamples = 0;
+                int encoding = 0;
+                double sampleRate = 0.0;
+                MelderFile_checkSoundFile(&file, &numberOfChannels, &encoding,
+                    &sampleRate, &startOfData, &claimedSamples);
+                const integer bytesPerFrame = numberOfChannels > 0 && sampleRate > 0.0
+                    ? numberOfChannels * Melder_bytesPerSamplePoint(encoding) : 0;
+                if (bytesPerFrame > 0 && fseeko(file.filePointer, 0, SEEK_END) == 0) {
+                    const integer presentSamples = (integer) (
+                        ((int64) ftello(file.filePointer) - (int64) startOfData) / bytesPerFrame);
+                    if (presentSamples < claimedSamples) {
+                        // Exactly the samples that are in the file, no zero padding.
+                        // A file with no sample data at all yields a 0-sample Sound
+                        // (analyses then fail on it) rather than an error, so that
+                        // the data-loss report stays the single signal.
+                        autoSound sound = Sound_createSimple(numberOfChannels,
+                            presentSamples / sampleRate, sampleRate);
+                        MelderFile_seek(&file, startOfData, SEEK_SET);
+                        Melder_readAudioToFloat(&file, encoding, sound->z.get());
+                        std::ostringstream msg;
+                        msg << path << ": the data chunk declares " << claimedSamples
+                            << " samples but the file holds " << presentSamples
+                            << "; read the " << presentSamples << " samples present";
+                        PLADDRR_WARN_DATA_LOSS("sound_read_from_file", msg.str());
+                        return create_xptr_from_auto<structSound>(sound);
+                    }
+                }
+            }
+            probe.close();
+        }
         
         // Read sound using native Praat reader (auto-detects format)
         // Supports: WAV, AIFF, AIFC, NeXT/Sun, NIST

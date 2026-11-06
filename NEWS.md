@@ -13,6 +13,13 @@
   catchable `pladdrr_input_error`) naming the file and the class found. Objects of a *derived* class still load
   (`Sound`/`Ltas` as a `Matrix`, `PointProcessTier` as a `PitchTier`), as does
   the `Vector` view `Matrix$as_string()` already offered.
+* A WAV whose `data` chunk declares more bytes than the file holds (truncated
+  download, malformed header) no longer allocates from that claim and pads the
+  rest with zeros. `Sound(path = )` now returns exactly the samples that are in
+  the file and raises a `pladdrr_data_loss` condition naming the file and the
+  real count, so `options(pladdrr.data_loss = "error")` turns a truncated file
+  into an error and `"silent"` silences it. A 46-byte file used to arrive as a
+  4.2 GB object; it now reads 130 MB.
 * `FormantPath$path_finder()` now matches Praat. A SIMD branch clamped the
   frequency-change cost twice (capped at 0.01 instead of 1), so the Viterbi
   path, and the formants of `extract_formant()` after it, could differ from
