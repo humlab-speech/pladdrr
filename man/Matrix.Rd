@@ -12,6 +12,11 @@ Praat Matrix object with direct C++ module binding for matrix operations.
 }
 \details{
 Matrix objects represent two-dimensional sampled data with x and y axes.
+A pointer handed in through \code{.xptr} must already be a Matrix (or a Praat
+Matrix subclass such as \code{Ltas} or \code{Sound}); any other object is
+refused with the package's \code{pladdrr_input_error} naming the class found,
+because reading a foreign object's fields is layout confusion (the same check
+\code{\link{matrix_read}} performs on the class a file names).
 }
 \examples{
 m <- Matrix(numberOfRows = 3, numberOfColumns = 4)

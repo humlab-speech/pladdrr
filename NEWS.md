@@ -51,6 +51,19 @@
   catchable `pladdrr_input_error`) naming the file and the class found. Objects of a *derived* class still load
   (`Sound`/`Ltas` as a `Matrix`, `PointProcessTier` as a `PitchTier`), as does
   the `Vector` view `Matrix$as_string()` already offered.
+* The same class check now guards the other door into a `Matrix` or `PitchTier`:
+  the `.xptr` constructor argument. `Matrix(.xptr = <a TextGrid pointer>)` and
+  `PitchTier(.xptr = <a Matrix pointer>)` used to build an object happily and
+  die in the R process (SIGSEGV, exit 139, no `tryCatch` possible) on the first
+  query, because the pointer was reinterpreted as the wrapper's own C++ type
+  before anything looked at it. Both now refuse a foreign object with the
+  package's typed `pladdrr_input_error` naming the class found, and because the
+  check is Praat's subclass test (`Thing_isa`), legitimate transfers — a `Pitch`
+  converted to a `PitchTier`, an `Ltas` or `Sound` pointer taken as a `Matrix` —
+  keep working. The other 37 `.xptr`-accepting constructors are still open
+  (`Sound`, `Pitch`, `Formant`, `Intensity`, `TextGrid`, ... segfault the same
+  way); each needs its own one-line wiring, listed in
+  `audit/2026-11/fixes/F-xptr-door.md`.
 * A WAV whose `data` chunk declares more bytes than the file holds (truncated
   download, malformed header) no longer allocates from that claim and pads the
   rest with zeros. `Sound(path = )` now returns exactly the samples that are in

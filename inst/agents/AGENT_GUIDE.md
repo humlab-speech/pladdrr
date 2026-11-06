@@ -501,6 +501,17 @@ Pitch <- function(.xptr = NULL) {
 }
 ```
 
+**`.xptr` is a checked door, not a bare cast (5.0.6):** `RType$new(ptr)` is where
+Rcpp reinterprets the external pointer as the wrapper's C++ struct, so that module
+constructor is the last place a wrong-class pointer can still be refused.
+`Matrix()` and `PitchTier()` check it there with `require_praat_class()`
+(`src/praat_xptr_utils.h`, Praat's `Thing_isa` *subclass* test — so an `Ltas` or
+`Sound` pointer still passes as a Matrix) and raise a classed `pladdrr_input_error`
+naming the class found; without it, the first field read after construction is
+out-of-bounds and the R session dies uncatchably. The other 37 `.xptr`-accepting
+constructors do **not** check yet — passing them a foreign pointer is still fatal
+(per-class status table: `audit/2026-11/fixes/F-xptr-door.md`).
+
 **Special cases:** Some wrappers have additional fields or no `.xptr`:
 - **FormantPath, KlattGrid, ComplexSpectrogram**: no `.xptr` — only `.cpp` stored
 - **PowerCepstrogram**: opposite of the above — pure `.xptr`, no `.cpp` module at all

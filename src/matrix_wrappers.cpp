@@ -94,11 +94,8 @@ SEXP matrix_read(std::string path) {
     // The file names the class to instantiate, so the result is only known to
     // be a Matrix after checking -- casting blindly is layout confusion.
     autoDaata data = Data_readFromTextFile(&file);
-    if (!Thing_isa(data.get(), classMatrix)) {
-      PLADDRR_STOP_INPUT("matrix_read", "path",
-        "File is not a Matrix: " + path + " (found " +
-        Melder_peek32to8(Thing_className(data.get())) + ")");
-    }
+    require_praat_class(data.get(), classMatrix, "File is not a Matrix: " + path,
+                        "matrix_read", "path");
     autoMatrix matrix = data.static_cast_move<structMatrix>();
     return create_xptr_from_auto<structMatrix>(matrix);
   } catch (MelderError) {

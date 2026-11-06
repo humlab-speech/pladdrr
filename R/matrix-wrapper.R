@@ -4,6 +4,11 @@
 #'
 #' @details
 #' Matrix objects represent two-dimensional sampled data with x and y axes.
+#' A pointer handed in through \code{.xptr} must already be a Matrix (or a Praat
+#' Matrix subclass such as \code{Ltas} or \code{Sound}); any other object is
+#' refused with the package's \code{pladdrr_input_error} naming the class found,
+#' because reading a foreign object's fields is layout confusion (the same check
+#' \code{\link{matrix_read}} performs on the class a file names).
 #'
 #' @return A \code{Matrix} object with methods for two-dimensional sampled data
 #'  access.
@@ -136,7 +141,10 @@ Matrix <- function(xmin = NULL, xmax = NULL, nx = NULL, dx = NULL, x1 = NULL,
   }
   
   mat_mod <- get_module("matrix_module")
-  cpp_obj <- mat_mod$RMatrix$new(ptr)
+  # The module constructor is where the pointer is reinterpreted as a Matrix;
+  # with_pladdrr_errors() turns its refusal of a foreign object into the classed
+  # pladdrr_input_error the typed-error contract promises (R/error-classes.R).
+  cpp_obj <- with_pladdrr_errors(mat_mod$RMatrix$new(ptr))
   
   structure(list(
     .cpp = cpp_obj,
