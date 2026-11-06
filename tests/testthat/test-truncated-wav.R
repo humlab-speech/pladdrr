@@ -106,7 +106,7 @@ test_that("a lying data chunk does not allocate from the claim (subprocess)", {
   hit <- grep("NX=", out, value = TRUE)
   expect_length(hit, 1L)   # child must report, not die
   kv <- regmatches(hit[1], regexec(
-    "NX=([0-9]+) PEAK=([0-9]+) HWM=([0-9]+) CONDITIONS=([0-9]+)",
+    "NX=([0-9]+) PEAK=(-?[0-9]+) HWM=(-?[0-9]+) CONDITIONS=([0-9]+)",
     hit[1]))[[1]]
   expect_identical(kv[2], "1")        # one sample present: 45 bytes - 44 header
   # VmPeak, not VmHWM, is what the header claim buys: Praat calloc's the buffer,

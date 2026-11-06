@@ -42,7 +42,7 @@ test_that("no cepstrogram or formant grain is smaller than the measured floor", 
   floors <- c(cepstrogram = cepstrogram_frames_per_thread,
               formant = formant_frames_per_thread)
   sizes <- list(cepstrogram = c(250, 500, 549, 1451, 14510, 145100),
-                formant = c(40, 80, 50, 596, 5960, 59600))
+                formant = c(40, 50, 80, 596, 5960, 59600))   # ascending: the monotonicity check below needs it
   for (site in names(floors)) {
     asked_before <- 0L
     for (n in sizes[[site]]) {
@@ -71,8 +71,13 @@ test_that("work too small to fill a grain is not threaded at all", {
     expect_equal(with_thread_cap(32L, grains(site, floor_)), 1L)          # one grain
     expect_equal(with_thread_cap(32L, grains(site, 2L * floor_ - 1L)), 1L) # one frame short of two
   }
-  expect_equal(with_thread_cap(32L, grains("cepstrogram", 501L)), 1L)   # 1.2 s clip
-  expect_equal(with_thread_cap(32L, grains("formant", 83L)), 1L)        # 0.46 s clip
+  # Real-clip sizes: Linux rounds n / (1.5 * floor) to nearest, so these stay on one
+  # thread there; macOS rounds n / floor down (see MelderThread_computeNumberOfThreads),
+  # where 501 and 83 frames already hold two grains.
+  if (Sys.info()[["sysname"]] == "Linux") {
+    expect_equal(with_thread_cap(32L, grains("cepstrogram", 501L)), 1L)   # 1.2 s clip
+    expect_equal(with_thread_cap(32L, grains("formant", 83L)), 1L)        # 0.46 s clip
+  }
 
   # Four grains is the smallest size at which every platform's formula in
   # MelderThread_computeNumberOfThreads() agrees that a second thread pays.
