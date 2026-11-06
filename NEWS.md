@@ -20,6 +20,15 @@
   real count, so `options(pladdrr.data_loss = "error")` turns a truncated file
   into an error and `"silent"` silences it. A 46-byte file used to arrive as a
   4.2 GB object; it now reads 130 MB.
+* `batch_process()` no longer loses the whole run to one bad file. A file that
+  cannot be read (a 0-byte `.wav` from an aborted download) or on which `func`
+  fails produced a row with different columns from the measured rows, and the
+  final `rbind()` then died with "names do not match previous names": no results
+  at all, and a message naming neither file nor cause. Every input file now
+  yields exactly one row, in file order, a failure carrying its message in an
+  `error` column and `NA` where the other rows have a measurement. That includes
+  the `pladdrr_data_loss` error of a truncated WAV under
+  `options(pladdrr.data_loss = "error")`, which used to abort the batch too.
 * `FormantPath$path_finder()` now matches Praat. A SIMD branch clamped the
   frequency-change cost twice (capped at 0.01 instead of 1), so the Viterbi
   path, and the formants of `extract_formant()` after it, could differ from

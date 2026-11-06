@@ -40,7 +40,7 @@ Imports:
     R6 (>= 2.5.0),
     ggplot2,
     rlang,
-    data.table (>= 1.14.0),
+    data.table (>= 1.15.0),
     methods,
     tools,
     utils,

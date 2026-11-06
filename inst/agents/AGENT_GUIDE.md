@@ -3083,6 +3083,11 @@ batch_process("~/audio/", pattern = "\\.wav$", func = my_analysis, parallel = TR
 | `extract_measurements_custom(sound, textgrid, tier, measures)` | Custom measure functions per interval |
 | `batch_process(directory, pattern, func, parallel)` | Map function over files with optional parallelism |
 
+`batch_process()` returns one row per file, in file order: a file that cannot be
+read, or on which `func` errors, does not abort the batch but gets the message in
+an `error` column and `NA` in the measured columns (so `error` appears only when
+something failed).
+
 ### SIMD Information
 
 SIMD acceleration is **enabled at build time** (`-DHAVE_XSIMD` in `Makevars.in`). The
