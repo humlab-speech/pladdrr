@@ -7,11 +7,11 @@
 
 ## Recent Changes
 
-See `AGENT_GUIDE.md` sections "What's New in v5.0.3" (line 133), "What's New in v5.0.2" (line 143), "What's New in v5.0.1" (line 151), "What's New in v4.9.x" (line 170), and "What's New in v4.8.x" (line 255) for recent feature additions and breaking changes.
+See `AGENT_GUIDE.md` sections "What's New in v5.1.0", "v5.0.7", "v5.0.6", "v5.0.4", "v5.0.3", "v5.0.2", "v5.0.1", "v5.0.0", "v4.9.x" and "v4.8.x" for recent feature additions and breaking changes (find them by heading; line numbers drift). The 2026-11 audit round is summarised under v5.0.7 (safety and robustness) and v5.1.0 (numbers that change); `NEWS.md` has the measurements.
 
 ## Historical Archive
 
-See this file's section "Version History (historical archive)" (line 39) for the full version history from v1.0 through v4.7.x.
+See this file's section "Version History (historical archive)" for the full version history from v1.0 through v4.7.x.
 
 ## Superseded SIMD Patterns
 

@@ -1,6 +1,6 @@
 # pladdrr Architecture Reference
 
-**Version:** 5.0.3 | **Maintained by:** coding agents and maintainers
+**Version:** 5.1.0 | **Maintained by:** coding agents and maintainers
 **Purpose:** Operational knowledge — build system, threading, dispatch patterns, stale-binary trap, compilation flags.
 
 ---
@@ -20,7 +20,9 @@ lockEnvironment(.pitch_methods, bindings = TRUE)
 
 Pitch <- function(.xptr = NULL) {
   pitch_mod <- get_module("pitch_module")
-  cpp_obj <- pitch_mod$RPitch$new(.xptr)
+  # The module constructor is where the pointer is reinterpreted as a Pitch; it
+  # runs a Thing_isa class check, and with_pladdrr_errors() classes its refusal.
+  cpp_obj <- with_pladdrr_errors(pitch_mod$RPitch$new(.xptr))
   structure(list(.xptr = .xptr, .cpp = cpp_obj), class = c("Pitch", "PraatObject"))
 }
 
@@ -40,9 +42,9 @@ Pitch <- function(.xptr = NULL) {
 
 **List of types using this pattern:** AmplitudeTier, BarkSpectrogram, Cepstrum, Cochleagram, ComplexSpectrogram, DTW, Discriminant, DurationTier, Excitation, Formant, FormantGrid, FormantModeler, FormantPath, FormantTier, Harmonicity, Intensity, IntensityTier, KlattGrid, LFCC, LPC, LongSound, Ltas, MFCC, Manipulation, Matrix, MelSpectrogram, PCA, Pitch, PitchModule, PitchTier, PointProcess, Polygon, Sound, Spectrogram, Spectrum, SpectrumTier, Table, TextGrid, VocalTract.
 
-### 2. Pure XPtr (PowerCepstrogram, PowerCepstrum)
+### 2. Pure XPtr (PowerCepstrogram)
 
-No `.cpp` module at all — only `.self$.xptr`. All methods are R wrapper functions that call C++ directly via `.Call()`.
+No `.cpp` object is stored — only `.self$.xptr`. All methods are R wrapper functions that call C++ directly via `.Call()`. (`PowerCepstrum` is *not* in this group: it keeps a module object like the shared-table types.) The constructor still builds an `RPowerCepstrogram` module object once and discards it, purely to run the class check described under "The `.xptr` door" below.
 
 **Why:** More performant than module dispatch for these types. The shared dispatch table pattern would add unnecessary indirection for objects that only need pointer access.
 
@@ -105,12 +107,79 @@ above 8 — but the risk is latent if you change chunk sizes or thresholds.
 each element writes a disjoint output slot and reads shared input only — that keeps
 results bit-identical at any thread count.
 
+**How many threads "automatic" means (5.0.7).** `MelderThread_getNumberOfProcessors()`
+(`src/melderthread_impl.cpp`) is the CPU affinity mask intersected with the cgroup
+CPU quota on Linux, `hardware_concurrency()` on macOS and Windows (job objects and
+macOS limits are not read), computed once per process. When `_R_CHECK_LIMIT_CORES_`
+is set to anything but `false` — `R CMD check --as-cran` does — the automatic count
+is capped at 2, because CRAN's timing check notes any example whose CPU time exceeds
+2.5x its elapsed time. `pladdrr_threads(n)`, n > 0, beats both. Because the count is
+read once, a test that depends on it needs a child process
+(`tests/testthat/test-check-core-limit.R`). The R-level default worker count
+(`.default_n_cores()`) follows the same CPU number, keeping one CPU spare only when
+there are more than two.
+
+**How much work a thread must get (5.0.7).** The minimum frames per thread at the
+cepstrogram and Burg-formant sites are pladdrr constants in
+`src/pladdrr_thread_thresholds.h` (250 and 40). The earlier values (40 and 3) were
+below the cost of starting a thread. Remember that the divisor in
+`MelderThread_computeNumberOfThreads` differs per platform, so a threshold that keeps
+a short clip serial on Linux may still give it two threads on macOS.
+
 ### Custom `parallel_for_range` (REMOVED v4.9.18)
 
 The former custom thread pool in `batch_queries.cpp` (`parallel_for_range` template) has been replaced with `MelderThread_PARALLELIZE`. This eliminates:
 - Redundant thread creation/destruction per call
 - Competition between two independent thread pools
 - Failure to respect `pladdrr_threads()` cap
+
+---
+
+## The `.xptr` door and input limits (5.0.7)
+
+**`.xptr` is a checked door.** Every wrapper constructor that accepts `.xptr` ends up
+in an Rcpp module constructor (`src/modules/*_module.cpp`) that reinterprets the
+external pointer as its C++ struct. Each of those constructors calls
+`require_praat_class()` (`src/praat_xptr_utils.h`: Praat's `Thing_isa` *subclass*
+test, so a `Sound` pointer is still accepted as a `Matrix`), and the R side wraps the
+construction in `with_pladdrr_errors()` so the refusal arrives as a classed
+`pladdrr_input_error` ("Not a Sound (found TextGrid)"). Without the check the first
+field read is out of bounds and the R session dies uncatchably. A new wrapper type
+needs both halves; `tests/testthat/test-xptr-all-constructors.R` lists the types.
+
+**Sizes that become allocations are bounded.** `src/pladdrr_limits.h` caps a
+Cochleagram at 2^29 cells and an Excitation at 10 000 bands; the guards sit in the
+vendored `Sound_to_Cochleagram.cpp` / `Spectrum_to_Excitation.cpp` (all three call
+doors reach them; logged in `PRAAT_MODIFICATIONS.md`). R-level factories
+(`sound_create_tone()` and siblings, `Matrix()`, the cochleagram methods) check
+positive, finite and at most 2^29 cells with `.check_positive_finite()` /
+`.check_cell_count()` in `R/validators.R`. The reason is platform behaviour: asking
+for a 2.5 TB tensor makes Linux's allocator fail with a Praat error, but macOS
+commits the pages and the kernel kills the R process (exit 137), which no
+`tryCatch()` can see.
+
+**Vendored `Melder_assert` is compiled out.** R adds `-DNDEBUG`, so Praat's ~1900
+asserts, including every `part()`/`row()` bounds check, are dead code in an installed
+build. A missing guard therefore means silent memory corruption, not an error:
+validate at the pladdrr boundary. `-UNDEBUG` was considered and rejected (a
+non-`NDEBUG` build is 2.1-7x slower package-wide).
+
+---
+
+## Test Gates
+
+- `tests/testthat/test-fidelity-fingerprint.R` runs `tests/testthat/fingerprint/golden.R`
+  (81 numbers from one synthetic signal) against `expected.tsv`; it refuses any
+  ERR/NA/non-finite row. Re-record only after an intended numeric change, and explain
+  every moved key in `NEWS.md`.
+- `tests/testthat/test-praat-faithfulness.R` compares 19 routines with the Praat
+  application (`PLADDRR_PRAAT_EXEC`, default `/Applications/Praat.app/...`) and, with
+  `PLADDRR_FAITHFULNESS_OUTDIR` set, regenerates `FAITHFULNESS_REPORT.md`. Name the
+  Praat version with any reference number: the CPPS pipeline differs between 6.4.27 and
+  6.4.47 by about 0.13 dB.
+- Some tests are platform-specific by nature (affinity and `/proc` checks are
+  Linux-only; thread-count expectations differ per platform). A skip is not a pass:
+  say which tests did not run.
 
 ---
 

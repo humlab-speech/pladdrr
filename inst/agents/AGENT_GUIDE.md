@@ -53,7 +53,9 @@ tryCatch(
 
 Conditions carry `$routine` and `$param` so callers can branch programmatically.
 Validators currently covering: pitch range, positive counts/numbers, `time_step`
-(0 = auto, matching Praat), quefrency ranges, trend-fit method.
+(0 = auto, matching Praat), quefrency ranges, trend-fit method, positive finite sizes
+and the 2^29-cell allocation bound (`.check_positive_finite()`, `.check_cell_count()`),
+cochleagram step sizes, and the `unit` of the Ltas locators (`"dB"` only).
 
 **Data loss (live).** When a routine returns something Praat fabricated, pladdrr
 returns Praat's value and says so:
@@ -150,13 +152,41 @@ Design principle 1 — faithfulness to Praat's own DSP output — is enforced by
 `/Applications/Praat.app/Contents/MacOS/Praat --run` against an extensible
 registry of routines in `tests/testthat/faithfulness/routines.R`, compares the
 output to the matching pladdrr call at a per-routine tolerance, and emits
-`inst/agents/FAITHFULNESS_REPORT.md`.
+`inst/agents/FAITHFULNESS_REPORT.md` (set `PLADDRR_FAITHFULNESS_OUTDIR` to regenerate it;
+the caveats in it live in the test file, and the report names the Praat version it ran
+against). **Always name the Praat version with a reference number**: the vendored source
+tracks 6.4.47, and the CPPS pipeline differs from 6.4.27 by about 0.13 dB (Praat rewrote
+its CPP-to-CPPS post-processing); against 6.4.47 all 19 registry rows pass and CPPS is
+0.003 dB away. `tests/testthat/test-fidelity-fingerprint.R` is the second gate: 81
+numbers from one signal, no oracle needed, refuses any ERR/NA row.
 
 When porting a new Praat routine into pladdrr, add a registry row. Default
 tolerance is `0` for exact-arithmetic routines; looser tolerances require a
 written rationale in the row. Failing rows are first-class regressions.
 
-## What's New in the development version (2026-10 perf/memory audit)
+## What's New in v5.1.0 (2026-11 audit round: numbers that change)
+
+Each item moves toward what the Praat application returns. Recompute anything you saved
+under the old behaviour; the magnitudes are in `NEWS.md`.
+
+- **Intensity averaging codes.** `Intensity$get_mean()`'s default `"energy"` used to return the *median* (codes were one too low). The strings now map onto Praat's enum (`"median"` 0, `"energy"` 1, `"sones"` 2, `"db"` 3); unknown strings and raw integers raise. `get_statistics()["mean"]` and `print()` use the energy average too. See "Unit Code Reference".
+- **Ltas units.** `unit = "energy"`/`"sones"` now return the dB number Praat prints (they returned the linear mean); `unit = "dB"` maps to code 3 so `get_slope()`/`get_local_peak_height()` return dB, not a ratio; band averages no longer interpolate (moves default-`dB` bands by up to 8.4 dB at bandwidth 100). Full-band means are unchanged. See "LTAS Units".
+- **Ltas locators accept only `"dB"`.** `get_value_at_frequency()`, `get_minimum()`, `get_maximum()` ignored `unit`; they now raise `pladdrr_input_error` for anything but `"dB"`.
+- **Script option arguments.** In `PraatInterpreter$run()`/`praat_run_script()`, CHOICE/OPTIONMENU arguments selected the wrong option (`base` offset stored unconverted in `src/uiform_libmode.cpp`); a numeric option argument changed meaning, and the first option of an enum (`"hertz"`, `"none"`) no longer errors.
+- **`av`-decoded audio** (FLAC, MP3, OGG): full-scale amplitude (it was 6.02 dB hot) and one row per channel (stereo used to arrive as double-length mono). The substitution is announced with a catchable `pladdrr_decoder_fallback` warning.
+
+## What's New in v5.0.7 (2026-11 audit round: safety and robustness)
+
+- **Sessions that used to die now raise.** A foreign-class `.xptr` handed to *any* wrapper constructor (`Sound(.xptr = <TextGrid>)` etc.; 10 of them segfaulted); a file whose `Object class` line names another class (`matrix_read()`, `PitchTier$from_file()`); an out-of-range `channel` (returned heap garbage, `channel = 1000` segfaulted); `to_cochleagram()` on a Sound sampled at 66 Hz or less (aborted R with exit 134; it now refuses anything below 200 Hz at the default window); step sizes that request an impossible tensor (`df = 1e-9` is 2.5 TB: Linux errors, macOS SIGKILLs R). All raise catchable `pladdrr_input_error`/Praat errors now.
+- **Input validation.** `sound_create_tone()`/`_pure_tone()`/`_tone_complex()`, `Matrix()`, `Excitation$to_formant()` and the cochleagram steps check positive, finite and at most 2^29 cells (`R/validators.R`: `.check_positive_finite()`, `.check_cell_count()`, `.check_cochleagram_steps()`).
+- **WAV sized from its `data` chunk.** A 46-byte file claiming 2^29 samples used to allocate 4.3 GB; the load now returns the samples that exist and reports the shortfall as `pladdrr_data_loss`.
+- **`as.matrix()`** returns the object's matrix or a typed error naming a conversion that class has (it returned a 2-element wrapper for 39 of 41 classes).
+- **Batch.** One unreadable file is one row (`error`, `error_class` columns), not a lost run. Conditions raised on a worker become rows, so `tryCatch(pladdrr_data_loss = )` around `batch_process()` cannot see them: filter on `error_class`. `.default_n_cores()` keeps a spare CPU only above 2 CPUs.
+- **Threads.** The automatic count is the affinity mask ∩ cgroup quota (Linux), capped at 2 under `_R_CHECK_LIMIT_CORES_` (what `R CMD check --as-cran` sets); cepstrogram and Burg-formant grains are 250/40 frames per thread. See `ARCHITECTURE.md` "Threading Model".
+- **Praat's global error buffer** is read then cleared in the cochleagram/excitation catch blocks, so one failed conversion no longer prefixes every later Praat error.
+- **Tests.** The 81-number fidelity fingerprint is a real test (`tests/testthat/test-fidelity-fingerprint.R`); the audit's 12 dead `NA` rows were repaired. See `ARCHITECTURE.md` "Test Gates".
+
+## What's New in v5.0.6 (2026-10 perf/memory audit)
 
 - **Load-time RSS 48 MB → 7 MB per R process / PSOCK worker.** Praat's `theForegroundPraatObjects` (10001 × ~4.2 KB) was *dynamically* initialised because `_autostring()` was not `constexpr`, so `dyn.load` dirtied all 42 MB. Fix needs **both** `constexpr _autostring()` (`melder_string32.h`) and value-init `structPraatObjects theForegroundPraatObjects {};` (`praat.cpp`); `constexpr` alone changed nothing. Never add a non-constexpr member/ctor to `structPraatObjects`.
 - **`FormantPath$path_finder()` bug fixed.** `formantpath_simd.cpp` clamped the frequency-change cost to 1, then the caller divided by the cutoff again (default 100) → cost capped at 0.01, wrong Viterbi path, F1 off by up to 1.7 kHz vs Praat. SIMD branch deleted; upstream scalar loop restored. New faithfulness row (`mpt2.wav`, mean F1/F2, tolerance 1e-6) passes at ~1e-12.
@@ -508,14 +538,16 @@ Pitch <- function(.xptr = NULL) {
 
 **`.xptr` is a checked door, not a bare cast (5.0.7):** `RType$new(ptr)` is where
 Rcpp reinterprets the external pointer as the wrapper's C++ struct, so that module
-constructor is the last place a wrong-class pointer can still be refused.
-`Matrix()` and `PitchTier()` check it there with `require_praat_class()`
-(`src/praat_xptr_utils.h`, Praat's `Thing_isa` *subclass* test — so an `Ltas` or
-`Sound` pointer still passes as a Matrix) and raise a classed `pladdrr_input_error`
-naming the class found; without it, the first field read after construction is
-out-of-bounds and the R session dies uncatchably. The other 37 `.xptr`-accepting
-constructors do **not** check yet — passing them a foreign pointer is still fatal
-(per-class status table: `audit/2026-11/fixes/F-xptr-door.md`).
+constructor is the last place a wrong-class pointer can still be refused. Every
+module constructor that takes one (`src/modules/*_module.cpp`, 37 types plus `Matrix`
+and `PitchTier`) calls `require_praat_class()` (`src/praat_xptr_utils.h`, Praat's
+`Thing_isa` *subclass* test — so an `Ltas` or `Sound` pointer still passes as a Matrix),
+and the R constructor wraps the call in `with_pladdrr_errors()`, so the refusal is a
+classed `pladdrr_input_error` naming the class found ("Not a Sound (found TextGrid)").
+`PowerCepstrogram` has no module object of its own; its constructor builds one only to
+run the check. Without the check the first field read after construction is out of
+bounds and the R session dies uncatchably. A new wrapper type needs both halves; the
+list of types is in `tests/testthat/test-xptr-all-constructors.R`.
 
 **Special cases:** Some wrappers have additional fields or no `.xptr`:
 - **FormantPath, KlattGrid, ComplexSpectrogram**: no `.xptr` — only `.cpp` stored
@@ -698,6 +730,11 @@ median** (`fon/praat_uvafon_init.cpp:1101-1105`); any other string is an error:
 `get_slope()` and `get_local_peak_height()` compare two band averages: code 3 subtracts
 them, the other two divide them and convert the ratio back (`fon/Ltas.cpp:83-97`). Code
 **3** — not 0 — is what selects the dB branch, which is why `"dB"` must map to 3.
+
+Three other Ltas queries — `get_value_at_frequency()`, `get_minimum()`, `get_maximum()` —
+also accept a `unit` argument, but they read bins that are already in dB and Praat's
+dialogs for them have no unit. They accept only `"dB"` (any case) and raise a
+`pladdrr_input_error` for anything else (before 5.1.0 the argument was silently ignored).
 
 A band average covers the whole bins between the two frequencies, weighting the bins at
 an incomplete range edge by the fraction of the bin inside the range; pladdrr does *not*
@@ -1000,7 +1037,7 @@ intensities <- extract_intensity_parallel(files, n_cores = 4)
 - `benchmark_parallel(files, analysis_func, cores)` - Find optimal core count
 
 **Best practices:**
-- Use `n_cores = pladdrr_threads()$processors - 1` to leave one core for system — the CPUs this process may actually use (affinity mask ∩ cgroup quota), which `parallel::detectCores()` ignores
+- The default (`n_cores = NULL`) is `pladdrr_threads()$processors - 1`, or all of them when there are only two — the CPUs this process may actually use (affinity mask ∩ cgroup quota), which `parallel::detectCores()` ignores. Under `R CMD check` (`_R_CHECK_LIMIT_CORES_` set) it is at most 2, and so is the C++ thread pool
 - `analyze_files_parallel()`: PSOCK (`parLapply`) on Windows and macOS, `mclapply` on Linux. `process_sounds_parallel()` on PSOCK sends one sound's samples per task (2026-10; previously the whole list went to every worker)
 - For very large files, consider batch processing + parallel combined
 
@@ -3156,7 +3193,10 @@ batch_process("~/audio/", pattern = "\\.wav$", func = my_analysis, parallel = TR
 `batch_process()` returns one row per file, in file order: a file that cannot be
 read, or on which `func` errors, does not abort the batch but gets the message in
 an `error` column and `NA` in the measured columns (so `error` appears only when
-something failed).
+something failed). `error_class` next to it holds the first class of the condition
+(`"pladdrr_input_error"`, `"simpleError"`, ...): a worker turns a condition into a row,
+so a `tryCatch(pladdrr_data_loss = )` around `batch_process()` never fires; filter on
+`error_class` instead.
 
 ### SIMD Information
 
@@ -4183,6 +4223,16 @@ shimmer_percent <- js$shimmer_local * 100 # 2.551%
 ```
 
 ---
+
+### Known limitations after the 2026-11 audit round
+
+- **Praat is not bit-identical across platforms.** On Apple Silicon the Praat application and pladdrr differ by ~2e-6 dB in the default-grid Intensity energy mean (fused multiply-add flips the centre sample of 5 of 117 frames at exact rounding boundaries; pladdrr disables contraction on purpose). Tolerances in the faithfulness registry cover it. See `FAITHFULNESS_REPORT.md`.
+- **C++ errors are mostly untagged.** Only `batch_queries.cpp`, `sound_wrappers.cpp` and the `.xptr` check emit tagged conditions; check before relying on a class from an arbitrary routine (see "Typed Errors").
+- **Worker conditions are flattened** in `batch_process()` (rows with `error_class`) and the `parallel` helpers; they cannot be caught by class around the call.
+- **`praat_run_script()` leaves objects** in Praat's list, also from a script that fails part-way (as Praat does); empty it with `PraatInterpreter$new()$clear_objects()`.
+- **Automatic thread count** reads affinity and cgroup quota on Linux only; macOS and Windows use the machine's core count. `.pladdrr_available_cpus()` reports `$processors`, not a cap set with `pladdrr_threads(n)`, so a batch nested inside a capped worker still defaults to many workers.
+- **`av` fallback:** AAC/MP4 encoder delay is not trimmed (Praat has no reader for those containers).
+- **Allocation bound:** 2^29 cells (4 GiB of doubles) for tones, matrices and cochleagrams; longer inputs raise rather than run.
 
 ## Real-World Use Cases (v4.0.3 Optimizations)
 

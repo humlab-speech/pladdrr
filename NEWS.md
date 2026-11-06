@@ -101,9 +101,8 @@ application returns, and each states by how much.
   Ltas with a 100 Hz analysis bandwidth the movement reaches **8.41 dB**, so a
   low band inside a single bin is the worst case, not an exception. Full-band
   means (`fmin = fmax = 0`, the usual call) are bit-identical to before, and
-  every averaging method, unit string and band
-  are bit-identical to before, and every averaging method, unit string and band
-  tested is now bit-identical to Praat 6.4.27
+  every averaging method, unit string and band tested is now bit-identical to
+  Praat 6.4.27
   (`tests/testthat/test-ltas-averaging-unit.R`). An unknown `unit` string in an
   averaging query is now a `pladdrr_input_error` instead of a silent
   `"energy"`, so **this also BREAKS** a script that had been passing a typo.

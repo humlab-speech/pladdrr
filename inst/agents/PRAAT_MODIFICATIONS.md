@@ -16,7 +16,7 @@ This document details all modifications made to the Praat source code to enable 
 
 ---
 
-### Unreleased — automatic thread count follows the CPUs the process may use (2026-11-05, audit F-power-01/F-power-04)
+### v5.0.7 — automatic thread count follows the CPUs the process may use (2026-11-05, audit F-power-01/F-power-04)
 
 #### `src/melderthread_impl.cpp` — `MelderThread_getNumberOfProcessors()` is affinity- and quota-aware
 
@@ -46,7 +46,16 @@ worker per CPU. `pladdrr:::.pladdrr_cpus_for_limits()` exposes the pure rule
 (hardware, affinity, quota, period → count) for tests; the reads around it are
 platform I/O. Not covered: Windows job-object limits and macOS CPU limits —
 both keep the machine's core count.
-### Unreleased — threading thresholds at the cepstrogram and formant sites (2026-11-05)
+
+The same function applies one more cap: when `_R_CHECK_LIMIT_CORES_` is set to
+anything but `false` (what `R CMD check --as-cran` does; `parallel` honours it
+the same way) the *automatic* count is at most 2. Before, only the R-level worker
+default followed that variable, so the C++ pool used every core and CRAN's
+CPU-over-elapsed timing check noted the CPPS examples (3 s clip: ratio 7.7, now
+2.0; `tests/testthat/test-check-core-limit.R`). An explicit `pladdrr_threads(n)`
+still wins.
+
+### v5.0.7 — threading thresholds at the cepstrogram and formant sites (2026-11-05)
 
 #### `LPC/Sound_to_PowerCepstrogram.cpp` + `fon/Sound_to_Formant.cpp` — minimum work per thread
 
@@ -73,11 +82,20 @@ many grains run at once, and the frame count decides whether there is work for
 them. Thread count does not change results (each frame is computed
 independently), so faithfulness is untouched; `tests/testthat/test-thread-granularity.R`
 pins both the decision and the bit identity, and
-`audit/2026-11/fixes/F-power-02.md` has the before/after measurements.
+the measurements and break-even derivation are in the header comment of
+`src/pladdrr_thread_thresholds.h`.
+
+**Platform note:** the divisor in `MelderThread_computeNumberOfThreads()` differs
+per platform (`floor(n/min)` on macOS, `floor(n/2/min)` on Windows,
+`round(n/1.5/min)` elsewhere), so the clip length below which a call stays on one
+thread is platform-dependent: the "under ~1.2 s stays serial" figures measured on
+Linux do not hold on macOS, where a 501-frame cepstrogram already gets two threads.
+Measured on an M1 (10 cores), the retune left CPPS wall time unchanged and cut a
+3 s cepstrogram's CPU time by 44 %.
 
 ---
 
-### Unreleased — Load-time RSS, FormantPath SIMD bug, dead SIMD hooks (2026-10-19)
+### v5.0.6 — Load-time RSS, FormantPath SIMD bug, dead SIMD hooks (2026-10-19)
 
 #### `melder/melder_string32.h` + `sys/praat.cpp` — constant-initialise the object list
 
