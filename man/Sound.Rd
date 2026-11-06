@@ -65,8 +65,10 @@ sound <- Sound$create_tone(frequency = 440, duration = 1.0)
 \item \code{get_rms()}, \code{get_energy()}, \code{get_power()} - energy
  measures
   \item \code{get_intensity_db()} - intensity in dB
-\item \code{get_minimum()}, \code{get_maximum()}, \code{get_mean()} -
- amplitude statistics
+\item \code{get_minimum(from_time, to_time, channel)},
+ \code{get_maximum(from_time, to_time, channel)},
+ \code{get_mean(from_time, to_time, channel)} - amplitude statistics on one
+ channel, or on all of them when \code{channel = 0}
   \item \code{get_values(channel)} - sample values as a numeric vector
   \item \code{get_sample_times()} - sample times as a numeric vector
 }

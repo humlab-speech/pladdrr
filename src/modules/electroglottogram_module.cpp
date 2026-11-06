@@ -237,6 +237,8 @@ XPtr<structElectroglottogram> electroglottogram_create(
 XPtr<structElectroglottogram> sound_extract_electroglottogram(
     XPtr<structSound> sound, int channel, bool invert) {
     if (!sound || !sound.get()) Rcpp::stop("Invalid Sound pointer");
+    // Strictly 1-based (Praat's own Melder_require agrees).
+    VALIDATE_CHANNEL_RANGE(sound, channel);
     try {
         autoElectroglottogram egg = Sound_extractElectroglottogram(
             sound.get(), channel, invert

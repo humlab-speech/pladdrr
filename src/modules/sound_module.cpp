@@ -165,22 +165,44 @@ public:
         return Sound_getIntensity_dB(ptr.get());
     }
 
-    double get_minimum(double from_time, double to_time, int interpolation) {
-        VALIDATE_PTR(ptr, Sound);
-        if (from_time == 0 && to_time == 0) {
-            from_time = ptr->xmin;
-            to_time = ptr->xmax;
+    // Channel 0 means "all channels" (Praat's Vector_CHANNEL_AVERAGE); 1..ny is
+    // one channel. Deviation from Praat: its queries clamp an out-of-range
+    // channel to 1 (QUERY_ONE_FOR_REAL__Sound_getMean), we error rather than
+    // report another channel's - or stray memory's - numbers.
+    static void check_channel(integer ny, int channel) {
+        if (channel < 0 || channel > ny) {
+            Rcpp::stop("Channel out of range [0, %d]: %d", ny, channel);
         }
-        return Vector_getMinimum(ptr.get(), from_time, to_time, (kVector_peakInterpolation) interpolation);
     }
 
-    double get_maximum(double from_time, double to_time, int interpolation) {
+    double get_minimum(double from_time, double to_time, int interpolation, int channel) {
         VALIDATE_PTR(ptr, Sound);
         if (from_time == 0 && to_time == 0) {
             from_time = ptr->xmin;
             to_time = ptr->xmax;
         }
-        return Vector_getMaximum(ptr.get(), from_time, to_time, (kVector_peakInterpolation) interpolation);
+        check_channel(ptr->ny, channel);
+        if (channel == 0) {
+            return Vector_getMinimum(ptr.get(), from_time, to_time, (kVector_peakInterpolation) interpolation);
+        }
+        double minimum;
+        Vector_getMinimumAndX(ptr.get(), from_time, to_time, channel, (kVector_peakInterpolation) interpolation, &minimum, nullptr);
+        return minimum;
+    }
+
+    double get_maximum(double from_time, double to_time, int interpolation, int channel) {
+        VALIDATE_PTR(ptr, Sound);
+        if (from_time == 0 && to_time == 0) {
+            from_time = ptr->xmin;
+            to_time = ptr->xmax;
+        }
+        check_channel(ptr->ny, channel);
+        if (channel == 0) {
+            return Vector_getMaximum(ptr.get(), from_time, to_time, (kVector_peakInterpolation) interpolation);
+        }
+        double maximum;
+        Vector_getMaximumAndX(ptr.get(), from_time, to_time, channel, (kVector_peakInterpolation) interpolation, &maximum, nullptr);
+        return maximum;
     }
 
     double get_mean(double from_time, double to_time, int channel) {
@@ -189,6 +211,7 @@ public:
             from_time = ptr->xmin;
             to_time = ptr->xmax;
         }
+        check_channel(ptr->ny, channel);
         return Vector_getMean(ptr.get(), from_time, to_time, channel);
     }
 

@@ -49,8 +49,10 @@
 #' \item \code{get_rms()}, \code{get_energy()}, \code{get_power()} - energy
 #'  measures
 #'   \item \code{get_intensity_db()} - intensity in dB
-#' \item \code{get_minimum()}, \code{get_maximum()}, \code{get_mean()} -
-#'  amplitude statistics
+#' \item \code{get_minimum(from_time, to_time, channel)},
+#'  \code{get_maximum(from_time, to_time, channel)},
+#'  \code{get_mean(from_time, to_time, channel)} - amplitude statistics on one
+#'  channel, or on all of them when \code{channel = 0}
 #'   \item \code{get_values(channel)} - sample values as a numeric vector
 #'   \item \code{get_sample_times()} - sample times as a numeric vector
 #' }
@@ -203,17 +205,17 @@ NULL
 .sound_methods$get_intensity_db <- function(.self) .self$.cpp$get_intensity_db()
 
 .sound_methods$get_minimum <- function(.self, from_time = 0.0, to_time = 0.0,
-  channel = 1, interpolation = "parabolic")
+  channel = 0, interpolation = "parabolic")
   {
   .self$.cpp$get_minimum(as.numeric(from_time), as.numeric(to_time),
-    .praat_peak_interpolation_code(interpolation))
+    .praat_peak_interpolation_code(interpolation), as.integer(channel))
 }
 
 .sound_methods$get_maximum <- function(.self, from_time = 0.0, to_time = 0.0,
-  channel = 1, interpolation = "parabolic")
+  channel = 0, interpolation = "parabolic")
   {
   .self$.cpp$get_maximum(as.numeric(from_time), as.numeric(to_time),
-    .praat_peak_interpolation_code(interpolation))
+    .praat_peak_interpolation_code(interpolation), as.integer(channel))
 }
 
 .sound_methods$get_mean <- function(.self, from_time = 0.0, to_time = 0.0,

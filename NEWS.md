@@ -9,6 +9,22 @@
 * `sound_extract_parts_pooled()` no longer leaks segments: they are now
   ordinary R-owned Sounds (`use_pool` is accepted but ignored). A Sound from
   `sound_pool_acquire()` while the pool is full is now freed by R.
+* An out-of-range `channel` is now an error instead of a wrong number. On a
+  mono sound, `Sound$get_mean(from, to, channel = 2)` returned arbitrary heap
+  contents (observed -6.8e+302) and larger indices could kill the R process;
+  the same missing check in `PointProcess$get_values_from_sound()`, the LPC
+  `filter_inverse_at_time()` entry points, `LongSound$get_window_extrema()` and
+  `LongSound$save_channel()` silently produced another channel's numbers.
+  `channel = 0` keeps meaning "all channels" (Praat's `Vector_CHANNEL_AVERAGE`)
+  where Praat allows it; `LongSound$get_window_extrema()` is 1-based and
+  `LongSound$save_channel()` keeps Praat's 0 = left / 1 = right. Deviation from
+  the application: Praat *clamps* an out-of-range channel to channel 1, pladdrr
+  errors, because an error beats silent garbage.
+* `Sound$get_maximum(from, to, channel)` and `Sound$get_minimum()` now honour
+  that documented `channel` argument; on a multichannel sound both used to
+  return the extremum over all channels whatever channel was asked for. The
+  default became `channel = 0` (all channels), so existing calls without a
+  channel, and all single-channel results, are bit-identical.
 
 ## Performance and memory
 

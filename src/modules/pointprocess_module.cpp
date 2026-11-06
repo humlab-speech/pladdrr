@@ -227,6 +227,11 @@ public:
         if (!sound_ptr || sound_ptr.get() == nullptr) {
             Rcpp::stop("Invalid Sound pointer");
         }
+        // channel 0 = Praat's Vector_CHANNEL_AVERAGE; Praat clamps an out-of-range
+        // channel, we error instead so a bad index cannot read other memory.
+        if (channel < 0 || channel > sound_ptr->ny) {
+            Rcpp::stop("Channel out of range [0, %d]: %d", sound_ptr->ny, channel);
+        }
 
         integer n = ptr->nt;
         NumericVector values(n);
