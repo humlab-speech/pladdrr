@@ -528,7 +528,7 @@ intensity_stats <- pladdrr:::intensity_get_statistics_batch(
   from_times,
   to_times,
   c("min", "max", "mean"),
-  averaging_method = 0L  # Energy averaging
+  averaging_method = 1L  # Energy averaging
 )
 ```
 

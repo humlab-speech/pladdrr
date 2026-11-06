@@ -186,7 +186,9 @@ pitch_get_adaptive_range <- function(pitch_xptr, from_time = 0, to_time = 0, q1_
 #' @param from_times Numeric vector of interval start times
 #' @param to_times Numeric vector of interval end times
 #' @param metrics Character vector: "min", "max", "mean", "stdev", "q25", "q50", "q75"
-#' @param averaging_method Integer (0=ENERGY, 1=SONES, 2=DB)
+#' @param averaging_method Integer Praat Intensity_averaging code
+#'   (0=MEDIAN, 1=ENERGY, 2=SONES, 3=DB); the default 0 is the median, while
+#'   Praat's legacy two-argument "Get mean" is the plain dB mean (= 3)
 #' @return NumericMatrix with intervals as rows, metrics as columns
 #' @keywords internal
 #' @examples
@@ -1312,7 +1314,8 @@ intensity_get_value_direct <- function(intensity_xptr, time, interpolation = 2L)
 #' @param intensity_xptr External pointer to Intensity
 #' @param from_time Start time
 #' @param to_time End time
-#' @param averaging_method 0=energy, 1=sones, 2=dB
+#' @param averaging_method Praat Intensity_averaging code: 0=median (default),
+#'   1=energy, 2=sones, 3=dB
 #' @return Mean intensity
 #' @keywords internal
 #' @examples

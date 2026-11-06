@@ -25,6 +25,22 @@
   return the extremum over all channels whatever channel was asked for. The
   default became `channel = 0` (all channels), so existing calls without a
   channel, and all single-channel results, are bit-identical.
+* `Intensity$get_mean()`'s `averaging_method` sent Praat's averaging codes one
+  too low, so the documented default `"energy"` returned the **median** (0.39 dB
+  on a level-stepped signal), `"sones"` returned the energy average and `"db"`
+  the sones average. The table now matches Praat's `Intensity_averaging` enum
+  (`"median"` 0, `"energy"` 1, `"sones"` 2, `"db"` 3) and an unknown string
+  errors instead of quietly averaging in medians; consequently
+  `audio_quality()`'s `mean_intensity_db` moves by up to ~0.9 dB on
+  non-stationary material (0.39 dB on the two-level fixture the tests use),
+  `Intensity$get_statistics()`'s `"mean"` metric and `print()`'s "Mean
+  intensity" line now use the same energy average, so all three agree, and the
+  integer APIs (`intensity_get_mean_direct()`, `intensity_get_statistics_batch()`)
+  keep their numbers but their docs are corrected — `0` has always been the
+  median there. `"db"` is Praat's legacy two-argument `Intensity: Get mean`.
+  Passing a raw integer to `get_mean()` (e.g. `averaging_method = 0L`, which
+  silently meant "median") is no longer accepted; it errors and names the four
+  strings.
 
 ## Performance and memory
 

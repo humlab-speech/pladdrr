@@ -621,13 +621,22 @@ integer value, check the specific call site below.
 
 There is no general-purpose "intensity unit" code. The only related parameter is `averaging_method`
 on `Intensity$get_mean(from_time, to_time, averaging_method)`, internally mapped by `.intensity_avg_code`
-(`R/intensity-wrapper.R:38`):
+(`R/intensity-wrapper.R`) onto Praat's `Intensity_averaging` enum (`fon/Intensity.h:64-67`);
+the returned number is always in dB, and any other string is an error:
 
-| R String | Code |
-|----------|------|
-| `"energy"` | `0` |
-| `"sones"` | `1` |
-| `"db"` | `2` |
+| R String | Code | What it averages |
+|----------|------|------------------|
+| `"median"` | `0` | 0.5 quantile of the contour |
+| `"energy"` | `1` | mean of `10^(dB/10)`, re-expressed in dB (DEFAULT) |
+| `"sones"` | `2` | mean of `2^(dB/10)`, re-expressed in dB |
+| `"db"` | `3` | arithmetic mean of the dB values |
+
+This is **not** the LTAS averaging enum (which has no median; see "LTAS Units" below).
+The integer APIs `intensity_get_mean_direct()` and `intensity_get_statistics_batch()` take the same
+raw codes and default to `0` = median; Praat's legacy two-argument `Intensity: Get mean: from, to`
+is the plain dB mean (= `3`), so those defaults are a pladdrr convention, not an oracle match.
+`Intensity$get_statistics(… , metrics = "mean")` and `print()`'s "Mean intensity" line use energy (= `1`),
+the same number `get_mean()` returns by default.
 
 ### LTAS Units (FIXED in v4.0.4)
 
