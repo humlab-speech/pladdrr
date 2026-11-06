@@ -261,8 +261,6 @@
   * NEWS spelling fixes and `inst/WORDLIST` additions (`dev`,
     `uncommented`).
 
-# pladdrr 5.0.5
-
 ## CRAN compliance
 
 * Removed the last two `R CMD check` warnings:

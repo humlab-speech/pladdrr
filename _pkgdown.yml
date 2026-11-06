@@ -91,38 +91,99 @@ navbar:
       href: news/index.html
 
 reference:
-- title: Core Audio Objects
-  desc: Primary sound and acoustic representation objects
+- title: Package, tiers and configuration
+  desc: >
+    What pladdrr is, how the four access tiers relate, and the switches that
+    change global behaviour.
+  contents:
+  - pladdrr-package
+  - with_pladdrr_errors
+  - pladdrr_threads
+  - pladdrr_simd
+  - simd_info
+
+- title: Sound and LongSound
+  desc: Load, create and inspect audio. Start here.
   contents:
   - Sound
   - LongSound
-  - Spectrum
-  - Spectrogram
-  - Ltas
-  - ComplexSpectrogram
+  - read_sound
+  - create_sound
+  - create_sound_from_values
+  - sound_from_values
+  - sound_as_matrix_fast
+  - get_sound_values_fast
+  - get_sound_times_fast
+  - sound_values_fast
+  - sound_times_fast
+  - longsound_open
+  - longsound_get_buffer_size_pref_seconds
+  - longsound_set_buffer_size_pref_seconds
+  - generate_noise
+  - generate_sine_wave
+  - sound_create_tone
+  - sound_create_pure_tone
+  - sound_create_tone_complex
+  - sound_load_window
+  - pair_files
+  - get_duration
+  - get_sampling_rate
+  - get_n_channels
+  - get_n_samples
 
-- title: Pitch Analysis
-  desc: Fundamental frequency extraction and manipulation
+- title: Pitch and voicing
+  desc: Fundamental frequency extraction (all four Praat pitch methods) and point processes.
   contents:
   - Pitch
   - PitchModule
   - PitchTier
-  - to_pitch_direct
-  - get_pitch_at_time
-  - get_pitch_at_times
-  - get_pitch_value_direct
-  - get_pitch_stats_direct
-  - get_pitch_strengths_at_times
-  - starts_with("sound_to_pitch")
+  - starts_with("to_pitch_")
+  - starts_with("get_pitch_")
+  - get_mean_pitch
+  - get_min_pitch
+  - get_max_pitch
+  - two_pass_adaptive_pitch
   - extract_pitch
+  - extract_pitch_parallel
+  - starts_with("sound_to_pitch_")
+  - PointProcess
+  - to_point_process_direct
+  - to_point_process_from_sound_and_pitch
+  - get_pointprocess_intervals
+  - get_pointprocess_times
+  - get_pointprocess_nearest_indices
+  - pp_get_mean_period_direct
+  - pp_get_stdev_period_direct
+  - extract_voiced_segments
+  - extract_voiced_segments_ultra
+  - vad
 
-- title: Formant Analysis
-  desc: Resonance frequency tracking and analysis
+- title: Voice quality and jitter/shimmer
+  desc: Jitter, shimmer, HNR, CPPS and multiband harmonicity.
+  contents:
+  - get_jitter_shimmer_batch
+  - get_voice_quality_ultra
+  - get_durations_batch
+  - Harmonicity
+  - to_harmonicity_direct
+  - build_multiband_harmonicity
+  - multiband_hnr_stats
+  - calculate_multiband_hnr_ultra
+  - calculate_f0_stats_ultra
+  - calculate_minimum_intensity_ultra
+  - calculate_cpps_fast
+  - calculate_cpps_ultra
+  - get_cpps_fast
+
+- title: Formants
+  desc: Resonance tracking, including the robust FormantPath/FormantModeler trackters.
   contents:
   - Formant
   - FormantPath
   - FormantGrid
   - FormantTier
+  - FormantModeler
+  - formanttier_from_formant
   - to_formant_direct
   - get_formant_at_time
   - get_formants_at_times
@@ -132,59 +193,81 @@ reference:
   - get_mean_formant
   - sound_to_formant_batch
   - extract_formants
+  - extract_formant_parallel
 
-- title: Intensity & Voice Quality
-  desc: Intensity measurements and voice quality analysis
+- title: Intensity
+  desc: Intensity contours, tiers and per-sound level statistics.
   contents:
   - Intensity
   - IntensityTier
-  - Harmonicity
+  - intensity_tier_to_amplitude_tier
   - to_intensity_direct
-  - to_harmonicity_direct
   - get_intensity_at_time
   - get_intensity_at_times
   - get_intensity_value_direct
-  - starts_with("get_max_intensity")
-  - starts_with("get_min_intensity")
-  - starts_with("get_mean_intensity")
-  - starts_with("get_sd_intensity")
+  - get_max_intensity
+  - get_min_intensity
+  - get_mean_intensity
+  - get_sd_intensity
   - sound_to_intensity_batch
   - extract_intensity
+  - extract_intensity_parallel
 
-- title: TextGrid & Annotation
-  desc: Time-aligned phonetic annotation
+- title: Spectral analysis
+  desc: Spectrum, spectrogram, LTAS and batch spectral moments.
+  contents:
+  - Spectrum
+  - Spectrogram
+  - Ltas
+  - ComplexSpectrogram
+  - BarkSpectrogram
+  - MelSpectrogram
+  - to_spectrum_direct
+  - to_spectrogram_direct
+  - to_ltas_direct
+  - ltas_average
+  - get_spectral_moments_batch
+  - spectrum_pass_hann_band
+  - spectrum_stop_hann_band
+  - SpectrumTier
+
+- title: Cepstrum, MFCC and auditory models
+  desc: Cepstral coefficients (MFCC, LFCC), power cepstrum/cepstrogram, cochlea models.
+  contents:
+  - Cepstrum
+  - MFCC
+  - LFCC
+  - LPC
+  - PowerCepstrum
+  - PowerCepstrogram
+  - to_powercepstrogram_fast
+  - Cochleagram
+  - Excitation
+  - spectrum_cepstral_smoothing
+
+- title: TextGrid and annotation
+  desc: Time-aligned annotation, including the per-interval batch analysers.
   contents:
   - TextGrid
-  - textgrid_create
   - starts_with("textgrid_")
   - starts_with("get_textgrid_")
   - extract_textgrid_intervals
   - pair_sound_textgrid
   - sound_to_textgrid_silences
+  - get_interval_predicate
 
-- title: Speech Synthesis
-  desc: Parametric speech synthesis with KlattGrid
+- title: Speech synthesis
+  desc: Parametric synthesis and articulatory models.
   contents:
   - KlattGrid
-  - KlattGrid_createExample
-  - KlattGrid_createFromVowel
+  - klattgrid_create_example
+  - klattgrid_create_from_vowel
   - VocalTract
   - vocaltract_create_from_phone
+  - Manipulation
 
-- title: Auditory Models
-  desc: Perceptual and cochlear models
-  contents:
-  - Cochleagram
-  - Excitation
-  - Cepstrum
-  - PowerCepstrum
-  - PowerCepstrogram
-  - to_powercepstrogram_fast
-  - calculate_cpps_fast
-  - get_cpps_fast
-
-- title: Sound Manipulation
-  desc: Audio processing and transformation
+- title: Sound manipulation
+  desc: Filtering, concatenation, resampling and per-sound statistics.
   contents:
   - starts_with("sound_extract")
   - starts_with("sound_filter")
@@ -194,80 +277,98 @@ reference:
   - sounds_cross_correlate
   - sound_lengthen
   - sound_deepen_band_modulation
-  - sound_create_tone
-  - starts_with("sound_statistics")
   - sound_auto_correlate
+  - sound_statistics
+  - sound_mean
+  - sound_min
+  - sound_max
+  - sound_rms
+  - sound_get_zcr
+  - check_audio_quality
+  - format_quality_report
+  - create_window_xptr
+  - apply_window_xptr
+  - apply_transform_xptr
 
-- title: Batch & Parallel Operations
-  desc: High-performance batch processing
+- title: Batch and parallel processing
+  desc: Tier 3/4 - run a whole file list or vector of sounds in one call.
   contents:
-  - starts_with("analyze_files")
-  - starts_with("extract_.*_parallel")
+  - create_file_list
+  - analyze_files_parallel
+  - process_sounds_parallel
   - batch_process
-  - starts_with("sound_to_.*_batch")
-  - starts_with("textgrid_.*_batch")
-  - starts_with("sound_pool")
+  - batch_processing
+  - benchmark_parallel
+  - sound_pool
+  - aggregate_measurements
+  - extract_measurements
+  - extract_measurements_custom
 
-- title: Direct API
-  desc: Low-level direct C++ access (fastest performance)
+- title: Distance and multivariate analysis
+  desc: Dynamic time warping, PCA and discriminant analysis over pladdrr objects.
   contents:
-  - ends_with("_direct")
-  - ends_with("_xptr")
+  - DTW
+  - mfccs_to_dtw
+  - pitches_to_dtw
+  - sounds_to_dtw
+  - spectrograms_to_dtw
+  - PCA
+  - pca_from_matrix
+  - Discriminant
+  - discriminant_from_matrix
 
-- title: Visualization
-  desc: Plotting methods for acoustic objects
+- title: Other Praat objects
+  desc: Containers and tiers that the analysers return.
   contents:
-  - autoplot-methods
-  - starts_with("plot_")
+  - AmplitudeTier
+  - amplitude_tier_create
+  - amplitude_tier_from_point_process
+  - DurationTier
+  - Electroglottogram
+  - electroglottogram_create
+  - Matrix
+  - matrix_create
+  - matrix_create_simple
+  - matrix_read
+  - Table
+  - table_create
+  - Polygon
 
-- title: Praat Interpreter
-  desc: Execute Praat scripts from R
+- title: Praat script interpreter
+  desc: Run Praat scripts and expressions from R.
   contents:
   - PraatInterpreter
   - starts_with("praat_")
 
-- title: Utilities
-  desc: Helper functions and utilities
+- title: Plotting
+  desc: ggplot2 autoplot/autolayer and the base-graphics plot functions.
   contents:
-  - aggregate_measurements
-  - extract_measurements
-  - extract_measurements_custom
-  - pair_files
-  - create_file_list
-  - check_audio_quality
-  - simd_info
-  - get_duration
-  - get_sampling_rate
-  - get_n_channels
-  - get_n_samples
-
-- title: Data Structures
-  desc: Additional Praat data types
-  contents:
-  - Matrix
-  - Table
-  - PointProcess
-  - Polygon
-  - AmplitudeTier
-  - DurationTier
-  - Electroglottogram
-  - LPC
-  - Manipulation
-
-- title: Internal & Development
-  desc: Helper functions and S3 methods
-  contents:
-  - starts_with("as.data.frame")
-  - starts_with("as.matrix")
-  - starts_with("$")
-  - starts_with(".")
-  - starts_with("summary")
-  - starts_with("print")
-  - starts_with("create_")
-  - batch_processing
+  - autoplot-methods
+  - plotting-methods
+  - plotting-combined
+  - starts_with("plot[.]")
+  - starts_with("plot_")
   - cepstrum_plots
   - create_cepstrum_report
-  - vad
+
+- title: Coercion and printing (S3)
+  desc: as.data.frame, as.matrix, print and summary methods for pladdrr objects.
+  contents:
+  - starts_with("as[.]data[.]frame[.]")
+  - as-data-frame-missing
+  - as.matrix.PraatObject
+  - starts_with("summary[.]")
+  - starts_with("print[.]")
+  - starts_with("is_praat_")
+  - starts_with("is_fast_")
+
+- title: Internal and development
+  desc: >
+    Not part of the user API: constructor dispatch anchors and the SIMD
+    dispatch bridge that the TextGrid batch functions install.
+  contents:
+  - starts_with("[$]")
+  - ends_with("_bridge")
 
 articles:
 - title: Getting Started
