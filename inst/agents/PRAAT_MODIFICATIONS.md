@@ -1473,10 +1473,12 @@ if (halfnsamp_window < 2)
 Why this file and not the R wrapper: the same C++ function is reached from the
 R6 door (`Sound$to_cochleagram()`), the module door
 (`cochleagram_module$Sound_to_Cochleagram`) and `praat_run_script()`, so a guard
-in R would leave the others aborting. Behaviour change: rates that used to abort
-now raise (and 67-133 Hz, which used to "succeed" with an all-NaN cochleagram,
-are refused too by Praat's own threshold — nothing useful is lost, but the
-change is user-visible and is in NEWS).
+in R would leave the others aborting. Behaviour change, measured per rate: the
+guard refuses every sampling rate below 200 Hz at the default 0.03 s window
+(`floor(window * rate) >= 6`). Rates <= 66 Hz aborted; 67-133 Hz "succeeded" with
+an all-NaN cochleagram (0 of 4352 cells finite); 150-199 Hz was about 55% finite,
+the same degenerate shape as the still-accepted 200-500 Hz. Nothing usable is
+given up, but the change is user-visible and is in NEWS.
 
 Upstream conflict note: this hunk sits three lines above the frame-count guard
 (`if (nFrames < 2) return autoCochleagram ();`), which is untouched. If upstream

@@ -10,10 +10,13 @@
   anything an agent had in flight. It now raises, in every door
   (`Sound$to_cochleagram()`, the `cochleagram_module` door, and a script
   `To Cochleagram:`), with Praat's own message for the case,
-  "Analysis window too short." — the guard `Sound_to_Pitch` has always had. Note
-  that rates from 67 to 133 Hz, which previously returned an all-NaN cochleagram
-  without complaint, are refused by the same rule; they had no usable output
-  anyway.
+  "Analysis window too short." — the guard `Sound_to_Pitch` has always had.
+  **Behaviour change to expect:** at the default 0.03 s window the guard refuses
+  any sampling rate below 200 Hz (the window needs 6 samples). Measured on the
+  previous build those rates had no usable output — 67-133 Hz returned an
+  all-NaN cochleagram (0 of 4352 cells finite), 150-199 Hz about 55% finite, the
+  same degenerate shape as the still-accepted 200-500 Hz — but a script calling
+  one of them now gets an error where it got a matrix of gaps.
 
 * A failed cochleagram or excitation conversion no longer contaminates every
   later Praat error in the session. Six catch blocks — five in
