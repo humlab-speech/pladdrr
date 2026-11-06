@@ -53,15 +53,23 @@
 
 // LPC/Sound_to_PowerCepstrogram.cpp. A 3 s clip at the default
 // time_step = 0.002 (1451 frames) gets 4 threads instead of the 24 it used to
-// ask for (6x less CPU); clips under ~1.1 s (562 frames) stay on the calling
-// thread, and from ~24 s on the machine is full again.
+// ask for (6x less CPU); clips under ~1.22 s (563 frames is the first grain the
+// review re-measured empirically) stay on the calling thread, and from ~24 s on
+// the machine is full again.
 #define PLADDRR_CEPSTROGRAM_FRAMES_PER_THREAD 250
 
 // fon/Sound_to_Formant.cpp. Also the value every sibling LPC/formant site
 // (LPC_and_Formant.cpp, Sound_and_LPC.cpp, Sound_to_Formant_mt.cpp,
 // LPC_and_LineSpectralFrequencies.cpp) already uses. A 3 s clip at the default
 // time_step = 0.005 (596 frames) gets 10 threads instead of all 32; clips under
-// ~0.45 s (89 frames) stay on the calling thread.
+// ~0.50 s (90 frames is the first grain measured to parallelise) stay on the
+// calling thread.
+//
+// The 1.25 ms/thread above is pinned to 8 physical CPUs. Unpinned on this 32
+// logical core box the marginal cost is superlinear (cap 8 = 40.3 ms, 16 = 82.3,
+// 24 = 163.7 CPU-ms), which would put break-even nearer 300-400 frames; 250 is
+// right for the pinned/physical-core case the audit measured and conservative
+// (never slower than serial) for the other.
 #define PLADDRR_FORMANT_FRAMES_PER_THREAD 40
 
 #endif // PLADDRR_THREAD_THRESHOLDS_H

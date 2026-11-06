@@ -184,11 +184,18 @@
   kernel and slower in wall clock than an 8-thread run; `to_formant_burg()`
   split it every 3 frames, so even a 0.25 s clip (40 frames) asked for 9 workers.
   The minimum work per thread is now 250 and 40 frames respectively (measured
-  break-even times three and five; 40 is what the other LPC/formant sites use),
-  so short clips stay on one thread while long recordings still fill the
-  machine. On 32 cores, one 3 s clip: 166 -> 27 CPU-ms (-83%) at 0.74x the wall
-  time for the cepstrogram, 44 -> 30 CPU-ms (-32%) at 1.03x the wall time for
-  formants; a 30 s recording is unchanged. Output is bit-identical at every
+  break-even times three and five; 10 of the 11 other LPC/formant sites already
+  use 40, the eleventh uses 80), so short clips stay on one thread while long
+  recordings still fill the machine. On 32 cores, one 3 s clip: 166 -> 27 CPU-ms
+  (-83%) at 0.74x the wall time for the cepstrogram, 44 -> 30 CPU-ms (-32%) at
+  1.03x the wall time for formants; a 30 s recording is unchanged.
+  **Short clips pay for it in latency**, which is the trade: over 600 clips at
+  default settings, wall time per call went 1.26 -> 1.66 ms (+32%) for a 0.2 s
+  formant analysis, 2.11 -> 3.22 ms (+53%) for a 0.4 s one and 1.85 -> 2.49 ms
+  (+35%) for a 0.4 s cepstrogram, against CPU-seconds down 21-36% on the same
+  calls; a 0.2 s cepstrogram and all pitch analysis are unaffected. If you
+  analyse hundreds of sub-second clips and wall clock matters more than load,
+  this change moves the wrong way for you. Output is bit-identical at every
   size, threads only partition frames.
 * Loading the package uses ~40 MB less resident memory per R process
   (including every parallel worker): Praat's 42 MB object list is now
