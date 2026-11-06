@@ -258,6 +258,7 @@ reference:
   desc: Helper functions and S3 methods
   contents:
   - starts_with("as.data.frame")
+  - starts_with("as.matrix")
   - starts_with("$")
   - starts_with(".")
   - starts_with("summary")

@@ -2664,6 +2664,12 @@ pitch_df <- pitch$as_data_frame(
 - In-place modification for memory efficiency
 - 5-15x faster for batch operations
 
+**Matrix export:** `as.matrix(x)` works on any object that has `$as_matrix()`
+(Sound, Pitch, Intensity, Spectrogram, Ltas, the tiers, Matrix, Polygon, ...) and
+returns exactly what that method returns; the classes without one raise a
+catchable `pladdrr_input_error` naming the class rather than returning a fake
+matrix, so use `as.data.frame(x)` for those.
+
 ### Pattern 4: Tier Manipulation (PitchTier v4.6.6+)
 
 ```r

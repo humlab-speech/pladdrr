@@ -2,6 +2,20 @@
 
 ## Bug fixes
 
+* `as.matrix()` no longer returns junk for the 39 of 41 object classes that had
+  no method of their own. Only `Matrix` and `Polygon` registered one, so R's
+  default fired for the rest: it put a `dim` on the 2-element wrapper list
+  (`.xptr`, `.cpp`) and *kept the S3 class*, so `is.matrix(as.matrix(pitch))`
+  was TRUE, no error was raised, the "matrix" held an external pointer instead
+  of numbers, and printing it died inside the class's own `print()`. One
+  fallback method on the shared `PraatObject` class now returns the object's own
+  `$as_matrix()` where it has one (Sound, Pitch, Intensity, Spectrogram, Ltas,
+  the tiers, the band-filtered spectrograms, ... — bit-for-bit the numbers that
+  accessor gives), and raises the package's typed `pladdrr_input_error` naming
+  the class and the accessor to use where it does not (`Formant`, PointProcess,
+  TextGrid, Table, ... have no matrix to give). `as.matrix(Matrix)` and
+  `as.matrix(Polygon)` behave exactly as before.
+
 * Options passed to Praat script commands now select the option Praat would
   select. pladdrr's library-mode form layer (`src/uiform_libmode.cpp`, the
   script-only stand-in for Praat's `Ui.cpp`) stored Praat's `base` argument — the
