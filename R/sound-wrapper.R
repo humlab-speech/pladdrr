@@ -1212,7 +1212,9 @@ lockEnvironment(.sound_methods, bindings = TRUE)
       # is av's start_pts, dropping that many samples.
       audio_info <- av::av_media_info(path)
       channels <- audio_info$audio$channels
-      if (is.null(channels)) channels <- 1L
+      # NULL or NA (av reports NA when the container does not say): without this
+      # the NA reached matrix() and surfaced as "invalid 'dim'".
+      if (length(channels) != 1L || is.na(channels)) channels <- 1L
       # av::read_audio_bin() returns one interleaved integer vector of raw
       # S32LE samples (full scale 2^31), not a channels x samples matrix in
       # +-1: scale by full scale, then de-interleave column-major (av fills

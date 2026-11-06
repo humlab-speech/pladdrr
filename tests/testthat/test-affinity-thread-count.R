@@ -81,7 +81,7 @@ test_that("automatic thread count and batch defaults follow a taskset CPU mask",
     # explicit override still wins over the affinity count (precedence rule)
     expect_identical(as.integer(fields[[4]]), 1L)
     # F-power-04: the batch helpers' defaults follow the mask too
-    expect_identical(as.integer(fields[[5]]), max(1L, maskSize - 1L))
+    expect_identical(as.integer(fields[[5]]), if (maskSize > 2L) maskSize - 1L else maskSize)
     expect_identical(as.integer(fields[[6]]), max(1L, maskSize %/% 2L))
   }
 })

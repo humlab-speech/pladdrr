@@ -31,16 +31,20 @@
   max(1L, total %/% max(1L, as.integer(n_cores)))
 }
 
-# Default core count: one worker per usable CPU minus one, capped at 2 under
-# R CMD check.
+# Default core count: one worker per usable CPU, minus one when there are more
+# than two, capped at 2 under R CMD check.
+#
+# The spare CPU keeps the calling session responsive, but with a 2-CPU
+# allowance it left ONE worker, so batch_process(parallel = TRUE) silently ran
+# serially and its "set n_cores > 1" hint could not be followed.
 #
 # R CMD check sets _R_CHECK_LIMIT_CORES_ to stop parallel::makeCluster() /
 # mclapply() calls that spawn more than 2 processes
 # (see parallel:::.check_ncores).
 # Honor that limit in the default so package checks pass while dev/CI still
 # uses the full machine.
-.default_n_cores <- function() {
-  n <- max(1, .pladdrr_available_cpus() - 1)
+.default_n_cores <- function(available = .pladdrr_available_cpus()) {
+  n <- if (available > 2) available - 1 else max(1, available)
   chk <- tolower(Sys.getenv("_R_CHECK_LIMIT_CORES_", ""))
   if (nzchar(chk) && chk != "false") min(n, 2L) else n
 }

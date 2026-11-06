@@ -2,6 +2,17 @@
 
 ## Bug fixes
 
+* `batch_process()` rows for files that failed now carry `error_class` next to
+  `error` (the first class of the condition, e.g. `pladdrr_input_error`). A worker
+  turns a condition into a row so one bad file cannot lose the run, which means a
+  `tryCatch(pladdrr_data_loss = )` around the call can never see it; filter on
+  `error_class` instead. The documentation says so.
+* The default worker count is the usable CPUs minus one only when there are more
+  than two. With a 2-CPU allowance it was one worker, so
+  `batch_process(parallel = TRUE)` silently ran serially.
+* An `av`-decoded file whose container reports no channel count (`NA`) is read as
+  mono instead of failing with "invalid 'dim'".
+
 * Sizes that become allocations are validated up front. `sound_create_tone()`,
   `sound_create_pure_tone()` and `sound_create_tone_complex()` refuse a
   non-positive, non-finite or absurd `duration` / `sampling_rate` (a negative
