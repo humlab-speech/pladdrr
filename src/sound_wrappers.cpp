@@ -876,6 +876,20 @@ XPtr<structPointProcess> sound_to_point_process_periodic_cc(
     }
 }
 
+// Sound_to_PointProcess_extrema/-zeroes index `my z [channel] [0]` directly
+// (fon/Sound_to_PointProcess.cpp:81), and R builds compile with -DNDEBUG, so
+// neither Melder_assert nor Vector_row's bounds check exists there. Praat's own
+// dialog clamps an out-of-range channel to channel 1 (fon/praat_Sound.cpp:1837);
+// pladdrr errors instead, as for every other channel argument (F-memsec-01).
+static void validate_point_process_channel(structSound *sound, int channel) {
+    if (channel == NA_INTEGER) {
+        stop("`channel` must be a single integer, not NA");
+    }
+    if (channel < 1 || channel > sound->ny) {
+        stop("Channel out of range [1, %d]: %d", sound->ny, channel);
+    }
+}
+
 //' Extract extrema (peaks) from sound (internal)
 //' @keywords internal
 //' @noRd
@@ -889,6 +903,8 @@ XPtr<structPointProcess> sound_to_point_process_extrema(
 ) {
     structSound* sound = get_ptr(xptr, "Sound");
     
+    validate_point_process_channel(sound, channel);
+
     try {
         // Convert interpolation int to enum
         kVector_peakInterpolation interp_type = static_cast<kVector_peakInterpolation>(interpolation);
@@ -921,6 +937,8 @@ XPtr<structPointProcess> sound_to_point_process_zeros(
 ) {
     structSound* sound = get_ptr(xptr, "Sound");
     
+    validate_point_process_channel(sound, channel);
+
     try {
         autoPointProcess pp = Sound_to_PointProcess_zeroes(
             sound,

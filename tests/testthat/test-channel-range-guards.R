@@ -204,3 +204,32 @@ test_that(
   expect_error(egg_mod$Sound_extract_Electroglottogram(s$get_xptr(), 99L, FALSE),
     "Channel out of range")
 })
+
+test_that("to_point_process_extrema()/zeros() guard the channel (F-memsec-01 review round)", {
+  ch <- .make_channels()
+  s <- .mono(ch)
+  st <- .stereo(ch)$sound
+
+  # These two Praat routines index `z[channel]` with no bounds check at all
+  # (fon/Sound_to_PointProcess.cpp:81) and -DNDEBUG removes the assert, so they
+  # were the last reachable channel arguments that returned garbage -- a large
+  # index crashed the whole R session (exit 139) rather than erroring.
+  zeros <- s$to_point_process_zeros(channel = 1)
+  extrema <- s$to_point_process_extrema(channel = 1)
+  expect_gt(zeros$get_number_of_points(), 0L)
+  expect_gt(extrema$get_number_of_points(), 0L)
+
+  expect_error(s$to_point_process_zeros(channel = 2), "Channel out of range")
+  expect_error(s$to_point_process_zeros(channel = 99), "Channel out of range")
+  expect_error(s$to_point_process_zeros(channel = NA_integer_), "single integer")
+  expect_error(s$to_point_process_zeros(channel = 1000L), "Channel out of range")
+  expect_error(s$to_point_process_extrema(channel = 2), "Channel out of range")
+  expect_error(s$to_point_process_extrema(channel = 1000L), "Channel out of range")
+  expect_error(s$to_point_process_extrema(channel = 0), "Channel out of range")
+
+  # stereo: channel 1 is the same signal as the mono case above
+  expect_identical(
+    st$to_point_process_zeros(channel = 1)$get_number_of_points(),
+    zeros$get_number_of_points()
+  )
+})

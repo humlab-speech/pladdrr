@@ -24,7 +24,11 @@
   contents (observed -6.8e+302) and larger indices could kill the R process;
   the same missing check in `PointProcess$get_values_from_sound()`, the LPC
   `filter_inverse_at_time()` entry points, `LongSound$get_window_extrema()` and
-  `LongSound$save_channel()` silently produced another channel's numbers.
+  `LongSound$save_channel()` silently produced another channel's numbers, and
+  `Sound$to_point_process_extrema()` / `$to_point_process_zeros()` counted
+  extrema and zero crossings in whatever memory lay beyond the channel array
+  (`channel = 1000` killed the R session). `channel = NA` is now named as such
+  instead of being reported as channel -2147483648.
   `channel = 0` keeps meaning "all channels" (Praat's `Vector_CHANNEL_AVERAGE`)
   where Praat allows it; `LongSound$get_window_extrema()` is 1-based and
   `LongSound$save_channel()` keeps Praat's 0 = left / 1 = right. Deviation from
