@@ -1483,3 +1483,20 @@ given up, but the change is user-visible and is in NEWS.
 Upstream conflict note: this hunk sits three lines above the frame-count guard
 (`if (nFrames < 2) return autoCochleagram ();`), which is untouched. If upstream
 ever adds its own window guard here, delete ours and keep upstream's.
+
+## `fon/Sound_to_Cochleagram.cpp`, `fon/Spectrum_to_Excitation.cpp` — bound the requested tensor (F-cochleagram-input-validation)
+
+`Sound_to_Cochleagram` and `Sound_to_Cochleagram_edb` size their output from
+`nf = iround (25.6 / df)`, and `Spectrum_to_Excitation` from
+`nbark = iround (25.6 / dbark)`, with no upper bound and no check that the count
+is positive. `df = 1e-9` is a 2.5 TB request: on Linux the allocator refuses and
+Praat reports an error, on macOS the pages are committed and the kernel SIGKILLs
+the R process (exit 137, measured: peak RSS above 4 GB, no R-level condition). A
+negative step gave a Cochleagram whose band count is negative.
+
+Each site now throws before allocating when the count is below 1 or the product
+exceeds the limits in `src/pladdrr_limits.h` (2^29 cochleagram cells; 10 000
+excitation bands, because the filter convolution is O(bands^2)). The guard is in
+C++ rather than R because the R6, module and script doors all reach it. Upstream
+Praat has no such limit, so if it adds one, delete ours and keep upstream's.
+

@@ -16,11 +16,14 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "pladdrr_limits.h"
 #include "Spectrum_to_Excitation.h"
 
 autoExcitation Spectrum_to_Excitation (Spectrum me, double dbark) {
 	try {
 		const integer nbark = Melder_iround (25.6 / dbark);
+		if (nbark < 1 || nbark > PLADDRR_MAX_EXCITATION_BANDS)   // pladdrr: see pladdrr_limits.h
+			Melder_throw (U"Excitation of ", nbark, U" bands is not allowed (step must be positive, at most ", PLADDRR_MAX_EXCITATION_BANDS, U" bands).");
 		const constVEC re = my z.row (1), im = my z.row (2);
 		const autoVEC auditoryFilter = raw_VEC (nbark);
 		for (integer i = 1; i <= nbark; i ++) {

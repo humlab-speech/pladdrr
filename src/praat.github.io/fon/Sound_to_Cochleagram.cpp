@@ -29,6 +29,7 @@
  */
 
 #include "Sound_to_Cochleagram.h"
+#include "pladdrr_limits.h"
 #include "Sound_and_Spectrum.h"
 #include "Spectrum_to_Excitation.h"
 
@@ -45,6 +46,8 @@ autoCochleagram Sound_to_Cochleagram (Sound me, double dt, double df, double dt_
 			Melder_throw (U"Analysis window too short.");   // pladdrr: same guard as Sound_to_Pitch.cpp; without it a sampling rate below ~67 Hz makes nsamp_window negative and Sound_and_Spectrum.cpp:30 writes before a 1-cell allocation, aborting the R process
 		nsamp_window = halfnsamp_window * 2;
 		if (nFrames < 2) return autoCochleagram ();
+		if (nf < 1 || nFrames > PLADDRR_MAX_TENSOR_CELLS / nf)   // pladdrr: see pladdrr_limits.h
+			Melder_throw (U"Cochleagram of ", nFrames, U" frames x ", nf, U" frequency bands is not allowed (frequency step must be positive, at most ", PLADDRR_MAX_TENSOR_CELLS, U" cells).");
 		double t1 = my x1 + 0.5 * (duration - my dx - (nFrames - 1) * dt);   // centre of first frame
 		autoCochleagram thee = Cochleagram_create (my xmin, my xmax, nFrames, dt, t1, df, nf);
 		autoSound window = Sound_createSimple (1, nsamp_window * my dx, 1.0 / my dx);
@@ -116,6 +119,8 @@ autoCochleagram Sound_to_Cochleagram_edb
 		integer ntime = Melder_iround (duration_seconds / dtime);
 		if (ntime < 2) return autoCochleagram ();
 		integer nfreq = Melder_iround (25.6 / dfreq);   // 25.6 Bark = highest frequency
+		if (nfreq < 1 || ntime > PLADDRR_MAX_TENSOR_CELLS / nfreq)   // pladdrr: see pladdrr_limits.h
+			Melder_throw (U"Cochleagram of ", ntime, U" frames x ", nfreq, U" frequency bands is not allowed (frequency step must be positive, at most ", PLADDRR_MAX_TENSOR_CELLS, U" cells).");
 
 		autoCochleagram thee = Cochleagram_create (my xmin, my xmax, ntime, dtime, 0.5 * dtime, dfreq, nfreq);
 

@@ -2,6 +2,19 @@
 
 ## Bug fixes
 
+* `Sound$to_cochleagram()`, `$to_cochleagram_edb()` and `Spectrum$to_excitation()`
+  refuse a step size that cannot describe the result instead of asking Praat for
+  it. `df = 1e-9` is a 2.5 TB request: Linux answered with an allocation error,
+  but macOS committed the pages and the kernel killed the whole R session
+  (exit 137, invisible to `tryCatch()`). The size is now bounded in C++ (2^29
+  cochleagram cells, i.e. about 5.8 h of audio at the default steps; 10 000
+  excitation bands), so every door (R6, module, script) raises "... is not
+  allowed". `dt`, `df`, `window_length`, `dtime` and `dfreq` also raise a classed
+  `pladdrr_input_error` naming the argument, and `to_cochleagram_edb(dfreq = -1)`
+  no longer returns a Cochleagram with a negative band count.
+  **Behaviour change to expect:** requests above those bounds used to run on
+  Linux machines with enough memory and now raise.
+
 * `Sound$to_cochleagram()` on a very low-rate Sound no longer kills the R
   process. A sampling rate below ~67 Hz (with the default 0.03 s window) made the
   internal analysis window negative, and the FFT zero-padding step three

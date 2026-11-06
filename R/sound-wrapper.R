@@ -695,20 +695,28 @@ NULL
   TextGrid(.xptr = tg_ptr)
 }
 
+# Positive, finite, non-NA step sizes. A negative or zero step reaches Praat as a
+# negative band count and comes back as a Cochleagram whose as.matrix() fails
+# far from the call; the size bound for huge requests is in C++
+# (src/pladdrr_limits.h) because the script and module doors need it too.
+.check_cochleagram_steps <- function(routine, ...) {
+  steps <- list(...)
+  for (nm in names(steps)) {
+    v <- steps[[nm]]
+    if (!.is_numeric_scalar(v) || !is.finite(v) || v <= 0)
+      .stop_input(routine, nm, paste0(nm, " must be a positive number"))
+  }
+  invisible(NULL)
+}
+
 .sound_methods$to_cochleagram <- function(.self, dt = 0.01, df = 0.1,
   window_length = 0.03,
                                            forward_masking_time = 0.03) {
-  stopifnot(
-    "dt must be a positive number" = is.numeric(
-      dt) && length(dt) == 1 && dt > 0,
-    "df must be a positive number" = is.numeric(
-      df) && length(df) == 1 && df > 0,
-    "window_length must be a positive number" = is.numeric(
-      window_length) && length(window_length) == 1 &&
-      window_length > 0,
-    "forward_masking_time must be a non-negative number" = is.numeric(
-      forward_masking_time) &&
-      length(forward_masking_time) == 1 && forward_masking_time >= 0)
+  .check_cochleagram_steps("to_cochleagram", dt = dt, df = df,
+    window_length = window_length)
+  if (!.is_numeric_scalar(forward_masking_time) || forward_masking_time < 0)
+    .stop_input("to_cochleagram", "forward_masking_time",
+      "must be a non-negative number")
   cochleagram_ptr <- .sound_to_cochleagram(.self$.xptr, dt, df, window_length,
     forward_masking_time)
   Cochleagram(.xptr = cochleagram_ptr)
@@ -729,6 +737,7 @@ NULL
          "more stable.",
          call. = FALSE)
   }
+  .check_cochleagram_steps("to_cochleagram_edb", dtime = dtime, dfreq = dfreq)
   cochleagram_ptr <- .sound_to_cochleagram_edb(
     .self$.xptr, dtime, dfreq, has_synapse,
     replenishment_rate, loss_rate, return_rate, reprocessing_rate)
