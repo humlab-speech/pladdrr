@@ -10,14 +10,18 @@ ltas_fixture <- function() {
 }
 
 test_that(".ltas_unit_code maps units and defaults", {
+  # F-faith-13: Praat's Ltas averaging CHOICE is 1-based with no MEDIAN, so
+  # "dB" is 3 (fon/praat_uvafon_init.cpp:1101-1105), and an unknown spelling is
+  # an error rather than a silent "energy" (it was 0L / 1L here before).
   expect_equal(pladdrr:::.ltas_unit_code("energy"), 1L,
     tolerance = sqrt(.Machine$double.eps))
   expect_equal(pladdrr:::.ltas_unit_code("sones"), 2L,
     tolerance = sqrt(.Machine$double.eps))
-  expect_equal(pladdrr:::.ltas_unit_code("db"), 0L,
+  expect_equal(pladdrr:::.ltas_unit_code("db"), 3L,
     tolerance = sqrt(.Machine$double.eps))
-  expect_equal(pladdrr:::.ltas_unit_code("bogus_unit"), 1L,
+  expect_equal(pladdrr:::.ltas_unit_code("dB"), 3L,
     tolerance = sqrt(.Machine$double.eps))
+  expect_error(pladdrr:::.ltas_unit_code("bogus_unit"), "energy")
 })
 
 test_that("Ltas constructor validation and accessor branches", {

@@ -638,24 +638,51 @@ is the plain dB mean (= `3`), so those defaults are a pladdrr convention, not an
 `Intensity$get_statistics(… , metrics = "mean")` and `print()`'s "Mean intensity" line use energy (= `1`),
 the same number `get_mean()` returns by default.
 
-### LTAS Units (FIXED in v4.0.4)
+### LTAS Units (fixed again in v5.0.6 — the v4.0.4 table this section used to carry was wrong)
 
-**BREAKING CHANGE:** Prior to v4.0.4, LTAS unit codes were incorrectly mapped. The fix aligns with Praat's `Ltas.cpp:44-60`.
+Five `Ltas` queries take a `unit` argument — `get_mean(fmin, fmax, unit)`,
+`get_means_batch(fmins, fmaxs, unit)`, `get_standard_deviation(fmin, fmax, unit)`,
+`get_slope(f1min, f1max, f2min, f2max, unit)` and
+`get_local_peak_height(environment_min, environment_max, peak_min, peak_max, unit)` —
+and **the number they return is always in dB**, whatever `unit` you name. `unit` selects
+the domain the *average* is taken in; Praat's own queries convert the result back
+(`Sampled_getMean_standardUnit`, `fon/Sampled.cpp:505-509`, and
+`Sampled_getStandardDeviation_standardUnit`, `fon/Sampled.cpp:550-554`, called at
+`fon/praat_uvafon_init.cpp:1107` and `:1156`). `.ltas_unit_code` (`R/ltas-wrapper.R`)
+maps the string onto Praat's Ltas averaging `CHOICE`, which is **1-based and has no
+median** (`fon/praat_uvafon_init.cpp:1101-1105`); any other string is an error:
 
-| R String | Code | Praat Behavior |
-|----------|------|----------------|
-| `"db"` | `0` | Passthrough (no conversion) |
-| `"energy"` | `1` | `10*log10(ratio)` → dB |
-| `"sones"` | `2` | `10*log2(ratio)` → dB |
+| R String | Code | What it averages | Returned |
+|----------|------|------------------|----------|
+| `"energy"` | `1` | mean of `10^(dB/10)` | that mean converted back: `10*log10(...)` dB |
+| `"sones"` | `2` | mean of `2^(dB/10)` | that mean converted back: `10*log2(...)` dB |
+| `"dB"` | `3` | arithmetic mean of the dB values (DEFAULT) | the dB mean itself |
 
-**Migration note:** If you used `unit="sones"` as a workaround for getting correct dB values, switch to `unit="energy"` or `unit="dB"`.
+`get_slope()` and `get_local_peak_height()` compare two band averages: code 3 subtracts
+them, the other two divide them and convert the ratio back (`fon/Ltas.cpp:83-97`). Code
+**3** — not 0 — is what selects the dB branch, which is why `"dB"` must map to 3.
+
+A band average covers the whole bins between the two frequencies, weighting the bins at
+an incomplete range edge by the fraction of the bin inside the range; pladdrr does *not*
+interpolate between bins here, because Praat's Ltas queries pass `interpolate = false`
+(`fon/praat_uvafon_init.cpp:1108`, `:1159`). Values are frozen against the oracle in
+`tests/testthat/test-ltas-averaging-unit.R`.
+
+**Wrong in earlier editions of this guide:** the table read `"db" | 0 | Passthrough`, and
+the `10*log10(ratio) → dB` column described the *conversion helper* rather than the unit of
+the answer. Both readings cost users numbers: `unit = "energy"` returned the linear mean
+(`14170.064098` where Praat prints `41.513718` dB), and `get_slope()` with its default
+`unit = "dB"` returned a dimensionless ratio (`-0.115522`) instead of `-31.906946` dB.
 
 ```r
-# CORRECT (v4.0.4+):
-slope <- ltas$get_slope(0, 1000, 1000, 10000, unit = "energy")  # Returns dB
+# All three answers are dB; they differ because the average is taken in three domains:
+ltas$get_mean(0, 0, unit = "dB")       # -22.832719   mean of the bins
+ltas$get_mean(0, 0, unit = "energy")   #  41.513718   mean of 10^(dB/10), back in dB
+ltas$get_mean(0, 0, unit = "sones")    #  -1.519995   mean of 2^(dB/10), back in dB
 
-# WRONG (pre-v4.0.4 workaround - no longer needed):
-slope <- ltas$get_slope(0, 1000, 1000, 10000, unit = "sones")   # Was accidental fix
+# Spectral tilt in dB — the default spelling now works (values: inst/extdata/test.wav):
+ltas$get_slope(0, 1000, 1000, 4000, unit = "dB")        # -31.906946
+ltas$get_slope(0, 1000, 1000, 4000, unit = "energy")    # -52.513078
 ```
 
 ### Interpolation Methods

@@ -1072,6 +1072,15 @@ Fixed incorrect unit code mapping in `Ltas$get_slope()`. The unit parameter now 
 
 **Impact:** Users who used `unit="sones"` as a workaround for correct dB slope values should now use `unit="energy"` or `unit="dB"`.
 
+> **Correction (5.0.6, F-faith-13):** this table was itself half wrong. `"dB"` is
+> Praat code **3**, not 0 (`Ltas_getSlope` and `Ltas_getLocalPeakHeight` test
+> `averagingUnits == 3`, `fon/Ltas.cpp:87`, `:95`), so the *default*
+> `get_slope(unit = "dB")` still returned a dimensionless ratio until 5.0.6; and the
+> "`→ dB`" column describes the conversion helper, not the unit of the answer —
+> `get_mean(unit = "energy")` returned the linear mean (`14170.06` where Praat prints
+> `41.513718` dB). See `NEWS.md` (5.0.6) and
+> `tests/testthat/test-ltas-averaging-unit.R` for the oracle-frozen contract.
+
 ```r
 # Before (workaround):
 slope <- ltas$get_slope(0, 1000, 1000, 10000, "sones")  # Accidentally correct

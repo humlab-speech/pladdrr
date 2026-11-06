@@ -102,7 +102,10 @@ public:
     double get_mean(double fmin, double fmax, int averaging_units) {
         VALIDATE_PTR(ptr, Ltas);
         GUARD_NAN_RANGE(fmin, fmax);
-        return Sampled_getMean(ptr.get(), fmin, fmax, 0, averaging_units, true);
+        // Praat's "Ltas: Get mean" uses the *_standardUnit variant (so the answer
+        // is dB whatever averaging unit was averaged in) and interpolate = false
+        // (fon/praat_uvafon_init.cpp:1107-1108).
+        return Sampled_getMean_standardUnit(ptr.get(), fmin, fmax, 0, averaging_units, false);
     }
 
     double get_slope(double f1min, double f1max, double f2min, double f2max, int averaging_units) {
@@ -235,7 +238,7 @@ public:
         try {
             for (int i = 0; i < n; i++) {
                 if (ISNAN(fmins[i]) || ISNAN(fmaxs[i])) { means[i] = NA_REAL; continue; }
-                means[i] = Sampled_getMean(ptr.get(), fmins[i], fmaxs[i], 0, averaging_units, true);
+                means[i] = Sampled_getMean_standardUnit(ptr.get(), fmins[i], fmaxs[i], 0, averaging_units, false);
             }
         } catch (MelderError) {
             Melder_clearError();
@@ -248,7 +251,8 @@ public:
     double get_standard_deviation(double fmin, double fmax, int averaging_units) {
         VALIDATE_PTR(ptr, Ltas);
         GUARD_NAN_RANGE(fmin, fmax);
-        return Sampled_getStandardDeviation(ptr.get(), fmin, fmax, 0, averaging_units, true);
+        // as in Praat's "Ltas: Get standard deviation" (fon/praat_uvafon_init.cpp:1156-1159)
+        return Sampled_getStandardDeviation_standardUnit(ptr.get(), fmin, fmax, 0, averaging_units, false);
     }
 
     // Transform

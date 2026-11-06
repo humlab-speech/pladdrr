@@ -72,6 +72,42 @@
   Passing a raw integer to `get_mean()` (e.g. `averaging_method = 0L`, which
   silently meant "median") is no longer accepted; it errors and names the four
   strings.
+* **BREAKING CHANGE (numbers move).** `Ltas$get_mean()`, `$get_means_batch()` and
+  `$get_standard_deviation()` with `unit = "energy"` or `unit = "sones"` returned
+  the *linear* average — the mean of `10^(dB/10)` or of `2^(dB/10)` — where
+  Praat's `Ltas: Get mean` averages in that domain and then converts the result
+  back, so they now report the dB number Praat prints. Before: on a one-second
+  speech LTAS `ltas$get_mean(0, 0, unit = "energy")` returned `14170.064098`
+  (`unit = "sones"` returned the deceptively dB-shaped `0.900002`); after, the
+  same call returns `41.513718` dB, which is what Praat prints and what
+  `10*log10()` of the old answer already gave. Nothing marks the change at
+  runtime: a column stored by 5.0.5 under `unit = "energy"` was simply wrong by
+  three decades, and re-running the old script now silently gives different
+  numbers, so recompute anything you saved.
+  `ltas$get_standard_deviation(0, 0, unit = "energy")` moved the same way
+  (`209963.529484` → `53.221439` dB).
+* `Ltas$get_slope()` and `$get_local_peak_height()` mapped `unit = "dB"` — their
+  **default** — to Praat's code 0, while `Ltas_getSlope` and
+  `Ltas_getLocalPeakHeight` test for 3 (`fon/Ltas.cpp:87`, `:95`), so they
+  returned a dimensionless ratio instead of a dB difference and could flip sign:
+  `get_slope(0, 1000, 1000, 4000)` gave `-0.115522`, it now gives `-31.906946`
+  dB (Praat's answer); `get_slope(1000, 4000, 4000, 8000)` changes sign, from
+  `+5.840895` to `-15.995483`. `"energy"` and `"sones"` results are unchanged, which is
+  why v4.0.4's table called them the working spellings — they were right by
+  accident, because only the dB branch was broken.
+* `Ltas` band averages no longer interpolate between bins, matching Praat's Ltas
+  queries, which pass `interpolate = false`. **The default `unit = "dB"`
+  results move too**, so "dB is unchanged" above would have been wrong: any
+  band whose edges do not fall on bin edges changes, and how far depends on how
+  far off they are. On `inst/extdata/test.wav`, `get_mean(500, 2000)` went from
+  `10.717937` to `10.444981` dB; scanning 50 Hz-wide bands over 0-5500 Hz the
+  movement reaches **8.08 dB**, so a low band inside a single bin is the worst
+  case, not an exception. Full-band means (`fmin = fmax = 0`, the usual call)
+  are bit-identical to before, and every averaging method, unit string and band
+  tested is now bit-identical to Praat 6.4.27
+  (`tests/testthat/test-ltas-averaging-unit.R`). An unknown `unit` string in an
+  averaging query is now a `pladdrr_input_error` instead of a silent
+  `"energy"`, so **this also BREAKS** a script that had been passing a typo.
 
 ## Performance and memory
 

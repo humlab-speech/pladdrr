@@ -34,7 +34,8 @@ See this file's section "Historical SIMD and performance archive (superseded)" (
 - **v4.8.32-33:** Shared dispatch table pattern introduced. Phase 3 migration from module dispatch to wrapper dispatch (30-40% per-call improvement).
 - **v4.6.4:** CPPS parameter defaults aligned with `calculate_cpps_fast()`. Added `pre_emphasis_from` and `max_frequency` parameters.
 - **v4.0.7:** MFCC, LFCC, FormantModeler, PCA, Discriminant modules added.
-- **v4.0.4:** LTAS unit codes fixed to match Praat's `kLtas_unit` enum.
+- **v4.0.4:** LTAS unit codes fixed to match Praat's `kLtas_unit` enum. (Itself wrong:
+  there is no `kLtas_unit`, and `"dB"` is Praat code 3, not 0 — fixed again in v5.0.6.)
 
 ---
 
@@ -182,6 +183,9 @@ docs in `R/simd_info.R`, `NEWS.md`, and `src/Makevars*`.
 - **BREAKING: Fixed LTAS `get_slope()` unit parameter**
   - Unit codes were incorrectly mapped: energy/sones/dB off by one
   - Now matches Praat's `Ltas.cpp:44-60`: dB=0, energy=1, sones=2
+    *(corrected in v5.0.6: the Ltas CHOICE is 1-based with no median, so dB=3 —
+    and `get_mean()`/`get_means_batch()`/`get_standard_deviation()` were missing
+    Praat's `*_standardUnit` back-conversion, see NEWS.md)*
   - Migration: If you used `unit="sones"` as workaround, switch to `unit="energy"`
 - **NEW: Zero Crossing Rate (ZCR) support for AVQI-compatible extraction**
   - `sound_get_zcr(sound, window_duration, hop_duration)` - Calculate ZCR per frame
