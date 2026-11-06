@@ -1,6 +1,6 @@
 # Faithfulness Report (pladdrr vs Praat)
 
-_Generated: 2026-10-19 20:25:52 CEST_
+_Generated: 2026-11-06 15:24:11 CET_
 
 Each row is one Praat DSP routine. Praat output is the oracle; pladdrr
 is checked against it at the documented tolerance. `pass` = within
@@ -11,12 +11,12 @@ tolerance, `fail` = drift (open an issue or document the rationale).
 | Sound$get_total_duration | pass | 1 | 1 | 0 | 0 |
 | Sound$get_number_of_samples | pass | 44100 | 44100 | 0 | 0 |
 | Sound -> Pitch (cc) -> mean F0 (Hz) | pass | 440.0102 | 440.0102 | 8.6402e-12 | 1e-04 |
-| Sound -> Intensity -> mean (dB) | pass | 84.94803 | 84.94803 | 3.079001e-07 | 1e-06 |
+| Sound -> Intensity -> mean (dB) | pass | 84.94803 | 84.94803 | 3.075786e-07 | 1e-06 |
 | Sound -> Formant (burg) -> F1@0.5s (Hz) | pass | 420.6684 | 420.6684 | 5.633183e-11 | 0.001 |
 | CPPS (calculate_cpps_ultra) | pass | 9.923184 | 9.920529 | 0.002654309 | 0.005 |
 | Pitch (AC) -> mean F0 (Hz) | pass | 440.0102 | 440.0102 | 9.549694e-12 | 1e-04 |
 | Pitch (SHS) -> mean F0 (Hz) | pass | 440.8181 | 440.8181 | 5.684342e-14 | 1e-04 |
-| Intensity -> mean (energy-averaged, dB) | pass | 84.94803 | 84.94803 | 7.71907e-06 | 1e-05 |
+| Intensity -> mean (energy-averaged, dB) | pass | 84.94803 | 84.94803 | 3.075826e-07 | 1e-05 |
 | Formant (keepAll) -> F1@0.5s (Hz) | pass | 0 | 0 | 0 | 0.001 |
 | Harmonicity (cc) -> mean (dB) | pass | 91.86342 | 91.8635 | 8.164053e-05 | 1e-04 |
 | Spectrogram -> power at (0.5 s, 1000 Hz) | pass | 3.131686e-05 | 3.131686e-05 | 2.236167e-19 | 1e-09 |
@@ -41,11 +41,18 @@ non-determinism faithfully when `"robust slow"` is requested (see
 Do not read the row above as evidence that the robust-slow path is
 bit-reproducible — it is not, in Praat or in pladdrr.
 
+**Oracle version (CPPS row above):** the CPPS row agrees with Praat 6.4.47 to
+0.003 dB. Against Praat 6.4.27 the same pipeline differs by about +0.13 dB:
+Praat rewrote its CPP-to-CPPS post-processing between those releases
+(`max(raw) - trend` became `max(raw - trend)`, and the robust trend estimator
+changed), so a gap of that size against an older oracle is a version
+difference, not a pladdrr defect. Say which Praat produced a reference number.
+
 **Platform caveat (Intensity row above):** on Apple Silicon the reference
 Praat application and pladdrr can differ by ~2e-6 dB in an energy-averaged
 Intensity mean at the default time step (measured against Praat 6.4.47 with
-byte-identical input: 87.415718735 vs 87.415720871; linear/x86-64 agrees to
-all printed digits, and so does every other step size tried). Frame centres
+byte-identical input: 87.415718735 vs 87.415720871; every other step size
+tried agrees to all printed digits, and the 2026-11 audit found Linux x86-64 agreeing against Praat 6.4.27). Frame centres
 `x1 + (i-1)*dx` land exactly on a rounding boundary of
 `Sampled_xToNearestIndex` for the default grid, and a fused multiply-add
 changes the chosen centre sample in 5 of the 117 frames (reproduced with
@@ -55,3 +62,5 @@ result. That the app is built with contraction is inferred from the simulation,
 not from its build flags. Treat differences of this size on a frame grid that
 hits exact sample boundaries as a platform artifact, not a pladdrr defect;
 the 1e-05 tolerance above already covers it.
+
+_Oracle: Praat 6.4.47 (November 7 2025) on Darwin (aarch64-apple-darwin23)._

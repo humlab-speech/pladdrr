@@ -95,6 +95,50 @@ audit_routine <- function(r) {
        diff = diff, tolerance = r$tolerance)
 }
 
+# Caveats that belong in the generated report; kept here so a regeneration does
+# not drop them.
+report_caveats <- c(
+    "**Non-determinism caveat (CPPS row above):** the tolerance reported for",
+    "`CPPS (calculate_cpps_ultra)` reflects the deterministic fast/default",
+    "trend-fit path (`fit_method = \"robust\"`, Siegel). Praat's own",
+    "`fit_method = \"robust slow\"` (Theil-Sen) trend fit is **not**",
+    "deterministic — a documented upstream Praat defect — and samples",
+    "randomly: ~0.8 dB spread across identical runs of the same input, with",
+    "occasional extreme outliers around `1e290`. pladdrr reproduces that",
+    "non-determinism faithfully when `\"robust slow\"` is requested (see",
+    "`AGENT_GUIDE.md` v4.9.19 entry and `PRAAT_MODIFICATIONS.md` v4.9.19).",
+    "Do not read the row above as evidence that the robust-slow path is",
+    "bit-reproducible — it is not, in Praat or in pladdrr.",
+    "",
+    "**Oracle version (CPPS row above):** the CPPS row agrees with Praat 6.4.47 to",
+    "0.003 dB. Against Praat 6.4.27 the same pipeline differs by about +0.13 dB:",
+    "Praat rewrote its CPP-to-CPPS post-processing between those releases",
+    "(`max(raw) - trend` became `max(raw - trend)`, and the robust trend estimator",
+    "changed), so a gap of that size against an older oracle is a version",
+    "difference, not a pladdrr defect. Say which Praat produced a reference number.",
+    "",
+    "**Platform caveat (Intensity row above):** on Apple Silicon the reference",
+    "Praat application and pladdrr can differ by ~2e-6 dB in an energy-averaged",
+    "Intensity mean at the default time step (measured against Praat 6.4.47 with",
+    "byte-identical input: 87.415718735 vs 87.415720871; every other step size",
+    "tried agrees to all printed digits, and the 2026-11 audit found Linux x86-64 agreeing against Praat 6.4.27). Frame centres",
+    "`x1 + (i-1)*dx` land exactly on a rounding boundary of",
+    "`Sampled_xToNearestIndex` for the default grid, and a fused multiply-add",
+    "changes the chosen centre sample in 5 of the 117 frames (reproduced with",
+    "`math.fma`). pladdrr disables floating-point contraction on purpose",
+    "(`#pragma STDC FP_CONTRACT OFF` in `melder.h`), so it follows the non-fused",
+    "result. That the app is built with contraction is inferred from the simulation,",
+    "not from its build flags. Treat differences of this size on a frame grid that",
+    "hits exact sample boundaries as a platform artifact, not a pladdrr defect;",
+    "the 1e-05 tolerance above already covers it."
+)
+
+praat_version_string <- function() {
+  v <- tryCatch(system2(PRAAT_EXEC, "--version", stdout = TRUE, stderr = FALSE)[1],
+    error = function(e) NA_character_)
+  if (is.na(v) || !nzchar(v)) "Praat (version unknown)" else v
+}
+
 write_reports <- function(rows) {
   df <- do.call(rbind, lapply(rows, as.data.frame, stringsAsFactors = FALSE))
   # Never write into the source tree from a test run: that makes `R CMD check`
@@ -138,6 +182,9 @@ write_reports <- function(rows) {
                                 format(df$praat[i]), format(df$pladdrr[i]),
                                 format(df$diff[i]), format(df$tolerance[i])))
     }
+    lines <- c(lines, "", report_caveats,
+      "", sprintf("_Oracle: %s on %s (%s)._", praat_version_string(),
+        Sys.info()[["sysname"]], R.version$platform))
     writeLines(lines, md_path)
   }
   invisible(df)
