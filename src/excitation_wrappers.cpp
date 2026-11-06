@@ -25,6 +25,7 @@
 #include "praat.github.io/fon/Cochleagram_and_Excitation.h"
 #include "praat.github.io/fon/Excitation_to_Formant.h"
 #include "praat.github.io/fon/Spectrum.h"
+#include "praat_error_handling.h"   // get_melder_error()
 
 // [[Rcpp::export(.spectrum_to_excitation)]]
 SEXP spectrum_to_excitation(SEXP spectrum_xptr, double erb_density) {
@@ -43,8 +44,12 @@ SEXP spectrum_to_excitation(SEXP spectrum_xptr, double erb_density) {
     Rcpp::XPtr<structExcitation> ptr(result.releaseToAmbiguousOwner());
     return ptr;
   } catch (MelderError) {
+    // Read the reason before clearing: Praat's error buffer is global and
+    // is only emptied here, so stopping without it leaks this failure
+    // into every later Praat error in the session.
+    std::string praat_error = get_melder_error();
     Melder_clearError();
-    Rcpp::stop("Praat error in Spectrum_to_Excitation");
+    Rcpp::stop("Praat error in Spectrum_to_Excitation: " + praat_error);
   }
 }
 
@@ -65,8 +70,12 @@ SEXP excitation_to_formant(SEXP xptr, int max_formants) {
     Rcpp::XPtr<structFormant> ptr(result.releaseToAmbiguousOwner());
     return ptr;
   } catch (MelderError) {
+    // Read the reason before clearing: Praat's error buffer is global and
+    // is only emptied here, so stopping without it leaks this failure
+    // into every later Praat error in the session.
+    std::string praat_error = get_melder_error();
     Melder_clearError();
-    Rcpp::stop("Praat error in Excitation_to_Formant");
+    Rcpp::stop("Praat error in Excitation_to_Formant: " + praat_error);
   }
 }
 

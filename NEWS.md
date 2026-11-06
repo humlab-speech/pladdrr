@@ -3,16 +3,24 @@
 ## Bug fixes
 
 * A failed cochleagram or excitation conversion no longer contaminates every
-  later Praat error in the session. Those five `catch (MelderError)` blocks in
-  `src/cochleagram_wrappers.cpp` and `src/excitation_wrappers.cpp` were the only
-  ones in the package that did not call `Melder_clearError()` before
-  `Rcpp::stop()`; Praat's global error buffer accumulates and is only emptied by
-  that call, so after one bad conversion (`Sound$to_cochleagram(df = 1e-9)`,
-  `Spectrum$to_excitation(erb_density = 1e-9)`) every subsequent error in the
-  same R session was prefixed with the stale "not enough room for ... elements"
-  / "not converted to Cochleagram" text. An agent parsing the error text got a
-  message mixing two unrelated calls. The fix is the same four words the other
-  wrappers use.
+  later Praat error in the session. Six catch blocks — five in
+  `src/cochleagram_wrappers.cpp` and `src/excitation_wrappers.cpp`, plus the
+  exported `sound_extract_parts_pooled()` — were the only ones that let a Praat
+  error cross back into R without calling `Melder_clearError()`. Praat's global
+  error buffer only accumulates, and that call alone empties it, so after one bad
+  conversion (`Sound$to_cochleagram(df = 1e-9)`,
+  `Spectrum$to_excitation(erb_density = 1e-9)`) every later error in the same R
+  session was prefixed with the stale "not enough room for ... elements" /
+  "not converted to Cochleagram" text: an agent parsing an error got a message
+  mixing two unrelated calls, and since Praat drops text that would overflow its
+  2000-character buffer, a saturated buffer loses later error text outright.
+  (Eight further blocks do not clear either; they re-throw into an outer
+  clearing catch instead of reaching R, so they are left alone.) The reason
+  Praat actually gave now travels in the error it belongs to: those errors end
+  with Praat's own text (`Praat error in Spectrum_to_Excitation: Out of memory:
+  ...`) via the package's `get_melder_error()` helper, which previously had no
+  callers at all. Matching the existing prefix keeps working; anything anchored
+  to the end of the message must be updated.
 
 * `as.matrix()` no longer returns junk for the 39 of 41 object classes that had
   no method of their own. Only `Matrix` and `Polygon` registered one, so R's
