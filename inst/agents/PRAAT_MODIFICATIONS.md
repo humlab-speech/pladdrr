@@ -1376,3 +1376,15 @@ Legacy backup files exist in the submodule:
 - `melder/melder_files.cpp.backup`
 
 These can be removed once modifications are stable.
+
+## `src/uiform_libmode.cpp` replaces `sys/Ui.cpp` in the library build (not a vendored edit)
+
+`src/Makevars.in` does not compile `src/praat.github.io/sys/Ui.cpp` at all; the
+`UiForm` the script interpreter talks to is the hand-ported
+`src/uiform_libmode.cpp`, so it is pladdrr code and lives outside the "never
+hand-edit `src/praat.github.io/`" rule. Two consequences for later work:
+syncing the vendored tree will **not** bring any upstream fix to script
+argument handling (this file has to be compared against upstream `Ui.cpp` by
+hand), and `UiForm_addRadio` used to live here as dead code (no declaration in
+`sys/Ui.h`, no caller) and was deleted rather than renamed when the `base` ->
+`subtract` conversion was fixed in F-faith-13b.

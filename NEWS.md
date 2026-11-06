@@ -2,6 +2,30 @@
 
 ## Bug fixes
 
+* Options passed to Praat script commands now select the option Praat would
+  select. pladdrr's library-mode form layer (`src/uiform_libmode.cpp`, the
+  script-only stand-in for Praat's `Ui.cpp`) stored Praat's `base` argument — the
+  number an option list starts at — in the field's `subtract` slot instead of
+  converting it (`Ui.cpp:1201 thy subtract = ( base == 1 ? 0 : 1 );`), so every
+  CHOICE/OPTIONMENU argument reached the command one option too low
+  (`Ltas: Get mean: 0, 0, "energy"` returned the dB mean and `"dB"` the sones
+  mean; `Pitch: Get standard deviation: 0, 0, "hertz"` the ERB figure), every
+  0-based `CHOICEx` list one option too high (`Pitch: Get value at time: …,
+  "nearest"` interpolated like `"linear"`), and the *first* option of a
+  `CHOICE_ENUM` — Pitch's own default unit `"hertz"`, `"none"`, `"nearest"` —
+  raised `Field 'Unit' must not have the value 'hertz'.` where Praat answers a
+  number. This is the script layer only: it applies to `PraatInterpreter$run()`
+  and `praat_run_script()` alike, not to the R6 or direct wrappers, which pass
+  their own integers and were already checked against Praat. It is not only a
+  string-layer bug: a **numeric** third argument changed meaning, so
+  `Get mean: 0, 0, 1` (energy in Praat's own enum) returned -8.19 dB before and
+  42.85 dB now, and a script that compensated by shifting its own option
+  strings, or by adding one to a number, must undo that. Among the families now
+  answered instead of refused: every `Formant: Get ...` with `"hertz"`/`"erb"`
+  (twelve commands, all of which used to error) and `Intensity: Get mean`, whose
+  default `"energy"` came out 3.99 dB low (84.0703382556 where Praat prints
+  88.1298604765).
+
 * `matrix_read()` and `PitchTier$from_file()` reject a file whose
   `Object class = ...` line names another class. A Praat text file names the
   C++ class to instantiate, and both readers cast the result to their own type

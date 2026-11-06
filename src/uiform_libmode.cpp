@@ -23,22 +23,25 @@
  * Provides form creation and argument parsing without GUI dependencies.
  * Extracted and adapted from Praat's Ui.cpp.
  */
-// NOTE (2026-08-16, test-coverage-expansion Task 2): 0% test coverage is expected, not
-// dead code. `Interpreter.cpp` and `praat_script.cpp` (both compiled unconditionally,
-// see src/Makevars.in) reference UiForm_create/UiForm_add*/UiForm_call/UiForm_parseString
-// from Interpreter_createForm() (used only by the GUI "form...endform" argument-prompt
-// dialog path, e.g. praat_script.cpp's firstPassThroughScript) and
-// Interpreter_getArgumentsFromDialog(). Deleting this file breaks the link. pladdrr's own
-// script-execution entry point (praat_run_script() -> interpreter_wrappers.cpp's call to
-// Interpreter_run()) never goes through Interpreter_createForm, so these symbols are
-// link-required but runtime-unreachable from R in library mode — not obsolete scaffolding.
+// NOTE (2026-08-16, test-coverage-expansion Task 2; corrected 2026-11-05 for
+// F-FAITH-13b): NOT dead code. UiForm_call() and UiField_argToValue() *are* run
+// from R for every Praat script command: the FORM(...)/DO macros in
+// praat_uvafon_init.cpp and praat_TextGrid_init.cpp end with
+// `UiForm_call (_dia_.get(), _narg_, _args_, interpreter)` (sys/praatM.h:333),
+// so the whole field machinery below decides which option a script argument
+// selects — see tests/testthat/test-praat-interpreter-choice-args.R. What is
+// unreachable is Interpreter_createForm()/Interpreter_getArgumentsFromDialog(),
+// i.e. the GUI "form...endform" argument-prompt dialog (praat_app_stubs.cpp
+// throws for it). The GUI branches below are therefore never executed here,
+// while the argument-parsing branches are hot; note the file is listed in
+// .covrignore, so this is a statement about the code, not a measured number.
 
 #include "praat.github.io/melder/melder.h"
 #include "praat.github.io/sys/Ui.h"
 #include "praat.github.io/sys/Interpreter.h"
 
-// Library-mode stubs for UiForm functions (GUI-only, never executed from R)
-// see lines 26-34 for full explanation of why these are link-required but unreachable
+// Library-mode implementation of the UiForm functions (the GUI widgets are
+// missing; the form still has to turn script arguments into C variables).
 // Whole file excluded from coverage measurement via .covrignore (see repo root).
 
 // ============================================================================
@@ -318,51 +321,48 @@ UiOption UiForm_addOption (UiForm me, conststring32 optionText) {
 }
 
 UiField UiForm_addChoice (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName,
-    conststring32 labelText, int defaultValue, int subtract)
+    conststring32 labelText, int defaultValue, int base)
 {
     UiField thee = UiForm_addField (me, _kUiField_type::CHOICE_, labelText);
     thy intVariable = intVariable;
     thy stringVariable = stringVariable;
     thy variableName = variableName;
     thy integerDefaultValue = defaultValue;
-    thy subtract = subtract;
+    /* Praat's CHOICE/CHOICEx/OPTIONMENU macros pass `base`, the number the option
+       list starts at (1 for a plain CHOICE, 0 for CHOICEx, and the enum's MIN for
+       CHOICE_ENUM), not the difference; sys/Ui.cpp:1201 turns one into the other. */
+    thy subtract = ( base == 1 ? 0 : 1 );
     my referenceToLatestUsedChoiceOrOptionMenu = thee;
     return thee;
 }
 
 UiField UiForm_addOptionMenu (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName,
-    conststring32 labelText, int defaultValue, int subtract)
+    conststring32 labelText, int defaultValue, int base)
 {
     UiField thee = UiForm_addField (me, _kUiField_type::OPTIONMENU_, labelText);
     thy intVariable = intVariable;
     thy stringVariable = stringVariable;
     thy variableName = variableName;
     thy integerDefaultValue = defaultValue;
-    thy subtract = subtract;
+    thy subtract = ( base == 1 ? 0 : 1 );   // as in sys/Ui.cpp:1214
     my referenceToLatestUsedChoiceOrOptionMenu = thee;
     return thee;
 }
 
 UiField UiForm_addChoiceEnum (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName,
-    conststring32 labelText, int defaultValue, int subtract, int (*getValueFunction) (conststring32))
+    conststring32 labelText, int defaultValue, int base, int (*getValueFunction) (conststring32))
 {
-    UiField thee = UiForm_addChoice (me, intVariable, stringVariable, variableName, labelText, defaultValue, subtract);
+    UiField thee = UiForm_addChoice (me, intVariable, stringVariable, variableName, labelText, defaultValue, base);
     thy getValueFunction = getValueFunction;
     return thee;
 }
 
 UiField UiForm_addOptionMenuEnum (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName,
-    conststring32 labelText, int defaultValue, int subtract, int (*getValueFunction) (conststring32))
+    conststring32 labelText, int defaultValue, int base, int (*getValueFunction) (conststring32))
 {
-    UiField thee = UiForm_addOptionMenu (me, intVariable, stringVariable, variableName, labelText, defaultValue, subtract);
+    UiField thee = UiForm_addOptionMenu (me, intVariable, stringVariable, variableName, labelText, defaultValue, base);
     thy getValueFunction = getValueFunction;
     return thee;
-}
-
-void UiForm_addRadio (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName,
-    conststring32 labelText, int defaultValue, int subtract)
-{
-    UiForm_addChoice (me, intVariable, stringVariable, variableName, labelText, defaultValue, subtract);
 }
 
 UiField UiForm_addColour (UiForm me, MelderColour *variable, conststring32 variableName,
