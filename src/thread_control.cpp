@@ -40,6 +40,33 @@ void pladdrr_set_threads_cpp(bool use_multithreading, int max_threads,
         (integer) max_threads, (integer) min_elements_per_thread, false);
 }
 
+// defined in melderthread_impl.cpp; declared here rather than in a vendored
+// header because only this shim and the regression test call it
+extern integer MelderThread_availableProcessorsForLimits (
+    integer numberOfHardwareCores, integer numberOfAffinityCores,
+    integer quotaMicroseconds, integer periodMicroseconds);
+
+//' Usable CPU count for synthetic limits (internal)
+//'
+//' The pure rule behind `MelderThread_getNumberOfProcessors()`, exposed so the
+//' precedence between hardware cores, the CPU affinity mask and a cgroup CPU
+//' quota can be tested without cgroups. 0 (or negative) means "unknown".
+//'
+//' @param hardware_cores logical cores as reported by the machine
+//' @param affinity_cores CPUs in the process affinity mask
+//' @param quota_microseconds cgroup CPU quota (`cpu.max` field 1)
+//' @param period_microseconds cgroup quota period (`cpu.max` field 2)
+//' @return Number of CPUs the process may use, at least 1
+//' @keywords internal
+//' @noRd
+// [[Rcpp::export(.pladdrr_cpus_for_limits)]]
+int pladdrr_cpus_for_limits(int hardware_cores, int affinity_cores,
+                            int quota_microseconds, int period_microseconds) {
+    return (int) MelderThread_availableProcessorsForLimits(
+        (integer) hardware_cores, (integer) affinity_cores,
+        (integer) quota_microseconds, (integer) period_microseconds);
+}
+
 //' Get MelderThread parallelization state (internal)
 //'
 //' @return List with processors, enabled, max_threads, min_elements_per_thread

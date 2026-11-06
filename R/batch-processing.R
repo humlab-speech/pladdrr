@@ -168,7 +168,7 @@ NULL
 #' @param recursive Logical, search directories recursively (default: FALSE)
 #' @param parallel Logical, use parallel processing (default: FALSE)
 #' @param ncores Integer, number of cores for parallel processing (default: NULL
-#'  = all-1)
+#'  = one worker per usable CPU, minus one)
 #' @param progress Logical, show progress bar (default: TRUE)
 #' @param ... Additional arguments passed to func
 #'
@@ -742,7 +742,7 @@ aggregate_measurements <- function(measurements,
       !requireNamespace("parallel",
         quietly = TRUE)) stop(
             "Package 'parallel' is required for parallel processing")
-    if (is.null(ncores)) ncores <- parallel::detectCores() - 1
+    if (is.null(ncores)) ncores <- .default_n_cores()
     tpw <- .pladdrr_worker_thread_budget(ncores)
     parallel::mclapply(files, function(f) {
       pladdrr_threads(tpw)

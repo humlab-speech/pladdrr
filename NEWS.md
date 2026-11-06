@@ -135,6 +135,16 @@
 
 ## Performance and memory
 
+* The automatic thread count, and the default worker count of
+  `analyze_files_parallel()` / `process_sounds_parallel()` / `batch_process()`,
+  now follow the CPUs the *process* may use — the CPU affinity mask
+  (`taskset`, container cpusets, SLURM) intersected with the cgroup CPU quota
+  visible to the process — instead of the machine's core count. Inside a 16-CPU cpuset the old 32-thread
+  default cost +15 % CPU-seconds and +9 % wall over the correct cap; the
+  batch helpers made it +11 % on both. `pladdrr_threads()$processors` reports
+  the same number, and explicit `pladdrr_threads(n)` / `n_cores` still win.
+  Where the platform exposes no affinity or quota API (Windows, macOS) the
+  count is unchanged; output is bit-identical either way.
 * Loading the package uses ~40 MB less resident memory per R process
   (including every parallel worker): Praat's 42 MB object list is now
   constant-initialised instead of being written at load time.

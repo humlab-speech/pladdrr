@@ -29,7 +29,7 @@ as first argument and return a named list or data frame row}
 \item{parallel}{Logical, use parallel processing (default: FALSE)}
 
 \item{ncores}{Integer, number of cores for parallel processing (default: NULL
-= all-1)}
+= one worker per usable CPU, minus one)}
 
 \item{progress}{Logical, show progress bar (default: TRUE)}
 

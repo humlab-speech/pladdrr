@@ -3203,6 +3203,23 @@ textgrid_interval_all_features_batch <- function(textgrid_xptr, pitch_xptr = NUL
     invisible(.Call(`_pladdrr_pladdrr_set_threads_cpp`, use_multithreading, max_threads, min_elements_per_thread))
 }
 
+#' Usable CPU count for synthetic limits (internal)
+#'
+#' The pure rule behind `MelderThread_getNumberOfProcessors()`, exposed so the
+#' precedence between hardware cores, the CPU affinity mask and a cgroup CPU
+#' quota can be tested without cgroups. 0 (or negative) means "unknown".
+#'
+#' @param hardware_cores logical cores as reported by the machine
+#' @param affinity_cores CPUs in the process affinity mask
+#' @param quota_microseconds cgroup CPU quota (`cpu.max` field 1)
+#' @param period_microseconds cgroup quota period (`cpu.max` field 2)
+#' @return Number of CPUs the process may use, at least 1
+#' @keywords internal
+#' @noRd
+.pladdrr_cpus_for_limits <- function(hardware_cores, affinity_cores, quota_microseconds, period_microseconds) {
+    .Call(`_pladdrr_pladdrr_cpus_for_limits`, hardware_cores, affinity_cores, quota_microseconds, period_microseconds)
+}
+
 #' Get MelderThread parallelization state (internal)
 #'
 #' @return List with processors, enabled, max_threads, min_elements_per_thread

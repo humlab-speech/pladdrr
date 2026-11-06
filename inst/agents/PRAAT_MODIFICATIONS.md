@@ -16,6 +16,37 @@ This document details all modifications made to the Praat source code to enable 
 
 ---
 
+### Unreleased — automatic thread count follows the CPUs the process may use (2026-11-05, audit F-power-01/F-power-04)
+
+#### `src/melderthread_impl.cpp` — `MelderThread_getNumberOfProcessors()` is affinity- and quota-aware
+
+Not a vendored edit: the vendored `melder/MelderThread.cpp` is not compiled in
+pladdrr (this file provides the symbols). Its automatic thread count was
+`std::thread::hardware_concurrency()`, i.e. how many cores the *machine* has.
+Under `taskset(1)`, a container cpuset or a SLURM allocation that is several
+times the number of CPUs the process may actually use, and every extra thread
+only adds context switches, first-touch page faults and spin-waiting: measured
+on a 16-CPU mask, the 32-thread default cost +15 % CPU-seconds and +9 % wall
+over 8 threads for the same work, and +75 % wall versus a 12-thread cap.
+
+The count is now `sched_getaffinity(2)` CPU_COUNT, further capped by the cgroup
+CPU quota (`/sys/fs/cgroup/cpu.max`, cgroup v1 `cpu.cfs_quota_us`/`cpu.cfs_period_us`
+for hosts without v2), with `hardware_concurrency()` as the fallback when
+neither is available — so on Windows/macOS, and on a Linux root cgroup with
+`max`, the number is unchanged. Fractional quotas round up (2.5 CPUs → 3
+threads). The result is computed once and cached (a `/sys` read per analysis
+call would put file I/O in the hot path). The precedence rule is unchanged for
+users: `pladdrr_threads(n)` with n > 0 still overrides everything; n = 0 means
+"automatic", now meaning automatic *for the CPUs we have*.
+
+`R/parallel-batch.R` (`.default_n_cores()`, `.pladdrr_worker_thread_budget()`)
+and `batch_process()` read the same number instead of `parallel::detectCores()`:
+31 PSOCK workers on 4 usable CPUs cost +11 % CPU-seconds and +11 % wall over one
+worker per CPU. `pladdrr:::.pladdrr_cpus_for_limits()` exposes the pure rule
+(hardware, affinity, quota, period → count) for tests; the reads around it are
+platform I/O. Not covered: Windows job-object limits and macOS CPU limits —
+both keep the machine's core count.
+
 ### Unreleased — Load-time RSS, FormantPath SIMD bug, dead SIMD hooks (2026-10-19)
 
 #### `melder/melder_string32.h` + `sys/praat.cpp` — constant-initialise the object list

@@ -963,7 +963,7 @@ intensities <- extract_intensity_parallel(files, n_cores = 4)
 - `benchmark_parallel(files, analysis_func, cores)` - Find optimal core count
 
 **Best practices:**
-- Use `n_cores = parallel::detectCores() - 1` to leave one core for system
+- Use `n_cores = pladdrr_threads()$processors - 1` to leave one core for system — the CPUs this process may actually use (affinity mask ∩ cgroup quota), which `parallel::detectCores()` ignores
 - `analyze_files_parallel()`: PSOCK (`parLapply`) on Windows and macOS, `mclapply` on Linux. `process_sounds_parallel()` on PSOCK sends one sound's samples per task (2026-10; previously the whole list went to every worker)
 - For very large files, consider batch processing + parallel combined
 

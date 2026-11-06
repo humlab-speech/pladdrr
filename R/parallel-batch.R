@@ -1,23 +1,38 @@
 # Parallel batch processing functions
 # pladdrr v2.3.0 - Phase 3 Performance Enhancement
 
+# CPUs this process may actually use: the CPU affinity mask intersected with the
+# cgroup CPU quota on Linux, the machine's core count elsewhere. Same number
+# pladdrr_threads() reports and the same one the C++ thread pool sizes itself
+# from, so the R-level worker count and the per-worker thread cap cannot
+# disagree with what the scheduler will actually run.
+#
+# The getter is a .Call that also runs inside worker processes; if it fails
+# (namespace/build mismatch there) fall back to the machine's count rather than
+# turn a core count into a hard error.
+.pladdrr_available_cpus <- function() {
+  tryCatch(.pladdrr_get_threads_cpp()$processors,
+           error = function(e) parallel::detectCores())
+}
+
 # Per-worker C++ thread budget for nested parallelism.
 #
 # When N R workers each run Praat kernels that themselves spawn threads across
 # all cores, the machine sees ~N*cores threads and thrashes (context-switch
 # storms, higher power draw, often slower than either level alone). Divide the
-# cores among the workers so total concurrency ~= detectCores(). NULL means
-# auto; an explicit value is passed through unchanged.
+# usable CPUs among the workers so total concurrency ~= the CPUs we may run on.
+# NULL means auto; an explicit value is passed through unchanged.
 .pladdrr_worker_thread_budget <- function(n_cores, threads_per_worker = NULL) {
   if (!is.null(threads_per_worker)) {
     return(max(1L, as.integer(threads_per_worker)))
   }
-  total <- tryCatch(parallel::detectCores(), error = function(e) NA_integer_)
+  total <- .pladdrr_available_cpus()
   if (is.na(total) || total < 1L) total <- n_cores
   max(1L, total %/% max(1L, as.integer(n_cores)))
 }
 
-# Default core count: n-1 cores, capped at 2 under R CMD check.
+# Default core count: one worker per usable CPU minus one, capped at 2 under
+# R CMD check.
 #
 # R CMD check sets _R_CHECK_LIMIT_CORES_ to stop parallel::makeCluster() /
 # mclapply() calls that spawn more than 2 processes
@@ -25,7 +40,7 @@
 # Honor that limit in the default so package checks pass while dev/CI still
 # uses the full machine.
 .default_n_cores <- function() {
-  n <- max(1, parallel::detectCores() - 1)
+  n <- max(1, .pladdrr_available_cpus() - 1)
   chk <- tolower(Sys.getenv("_R_CHECK_LIMIT_CORES_", ""))
   if (nzchar(chk) && chk != "false") min(n, 2L) else n
 }
@@ -47,11 +62,12 @@
 #' @param analysis_func Function. Analysis function to apply to each file.
 #'   Should accept a Sound object and return results.
 #' @param n_cores Integer. Number of CPU cores to use (default:
-#'  parallel::detectCores() - 1)
+#'  one worker per usable CPU, minus one; see `pladdrr_threads()`)
 #' @param threads_per_worker Integer or `NULL`. C++ threads each worker may use
-#'   for Praat kernels. `NULL` (default) auto-divides cores among workers so
-#'   total concurrency stays near the machine's core count, preventing
-#'   oversubscription. Set `1` to force strictly single-threaded workers.
+#'   for Praat kernels. `NULL` (default) auto-divides the usable CPUs among
+#'   workers so total concurrency stays near what the scheduler will run,
+#'   preventing oversubscription. Set `1` to force strictly single-threaded
+#'   workers.
 #' @param ... Additional arguments passed to analysis_func
 #'
 #' @return List of results from analysis_func, one per file
