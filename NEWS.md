@@ -178,6 +178,18 @@
   the same number, and explicit `pladdrr_threads(n)` / `n_cores` still win.
   Where the platform exposes no affinity or quota API (Windows, macOS) the
   count is unchanged; output is bit-identical either way.
+* The power-cepstrogram (CPPS) and Burg formant analyses no longer start a
+  worker thread for a handful of frames. `Sound$to_powercepstrogram()` split a
+  3 s clip into 60-frame grains - 24 threads, 6x the CPU-seconds of the serial
+  kernel and slower in wall clock than an 8-thread run; `to_formant_burg()`
+  split it every 3 frames, so even a 0.25 s clip (40 frames) asked for 9 workers.
+  The minimum work per thread is now 250 and 40 frames respectively (measured
+  break-even times three and five; 40 is what the other LPC/formant sites use),
+  so short clips stay on one thread while long recordings still fill the
+  machine. On 32 cores, one 3 s clip: 166 -> 27 CPU-ms (-83%) at 0.74x the wall
+  time for the cepstrogram, 44 -> 30 CPU-ms (-32%) at 1.03x the wall time for
+  formants; a 30 s recording is unchanged. Output is bit-identical at every
+  size, threads only partition frames.
 * Loading the package uses ~40 MB less resident memory per R process
   (including every parallel worker): Praat's 42 MB object list is now
   constant-initialised instead of being written at load time.

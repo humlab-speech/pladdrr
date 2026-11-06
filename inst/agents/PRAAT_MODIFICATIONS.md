@@ -46,6 +46,35 @@ worker per CPU. `pladdrr:::.pladdrr_cpus_for_limits()` exposes the pure rule
 (hardware, affinity, quota, period → count) for tests; the reads around it are
 platform I/O. Not covered: Windows job-object limits and macOS CPU limits —
 both keep the machine's core count.
+### Unreleased — threading thresholds at the cepstrogram and formant sites (2026-11-05)
+
+#### `LPC/Sound_to_PowerCepstrogram.cpp` + `fon/Sound_to_Formant.cpp` — minimum work per thread
+
+**Problem:** `MelderThread_computeNumberOfThreads()` divides the frame count by
+`1.5 * thresholdNumberOfElementsPerThread`, so nothing in the model knows what
+starting a thread costs (24-53 us of CPU, plus the buffers the analysis allocates
+inside its thread block - the cepstrogram builds a `NUMFourierTable`, a `Sound`,
+a `Spectrum` and a `PowerCepstrum` per thread). Both sites were set below their
+break-even, i.e. they woke threads to do less work than handing the work out
+costs: one 3 s / 16 kHz clip asked for 24 (cepstrogram, threshold 40) and 32
+(formant, threshold 3) threads and cost 7.2x and 1.9x the serial CPU-seconds,
+the cepstrogram being slower in wall clock than the same call capped at 8 threads.
+
+**Fix:** both thresholds are now pladdrr constants in
+`src/pladdrr_thread_thresholds.h` - 250 and 40 frames per thread, 3x and 5x the
+break-even measured for that site (16 us/frame with 1.25 ms of extra CPU per
+cepstrogram thread => 79 frames; 39 us/frame with 0.31 ms per formant thread =>
+8 frames). 40 is also what every
+sibling LPC/formant site already uses; `Sound_to_Pitch.cpp` keeps its own
+v4.8.9 value of 20. The constants are floors per grain and are deliberately not
+scaled by the core count - the existing concurrent-thread cap is what limits how
+many grains run at once, and the frame count decides whether there is work for
+them. Thread count does not change results (each frame is computed
+independently), so faithfulness is untouched; `tests/testthat/test-thread-granularity.R`
+pins both the decision and the bit identity, and
+`audit/2026-11/fixes/F-power-02.md` has the before/after measurements.
+
+---
 
 ### Unreleased — Load-time RSS, FormantPath SIMD bug, dead SIMD hooks (2026-10-19)
 

@@ -7493,6 +7493,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// pladdrr_thread_grains_cpp
+IntegerVector pladdrr_thread_grains_cpp(IntegerVector work_size, std::string site);
+RcppExport SEXP _pladdrr_pladdrr_thread_grains_cpp(SEXP work_sizeSEXP, SEXP siteSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerVector >::type work_size(work_sizeSEXP);
+    Rcpp::traits::input_parameter< std::string >::type site(siteSEXP);
+    rcpp_result_gen = Rcpp::wrap(pladdrr_thread_grains_cpp(work_size, site));
+    return rcpp_result_gen;
+END_RCPP
+}
 // praat_error_to_r
 void praat_error_to_r(const std::string& error_msg);
 RcppExport SEXP _pladdrr_praat_error_to_r(SEXP error_msgSEXP) {
@@ -8139,6 +8151,7 @@ extern const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_pladdrr_set_threads_cpp", (DL_FUNC) &_pladdrr_pladdrr_set_threads_cpp, 3},
     {"_pladdrr_pladdrr_cpus_for_limits", (DL_FUNC) &_pladdrr_pladdrr_cpus_for_limits, 4},
     {"_pladdrr_pladdrr_get_threads_cpp", (DL_FUNC) &_pladdrr_pladdrr_get_threads_cpp, 0},
+    {"_pladdrr_pladdrr_thread_grains_cpp", (DL_FUNC) &_pladdrr_pladdrr_thread_grains_cpp, 2},
     {"_pladdrr_praat_error_to_r", (DL_FUNC) &_pladdrr_praat_error_to_r, 1},
     {"_pladdrr_vocaltract_create", (DL_FUNC) &_pladdrr_vocaltract_create, 2},
     {"_pladdrr_vocaltract_create_from_phone", (DL_FUNC) &_pladdrr_vocaltract_create_from_phone, 1},

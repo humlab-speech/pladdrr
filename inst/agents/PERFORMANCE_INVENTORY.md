@@ -145,7 +145,8 @@ cautionary tale).
 
 ## Threaded modules per CLAUDE.md
 
-- `Sound_to_PowerCepstrogram` — `MelderThread_PARALLELIZE`, threshold=40 frames
+- `Sound_to_PowerCepstrogram` — `MelderThread_PARALLELIZE`, threshold=250 frames
+- `Sound_to_Formant` — `MelderThread_PARALLELIZE`, threshold=40 frames
 - `PowerCepstrogram_to_Matrix_CPP` — `SampledIntoSampled_mt`
 - `PowerCepstrogram_smooth_fast` — parallelised `Sampled_getMean`
 - `Sound_to_Harmonicity_GNE` (v4.8.30) — Loops B and C parallelised

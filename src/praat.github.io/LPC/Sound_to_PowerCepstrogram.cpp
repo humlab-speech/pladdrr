@@ -23,6 +23,7 @@
 #include "Sound_extensions.h"
 #include "Sound_to_PowerCepstrogram.h"
 #include "SoundFrameIntoSampledFrame.h"   // needed only for getPhysicalAnalysisWidth2; TODO: move that function into the right location
+#include "pladdrr_thread_thresholds.h"
 
 // SIMD optimization for PowerCepstrogram (v4.8.10 - CPPS optimization)
 #ifdef HAVE_XSIMD
@@ -55,7 +56,9 @@ extern "C" {
 
 static void Sound_into_PowerCepstrogram (constSound input, mutablePowerCepstrogram output, double effectiveAnalysisWidth, kSound_windowShape windowShape) {
 	SampledIntoSampled_assertEqualDomains (input, output);
-	constexpr integer thresholdNumberOfFramesPerThread = 40;
+	// PLADDRR: was 40 frames, which is below the cost of starting a thread here
+	// (each thread builds its own NUMFourierTable); measured value in the header.
+	constexpr integer thresholdNumberOfFramesPerThread = PLADDRR_CEPSTROGRAM_FRAMES_PER_THREAD;
 	const integer numberOfFrames = output -> nx;
 	//autoMelderProgress progress (U"Analyse power cepstrogram...");
 

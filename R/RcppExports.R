@@ -3229,6 +3229,21 @@ textgrid_interval_all_features_batch <- function(textgrid_xptr, pitch_xptr = NUL
     .Call(`_pladdrr_pladdrr_get_threads_cpp`)
 }
 
+#' How many threads a frame-parallel analysis uses for N frames (internal)
+#'
+#' Lets tests assert the parallel-decision of the sites whose threshold pladdrr
+#' retunes, instead of measuring timings. Uses the current thread cap, so call
+#' `pladdrr_threads()` first to pin it.
+#'
+#' @param work_size Number of analysis frames
+#' @param site "cepstrogram" or "formant"
+#' @return Integer vector with the number of threads each work size asks for
+#' @keywords internal
+#' @noRd
+.pladdrr_thread_grains_cpp <- function(work_size, site) {
+    .Call(`_pladdrr_pladdrr_thread_grains_cpp`, work_size, site)
+}
+
 #' Convert Praat errors to R exceptions
 #'
 #' Wraps Praat function calls and converts Praat's error system to R exceptions

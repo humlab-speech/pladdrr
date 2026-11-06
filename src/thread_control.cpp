@@ -23,6 +23,7 @@
 
 #include <Rcpp.h>
 #include "melder/melder.h"
+#include "pladdrr_thread_thresholds.h"
 
 using namespace Rcpp;
 
@@ -80,4 +81,36 @@ List pladdrr_get_threads_cpp() {
         _["max_threads"] = (int) MelderThread_getMaximumNumberOfConcurrentThreads(),
         _["min_elements_per_thread"] = (int) MelderThread_getMinimumNumberOfElementsPerThread()
     );
+}
+
+//' How many threads a frame-parallel analysis uses for N frames (internal)
+//'
+//' Lets tests assert the parallel-decision of the sites whose threshold pladdrr
+//' retunes, instead of measuring timings. Uses the current thread cap, so call
+//' `pladdrr_threads()` first to pin it.
+//'
+//' @param work_size Number of analysis frames
+//' @param site "cepstrogram" or "formant"
+//' @return Integer vector with the number of threads each work size asks for
+//' @keywords internal
+//' @noRd
+// [[Rcpp::export(.pladdrr_thread_grains_cpp)]]
+IntegerVector pladdrr_thread_grains_cpp(IntegerVector work_size, std::string site) {
+    integer threshold;
+    if (site == "cepstrogram") {
+        threshold = PLADDRR_CEPSTROGRAM_FRAMES_PER_THREAD;
+    } else if (site == "formant") {
+        threshold = PLADDRR_FORMANT_FRAMES_PER_THREAD;
+    } else {
+        Rcpp::stop("unknown analysis '%s'", site);
+    }
+    IntegerVector threads(work_size.size());
+    for (R_xlen_t i = 0; i < work_size.size(); i++) {
+        if (work_size[i] == NA_INTEGER) {
+            threads[i] = NA_INTEGER;
+        } else {
+            threads[i] = MelderThread_computeNumberOfThreads(work_size[i], threshold);
+        }
+    }
+    return threads;
 }
