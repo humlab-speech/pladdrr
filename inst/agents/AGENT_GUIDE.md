@@ -1,8 +1,8 @@
 # pladdrr Agent Guide
 
-**Version:** 5.0.6 guide refresh (2026-09-04; perf/memory audit notes 2026-10-19)
+**Version:** 5.1.0 guide refresh (2026-09-04; perf/memory audit notes 2026-10-19; 2026-11 audit round 2026-11-06)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** Current through package 5.0.6 (the 2026-11 audit round: 14 fixes, see `NEWS.md`). Shared-dispatch wrappers + threaded Praat backend + xsimd acceleration (enabled at build time, runtime toggle via `pladdrr_simd()`) + clinical Tier 4 helpers + wrapper dispatch migration (Sound/Formant/Spectrum/Spectrogram queries now use direct `.Call()` instead of Rcpp module dispatch) + current `praat.github.io/` build prefix guidance + current CPPS/CPP usage notes + macOS PSOCK parallelism + unified SIMD bridge header (`simd_bridge.h`) + GitHub Actions CI + code coverage + spectral-moments/data-frame allocation cleanup (v4.9.24) + CRAN pre-submission hygiene and full man/ coverage (v5.0.0) + Ltas full Praat-parity query coverage and new SpectrumTier peak-picking class (v5.0.3) + perf/memory audit: load-time RSS fix, FormantPath parity fix, 8 SIMD files removed (development version, 2026-10).
+**Status:** Current through package 5.1.0 (the 2026-11 audit round and its follow-ups, see `NEWS.md` under 5.0.7 and 5.1.0). Shared-dispatch wrappers + threaded Praat backend + xsimd acceleration (enabled at build time, runtime toggle via `pladdrr_simd()`) + clinical Tier 4 helpers + wrapper dispatch migration (Sound/Formant/Spectrum/Spectrogram queries now use direct `.Call()` instead of Rcpp module dispatch) + current `praat.github.io/` build prefix guidance + current CPPS/CPP usage notes + macOS PSOCK parallelism + unified SIMD bridge header (`simd_bridge.h`) + GitHub Actions CI + code coverage + spectral-moments/data-frame allocation cleanup (v4.9.24) + CRAN pre-submission hygiene and full man/ coverage (v5.0.0) + Ltas full Praat-parity query coverage and new SpectrumTier peak-picking class (v5.0.3) + perf/memory audit: load-time RSS fix, FormantPath parity fix, 8 SIMD files removed (development version, 2026-10).
 - **v4.9.18 — Performance + docs + CI (2026-08-05 assessment, Phases 1-4):**
   - **PointProcess jitter/shimmer batch cache:** First shimmer call fetches all 11 jitter+shimmer metrics via `get_jitter_shimmer_batch_cpp()`. Subsequent jitter or shimmer calls with matching parameters return from cache — no additional C++ crossing. Backward compatible: jitter methods unchanged (no Sound required); cache activates automatically after first shimmer call.
   - **Formant `get_all_values_at_time` — single C++ call:** Added `formant_get_all_values_at_time()` export; replaces `vapply` loop over N module calls with one direct wrapper call.
@@ -506,7 +506,7 @@ Pitch <- function(.xptr = NULL) {
 }
 ```
 
-**`.xptr` is a checked door, not a bare cast (5.0.6):** `RType$new(ptr)` is where
+**`.xptr` is a checked door, not a bare cast (5.0.7):** `RType$new(ptr)` is where
 Rcpp reinterprets the external pointer as the wrapper's C++ struct, so that module
 constructor is the last place a wrong-class pointer can still be refused.
 `Matrix()` and `PitchTier()` check it there with `require_praat_class()`
@@ -675,7 +675,7 @@ is the plain dB mean (= `3`), so those defaults are a pladdrr convention, not an
 `Intensity$get_statistics(… , metrics = "mean")` and `print()`'s "Mean intensity" line use energy (= `1`),
 the same number `get_mean()` returns by default.
 
-### LTAS Units (fixed again in v5.0.6 — the v4.0.4 table this section used to carry was wrong)
+### LTAS Units (fixed again in v5.1.0 — the v4.0.4 table this section used to carry was wrong)
 
 Five `Ltas` queries take a `unit` argument — `get_mean(fmin, fmax, unit)`,
 `get_means_batch(fmins, fmaxs, unit)`, `get_standard_deviation(fmin, fmax, unit)`,

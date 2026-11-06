@@ -1,6 +1,114 @@
-# pladdrr 5.0.6
+# pladdrr 5.1.0
 
-## Bug fixes
+5.1.0 is 5.0.7 plus the corrections below that change numbers a user can see,
+or make a call that used to succeed raise. Each moves toward what the Praat
+application returns, and each states by how much.
+
+## Numbers that change
+
+* Options passed to Praat script commands now select the option Praat would
+  select. pladdrr's library-mode form layer (`src/uiform_libmode.cpp`, the
+  script-only stand-in for Praat's `Ui.cpp`) stored Praat's `base` argument — the
+  number an option list starts at — in the field's `subtract` slot instead of
+  converting it (`Ui.cpp:1201 thy subtract = ( base == 1 ? 0 : 1 );`), so every
+  CHOICE/OPTIONMENU argument reached the command one option too low
+  (`Ltas: Get mean: 0, 0, "energy"` returned the dB mean and `"dB"` the sones
+  mean; `Pitch: Get standard deviation: 0, 0, "hertz"` the ERB figure), every
+  0-based `CHOICEx` list one option too high (`Pitch: Get value at time: …,
+  "nearest"` interpolated like `"linear"`), and the *first* option of a
+  `CHOICE_ENUM` — Pitch's own default unit `"hertz"`, `"none"`, `"nearest"` —
+  raised `Field 'Unit' must not have the value 'hertz'.` where Praat answers a
+  number. This is the script layer only: it applies to `PraatInterpreter$run()`
+  and `praat_run_script()` alike, not to the R6 or direct wrappers, which pass
+  their own integers and were already checked against Praat. It is not only a
+  string-layer bug: a **numeric** third argument changed meaning, so
+  `Get mean: 0, 0, 1` (energy in Praat's own enum) returned -8.19 dB before and
+  42.85 dB now, and a script that compensated by shifting its own option
+  strings, or by adding one to a number, must undo that. Among the families now
+  answered instead of refused: the twelve `Formant: Get ...` commands whose
+  `Unit` argument is Praat's `kFormant_unit` choice (all twelve used to error on
+  their default; the enum offers `"hertz"` and `"bark"`, and `"erb"` is refused
+  by Praat 6.4.27 too), and `Intensity: Get mean`, whose default `"energy"`
+  came out 4.06 dB low (84.0703382556 where Praat prints 88.1298604765).
+
+* Reading FLAC, MP3, OGG and other `av`-decoded files no longer changes the
+  level or folds the channels. The fallback reader divided the decoded samples
+  by their own peak instead of the format's full scale, so the same tone came
+  back 6.02 dB hotter from a lossless FLAC than from the WAV it was converted
+  from, and it ignored the channel count, so a 2 x N stereo file arrived as a
+  1 x 2N mono Sound of twice the length. It now scales by full scale (2^31, the
+  S32LE that `av::read_audio_bin()` hands back) and de-interleaves into one row
+  per channel. The substitution itself is announced with a catchable
+  `pladdrr_decoder_fallback` warning instead of a console message, so a script
+  that insists on the native reader can turn it into an error. Known limit,
+  documented in `?Sound`: AAC/MP4 encoder delay is not trimmed (Praat has no
+  reader for those containers, so there is no oracle behaviour to reproduce).
+
+* `Intensity$get_mean()`'s `averaging_method` sent Praat's averaging codes one
+  too low, so the documented default `"energy"` returned the **median**,
+  `"sones"` returned the energy average and `"db"` the sones average. The table
+  now matches Praat's `Intensity_averaging` enum (`"median"` 0, `"energy"` 1,
+  `"sones"` 2, `"db"` 3) and an unknown string errors instead of quietly
+  averaging in medians. How far a number moves is the gap between the median and
+  the energy mean of the contour, so it depends on the material and is not
+  bounded: on the level-stepped signal the tests use it is 0.39 dB (87.74 ->
+  88.13 dB), on a stationary file it is 8e-06 dB, and on a file that is mostly
+  below its own analysis threshold the old median sat on the floor and the
+  answer was the `-300` dB floor value where the energy average is 54.93 dB.
+  `check_audio_quality()`'s `mean_intensity_db` is that same call and moves with
+  it. `Intensity$get_statistics()`'s `"mean"` metric and `print()`'s "Mean
+  intensity" line now use the same energy average, so all three agree. The
+  integer APIs keep their numbers (`intensity_get_mean_direct(x, 0, 0, 0L)` is
+  the median before and after — it used to add one, which is why the *string*
+  layer was off by one, not the integer layer); their documentation is what was
+  corrected, and it now names `0` median, `1` energy, `2` sones, `3` dB, which
+  is also Praat's `Intensity_averaging` order. Passing a raw integer to
+  `Intensity$get_mean()` (e.g. `averaging_method = 0L`, which silently meant
+  "median") is no longer accepted; it errors and names the four strings. `"db"`
+  is Praat's legacy two-argument `Intensity: Get mean`.
+
+* **BREAKING CHANGE (numbers move).** `Ltas$get_mean()`, `$get_means_batch()` and
+  `$get_standard_deviation()` with `unit = "energy"` or `unit = "sones"` returned
+  the *linear* average — the mean of `10^(dB/10)` or of `2^(dB/10)` — where
+  Praat's `Ltas: Get mean` averages in that domain and then converts the result
+  back, so they now report the dB number Praat prints. Before: on a one-second
+  speech LTAS `ltas$get_mean(0, 0, unit = "energy")` returned `14170.064098`
+  (`unit = "sones"` returned the deceptively dB-shaped `0.900002`); after, the
+  same call returns `41.513718` dB, which is what Praat prints and what
+  `10*log10()` of the old answer already gave. Nothing marks the change at
+  runtime: a column stored by 5.0.5 under `unit = "energy"` was simply wrong by
+  three decades, and re-running the old script now silently gives different
+  numbers, so recompute anything you saved.
+  `ltas$get_standard_deviation(0, 0, unit = "energy")` moved the same way
+  (`209963.529484` → `53.221439` dB).
+
+* `Ltas$get_slope()` and `$get_local_peak_height()` mapped `unit = "dB"` — their
+  **default** — to Praat's code 0, while `Ltas_getSlope` and
+  `Ltas_getLocalPeakHeight` test for 3 (`fon/Ltas.cpp:87`, `:95`), so they
+  returned a dimensionless ratio instead of a dB difference and could flip sign:
+  `get_slope(0, 1000, 1000, 4000)` gave `-0.115522`, it now gives `-31.906946`
+  dB (Praat's answer); `get_slope(1000, 4000, 4000, 8000)` changes sign, from
+  `+5.840895` to `-15.995483`. `"energy"` and `"sones"` results are unchanged, which is
+  why v4.0.4's table called them the working spellings — they were right by
+  accident, because only the dB branch was broken.
+
+* `Ltas` band averages no longer interpolate between bins, matching Praat's Ltas
+  queries, which pass `interpolate = false`. **The default `unit = "dB"`
+  results move too**, so "dB is unchanged" above would have been wrong: any
+  band whose edges do not fall on bin edges changes, and how far depends on how
+  far off they are. On `inst/extdata/test.wav`, `get_mean(500, 2000)` went from
+  `10.717937` to `10.444981` dB; scanning 50 Hz-wide bands over 0-5500 Hz on an
+  Ltas with a 100 Hz analysis bandwidth the movement reaches **8.41 dB**, so a
+  low band inside a single bin is the worst case, not an exception. Full-band
+  means (`fmin = fmax = 0`, the usual call) are bit-identical to before, and
+  every averaging method, unit string and band
+  are bit-identical to before, and every averaging method, unit string and band
+  tested is now bit-identical to Praat 6.4.27
+  (`tests/testthat/test-ltas-averaging-unit.R`). An unknown `unit` string in an
+  averaging query is now a `pladdrr_input_error` instead of a silent
+  `"energy"`, so **this also BREAKS** a script that had been passing a typo.
+
+## Behaviour changes
 
 * `Ltas$get_value_at_frequency()`, `$get_minimum()` and `$get_maximum()` took a
   `unit` argument and ignored it, so `unit = "energy"` or `"sones"` silently
@@ -9,14 +117,23 @@
   `pladdrr_input_error` for anything else. **Behaviour change to expect:** a call
   that passed another unit used to return the dB number and now raises.
 
+# pladdrr 5.0.7
+
+Safety and robustness fixes: sessions that died, memory that was read or
+requested out of bounds, errors that named neither the file nor the cause.
+
+## Bug fixes
+
 * `batch_process()` rows for files that failed now carry `error_class` next to
   `error` (the first class of the condition, e.g. `pladdrr_input_error`). A worker
   turns a condition into a row so one bad file cannot lose the run, which means a
   `tryCatch(pladdrr_data_loss = )` around the call can never see it; filter on
   `error_class` instead. The documentation says so.
+
 * The default worker count is the usable CPUs minus one only when there are more
   than two. With a 2-CPU allowance it was one worker, so
   `batch_process(parallel = TRUE)` silently ran serially.
+
 * An `av`-decoded file whose container reports no channel count (`NA`) is read as
   mono instead of failing with "invalid 'dim'".
 
@@ -111,31 +228,6 @@
   TextGrid, Table, ... have no matrix to give). `as.matrix(Matrix)` and
   `as.matrix(Polygon)` behave exactly as before.
 
-* Options passed to Praat script commands now select the option Praat would
-  select. pladdrr's library-mode form layer (`src/uiform_libmode.cpp`, the
-  script-only stand-in for Praat's `Ui.cpp`) stored Praat's `base` argument — the
-  number an option list starts at — in the field's `subtract` slot instead of
-  converting it (`Ui.cpp:1201 thy subtract = ( base == 1 ? 0 : 1 );`), so every
-  CHOICE/OPTIONMENU argument reached the command one option too low
-  (`Ltas: Get mean: 0, 0, "energy"` returned the dB mean and `"dB"` the sones
-  mean; `Pitch: Get standard deviation: 0, 0, "hertz"` the ERB figure), every
-  0-based `CHOICEx` list one option too high (`Pitch: Get value at time: …,
-  "nearest"` interpolated like `"linear"`), and the *first* option of a
-  `CHOICE_ENUM` — Pitch's own default unit `"hertz"`, `"none"`, `"nearest"` —
-  raised `Field 'Unit' must not have the value 'hertz'.` where Praat answers a
-  number. This is the script layer only: it applies to `PraatInterpreter$run()`
-  and `praat_run_script()` alike, not to the R6 or direct wrappers, which pass
-  their own integers and were already checked against Praat. It is not only a
-  string-layer bug: a **numeric** third argument changed meaning, so
-  `Get mean: 0, 0, 1` (energy in Praat's own enum) returned -8.19 dB before and
-  42.85 dB now, and a script that compensated by shifting its own option
-  strings, or by adding one to a number, must undo that. Among the families now
-  answered instead of refused: the twelve `Formant: Get ...` commands whose
-  `Unit` argument is Praat's `kFormant_unit` choice (all twelve used to error on
-  their default; the enum offers `"hertz"` and `"bark"`, and `"erb"` is refused
-  by Praat 6.4.27 too), and `Intensity: Get mean`, whose default `"energy"`
-  came out 4.06 dB low (84.0703382556 where Praat prints 88.1298604765).
-
 * `matrix_read()` and `PitchTier$from_file()` reject a file whose
   `Object class = ...` line names another class. A Praat text file names the
   C++ class to instantiate, and both readers cast the result to their own type
@@ -148,6 +240,7 @@
   of a *derived* class still load (`Sound` or `Ltas` read as a `Matrix`),
   because the test is Praat's own subclass rule (`Thing_isa`) and not a name
   match.
+
 * The same class check now guards the other door into a `Matrix` or `PitchTier`:
   the `.xptr` constructor argument. `Matrix(.xptr = <a TextGrid pointer>)` and
   `PitchTier(.xptr = <a Matrix pointer>)` used to build an object happily and
@@ -161,6 +254,7 @@
   (`Sound`, `Pitch`, `Formant`, `Intensity`, `TextGrid`, ... segfault the same
   way); each needs its own one-line wiring, listed in
   `audit/2026-11/fixes/F-xptr-door.md`.
+
 * A WAV whose `data` chunk declares more bytes than the file holds (truncated
   download, malformed header) no longer allocates from that claim and pads the
   rest with zeros. `Sound(path = )` now returns exactly the samples that are in
@@ -174,6 +268,7 @@
   understates the audio that follows it, still returns the shorter count Praat
   returns (design goal 1), but now reports the discarded samples through the
   same condition instead of only in Praat's console text.
+
 * `batch_process()` no longer loses the whole run to one bad file. A file that
   cannot be read (a 0-byte `.wav` from an aborted download) or on which `func`
   fails produced a row with different columns from the measured rows, and the
@@ -183,26 +278,7 @@
   `error` column and `NA` where the other rows have a measurement. That includes
   the `pladdrr_data_loss` error of a truncated WAV under
   `options(pladdrr.data_loss = "error")`, which used to abort the batch too.
-* Reading FLAC, MP3, OGG and other `av`-decoded files no longer changes the
-  level or folds the channels. The fallback reader divided the decoded samples
-  by their own peak instead of the format's full scale, so the same tone came
-  back 6.02 dB hotter from a lossless FLAC than from the WAV it was converted
-  from, and it ignored the channel count, so a 2 x N stereo file arrived as a
-  1 x 2N mono Sound of twice the length. It now scales by full scale (2^31, the
-  S32LE that `av::read_audio_bin()` hands back) and de-interleaves into one row
-  per channel. The substitution itself is announced with a catchable
-  `pladdrr_decoder_fallback` warning instead of a console message, so a script
-  that insists on the native reader can turn it into an error. Known limit,
-  documented in `?Sound`: AAC/MP4 encoder delay is not trimmed (Praat has no
-  reader for those containers, so there is no oracle behaviour to reproduce).
 
-* `FormantPath$path_finder()` now matches Praat. A SIMD branch clamped the
-  frequency-change cost twice (capped at 0.01 instead of 1), so the Viterbi
-  path, and the formants of `extract_formant()` after it, could differ from
-  Praat by more than 1 kHz.
-* `sound_extract_parts_pooled()` no longer leaks segments: they are now
-  ordinary R-owned Sounds (`use_pool` is accepted but ignored). A Sound from
-  `sound_pool_acquire()` while the pool is full is now freed by R.
 * An out-of-range `channel` is now an error instead of a wrong number. On a
   mono sound, `Sound$get_mean(from, to, channel = 2)` returned arbitrary heap
   contents (observed -6.8e+302) and larger indices could kill the R process;
@@ -223,6 +299,7 @@
   `LongSound$save_channel()` keeps Praat's 0 = left / 1 = right. Deviation from
   the application: Praat *clamps* an out-of-range channel to channel 1, pladdrr
   errors, because an error beats silent garbage.
+
 * `Sound$get_maximum(from, to, channel)` and `Sound$get_minimum()` now honour
   that documented `channel` argument; on a multichannel sound both used to
   return the extremum over all channels whatever channel was asked for. On a
@@ -232,66 +309,6 @@
   so existing calls without a channel, and all single-channel results, are
   bit-identical. The `channel` argument is checked by the guards described in
   the previous bullet (an untagged error, not a `pladdrr_input_error`).
-* `Intensity$get_mean()`'s `averaging_method` sent Praat's averaging codes one
-  too low, so the documented default `"energy"` returned the **median**,
-  `"sones"` returned the energy average and `"db"` the sones average. The table
-  now matches Praat's `Intensity_averaging` enum (`"median"` 0, `"energy"` 1,
-  `"sones"` 2, `"db"` 3) and an unknown string errors instead of quietly
-  averaging in medians. How far a number moves is the gap between the median and
-  the energy mean of the contour, so it depends on the material and is not
-  bounded: on the level-stepped signal the tests use it is 0.39 dB (87.74 ->
-  88.13 dB), on a stationary file it is 8e-06 dB, and on a file that is mostly
-  below its own analysis threshold the old median sat on the floor and the
-  answer was the `-300` dB floor value where the energy average is 54.93 dB.
-  `check_audio_quality()`'s `mean_intensity_db` is that same call and moves with
-  it. `Intensity$get_statistics()`'s `"mean"` metric and `print()`'s "Mean
-  intensity" line now use the same energy average, so all three agree. The
-  integer APIs keep their numbers (`intensity_get_mean_direct(x, 0, 0, 0L)` is
-  the median before and after — it used to add one, which is why the *string*
-  layer was off by one, not the integer layer); their documentation is what was
-  corrected, and it now names `0` median, `1` energy, `2` sones, `3` dB, which
-  is also Praat's `Intensity_averaging` order. Passing a raw integer to
-  `Intensity$get_mean()` (e.g. `averaging_method = 0L`, which silently meant
-  "median") is no longer accepted; it errors and names the four strings. `"db"`
-  is Praat's legacy two-argument `Intensity: Get mean`.
-* **BREAKING CHANGE (numbers move).** `Ltas$get_mean()`, `$get_means_batch()` and
-  `$get_standard_deviation()` with `unit = "energy"` or `unit = "sones"` returned
-  the *linear* average — the mean of `10^(dB/10)` or of `2^(dB/10)` — where
-  Praat's `Ltas: Get mean` averages in that domain and then converts the result
-  back, so they now report the dB number Praat prints. Before: on a one-second
-  speech LTAS `ltas$get_mean(0, 0, unit = "energy")` returned `14170.064098`
-  (`unit = "sones"` returned the deceptively dB-shaped `0.900002`); after, the
-  same call returns `41.513718` dB, which is what Praat prints and what
-  `10*log10()` of the old answer already gave. Nothing marks the change at
-  runtime: a column stored by 5.0.5 under `unit = "energy"` was simply wrong by
-  three decades, and re-running the old script now silently gives different
-  numbers, so recompute anything you saved.
-  `ltas$get_standard_deviation(0, 0, unit = "energy")` moved the same way
-  (`209963.529484` → `53.221439` dB).
-* `Ltas$get_slope()` and `$get_local_peak_height()` mapped `unit = "dB"` — their
-  **default** — to Praat's code 0, while `Ltas_getSlope` and
-  `Ltas_getLocalPeakHeight` test for 3 (`fon/Ltas.cpp:87`, `:95`), so they
-  returned a dimensionless ratio instead of a dB difference and could flip sign:
-  `get_slope(0, 1000, 1000, 4000)` gave `-0.115522`, it now gives `-31.906946`
-  dB (Praat's answer); `get_slope(1000, 4000, 4000, 8000)` changes sign, from
-  `+5.840895` to `-15.995483`. `"energy"` and `"sones"` results are unchanged, which is
-  why v4.0.4's table called them the working spellings — they were right by
-  accident, because only the dB branch was broken.
-* `Ltas` band averages no longer interpolate between bins, matching Praat's Ltas
-  queries, which pass `interpolate = false`. **The default `unit = "dB"`
-  results move too**, so "dB is unchanged" above would have been wrong: any
-  band whose edges do not fall on bin edges changes, and how far depends on how
-  far off they are. On `inst/extdata/test.wav`, `get_mean(500, 2000)` went from
-  `10.717937` to `10.444981` dB; scanning 50 Hz-wide bands over 0-5500 Hz on an
-  Ltas with a 100 Hz analysis bandwidth the movement reaches **8.41 dB**, so a
-  low band inside a single bin is the worst case, not an exception. Full-band
-  means (`fmin = fmax = 0`, the usual call) are bit-identical to before, and
-  every averaging method, unit string and band
-  are bit-identical to before, and every averaging method, unit string and band
-  tested is now bit-identical to Praat 6.4.27
-  (`tests/testthat/test-ltas-averaging-unit.R`). An unknown `unit` string in an
-  averaging query is now a `pladdrr_input_error` instead of a silent
-  `"energy"`, so **this also BREAKS** a script that had been passing a typo.
 
 ## Performance and memory
 
@@ -314,6 +331,7 @@
   `pladdrr_threads(n)` / `n_cores` still win.
   Where the platform exposes no affinity or quota API (Windows, macOS) the
   count is unchanged; output is bit-identical either way.
+
 * The power-cepstrogram (CPPS) and Burg formant analyses no longer start a
   worker thread for a handful of frames. `Sound$to_powercepstrogram()` split a
   3 s clip into 60-frame grains - 24 threads, 6x the CPU-seconds of the serial
@@ -333,20 +351,42 @@
   analyse hundreds of sub-second clips and wall clock matters more than load,
   this change moves the wrong way for you. Output is bit-identical at every
   size, threads only partition frames.
+
+# pladdrr 5.0.6
+
+## Bug fixes
+
+* `FormantPath$path_finder()` now matches Praat. A SIMD branch clamped the
+  frequency-change cost twice (capped at 0.01 instead of 1), so the Viterbi
+  path, and the formants of `extract_formant()` after it, could differ from
+  Praat by more than 1 kHz.
+
+* `sound_extract_parts_pooled()` no longer leaks segments: they are now
+  ordinary R-owned Sounds (`use_pool` is accepted but ignored). A Sound from
+  `sound_pool_acquire()` while the pool is full is now freed by R.
+
+## Performance and memory
+
 * Loading the package uses ~40 MB less resident memory per R process
   (including every parallel worker): Praat's 42 MB object list is now
   constant-initialised instead of being written at load time.
+
 * `Sound$resample()` (and therefore every Burg formant analysis) runs its
   sinc interpolation on multiple threads; output is bit-identical.
+
 * `process_sounds_parallel()` on PSOCK clusters (Windows) no longer ships
   every Sound's samples to every worker with each task.
+
 * `as_data_frame()` for Spectrogram, ComplexSpectrogram and Matrix fills
   preallocated vectors (peak memory roughly halved for long sounds).
+
 * `sound_mean()`, `sound_min()`, `sound_max()`, `sound_rms()` and
   `sound_statistics()` read channel 1 directly instead of exporting all
   channels.
+
 * Voice activity ZCR framing is O(frames + crossings) instead of
   O(frames x crossings).
+
 * AVQI frees the per-interval Sounds once they are concatenated.
 
 ## Internal
@@ -354,6 +394,7 @@
 * Removed unused or unreachable SIMD code (pitch bridge, pitch filter,
   autocorrelation, window functions, SlopeSelector, cochleagram, excitation,
   FormantPath) and their internal test-only bindings.
+
 * Faithfulness registry: the `Pitch (cc)` and `Pitch (AC)` rows had been
   failing silently in the Praat oracle (a line wrap split the Praat command);
   fixed, and a FormantPath path-finder row was added.
