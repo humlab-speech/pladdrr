@@ -21,7 +21,10 @@
 #'     were dropped from the vendored Praat tree in v4.9.5 to keep the CRAN
 #'     tarball within limits, so those formats need \code{av} installed
 #'     (\code{install.packages("av")}). Without it, reading a FLAC or MP3
-#'     file raises an error naming the missing package.
+#'     file raises an error naming the missing package. The fallback reports
+#'     itself with one message per file read; sample values, channel count and
+#'     duration are then those of the file (a multichannel file comes back as a
+#'     multichannel Sound), so a lossless FLAC reads like the WAV it came from.
 #' }
 #'
 #' Convert to WAV up front if you want to avoid the \code{av} dependency
@@ -1168,15 +1171,24 @@ lockEnvironment(.sound_methods, bindings = TRUE)
     error = function(e) {
       if (!requireNamespace("av", quietly = TRUE)) {
         stop("Native reader failed and 'av' package not available.\n",
-             "Install av: remotes::install_github('humlab-speech/av')\n",
+             "Install av: install.packages('av')\n",
              "Native error: ", e$message)
       }
+      message("pladdrr: '", path, "' decoded with the av (libav) fallback reader;",
+              " amplitudes are the file's own, channels and length come from",
+              " the container. Native reader said: ", e$message)
       audio_info <- av::av_media_info(path)
-      audio_data <- av::read_audio_bin(path)
-      max_value <- max(abs(audio_data))
-      if (max_value > 0) audio_data <- audio_data / max_value
-      if (is.matrix(audio_data)) audio_data <- t(audio_data)
-      else audio_data <- matrix(audio_data, nrow = 1)
+      channels <- audio_info$audio$channels
+      if (is.null(channels)) channels <- 1L
+      # av::read_audio_bin() returns one interleaved integer vector of raw
+      # S32LE samples (full scale 2^31), not a channels x samples matrix in
+      # +-1: scale by full scale, then de-interleave column-major (av fills
+      # L,R,L,R) so row 1 is channel 1 — same object as matrix(x, nrow =
+      # channels) but without copying the samples. Scaling by the file's own
+      # peak would destroy the absolute level, and one row would fold every
+      # multichannel file into a track of twice the length.
+      audio_data <- av::read_audio_bin(path) / 2147483648
+      dim(audio_data) <- c(channels, length(audio_data) / channels)
       sampling_rate <- audio_info$audio$sample_rate
       .sound_create_from_values(audio_data, sampling_rate)
     }

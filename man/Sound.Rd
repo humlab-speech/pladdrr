@@ -33,7 +33,10 @@ The constructor tries two readers in order:
     were dropped from the vendored Praat tree in v4.9.5 to keep the CRAN
     tarball within limits, so those formats need \code{av} installed
     (\code{install.packages("av")}). Without it, reading a FLAC or MP3
-    file raises an error naming the missing package.
+    file raises an error naming the missing package. The fallback reports
+    itself with one message per file read; sample values, channel count and
+    duration are then those of the file (a multichannel file comes back as a
+    multichannel Sound), so a lossless FLAC reads like the WAV it came from.
 }
 
 Convert to WAV up front if you want to avoid the \code{av} dependency
