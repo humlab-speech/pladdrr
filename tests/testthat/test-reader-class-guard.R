@@ -109,3 +109,23 @@ test_that("a legacy class name for the same class is still accepted", {
   expect_identical(tier$get_number_of_points(), 3L)
   expect_equal(tier$get_value_at_time(0.5), 150)
 })
+
+test_that("the rejection is the package's tagged input error", {
+  # inst/agents/AGENT_GUIDE.md's typed-error contract: errors raised in C++
+  # carry a `[pladdrr_input_error:routine:param]` tag that
+  # with_pladdrr_errors() turns into a classed condition. A bare Rcpp::stop()
+  # here would leave this one error uncatchable by class.
+  expect_error(matrix_read(mat_fix("pitchtier-good.pitchtier")),
+    "\\[pladdrr_input_error:matrix_read:path\\]")
+  expect_error(pladdrr:::pitchtier_from_file(mat_fix("matrix-good.matrix")),
+    "\\[pladdrr_input_error:pitchtier_from_file:path\\]")
+  caught <- NULL
+  expect_error(with_pladdrr_errors(matrix_read(mat_fix("pitchtier-good.pitchtier"))),
+    "not a Matrix")
+  tryCatch(
+    with_pladdrr_errors(matrix_read(mat_fix("pitchtier-good.pitchtier"))),
+    pladdrr_input_error = function(e) { caught <<- e; invisible(NULL) }
+  )
+  expect_s3_class(caught, "pladdrr_input_error")
+  expect_identical(caught$routine, "matrix_read")
+})

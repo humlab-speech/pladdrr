@@ -23,6 +23,7 @@
 #include <numeric>
 #include <algorithm>
 #include "praat_xptr_utils.h"
+#include "pladdrr_errors.h"
 #include "praat_error_handling.h"
 #include "simd_utils.h"
 #include "fon/Matrix.h"
@@ -94,8 +95,9 @@ SEXP matrix_read(std::string path) {
     // be a Matrix after checking -- casting blindly is layout confusion.
     autoDaata data = Data_readFromTextFile(&file);
     if (!Thing_isa(data.get(), classMatrix)) {
-      Rcpp::stop("File is not a Matrix: " + path + " (found " +
-                 Melder_peek32to8(Thing_className(data.get())) + ")");
+      PLADDRR_STOP_INPUT("matrix_read", "path",
+        "File is not a Matrix: " + path + " (found " +
+        Melder_peek32to8(Thing_className(data.get())) + ")");
     }
     autoMatrix matrix = data.static_cast_move<structMatrix>();
     return create_xptr_from_auto<structMatrix>(matrix);
