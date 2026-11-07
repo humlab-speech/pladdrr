@@ -2,7 +2,9 @@
 
 Executes a Praat script with automatic interpreter initialization.
 Objects created during script execution remain in Praat's internal
-object list.
+object list. This includes objects created before a line that fails, as
+in Praat itself; empty the list with
+`PraatInterpreter$new()$clear_objects()`.
 
 ## Usage
 

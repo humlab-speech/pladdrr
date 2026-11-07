@@ -30,9 +30,25 @@ quality across speakers or checking a recording's frequency balance.
 
 ## Units and interpolation
 
-Power values default to decibels (`unit = "dB"`); pass `"energy"` or
-`"sones"` for Praat's other two averaging units. Methods that locate a
-peak or trough take an `interpolation` of `"none"`, `"parabolic"` (the
+The five averaging queries - `get_mean()`, `get_means_batch()`,
+`get_standard_deviation()`, `get_slope()` and
+`get_local_peak_height()` - all *return decibels*, whatever `unit` you
+name. `unit` selects the domain the average is taken in: `"dB"` (the
+default) averages the bin values, `"energy"` averages `10^(z/10)` and
+`"sones"` averages `2^(z/10)` (Praat's own conversions), and the result
+is converted back to dB, exactly as Praat's Ltas queries do. The three
+therefore give three different numbers - the `"energy"` mean is the one
+comparable with broadband energy sums. Spelling is case-insensitive, and
+an unrecognised `unit` is an error naming the accepted spellings (in the
+queries that average: `get_mean()`, `get_means_batch()`,
+`get_standard_deviation()`, `get_slope()`, `get_local_peak_height()`).
+The peak/trough and value-at-frequency locators take a `unit` argument
+for compatibility but answer in the bins' own dB, so they accept only
+`"dB"` and raise a `pladdrr_input_error` for anything else. Averages
+cover the whole bins between the two frequencies, weighting the two bins
+at an incomplete range edge by the fraction of the bin inside the range
+(Praat's non-interpolating averaging window). Methods that locate a peak
+or trough take an `interpolation` of `"none"`, `"parabolic"` (the
 default), `"cubic"`, `"sinc70"`, or `"sinc700"` - parabolic and cubic
 refine the peak's position between bins instead of snapping to the
 nearest one. `get_value_at_frequency()` takes a plain `interpolate` flag
@@ -69,17 +85,18 @@ nearest one. `get_value_at_frequency()` takes a plain `interpolate` flag
   `get_frequency_of_maximum(fmin, fmax, interpolation)` - where those
   extremes occur
 
-- `get_mean(fmin, fmax, unit)` - average power across a frequency range
+- `get_mean(fmin, fmax, unit)` - average power across a frequency range,
+  in dB (see "Units and interpolation" for what `unit` changes)
 
 - `get_standard_deviation(fmin, fmax, unit)` - how much the power varies
-  across a frequency range
+  across a frequency range, in dB
 
 - `get_slope(f1min, f1max, f2min, f2max, unit)` - the difference in
-  average power between two bands, e.g. spectral tilt (high-frequency
-  band minus low-frequency band)
+  average power between two bands in dB, e.g. spectral tilt
+  (high-frequency band minus low-frequency band)
 
 - `get_local_peak_height(environment_min, environment_max, peak_min, peak_max, unit)` -
-  how far a peak rises above its surrounding band, e.g.
+  how far a peak rises above its surrounding band, in dB, e.g.
   harmonic-to-noise prominence
 
 ## Batch queries
@@ -90,7 +107,7 @@ crosses into C++ once for the whole set of frequencies or ranges.
 - `get_values_at_frequencies(frequencies, interpolation)` - values at
   many frequencies at once
 
-- `get_means_batch(fmins, fmaxs, unit)` - means for many frequency
+- `get_means_batch(fmins, fmaxs, unit)` - means in dB for many frequency
   ranges at once
 
 - `get_peaks_batch(fmins, fmaxs, interpolation)`,

@@ -43,8 +43,8 @@ batch_process(
 
 - ncores:
 
-  Integer, number of cores for parallel processing (default: NULL =
-  all-1)
+  Integer, number of cores for parallel processing (default: NULL = one
+  worker per usable CPU, minus one)
 
 - progress:
 
@@ -56,7 +56,13 @@ batch_process(
 
 ## Value
 
-Data frame with results from all files
+Data frame with results from all files: exactly one row per file, in the
+order the files were processed. A file that cannot be read, or where
+`func` fails, does not abort the batch: its row carries the message in
+an `error` column (and `error_class`, the first class of the condition,
+e.g. `"pladdrr_input_error"`) and `NA` where the other rows have a
+value. Conditions raised on a worker cannot be caught by class around
+`batch_process()`; filter on `error_class` instead.
 
 ## Examples
 

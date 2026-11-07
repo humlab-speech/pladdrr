@@ -9,8 +9,11 @@ multivariate statistics.
 
 ## Acoustic Analysis
 
-- **Sound**: read/write WAV, AIFF, FLAC, MP3, NIST; generate tones and
-  noise; `LongSound` for streaming files too large to hold in memory
+- **Sound**: read/write WAV, AIFF and NIST (FLAC and MP3 are read
+  through the `av` fallback, see
+  [`Sound`](https://humlab-speech.github.io/pladdrr/reference/Sound.md));
+  generate tones and noise; `LongSound` for streaming files too large to
+  hold in memory
 
 - **Pitch**: F0 contours, autocorrelation and cross-correlation methods,
   quality-aware tracking
@@ -67,7 +70,19 @@ doesn't fit the shared-table pattern.
 Following R conventions, undefined analysis values (e.g. pitch in
 unvoiced segments, formants in silence) are returned as `NA`. Quality
 warnings are issued when a result may be unreliable, and can be
-suppressed with the usual R warning-control mechanisms.
+suppressed with the usual R warning-control mechanisms. Failures pladdrr
+can classify are signalled as `pladdrr_error` / `pladdrr_warning`
+subclasses, so a batch script can tell an invalid argument from a
+truncated file from a Praat-internal failure; see
+[`with_pladdrr_errors`](https://humlab-speech.github.io/pladdrr/reference/with_pladdrr_errors.md).
+
+## Coercion
+
+`as.matrix(x)` returns the sampled data of any object that has a matrix
+of its own and names the accessor for the classes that do not
+([`as.matrix.PraatObject`](https://humlab-speech.github.io/pladdrr/reference/as.matrix.PraatObject.md));
+`Formant`, `Pitch` and the other contours have no matrix, use
+`as.data.frame` on those.
 
 ## Getting Started
 

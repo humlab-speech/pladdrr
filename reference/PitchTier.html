@@ -9,7 +9,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">pladdrr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.0.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -101,7 +101,12 @@ PitchTier object; set internally when a method returns a new PitchTier.</p></dd>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>PitchTiers are used together with Manipulation objects to modify the pitch
 contour of sounds. Unlike Pitch objects, which hold sampled data, PitchTiers
-hold discrete time-value pairs that can be edited directly.</p>
+hold discrete time-value pairs that can be edited directly. Loading a file
+whose <code>Object class</code> line names another class is an error naming the
+class found (as for <code><a href="matrix_read.html">matrix_read</a></code>). The same check guards the
+<code>.xptr</code> argument: <code>PitchTier(.xptr = )</code> refuses an object that is
+not a PitchTier or a Praat subclass of one, with the package's
+<code>pladdrr_input_error</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h2>

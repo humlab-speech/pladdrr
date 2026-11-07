@@ -10,6 +10,12 @@ A `Matrix` object with methods for two-dimensional sampled data access.
 ## Details
 
 Matrix objects represent two-dimensional sampled data with x and y axes.
+A pointer handed in through `.xptr` must already be a Matrix (or a Praat
+Matrix subclass such as `Ltas` or `Sound`); any other object is refused
+with the package's `pladdrr_input_error` naming the class found, because
+reading a foreign object's fields is layout confusion (the same check
+[`matrix_read`](https://humlab-speech.github.io/pladdrr/reference/matrix_read.md)
+performs on the class a file names).
 
 ## Examples
 

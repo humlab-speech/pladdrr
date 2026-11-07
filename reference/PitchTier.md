@@ -28,6 +28,12 @@ time-value points.
 PitchTiers are used together with Manipulation objects to modify the
 pitch contour of sounds. Unlike Pitch objects, which hold sampled data,
 PitchTiers hold discrete time-value pairs that can be edited directly.
+Loading a file whose `Object class` line names another class is an error
+naming the class found (as for
+[`matrix_read`](https://humlab-speech.github.io/pladdrr/reference/matrix_read.md)).
+The same check guards the `.xptr` argument: `PitchTier(.xptr = )`
+refuses an object that is not a PitchTier or a Praat subclass of one,
+with the package's `pladdrr_input_error`.
 
 ## Usage
 

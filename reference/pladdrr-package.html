@@ -17,7 +17,7 @@ multivariate statistics."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">pladdrr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.0.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -92,7 +92,8 @@ multivariate statistics.</p>
 
 
 
-<ul><li><p><strong>Sound</strong>: read/write WAV, AIFF, FLAC, MP3, NIST; generate
+<ul><li><p><strong>Sound</strong>: read/write WAV, AIFF and NIST (FLAC and MP3 are read
+        through the <code>av</code> fallback, see <code><a href="Sound.html">Sound</a></code>); generate
         tones and noise; <code>LongSound</code> for streaming files too large to
         hold in memory</p></li>
 <li><p><strong>Pitch</strong>: F0 contours, autocorrelation and cross-correlation
@@ -160,7 +161,20 @@ pattern.</p>
 <p>Following R conventions, undefined analysis values (e.g. pitch in unvoiced
 segments, formants in silence) are returned as <code>NA</code>. Quality warnings
 are issued when a result may be unreliable, and can be suppressed with the
-usual R warning-control mechanisms.</p>
+usual R warning-control mechanisms. Failures pladdrr can classify are
+signalled as <code>pladdrr_error</code> / <code>pladdrr_warning</code> subclasses, so a
+batch script can tell an invalid argument from a truncated file from a
+Praat-internal failure; see <code><a href="with_pladdrr_errors.html">with_pladdrr_errors</a></code>.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="coercion">Coercion<a class="anchor" aria-label="anchor" href="#coercion"></a></h2>
+
+
+
+<p><code>as.matrix(x)</code> returns the sampled data of any object that has a matrix
+of its own and names the accessor for the classes that do not
+(<code><a href="as.matrix.PraatObject.html">as.matrix.PraatObject</a></code>); <code>Formant</code>, <code>Pitch</code> and the
+other contours have no matrix, use <code>as.data.frame</code> on those.</p>
     </div>
     <div class="section level2">
     <h2 id="getting-started">Getting Started<a class="anchor" aria-label="anchor" href="#getting-started"></a></h2>

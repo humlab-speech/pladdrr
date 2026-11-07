@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="index.html">pladdrr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.0.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -96,7 +96,7 @@ R/
 </div>
 <div class="section level2">
 <h2 id="threading">Threading<a class="anchor" aria-label="anchor" href="#threading"></a></h2>
-<p><code>MelderThread</code> fully implemented (not stubbed). Key threaded paths: - <code>Sound_to_PowerCepstrogram</code>: <code>MelderThread_PARALLELIZE</code>, threshold=40 frames - <code>PowerCepstrogram_to_Matrix_CPP</code>: <code>SampledIntoSampled_mt</code> - <code>PowerCepstrogram_smooth_fast</code>: parallelized <code>Sampled_getMean</code></p>
+<p><code>MelderThread</code> fully implemented (not stubbed). Key threaded paths: - <code>Sound_to_PowerCepstrogram</code>: <code>MelderThread_PARALLELIZE</code>, 250 frames per worker - <code>Sound_to_Formant</code> (Burg): <code>MelderThread_PARALLELIZE</code>, 40 frames per worker - Both thresholds live in <code>src/pladdrr_thread_thresholds.h</code> (2026-11: the old 40-frame cepstrogram threshold made short calls slower than serial) - <code>PowerCepstrogram_to_Matrix_CPP</code>: <code>SampledIntoSampled_mt</code> - <code>PowerCepstrogram_smooth_fast</code>: parallelized <code>Sampled_getMean</code> - Automatic thread count follows the process’s CPU affinity mask and cgroup CPU quota, not <code>detectCores()</code> (<code>R/thread-control.R</code>)</p>
 </div>
 <div class="section level2">
 <h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a></h2>

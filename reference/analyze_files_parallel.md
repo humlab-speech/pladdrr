@@ -28,15 +28,16 @@ analyze_files_parallel(
 
 - n_cores:
 
-  Integer. Number of CPU cores to use (default:
-  parallel::detectCores() - 1)
+  Integer. Number of CPU cores to use (default: one worker per usable
+  CPU, minus one; see
+  [`pladdrr_threads()`](https://humlab-speech.github.io/pladdrr/reference/pladdrr_threads.md))
 
 - threads_per_worker:
 
-  Integer or \`NULL\`. C++ threads each worker may use for Praat
-  kernels. \`NULL\` (default) auto-divides cores among workers so total
-  concurrency stays near the machine's core count, preventing
-  oversubscription. Set \`1\` to force strictly single-threaded workers.
+  Integer or `NULL`. C++ threads each worker may use for Praat kernels.
+  `NULL` (default) auto-divides the usable CPUs among workers so total
+  concurrency stays near what the scheduler will run, preventing
+  oversubscription. Set `1` to force strictly single-threaded workers.
 
 - ...:
 

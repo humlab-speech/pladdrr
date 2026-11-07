@@ -32,9 +32,9 @@ process_sounds_parallel(
 
 - threads_per_worker:
 
-  Integer or \`NULL\`. C++ threads each worker may use for Praat
-  kernels. \`NULL\` (default) auto-divides cores among workers to avoid
-  oversubscription; set \`1\` to force single-threaded workers.
+  Integer or `NULL`. C++ threads each worker may use for Praat kernels.
+  `NULL` (default) auto-divides cores among workers to avoid
+  oversubscription; set `1` to force single-threaded workers.
 
 - ...:
 

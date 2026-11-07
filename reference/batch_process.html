@@ -9,7 +9,7 @@ pattern of creating Strings objects and looping over files."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">pladdrr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.0.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -116,7 +116,7 @@ as first argument and return a named list or data frame row</p></dd>
 
 <dt id="arg-ncores">ncores<a class="anchor" aria-label="anchor" href="#arg-ncores"></a></dt>
 <dd><p>Integer, number of cores for parallel processing (default: NULL
-= all-1)</p></dd>
+= one worker per usable CPU, minus one)</p></dd>
 
 
 <dt id="arg-progress">progress<a class="anchor" aria-label="anchor" href="#arg-progress"></a></dt>
@@ -129,7 +129,13 @@ as first argument and return a named list or data frame row</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Data frame with results from all files</p>
+    <p>Data frame with results from all files: exactly one row per file, in
+the order the files were processed. A file that cannot be read, or where
+<code>func</code> fails, does not abort the batch: its row carries the message in
+an <code>error</code> column (and <code>error_class</code>, the first class of the
+condition, e.g. <code>"pladdrr_input_error"</code>) and <code>NA</code> where the
+other rows have a value. Conditions raised on a worker cannot be caught by
+class around <code>batch_process()</code>; filter on <code>error_class</code> instead.</p>
     </div>
 
     <div class="section level2">

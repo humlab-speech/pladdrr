@@ -128,11 +128,11 @@ simd_time <- microbenchmark(sound$to_pitch(), times = 50)
 print(scalar_time)
 #> Unit: milliseconds
 #>              expr      min       lq     mean   median       uq      max neval
-#>  sound$to_pitch() 3.436872 3.471553 5.905017 3.495004 3.517642 123.5766    50
+#>  sound$to_pitch() 3.807117 4.162902 7.748155 4.209193 4.282786 181.2593    50
 print(simd_time)
 #> Unit: milliseconds
-#>              expr      min       lq     mean   median      uq      max neval
-#>  sound$to_pitch() 3.434899 3.471613 3.545749 3.502388 3.53668 5.177881    50
+#>              expr      min      lq     mean   median       uq      max neval
+#>  sound$to_pitch() 3.817908 4.14024 4.171818 4.164745 4.198058 5.148813    50
 ```
 
 Gains vary by routine, CPU, compiler, and vector length — there is no
@@ -582,7 +582,7 @@ intensity_stats <- pladdrr:::intensity_get_statistics_batch(
   from_times,
   to_times,
   c("min", "max", "mean"),
-  averaging_method = 0L  # Energy averaging
+  averaging_method = 1L  # Energy averaging
 )
 ```
 
@@ -703,7 +703,7 @@ clipped <- apply_transform_xptr(sound, soft_clip)
 ``` r
 
 sessionInfo()
-#> R version 4.6.1 (2026-06-24)
+#> R version 4.6.2 (2026-10-29)
 #> Platform: x86_64-pc-linux-gnu
 #> Running under: Ubuntu 24.04.5 LTS
 #> 
@@ -724,11 +724,11 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] RcppXPtrUtils_0.1.3  microbenchmark_1.5.0 pladdrr_5.0.6       
+#> [1] RcppXPtrUtils_0.1.3  microbenchmark_1.5.0 pladdrr_5.1.0       
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] gtable_0.3.6        jsonlite_2.0.0      dplyr_1.2.1        
-#>  [4] compiler_4.6.1      tidyselect_1.2.1    Rcpp_1.1.2         
+#>  [4] compiler_4.6.2      tidyselect_1.2.1    Rcpp_1.1.2         
 #>  [7] jquerylib_0.1.4     systemfonts_1.3.2   scales_1.4.0       
 #> [10] textshaping_1.0.5   yaml_2.3.12         fastmap_1.2.0      
 #> [13] ggplot2_4.0.3       R6_2.6.1            generics_0.1.4     
@@ -737,9 +737,9 @@ sessionInfo()
 #> [22] rlang_1.3.0         cachem_1.1.0        xfun_0.62          
 #> [25] fs_2.1.0            sass_0.4.10         S7_0.2.2           
 #> [28] otel_0.2.0          cli_3.6.6           pkgdown_2.2.1      
-#> [31] magrittr_2.0.5      digest_0.6.39       grid_4.6.1         
+#> [31] magrittr_2.0.5      digest_0.6.39       grid_4.6.2         
 #> [34] lifecycle_1.0.5     vctrs_0.7.3         evaluate_1.0.5     
 #> [37] glue_1.8.1          data.table_1.18.6.1 farver_2.1.2       
 #> [40] codetools_0.2-20    ragg_1.5.2          rmarkdown_2.32     
-#> [43] tools_4.6.1         pkgconfig_2.0.3     htmltools_0.5.9
+#> [43] pkgconfig_2.0.3     tools_4.6.2         htmltools_0.5.9
 ```

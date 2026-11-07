@@ -13,8 +13,9 @@ read_sound(file_path, channel = 0)
 
 - file_path:
 
-  Path to audio file (WAV/AIFF/FLAC/MP3 via Praat, others via av
-  fallback)
+  Path to audio file. WAV and AIFF are read by Praat; FLAC, MP3, OGG and
+  anything else Praat has no reader for go through the `av` fallback,
+  which warns with `pladdrr_decoder_fallback` and needs av installed
 
 - channel:
 

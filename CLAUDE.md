@@ -37,9 +37,15 @@ install.
 ## Threading
 
 `MelderThread` fully implemented (not stubbed). Key threaded paths: -
-`Sound_to_PowerCepstrogram`: `MelderThread_PARALLELIZE`, threshold=40
-frames - `PowerCepstrogram_to_Matrix_CPP`: `SampledIntoSampled_mt` -
-`PowerCepstrogram_smooth_fast`: parallelized `Sampled_getMean`
+`Sound_to_PowerCepstrogram`: `MelderThread_PARALLELIZE`, 250 frames per
+worker - `Sound_to_Formant` (Burg): `MelderThread_PARALLELIZE`, 40
+frames per worker - Both thresholds live in
+`src/pladdrr_thread_thresholds.h` (2026-11: the old 40-frame cepstrogram
+threshold made short calls slower than serial) -
+`PowerCepstrogram_to_Matrix_CPP`: `SampledIntoSampled_mt` -
+`PowerCepstrogram_smooth_fast`: parallelized `Sampled_getMean` -
+Automatic thread count follows the process’s CPU affinity mask and
+cgroup CPU quota, not `detectCores()` (`R/thread-control.R`)
 
 ## Documentation
 

@@ -13,7 +13,7 @@ Uses LongSound for lazy loading - only the requested window is loaded from
 
     <a class="navbar-brand me-2" href="../index.html">pladdrr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.0.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -90,7 +90,9 @@ Uses LongSound for lazy loading - only the requested window is loaded from
 
 
 <dl><dt id="arg-path">path<a class="anchor" aria-label="anchor" href="#arg-path"></a></dt>
-<dd><p>Path to sound file (WAV, AIFF, FLAC, MP3, etc.)</p></dd>
+<dd><p>Path to sound file in a format Praat's own streaming reader
+accepts (WAV, AIFF, NIST). FLAC and MP3 fail here: see
+<code><a href="longsound_open.html">longsound_open</a></code>.</p></dd>
 
 
 <dt id="arg-start">start<a class="anchor" aria-label="anchor" href="#arg-start"></a></dt>

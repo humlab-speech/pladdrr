@@ -36,7 +36,9 @@ Created from a Sound using intensity contour extraction.
 
 ## Statistics methods (over a time range)
 
-- `get_mean(from_time, to_time, averaging_method)` - mean intensity (dB)
+- `get_mean(from_time, to_time, averaging_method)` - mean intensity in
+  dB, averaged as named by `averaging_method` (see "Interpolation"),
+  `"energy"` by default
 
 - `get_standard_deviation(from_time, to_time)` - standard deviation (dB)
 
@@ -60,8 +62,21 @@ Created from a Sound using intensity contour extraction.
 ## Interpolation
 
 Codes: `"nearest"` (0), `"linear"` (1), `"cubic"` (2, default),
-`"sinc70"` (3), `"sinc700"` (4). Averaging methods: `"energy"` (0,
-default), `"sones"` (1), `"db"` (2).
+`"sinc70"` (3), `"sinc700"` (4). Averaging methods for `get_mean()`,
+case-insensitive strings; the code in brackets is Praat's
+`Intensity_averaging` value and the result is always in dB:
+
+- `"median"` (0) - the 0.5 quantile of the contour
+
+- `"energy"` (1, default) - mean of `10^(dB/10)`, re-expressed in dB
+
+- `"sones"` (2) - mean of `2^(dB/10)`, re-expressed in dB
+
+- `"db"` (3) - arithmetic mean of the dB values
+
+Any other string is an error. `get_statistics()`'s `"mean"` metric is
+the energy average (code 1), the same as `get_mean()`'s default; pass
+`metrics = "median"` for the 0.5 quantile.
 
 ## See also
 

@@ -15,7 +15,9 @@ sound_load_window(path, start, end, resample_to = NULL, preserve_times = FALSE)
 
 - path:
 
-  Path to sound file (WAV, AIFF, FLAC, MP3, etc.)
+  Path to sound file in a format Praat's own streaming reader accepts
+  (WAV, AIFF, NIST). FLAC and MP3 fail here: see
+  [`longsound_open`](https://humlab-speech.github.io/pladdrr/reference/longsound_open.md).
 
 - start:
 

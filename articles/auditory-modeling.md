@@ -371,8 +371,8 @@ loudness_time_series <- vapply(seq(0, 0.5, by = 0.01),
 rm(cochlea)
 gc()  # Force garbage collection
 #>           used  (Mb) gc trigger  (Mb) max used  (Mb)
-#> Ncells 1889020 100.9    3183465 170.1  3183465 170.1
-#> Vcells 3212422  24.6    8388608  64.0  7264278  55.5
+#> Ncells 1896515 101.3    3199555 170.9  3199555 170.9
+#> Vcells 3224371  24.6    8388608  64.0  7280287  55.6
 ```
 
 ## Comparison with Traditional Analysis
@@ -401,7 +401,7 @@ Psychoacoustic research - Hearing aid algorithm development
 ``` r
 
 sessionInfo()
-#> R version 4.6.1 (2026-06-24)
+#> R version 4.6.2 (2026-10-29)
 #> Platform: x86_64-pc-linux-gnu
 #> Running under: Ubuntu 24.04.5 LTS
 #> 
@@ -422,11 +422,11 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] ggplot2_4.0.3 pladdrr_5.0.6
+#> [1] ggplot2_4.0.3 pladdrr_5.1.0
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] gtable_0.3.6        jsonlite_2.0.0      dplyr_1.2.1        
-#>  [4] compiler_4.6.1      tidyselect_1.2.1    Rcpp_1.1.2         
+#>  [4] compiler_4.6.2      tidyselect_1.2.1    Rcpp_1.1.2         
 #>  [7] jquerylib_0.1.4     systemfonts_1.3.2   scales_1.4.0       
 #> [10] textshaping_1.0.5   yaml_2.3.12         fastmap_1.2.0      
 #> [13] R6_2.6.1            labeling_0.4.3      generics_0.1.4     
@@ -436,9 +436,9 @@ sessionInfo()
 #> [25] fs_2.1.0            sass_0.4.10         S7_0.2.2           
 #> [28] otel_0.2.0          viridisLite_0.4.3   cli_3.6.6          
 #> [31] pkgdown_2.2.1       withr_3.0.3         magrittr_2.0.5     
-#> [34] digest_0.6.39       grid_4.6.1          lifecycle_1.0.5    
+#> [34] digest_0.6.39       grid_4.6.2          lifecycle_1.0.5    
 #> [37] vctrs_0.7.3         evaluate_1.0.5      glue_1.8.1         
 #> [40] data.table_1.18.6.1 farver_2.1.2        codetools_0.2-20   
-#> [43] ragg_1.5.2          rmarkdown_2.32      tools_4.6.1        
+#> [43] ragg_1.5.2          rmarkdown_2.32      tools_4.6.2        
 #> [46] pkgconfig_2.0.3     htmltools_0.5.9
 ```

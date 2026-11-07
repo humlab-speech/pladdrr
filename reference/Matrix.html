@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">pladdrr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.0.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -79,7 +79,12 @@
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Matrix objects represent two-dimensional sampled data with x and y axes.</p>
+    <p>Matrix objects represent two-dimensional sampled data with x and y axes.
+A pointer handed in through <code>.xptr</code> must already be a Matrix (or a Praat
+Matrix subclass such as <code>Ltas</code> or <code>Sound</code>); any other object is
+refused with the package's <code>pladdrr_input_error</code> naming the class found,
+because reading a foreign object's fields is layout confusion (the same check
+<code><a href="matrix_read.html">matrix_read</a></code> performs on the class a file names).</p>
     </div>
 
     <div class="section level2">

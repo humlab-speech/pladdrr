@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="index.html">pladdrr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.0.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -952,6 +952,9 @@
 <td>Code 0</td>
 <td>Passthrough</td>
 </tr></tbody></table><p><strong>Impact:</strong> Users who used <code>unit="sones"</code> as a workaround for correct dB slope values should now use <code>unit="energy"</code> or <code>unit="dB"</code>.</p>
+<blockquote>
+<p><strong>Correction (5.0.6, F-faith-13):</strong> this table was itself half wrong. <code>"dB"</code> is Praat code <strong>3</strong>, not 0 (<code>Ltas_getSlope</code> and <code>Ltas_getLocalPeakHeight</code> test <code>averagingUnits == 3</code>, <code>fon/Ltas.cpp:87</code>, <code>:95</code>), so the <em>default</em> <code>get_slope(unit = "dB")</code> still returned a dimensionless ratio until 5.0.6; and the “<code>→ dB</code>” column describes the conversion helper, not the unit of the answer — <code>get_mean(unit = "energy")</code> returned the linear mean (<code>14170.06</code> where Praat prints <code>41.513718</code> dB). See <code>NEWS.md</code> (5.0.6) and <code>tests/testthat/test-ltas-averaging-unit.R</code> for the oracle-frozen contract.</p>
+</blockquote>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Before (workaround):</span></span>
 <span><span class="va">slope</span> <span class="op">&lt;-</span> <span class="va">ltas</span><span class="op">$</span><span class="fu">get_slope</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1000</span>, <span class="fl">1000</span>, <span class="fl">10000</span>, <span class="st">"sones"</span><span class="op">)</span>  <span class="co"># Accidentally correct</span></span>

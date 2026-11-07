@@ -12,7 +12,11 @@ longsound_open(path)
 
 - path:
 
-  Path to audio file (WAV, AIFF, FLAC, MP3, etc.)
+  Path to audio file in a format Praat's own streaming reader accepts
+  (WAV, AIFF, NIST). FLAC and MP3 do NOT work here: their decoders were
+  dropped from the vendored Praat tree, and the `av` fallback that
+  covers them exists only in `Sound(path = )`, which reads the whole
+  file into memory.
 
 ## Value
 
@@ -28,7 +32,7 @@ Sound$create_tone(frequency = 220, duration = 1, sampling_rate =
 ls <- longsound_open(wav)
 print(ls)
 #> <Praat LongSound>
-#>   File: /tmp/RtmpK8Dduu/file219e11acb464.wav 
+#>   File: /tmp/RtmppimeU1/file229b38277c49.wav 
 #>   Duration: 1.000 seconds
 #>   Sample rate: 16000 Hz
 #>   Channels: 1 

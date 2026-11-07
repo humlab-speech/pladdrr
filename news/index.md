@@ -1,5 +1,421 @@
 # Changelog
 
+## pladdrr 5.1.0
+
+5.1.0 collects the 2026-11 audit round: safety and robustness fixes
+(sessions that died, memory read or requested out of bounds, errors that
+named neither the file nor the cause), plus corrections that change
+numbers a user can see or make a call that used to succeed raise. Each
+of the latter moves toward what the Praat application returns, and each
+states by how much. The safety and robustness items are listed after
+“Behaviour changes”.
+
+### Numbers that change
+
+- Options passed to Praat script commands now select the option Praat
+  would select. pladdrr’s library-mode form layer
+  (`src/uiform_libmode.cpp`, the script-only stand-in for Praat’s
+  `Ui.cpp`) stored Praat’s `base` argument — the number an option list
+  starts at — in the field’s `subtract` slot instead of converting it
+  (`Ui.cpp:1201 thy subtract = ( base == 1 ? 0 : 1 );`), so every
+  CHOICE/OPTIONMENU argument reached the command one option too low
+  (`Ltas: Get mean: 0, 0, "energy"` returned the dB mean and `"dB"` the
+  sones mean; `Pitch: Get standard deviation: 0, 0, "hertz"` the ERB
+  figure), every 0-based `CHOICEx` list one option too high
+  (`Pitch: Get value at time: …, "nearest"` interpolated like
+  `"linear"`), and the *first* option of a `CHOICE_ENUM` — Pitch’s own
+  default unit `"hertz"`, `"none"`, `"nearest"` — raised
+  `Field 'Unit' must not have the value 'hertz'.` where Praat answers a
+  number. This is the script layer only: it applies to
+  `PraatInterpreter$run()` and
+  [`praat_run_script()`](https://humlab-speech.github.io/pladdrr/reference/praat_run_script.md)
+  alike, not to the R6 or direct wrappers, which pass their own integers
+  and were already checked against Praat. It is not only a string-layer
+  bug: a **numeric** third argument changed meaning, so
+  `Get mean: 0, 0, 1` (energy in Praat’s own enum) returned -8.19 dB
+  before and 42.85 dB now, and a script that compensated by shifting its
+  own option strings, or by adding one to a number, must undo that.
+  Among the families now answered instead of refused: the twelve
+  `Formant: Get ...` commands whose `Unit` argument is Praat’s
+  `kFormant_unit` choice (all twelve used to error on their default; the
+  enum offers `"hertz"` and `"bark"`, and `"erb"` is refused by Praat
+  6.4.27 too), and `Intensity: Get mean`, whose default `"energy"` came
+  out 4.06 dB low (84.0703382556 where Praat prints 88.1298604765).
+
+- Reading FLAC, MP3, OGG and other `av`-decoded files no longer changes
+  the level or folds the channels. The fallback reader divided the
+  decoded samples by their own peak instead of the format’s full scale,
+  so the same tone came back 6.02 dB hotter from a lossless FLAC than
+  from the WAV it was converted from, and it ignored the channel count,
+  so a 2 x N stereo file arrived as a 1 x 2N mono Sound of twice the
+  length. It now scales by full scale (2^31, the S32LE that
+  [`av::read_audio_bin()`](https://docs.ropensci.org/av//reference/read_audio.html)
+  hands back) and de-interleaves into one row per channel. The
+  substitution itself is announced with a catchable
+  `pladdrr_decoder_fallback` warning instead of a console message, so a
+  script that insists on the native reader can turn it into an error.
+  Known limit, documented in
+  [`?Sound`](https://humlab-speech.github.io/pladdrr/reference/Sound.md):
+  AAC/MP4 encoder delay is not trimmed (Praat has no reader for those
+  containers, so there is no oracle behaviour to reproduce).
+
+- `Intensity$get_mean()`’s `averaging_method` sent Praat’s averaging
+  codes one too low, so the documented default `"energy"` returned the
+  **median**, `"sones"` returned the energy average and `"db"` the sones
+  average. The table now matches Praat’s `Intensity_averaging` enum
+  (`"median"` 0, `"energy"` 1, `"sones"` 2, `"db"` 3) and an unknown
+  string errors instead of quietly averaging in medians. How far a
+  number moves is the gap between the median and the energy mean of the
+  contour, so it depends on the material and is not bounded: on the
+  level-stepped signal the tests use it is 0.39 dB (87.74 -\> 88.13 dB),
+  on a stationary file it is 8e-06 dB, and on a file that is mostly
+  below its own analysis threshold the old median sat on the floor and
+  the answer was the `-300` dB floor value where the energy average is
+  54.93 dB.
+  [`check_audio_quality()`](https://humlab-speech.github.io/pladdrr/reference/check_audio_quality.md)’s
+  `mean_intensity_db` is that same call and moves with it.
+  `Intensity$get_statistics()`’s `"mean"` metric and
+  [`print()`](https://rdrr.io/r/base/print.html)’s “Mean intensity” line
+  now use the same energy average, so all three agree. The integer APIs
+  keep their numbers (`intensity_get_mean_direct(x, 0, 0, 0L)` is the
+  median before and after — it used to add one, which is why the
+  *string* layer was off by one, not the integer layer); their
+  documentation is what was corrected, and it now names `0` median, `1`
+  energy, `2` sones, `3` dB, which is also Praat’s `Intensity_averaging`
+  order. Passing a raw integer to `Intensity$get_mean()`
+  (e.g. `averaging_method = 0L`, which silently meant “median”) is no
+  longer accepted; it errors and names the four strings. `"db"` is
+  Praat’s legacy two-argument `Intensity: Get mean`.
+
+- **BREAKING CHANGE (numbers move).** `Ltas$get_mean()`,
+  `$get_means_batch()` and `$get_standard_deviation()` with
+  `unit = "energy"` or `unit = "sones"` returned the *linear* average —
+  the mean of `10^(dB/10)` or of `2^(dB/10)` — where Praat’s
+  `Ltas: Get mean` averages in that domain and then converts the result
+  back, so they now report the dB number Praat prints. Before: on a
+  one-second speech LTAS `ltas$get_mean(0, 0, unit = "energy")` returned
+  `14170.064098` (`unit = "sones"` returned the deceptively dB-shaped
+  `0.900002`); after, the same call returns `41.513718` dB, which is
+  what Praat prints and what `10*log10()` of the old answer already
+  gave. Nothing marks the change at runtime: a column stored by 5.0.5
+  under `unit = "energy"` was simply wrong by three decades, and
+  re-running the old script now silently gives different numbers, so
+  recompute anything you saved.
+  `ltas$get_standard_deviation(0, 0, unit = "energy")` moved the same
+  way (`209963.529484` → `53.221439` dB).
+
+- `Ltas$get_slope()` and `$get_local_peak_height()` mapped `unit = "dB"`
+  — their **default** — to Praat’s code 0, while `Ltas_getSlope` and
+  `Ltas_getLocalPeakHeight` test for 3 (`fon/Ltas.cpp:87`, `:95`), so
+  they returned a dimensionless ratio instead of a dB difference and
+  could flip sign: `get_slope(0, 1000, 1000, 4000)` gave `-0.115522`, it
+  now gives `-31.906946` dB (Praat’s answer);
+  `get_slope(1000, 4000, 4000, 8000)` changes sign, from `+5.840895` to
+  `-15.995483`. `"energy"` and `"sones"` results are unchanged, which is
+  why v4.0.4’s table called them the working spellings — they were right
+  by accident, because only the dB branch was broken.
+
+- `Ltas` band averages no longer interpolate between bins, matching
+  Praat’s Ltas queries, which pass `interpolate = false`. **The default
+  `unit = "dB"` results move too**, so “dB is unchanged” above would
+  have been wrong: any band whose edges do not fall on bin edges
+  changes, and how far depends on how far off they are. On
+  `inst/extdata/test.wav`, `get_mean(500, 2000)` went from `10.717937`
+  to `10.444981` dB; scanning 50 Hz-wide bands over 0-5500 Hz on an Ltas
+  with a 100 Hz analysis bandwidth the movement reaches **8.41 dB**, so
+  a low band inside a single bin is the worst case, not an exception.
+  Full-band means (`fmin = fmax = 0`, the usual call) are bit-identical
+  to before, and every averaging method, unit string and band tested is
+  now bit-identical to Praat 6.4.27
+  (`tests/testthat/test-ltas-averaging-unit.R`). An unknown `unit`
+  string in an averaging query is now a `pladdrr_input_error` instead of
+  a silent `"energy"`, so **this also BREAKS** a script that had been
+  passing a typo.
+
+### Behaviour changes
+
+- `Ltas$get_value_at_frequency()`, `$get_minimum()` and `$get_maximum()`
+  took a `unit` argument and ignored it, so `unit = "energy"` or
+  `"sones"` silently returned dB. They answer in the bins’ own dB
+  (Praat’s dialogs for them have no unit), so they now accept only
+  `"dB"` (any case) and raise a `pladdrr_input_error` for anything else.
+  **Behaviour change to expect:** a call that passed another unit used
+  to return the dB number and now raises.
+
+### Bug fixes
+
+- [`batch_process()`](https://humlab-speech.github.io/pladdrr/reference/batch_process.md)
+  rows for files that failed now carry `error_class` next to `error`
+  (the first class of the condition, e.g. `pladdrr_input_error`). A
+  worker turns a condition into a row so one bad file cannot lose the
+  run, which means a `tryCatch(pladdrr_data_loss = )` around the call
+  can never see it; filter on `error_class` instead. The documentation
+  says so.
+
+- The default worker count is the usable CPUs minus one only when there
+  are more than two. With a 2-CPU allowance it was one worker, so
+  `batch_process(parallel = TRUE)` silently ran serially.
+
+- An `av`-decoded file whose container reports no channel count (`NA`)
+  is read as mono instead of failing with “invalid ‘dim’”.
+
+- Sizes that become allocations are validated up front.
+  [`sound_create_tone()`](https://humlab-speech.github.io/pladdrr/reference/sound_create_tone.md),
+  [`sound_create_pure_tone()`](https://humlab-speech.github.io/pladdrr/reference/sound_create_pure_tone.md)
+  and
+  [`sound_create_tone_complex()`](https://humlab-speech.github.io/pladdrr/reference/sound_create_tone_complex.md)
+  refuse a non-positive, non-finite or absurd `duration` /
+  `sampling_rate` (a negative duration used to return a Sound with
+  `nx = -16000`; 1e9 s asked for 4.4e13 samples),
+  [`Matrix()`](https://humlab-speech.github.io/pladdrr/reference/Matrix.md)
+  /
+  [`matrix_create_simple()`](https://humlab-speech.github.io/pladdrr/reference/matrix_create_simple.md)
+  refuse non-positive or oversized dimensions (a negative count built a
+  corrupt object), and `Excitation$to_formant()` needs
+  `max_formants >= 1`. All raise a classed `pladdrr_input_error` naming
+  the argument. The limit is 2^29 cells (4 GiB of doubles), the same as
+  the cochleagram bound.
+
+- The automatic thread count is capped at two when
+  `_R_CHECK_LIMIT_CORES_` is set to anything but `false`, the way
+  `R CMD check --as-cran` sets it and the way `parallel` already honours
+  it. Before, only the R-level worker default followed it, so the C++
+  pool still used every core and CRAN’s timing check (CPU time over 2.5x
+  elapsed) flagged the CPPS examples: a 3 s
+  [`to_powercepstrogram_fast()`](https://humlab-speech.github.io/pladdrr/reference/to_powercepstrogram_fast.md) +
+  [`get_cpps_fast()`](https://humlab-speech.github.io/pladdrr/reference/get_cpps_fast.md)
+  ran at a CPU/elapsed ratio of 7.7 and now 2.0 under the variable.
+  Outside `R CMD check` nothing changes, and an explicit
+  `pladdrr_threads(n)` still wins.
+
+- Every class constructor that takes `.xptr` now refuses a pointer to a
+  Praat object of another class with a `pladdrr_input_error` (“Not a
+  Sound (found TextGrid)”), the check `Matrix` and `PitchTier` already
+  had. Before, 10 constructors (`Sound`, `Pitch`, `Formant`,
+  `FormantTier`, `Intensity`, `IntensityTier`, `Excitation`, `MFCC`,
+  `LFCC`, `TextGrid`) re-interpreted the foreign object and the first
+  query killed the R session (SIGSEGV, exit 139), and 21 more answered
+  with another class’s numbers. Subclasses still pass (a `Sound` is a
+  valid `Matrix`), and `PowerCepstrogram` does the same.
+
+- `Sound$to_cochleagram()`, `$to_cochleagram_edb()` and
+  `Spectrum$to_excitation()` refuse a step size that cannot describe the
+  result instead of asking Praat for it. `df = 1e-9` is a 2.5 TB
+  request: Linux answered with an allocation error, but macOS committed
+  the pages and the kernel killed the whole R session (exit 137,
+  invisible to [`tryCatch()`](https://rdrr.io/r/base/conditions.html)).
+  The size is now bounded in C++ (2^29 cochleagram cells, i.e. about 5.8
+  h of audio at the default steps; 10 000 excitation bands), so every
+  door (R6, module, script) raises “… is not allowed”. `dt`, `df`,
+  `window_length`, `dtime` and `dfreq` also raise a classed
+  `pladdrr_input_error` naming the argument, and
+  `to_cochleagram_edb(dfreq = -1)` no longer returns a Cochleagram with
+  a negative band count. **Behaviour change to expect:** requests above
+  those bounds used to run on Linux machines with enough memory and now
+  raise.
+
+- `Sound$to_cochleagram()` on a very low-rate Sound no longer kills the
+  R process. A sampling rate below ~67 Hz (with the default 0.03 s
+  window) made the internal analysis window negative, and the FFT
+  zero-padding step three functions away wrote outside a one-cell
+  allocation: `free(): invalid pointer`, exit code 134, invisible to
+  [`tryCatch()`](https://rdrr.io/r/base/conditions.html) — the whole
+  session died, along with anything an agent had in flight. It now
+  raises, in every door (`Sound$to_cochleagram()`, the
+  `cochleagram_module` door, and a script `To Cochleagram:`), with
+  Praat’s own message for the case, “Analysis window too short.” — the
+  guard `Sound_to_Pitch` has always had. **Behaviour change to expect:**
+  at the default 0.03 s window the guard refuses any sampling rate below
+  200 Hz (the window needs 6 samples). Measured on the previous build
+  those rates had no usable output — 67-133 Hz returned an all-NaN
+  cochleagram (0 of 4352 cells finite), 150-199 Hz about 55% finite, the
+  same degenerate shape as the still-accepted 200-500 Hz — but a script
+  calling one of them now gets an error where it got a matrix of gaps.
+
+- A failed cochleagram or excitation conversion no longer contaminates
+  every later Praat error in the session. Six catch blocks — five in
+  `src/cochleagram_wrappers.cpp` and `src/excitation_wrappers.cpp`, plus
+  the exported
+  [`sound_extract_parts_pooled()`](https://humlab-speech.github.io/pladdrr/reference/sound_extract_parts_pooled.md)
+  — were the only ones that let a Praat error cross back into R without
+  calling `Melder_clearError()`. Praat’s global error buffer only
+  accumulates, and that call alone empties it, so after one bad
+  conversion (`Sound$to_cochleagram(df = 1e-9)`,
+  `Spectrum$to_excitation(erb_density = 1e-9)`) every later error in the
+  same R session was prefixed with the stale “not enough room for …
+  elements” / “not converted to Cochleagram” text: an agent parsing an
+  error got a message mixing two unrelated calls, and since Praat drops
+  text that would overflow its 2000-character buffer, a saturated buffer
+  loses later error text outright. (Eight further blocks do not clear
+  either; they re-throw into an outer clearing catch instead of reaching
+  R, so they are left alone.) The reason Praat actually gave now travels
+  in the error it belongs to: those errors end with Praat’s own text
+  (`Praat error in Spectrum_to_Excitation: Out of memory: ...`) via the
+  package’s `get_melder_error()` helper, which previously had no callers
+  at all. Matching the existing prefix keeps working; anything anchored
+  to the end of the message must be updated.
+
+- [`as.matrix()`](https://rdrr.io/r/base/matrix.html) no longer returns
+  junk for the 39 of 41 object classes that had no method of their own.
+  Only `Matrix` and `Polygon` registered one, so R’s default fired for
+  the rest: it put a `dim` on the 2-element wrapper list (`.xptr`,
+  `.cpp`) and *kept the S3 class*, so `is.matrix(as.matrix(pitch))` was
+  TRUE, no error was raised, the “matrix” held an external pointer
+  instead of numbers, and printing it died inside the class’s own
+  [`print()`](https://rdrr.io/r/base/print.html). One fallback method on
+  the shared `PraatObject` class now returns the object’s own
+  `$as_matrix()` where it has one (Sound, Pitch, Intensity, Spectrogram,
+  Ltas, the tiers, the band-filtered spectrograms, … — bit-for-bit the
+  numbers that accessor gives), and raises the package’s typed
+  `pladdrr_input_error` naming the class and the accessor to use where
+  it does not (`Formant`, PointProcess, TextGrid, Table, … have no
+  matrix to give). `as.matrix(Matrix)` and `as.matrix(Polygon)` behave
+  exactly as before.
+
+- [`matrix_read()`](https://humlab-speech.github.io/pladdrr/reference/matrix_read.md)
+  and `PitchTier$from_file()` reject a file whose `Object class = ...`
+  line names another class. A Praat text file names the C++ class to
+  instantiate, and both readers cast the result to their own type
+  without checking: loading a PitchTier as a Matrix reported garbage
+  dimensions and then killed the R session uncatchably (SIGSEGV,
+  exit 139) on the first value query, while a TextGrid cast to Matrix
+  returned arbitrary heap values as numbers. They now raise the
+  package’s tagged input error (`[pladdrr_input_error:...]`, so
+  [`with_pladdrr_errors()`](https://humlab-speech.github.io/pladdrr/reference/with_pladdrr_errors.md)
+  turns it into a catchable `pladdrr_input_error`) naming the file and
+  the class found. Objects of a *derived* class still load (`Sound` or
+  `Ltas` read as a `Matrix`), because the test is Praat’s own subclass
+  rule (`Thing_isa`) and not a name match.
+
+- The same class check now guards the other door into a `Matrix` or
+  `PitchTier`: the `.xptr` constructor argument.
+  `Matrix(.xptr = <a TextGrid pointer>)` and
+  `PitchTier(.xptr = <a Matrix pointer>)` used to build an object
+  happily and die in the R process (SIGSEGV, exit 139, no `tryCatch`
+  possible) on the first query, because the pointer was reinterpreted as
+  the wrapper’s own C++ type before anything looked at it. Both now
+  refuse a foreign object with the package’s typed `pladdrr_input_error`
+  naming the class found, and because the check is Praat’s subclass test
+  (`Thing_isa`), legitimate transfers — a `Pitch` converted to a
+  `PitchTier`, an `Ltas` or `Sound` pointer taken as a `Matrix` — keep
+  working. The other 37 `.xptr`-accepting constructors are still open
+  (`Sound`, `Pitch`, `Formant`, `Intensity`, `TextGrid`, … segfault the
+  same way); each needs its own one-line wiring, listed in
+  `audit/2026-11/fixes/F-xptr-door.md`.
+
+- A WAV whose `data` chunk declares more bytes than the file holds
+  (truncated download, malformed header) no longer allocates from that
+  claim and pads the rest with zeros. `Sound(path = )` now returns
+  exactly the samples that are in the file, up to the end of the `data`
+  chunk: a metadata chunk that follows the samples is no longer read
+  back as audio either. It raises a `pladdrr_data_loss` condition naming
+  the file and the real count, so `options(pladdrr.data_loss = "error")`
+  turns a truncated file into an error and `"silent"` silences it. A
+  46-byte file whose header claimed 536 870 912 samples used to arrive
+  as a 4.3 GB object; it now yields the one sample that is physically in
+  it. The mirror case, a `data` chunk that understates the audio that
+  follows it, still returns the shorter count Praat returns (design goal
+  1), but now reports the discarded samples through the same condition
+  instead of only in Praat’s console text.
+
+- [`batch_process()`](https://humlab-speech.github.io/pladdrr/reference/batch_process.md)
+  no longer loses the whole run to one bad file. A file that cannot be
+  read (a 0-byte `.wav` from an aborted download) or on which `func`
+  fails produced a row with different columns from the measured rows,
+  and the final [`rbind()`](https://rdrr.io/r/base/cbind.html) then died
+  with “names do not match previous names”: no results at all, and a
+  message naming neither file nor cause. Every input file now yields
+  exactly one row, in file order, a failure carrying its message in an
+  `error` column and `NA` where the other rows have a measurement. That
+  includes the `pladdrr_data_loss` error of a truncated WAV under
+  `options(pladdrr.data_loss = "error")`, which used to abort the batch
+  too.
+
+- An out-of-range `channel` is now an error instead of a wrong number.
+  On a mono sound, `Sound$get_mean(from, to, channel = 2)` returned
+  arbitrary heap contents (observed -6.8e+302) and larger indices could
+  kill the R process; the same missing check in
+  `PointProcess$get_values_from_sound()`, the LPC
+  `filter_inverse_at_time()` entry points,
+  `LongSound$get_window_extrema()` and `LongSound$save_channel()`
+  silently produced another channel’s numbers, and
+  `Sound$to_point_process_extrema()` / `$to_point_process_zeros()`
+  counted extrema and zero crossings in whatever memory lay beyond the
+  channel array (`channel = 1000` killed the R session). An `NA` channel
+  is named as such where the check happens in R
+  (`Sound$to_point_process_zeros(channel = NA)` -\> “`channel` must be a
+  single integer, not NA”); where it happens in C++ the `NA` still
+  arrives as its integer cast (`Sound$get_mean(0, 1, NA)` -\> “Channel
+  out of range \[0, 3\]: -2147483648”). None of these channel errors is
+  classed: the R ones are plain `simpleError`s and the C++ ones
+  `Rcpp::exception`, so catch `error`, not `pladdrr_input_error`.
+  `channel = 0` keeps meaning “all channels” (Praat’s
+  `Vector_CHANNEL_AVERAGE`) where Praat allows it;
+  `LongSound$get_window_extrema()` is 1-based and
+  `LongSound$save_channel()` keeps Praat’s 0 = left / 1 = right.
+  Deviation from the application: Praat *clamps* an out-of-range channel
+  to channel 1, pladdrr errors, because an error beats silent garbage.
+
+- `Sound$get_maximum(from, to, channel)` and `Sound$get_minimum()` now
+  honour that documented `channel` argument; on a multichannel sound
+  both used to return the extremum over all channels whatever channel
+  was asked for. On a 3-channel file with per-channel peaks of 0.1 / 0.5
+  / 0.9, all three of `get_maximum(0, 0, 1:3)` returned `0.8999634`
+  before and `0.09997559`, `0.4999695`, `0.8999634` now. The default
+  became `channel = 0` (all channels), so existing calls without a
+  channel, and all single-channel results, are bit-identical. The
+  `channel` argument is checked by the guards described in the previous
+  bullet (an untagged error, not a `pladdrr_input_error`).
+
+### Performance and memory
+
+- The automatic thread count, and the default worker count of
+  [`analyze_files_parallel()`](https://humlab-speech.github.io/pladdrr/reference/analyze_files_parallel.md)
+  /
+  [`process_sounds_parallel()`](https://humlab-speech.github.io/pladdrr/reference/process_sounds_parallel.md)
+  /
+  [`batch_process()`](https://humlab-speech.github.io/pladdrr/reference/batch_process.md),
+  now follow the CPUs the *process* may use — the CPU affinity mask
+  (`taskset`, container cpusets, SLURM) intersected with the cgroup CPU
+  quota visible to the process — instead of the machine’s core count.
+  The old default asked for the machine’s 32 threads no matter how few
+  CPUs the process was given. Measured on a 32-core box (shared; medians
+  of 3-5 runs over a 100-file pitch+formant corpus): in a 4-CPU cpuset
+  [`analyze_files_parallel()`](https://humlab-speech.github.io/pladdrr/reference/analyze_files_parallel.md)
+  with the default core count went from 4.57 s wall / 15.5 CPU-seconds
+  to 1.81 s / 4.25 (-60 % wall, -73 % CPU-seconds — it was starting 31
+  CPU-bound workers on 4 CPUs), and a plain sequential loop from 2.08 s
+  to 1.78 s with CPU-seconds unchanged. In a 16-CPU cpuset the saving is
+  mostly latency, not CPU-seconds (loop 1.72 s -\> 1.54 s, 4.39 -\> 4.19
+  CPU-seconds; the batch helpers 1.72 s / 17.7 -\> 1.18 s / 10.0),
+  because with 16 usable CPUs the 32-thread default was mostly waiting
+  rather than spinning. `pladdrr_threads()$processors` reports the same
+  number, and explicit `pladdrr_threads(n)` / `n_cores` still win. Where
+  the platform exposes no affinity or quota API (Windows, macOS) the
+  count is unchanged; output is bit-identical either way.
+
+- The power-cepstrogram (CPPS) and Burg formant analyses no longer start
+  a worker thread for a handful of frames. `Sound$to_powercepstrogram()`
+  split a 3 s clip into 60-frame grains - 24 threads, 6x the CPU-seconds
+  of the serial kernel and slower in wall clock than an 8-thread run;
+  `to_formant_burg()` split it every 3 frames, so even a 0.25 s clip (40
+  frames) asked for 9 workers. The minimum work per thread is now 250
+  and 40 frames respectively (measured break-even times three and five;
+  10 of the 11 other LPC/formant sites already use 40, the eleventh uses
+  80), so short clips stay on one thread while long recordings still
+  fill the machine. On 32 cores, one 3 s clip: 166 -\> 27 CPU-ms (-83%)
+  at 0.74x the wall time for the cepstrogram, 44 -\> 30 CPU-ms (-32%) at
+  1.03x the wall time for formants; a 30 s recording is unchanged.
+  **Short clips pay for it in latency**, which is the trade: over 600
+  clips at default settings, wall time per call went 1.26 -\> 1.66 ms
+  (+32%) for a 0.2 s formant analysis, 2.11 -\> 3.22 ms (+53%) for a 0.4
+  s one and 1.85 -\> 2.49 ms (+35%) for a 0.4 s cepstrogram, against
+  CPU-seconds down 21-36% on the same calls; a 0.2 s cepstrogram and all
+  pitch analysis are unaffected. If you analyse hundreds of sub-second
+  clips and wall clock matters more than load, this change moves the
+  wrong way for you. Output is bit-identical at every size, threads only
+  partition frames.
+
 ## pladdrr 5.0.6
 
 ### Bug fixes
@@ -8,6 +424,7 @@
   the frequency-change cost twice (capped at 0.01 instead of 1), so the
   Viterbi path, and the formants of `extract_formant()` after it, could
   differ from Praat by more than 1 kHz.
+
 - [`sound_extract_parts_pooled()`](https://humlab-speech.github.io/pladdrr/reference/sound_extract_parts_pooled.md)
   no longer leaks segments: they are now ordinary R-owned Sounds
   (`use_pool` is accepted but ignored). A Sound from
@@ -18,14 +435,18 @@
 - Loading the package uses ~40 MB less resident memory per R process
   (including every parallel worker): Praat’s 42 MB object list is now
   constant-initialised instead of being written at load time.
+
 - `Sound$resample()` (and therefore every Burg formant analysis) runs
   its sinc interpolation on multiple threads; output is bit-identical.
+
 - [`process_sounds_parallel()`](https://humlab-speech.github.io/pladdrr/reference/process_sounds_parallel.md)
   on PSOCK clusters (Windows) no longer ships every Sound’s samples to
   every worker with each task.
+
 - [`as_data_frame()`](https://tibble.tidyverse.org/reference/deprecated.html)
   for Spectrogram, ComplexSpectrogram and Matrix fills preallocated
   vectors (peak memory roughly halved for long sounds).
+
 - [`sound_mean()`](https://humlab-speech.github.io/pladdrr/reference/sound_mean.md),
   [`sound_min()`](https://humlab-speech.github.io/pladdrr/reference/sound_min.md),
   [`sound_max()`](https://humlab-speech.github.io/pladdrr/reference/sound_max.md),
@@ -33,8 +454,10 @@
   and
   [`sound_statistics()`](https://humlab-speech.github.io/pladdrr/reference/sound_statistics.md)
   read channel 1 directly instead of exporting all channels.
+
 - Voice activity ZCR framing is O(frames + crossings) instead of
   O(frames x crossings).
+
 - AVQI frees the per-interval Sounds once they are concatenated.
 
 ### Internal
@@ -42,6 +465,7 @@
 - Removed unused or unreachable SIMD code (pitch bridge, pitch filter,
   autocorrelation, window functions, SlopeSelector, cochleagram,
   excitation, FormantPath) and their internal test-only bindings.
+
 - Faithfulness registry: the `Pitch (cc)` and `Pitch (AC)` rows had been
   failing silently in the Praat oracle (a line wrap split the Praat
   command); fixed, and a FormantPath path-finder row was added.
@@ -71,8 +495,6 @@
     stops, doc anchors, load-time branches) marked `# nocov`.
   - NEWS spelling fixes and `inst/WORDLIST` additions (`dev`,
     `uncommented`).
-
-## pladdrr 5.0.5
 
 ### CRAN compliance
 

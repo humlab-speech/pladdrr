@@ -9,7 +9,7 @@ Sound$new(file_path)"></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">pladdrr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.0.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -84,8 +84,10 @@ Sound$new(file_path)"></head><body>
 
 
 <dl><dt id="arg-file-path">file_path<a class="anchor" aria-label="anchor" href="#arg-file-path"></a></dt>
-<dd><p>Path to audio file (WAV/AIFF/FLAC/MP3 via Praat, others via
-av fallback)</p></dd>
+<dd><p>Path to audio file. WAV and AIFF are read by Praat; FLAC, MP3,
+OGG and anything else Praat has no reader for go through the <code>av</code>
+fallback, which warns with <code>pladdrr_decoder_fallback</code> and needs
+<span class="pkg">av</span> installed</p></dd>
 
 
 <dt id="arg-channel">channel<a class="anchor" aria-label="anchor" href="#arg-channel"></a></dt>
