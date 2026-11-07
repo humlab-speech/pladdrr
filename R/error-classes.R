@@ -11,8 +11,17 @@
 #       conditions:
 #         pladdrr_input_error  — invalid argument or precondition failed
 #         pladdrr_praat_error  — Praat-internal failure
-#         pladdrr_data_loss    — output incomplete vs requested range; the
-# return value carries attr(., "pladdrr_data_loss")
+#         pladdrr_data_loss    — output incomplete vs requested range, or input
+#           shorter than its own header (a WAV read shorter than its `data`
+#           chunk claims); for these, attr(., "pladdrr_data_loss") on the value
+#           returned by with_pladdrr_errors() lists the routines that reported it
+#
+# Classes raised at R level are already classed and pass through untouched (they
+# carry $routine/$message on the condition, not an attribute on the value):
+#         pladdrr_data_loss         — .warn_data_loss(), e.g. a truncated WAV in
+#           .sound_ptr_from_path(); options(pladdrr.data_loss =) governs it
+#         pladdrr_decoder_fallback  — the native reader refused the file and av
+#           decoded it; deliberately NOT governed by that option
 #
 # Hierarchy: each class inherits from "pladdrr_error" -> "error" -> "condition"
 # (warnings inherit from "pladdrr_warning" -> "warning" -> "condition").
@@ -72,7 +81,7 @@ pladdrr_warning_cond <- function(klass, routine, param, message,
   )
 }
 
-#' Run an expression, reclassifying tagged pladdrr C++ errors/warnings.
+#' Run an expression, reclassifying tagged pladdrr C++ errors and warnings
 #'
 #' Any error or warning whose message matches the
 #' \code{"[pladdrr_<class>:<routine>:<param>] <message>"} tag is rethrown as a
@@ -82,19 +91,37 @@ pladdrr_warning_cond <- function(klass, routine, param, message,
 #' \itemize{
 #'   \item \code{pladdrr_input_error} — invalid argument or precondition failed
 #'   \item \code{pladdrr_praat_error} — Praat-internal failure
-#'   \item \code{pladdrr_data_loss}   — output incomplete vs requested range
+#'   \item \code{pladdrr_data_loss}   — output incomplete vs requested range, or
+#'     input shorter than its own header (a WAV read shorter than the length its
+#'     \code{data} chunk declares)
+#'   \item \code{pladdrr_decoder_fallback} — the native reader refused the file
+#'     and the \code{av} fallback decoded it instead
 #' }
-#' All inherit from \code{pladdrr_error} so a single
-#' \code{tryCatch(pladdrr_error = ...)} catches them all.
+#' The error classes inherit from \code{pladdrr_error} and the warning classes
+#' from \code{pladdrr_warning}, so \code{tryCatch(pladdrr_error = ...)} catches
+#' the failures; \code{pladdrr_data_loss} as a warning and
+#' \code{pladdrr_decoder_fallback} are caught as warnings.
 #'
-#' Data-loss warnings additionally attach
-#' \code{attr(., "pladdrr_data_loss")} to the result, listing every routine
-#' that reported missing values during the call.
+#' Only conditions carrying the C++ tag above are reclassified here. The ones
+#' pladdrr raises at R level are already classed and pass through unchanged:
+#' \code{pladdrr_data_loss} from \code{.warn_data_loss()} (out-of-range
+#' extraction, and a file read shorter than its own header) and
+#' \code{pladdrr_decoder_fallback} from the \code{av} fallback in
+#' \code{Sound(path = )}. Those two need no \code{with_pladdrr_errors()}; they
+#' carry \code{$routine} and \code{$message} on the condition, and no attribute
+#' on the value they interrupted.
+#'
+#' Data loss reported by a tagged C++ routine additionally attaches
+#' \code{attr(., "pladdrr_data_loss")} to the value
+#' \code{with_pladdrr_errors()} returns, listing every routine that reported
+#' missing values during the call. Values that take no attributes (an external
+#' pointer, an R6 object) get none.
 #'
 #' The reaction to data loss is controlled by
 #' \code{options(pladdrr.data_loss = )}: \code{"warn"} (default) raises a
 #' classed warning per incident, \code{"error"} stops at the first incident,
-#' \code{"silent"} only records the attribute.
+#' \code{"silent"} only records the attribute. It does not govern
+#' \code{pladdrr_decoder_fallback}: a decode that succeeded lost nothing.
 #'
 #' @param expr expression to evaluate
 #' @return value of \code{expr}, possibly with a \code{pladdrr_data_loss}

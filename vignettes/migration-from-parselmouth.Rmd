@@ -327,7 +327,7 @@ df['speaker'] = ['A', 'B', 'C']
 
 ### pladdrr + tidyverse
 
-```{r}
+```{r eval = requireNamespace("dplyr", quietly = TRUE) && requireNamespace("purrr", quietly = TRUE) && requireNamespace("tidyr", quietly = TRUE)}
 # Requires the dplyr, purrr, and tidyr packages (not pladdrr dependencies;
 # install separately if needed)
 library(pladdrr)

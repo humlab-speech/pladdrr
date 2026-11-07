@@ -38,7 +38,9 @@ private:
 
 public:
     RElectroglottogram() : ptr(R_NilValue) {}
-    RElectroglottogram(XPtr<structElectroglottogram> xptr) : ptr(xptr) {}
+    RElectroglottogram(XPtr<structElectroglottogram> xptr) : ptr(xptr) {
+        require_praat_class(ptr.get(), classElectroglottogram, "Not a Electroglottogram", "Electroglottogram", ".xptr");
+    }
 
     bool is_valid() { return ptr.get() != nullptr; }
 
@@ -237,6 +239,8 @@ XPtr<structElectroglottogram> electroglottogram_create(
 XPtr<structElectroglottogram> sound_extract_electroglottogram(
     XPtr<structSound> sound, int channel, bool invert) {
     if (!sound || !sound.get()) Rcpp::stop("Invalid Sound pointer");
+    // Strictly 1-based (Praat's own Melder_require agrees).
+    VALIDATE_CHANNEL_RANGE(sound, channel);
     try {
         autoElectroglottogram egg = Sound_extractElectroglottogram(
             sound.get(), channel, invert

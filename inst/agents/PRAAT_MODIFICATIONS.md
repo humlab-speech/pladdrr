@@ -1,7 +1,7 @@
 # Praat Source Modifications for pladdrr
 
-**Last Updated:** 2026-09-04
-**Package Version:** 5.0.5
+**Last Updated:** 2026-11-05
+**Package Version:** 5.1.0
 **Praat Base Version:** 6.4.x (vendored, tracked directly in this repo at src/praat.github.io as of 2026-09-05; previously a submodule pinned to fork `humlab-speech/praat.github.io`)
 **Upstream merge-base:** `b1b3199a3` (praat/praat.github.io master, 2025-11-22) — the submodule's own git history is no longer checked out locally, so per-commit divergence against upstream must be reconstructed by cloning `humlab-speech/praat.github.io` separately and diffing against the commit SHAs recorded in this document
 
@@ -16,7 +16,86 @@ This document details all modifications made to the Praat source code to enable 
 
 ---
 
-### Unreleased — Load-time RSS, FormantPath SIMD bug, dead SIMD hooks (2026-10-19)
+### v5.0.7 — automatic thread count follows the CPUs the process may use (2026-11-05, audit F-power-01/F-power-04)
+
+#### `src/melderthread_impl.cpp` — `MelderThread_getNumberOfProcessors()` is affinity- and quota-aware
+
+Not a vendored edit: the vendored `melder/MelderThread.cpp` is not compiled in
+pladdrr (this file provides the symbols). Its automatic thread count was
+`std::thread::hardware_concurrency()`, i.e. how many cores the *machine* has.
+Under `taskset(1)`, a container cpuset or a SLURM allocation that is several
+times the number of CPUs the process may actually use, and every extra thread
+only adds context switches, first-touch page faults and spin-waiting: measured
+on a 16-CPU mask, the 32-thread default cost +15 % CPU-seconds and +9 % wall
+over 8 threads for the same work, and +75 % wall versus a 12-thread cap.
+
+The count is now `sched_getaffinity(2)` CPU_COUNT, further capped by the cgroup
+CPU quota (`/sys/fs/cgroup/cpu.max`, cgroup v1 `cpu.cfs_quota_us`/`cpu.cfs_period_us`
+for hosts without v2), with `hardware_concurrency()` as the fallback when
+neither is available — so on Windows/macOS, and on a Linux root cgroup with
+`max`, the number is unchanged. Fractional quotas round up (2.5 CPUs → 3
+threads). The result is computed once and cached (a `/sys` read per analysis
+call would put file I/O in the hot path). The precedence rule is unchanged for
+users: `pladdrr_threads(n)` with n > 0 still overrides everything; n = 0 means
+"automatic", now meaning automatic *for the CPUs we have*.
+
+`R/parallel-batch.R` (`.default_n_cores()`, `.pladdrr_worker_thread_budget()`)
+and `batch_process()` read the same number instead of `parallel::detectCores()`:
+31 PSOCK workers on 4 usable CPUs cost +11 % CPU-seconds and +11 % wall over one
+worker per CPU. `pladdrr:::.pladdrr_cpus_for_limits()` exposes the pure rule
+(hardware, affinity, quota, period → count) for tests; the reads around it are
+platform I/O. Not covered: Windows job-object limits and macOS CPU limits —
+both keep the machine's core count.
+
+The same function applies one more cap: when `_R_CHECK_LIMIT_CORES_` is set to
+anything but `false` (what `R CMD check --as-cran` does; `parallel` honours it
+the same way) the *automatic* count is at most 2. Before, only the R-level worker
+default followed that variable, so the C++ pool used every core and CRAN's
+CPU-over-elapsed timing check noted the CPPS examples (3 s clip: ratio 7.7, now
+2.0; `tests/testthat/test-check-core-limit.R`). An explicit `pladdrr_threads(n)`
+still wins.
+
+### v5.0.7 — threading thresholds at the cepstrogram and formant sites (2026-11-05)
+
+#### `LPC/Sound_to_PowerCepstrogram.cpp` + `fon/Sound_to_Formant.cpp` — minimum work per thread
+
+**Problem:** `MelderThread_computeNumberOfThreads()` divides the frame count by
+`1.5 * thresholdNumberOfElementsPerThread`, so nothing in the model knows what
+starting a thread costs (24-53 us of CPU, plus the buffers the analysis allocates
+inside its thread block - the cepstrogram builds a `NUMFourierTable`, a `Sound`,
+a `Spectrum` and a `PowerCepstrum` per thread). Both sites were set below their
+break-even, i.e. they woke threads to do less work than handing the work out
+costs: one 3 s / 16 kHz clip asked for 24 (cepstrogram, threshold 40) and 32
+(formant, threshold 3) threads and cost 7.2x and 1.9x the serial CPU-seconds,
+the cepstrogram being slower in wall clock than the same call capped at 8 threads.
+
+**Fix:** both thresholds are now pladdrr constants in
+`src/pladdrr_thread_thresholds.h` - 250 and 40 frames per thread, 3x and 5x the
+break-even measured for that site (16 us/frame with 1.25 ms of extra CPU per
+cepstrogram thread => 79 frames; 39 us/frame with 0.31 ms per formant thread =>
+8 frames). 40 is also what 10 of the 11
+sibling LPC/formant sites already use (`LPC_and_Formant.cpp:214` is the
+exception at 80); `Sound_to_Pitch.cpp` keeps its own
+v4.8.9 value of 20. The constants are floors per grain and are deliberately not
+scaled by the core count - the existing concurrent-thread cap is what limits how
+many grains run at once, and the frame count decides whether there is work for
+them. Thread count does not change results (each frame is computed
+independently), so faithfulness is untouched; `tests/testthat/test-thread-granularity.R`
+pins both the decision and the bit identity, and
+the measurements and break-even derivation are in the header comment of
+`src/pladdrr_thread_thresholds.h`.
+
+**Platform note:** the divisor in `MelderThread_computeNumberOfThreads()` differs
+per platform (`floor(n/min)` on macOS, `floor(n/2/min)` on Windows,
+`round(n/1.5/min)` elsewhere), so the clip length below which a call stays on one
+thread is platform-dependent: the "under ~1.2 s stays serial" figures measured on
+Linux do not hold on macOS, where a 501-frame cepstrogram already gets two threads.
+Measured on an M1 (10 cores), the retune left CPPS wall time unchanged and cut a
+3 s cepstrogram's CPU time by 44 %.
+
+---
+
+### v5.0.6 — Load-time RSS, FormantPath SIMD bug, dead SIMD hooks (2026-10-19)
 
 #### `melder/melder_string32.h` + `sys/praat.cpp` — constant-initialise the object list
 
@@ -1376,3 +1455,66 @@ Legacy backup files exist in the submodule:
 - `melder/melder_files.cpp.backup`
 
 These can be removed once modifications are stable.
+
+## `src/uiform_libmode.cpp` replaces `sys/Ui.cpp` in the library build (not a vendored edit)
+
+`src/Makevars.in` does not compile `src/praat.github.io/sys/Ui.cpp` at all; the
+`UiForm` the script interpreter talks to is the hand-ported
+`src/uiform_libmode.cpp`, so it is pladdrr code and lives outside the "never
+hand-edit `src/praat.github.io/`" rule. Two consequences for later work:
+syncing the vendored tree will **not** bring any upstream fix to script
+argument handling (this file has to be compared against upstream `Ui.cpp` by
+hand), and `UiForm_addRadio` used to live here as dead code (no declaration in
+`sys/Ui.h`, no caller) and was deleted rather than renamed when the `base` ->
+`subtract` conversion was fixed in F-faith-13b.
+
+## `fon/Sound_to_Cochleagram.cpp` — reject an analysis window shorter than two samples (F-security-08)
+
+`Sound_to_Cochleagram` computed `nsamp_window = floor(dt_window / dx)`, then
+`halfnsamp_window = nsamp_window / 2 - 1`, then `nsamp_window = halfnsamp_window
+* 2` and handed that straight to `Sound_createSimple`. On a Sound sampled below
+~67 Hz (default `window_length` 0.03 s) that value goes **negative**, and the
+damage surfaces three functions away, in the FFT zero-padding step
+(`fon/Sound_and_Spectrum.cpp:30`, `data.part (my nx + 1, …) <<= 0.0`): the
+`part()` bounds check is a `Melder_assert`, which is compiled out under R's
+`-DNDEBUG`, so it writes before a 1-cell allocation and glibc aborts the whole R
+process (`free(): invalid pointer`, exit 134 — not catchable by `tryCatch()`).
+
+Two lines were added, mirroring what upstream already does at
+`fon/Sound_to_Pitch.cpp:356-357` for the identical computation:
+
+```c
+if (halfnsamp_window < 2)
+    Melder_throw (U"Analysis window too short.");
+```
+
+Why this file and not the R wrapper: the same C++ function is reached from the
+R6 door (`Sound$to_cochleagram()`), the module door
+(`cochleagram_module$Sound_to_Cochleagram`) and `praat_run_script()`, so a guard
+in R would leave the others aborting. Behaviour change, measured per rate: the
+guard refuses every sampling rate below 200 Hz at the default 0.03 s window
+(`floor(window * rate) >= 6`). Rates <= 66 Hz aborted; 67-133 Hz "succeeded" with
+an all-NaN cochleagram (0 of 4352 cells finite); 150-199 Hz was about 55% finite,
+the same degenerate shape as the still-accepted 200-500 Hz. Nothing usable is
+given up, but the change is user-visible and is in NEWS.
+
+Upstream conflict note: this hunk sits three lines above the frame-count guard
+(`if (nFrames < 2) return autoCochleagram ();`), which is untouched. If upstream
+ever adds its own window guard here, delete ours and keep upstream's.
+
+## `fon/Sound_to_Cochleagram.cpp`, `fon/Spectrum_to_Excitation.cpp` — bound the requested tensor (F-cochleagram-input-validation)
+
+`Sound_to_Cochleagram` and `Sound_to_Cochleagram_edb` size their output from
+`nf = iround (25.6 / df)`, and `Spectrum_to_Excitation` from
+`nbark = iround (25.6 / dbark)`, with no upper bound and no check that the count
+is positive. `df = 1e-9` is a 2.5 TB request: on Linux the allocator refuses and
+Praat reports an error, on macOS the pages are committed and the kernel SIGKILLs
+the R process (exit 137, measured: peak RSS above 4 GB, no R-level condition). A
+negative step gave a Cochleagram whose band count is negative.
+
+Each site now throws before allocating when the count is below 1 or the product
+exceeds the limits in `src/pladdrr_limits.h` (2^29 cochleagram cells; 10 000
+excitation bands, because the filter convolution is O(bands^2)). The guard is in
+C++ rather than R because the R6, module and script doors all reach it. Upstream
+Praat has no such limit, so if it adds one, delete ours and keep upstream's.
+

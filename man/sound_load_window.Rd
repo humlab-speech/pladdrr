@@ -7,7 +7,9 @@
 sound_load_window(path, start, end, resample_to = NULL, preserve_times = FALSE)
 }
 \arguments{
-\item{path}{Path to sound file (WAV, AIFF, FLAC, MP3, etc.)}
+\item{path}{Path to sound file in a format Praat's own streaming reader
+accepts (WAV, AIFF, NIST). FLAC and MP3 fail here: see
+\code{\link{longsound_open}}.}
 
 \item{start}{Start time of window in seconds}
 

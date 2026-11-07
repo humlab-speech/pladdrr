@@ -227,7 +227,7 @@ LongSound <- function(.xptr = NULL) {
   }
 
   mod <- get_module("longsound_module")
-  cpp_obj <- mod$RLongSound$new(.xptr)
+  cpp_obj <- with_pladdrr_errors(mod$RLongSound$new(.xptr))
 
   structure(list(
     .cpp = cpp_obj,
@@ -240,7 +240,11 @@ LongSound <- function(.xptr = NULL) {
 # ============================================================================
 
 #' Open a LongSound from file
-#' @param path Path to audio file (WAV, AIFF, FLAC, MP3, etc.)
+#' @param path Path to audio file in a format Praat's own streaming reader
+#'   accepts (WAV, AIFF, NIST). FLAC and MP3 do NOT work here: their decoders
+#'   were dropped from the vendored Praat tree, and the \code{av} fallback that
+#'   covers them exists only in \code{Sound(path = )}, which reads the whole
+#'   file into memory.
 #' @return LongSound object
 #' @export
 #' @examples

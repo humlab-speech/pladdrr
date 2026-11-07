@@ -21,6 +21,7 @@
 // Part of the pladdrr package - Phase 2.4 extension
 
 #include <Rcpp.h>
+#include "praat_xptr_utils.h"
 #include "module_common.h"
 #include "../datatable_utils.h"
 
@@ -80,7 +81,9 @@ public:
     RComplexSpectrogram() : ptr(R_NilValue) {}
 
     // Constructor from external pointer
-    RComplexSpectrogram(Rcpp::XPtr<structComplexSpectrogram> p) : ptr(p) {}
+    RComplexSpectrogram(Rcpp::XPtr<structComplexSpectrogram> p) : ptr(p) {
+        require_praat_class(ptr.get(), classComplexSpectrogram, "Not a ComplexSpectrogram", "ComplexSpectrogram", ".xptr");
+    }
 
     // ========================================================================
     // Validation

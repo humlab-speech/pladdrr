@@ -112,7 +112,7 @@ SpectrumTier <- function(.xptr = NULL) {
         "ltas$to_spectrum_tier_peaks()")
   }
   tier_mod <- get_module("spectrumtier_module")
-  cpp_obj <- tier_mod$RSpectrumTier$new(.xptr)
+  cpp_obj <- with_pladdrr_errors(tier_mod$RSpectrumTier$new(.xptr))
   structure(list(.xptr = .xptr, .cpp = cpp_obj),
     class = c("SpectrumTier", "PraatObject"))
 }

@@ -7469,6 +7469,20 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// pladdrr_cpus_for_limits
+int pladdrr_cpus_for_limits(int hardware_cores, int affinity_cores, int quota_microseconds, int period_microseconds);
+RcppExport SEXP _pladdrr_pladdrr_cpus_for_limits(SEXP hardware_coresSEXP, SEXP affinity_coresSEXP, SEXP quota_microsecondsSEXP, SEXP period_microsecondsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type hardware_cores(hardware_coresSEXP);
+    Rcpp::traits::input_parameter< int >::type affinity_cores(affinity_coresSEXP);
+    Rcpp::traits::input_parameter< int >::type quota_microseconds(quota_microsecondsSEXP);
+    Rcpp::traits::input_parameter< int >::type period_microseconds(period_microsecondsSEXP);
+    rcpp_result_gen = Rcpp::wrap(pladdrr_cpus_for_limits(hardware_cores, affinity_cores, quota_microseconds, period_microseconds));
+    return rcpp_result_gen;
+END_RCPP
+}
 // pladdrr_get_threads_cpp
 List pladdrr_get_threads_cpp();
 RcppExport SEXP _pladdrr_pladdrr_get_threads_cpp() {
@@ -7476,6 +7490,18 @@ BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     rcpp_result_gen = Rcpp::wrap(pladdrr_get_threads_cpp());
+    return rcpp_result_gen;
+END_RCPP
+}
+// pladdrr_thread_grains_cpp
+IntegerVector pladdrr_thread_grains_cpp(IntegerVector work_size, std::string site);
+RcppExport SEXP _pladdrr_pladdrr_thread_grains_cpp(SEXP work_sizeSEXP, SEXP siteSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerVector >::type work_size(work_sizeSEXP);
+    Rcpp::traits::input_parameter< std::string >::type site(siteSEXP);
+    rcpp_result_gen = Rcpp::wrap(pladdrr_thread_grains_cpp(work_size, site));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -8123,7 +8149,9 @@ extern const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_textgrid_duplicate_tier", (DL_FUNC) &_pladdrr_textgrid_duplicate_tier, 3},
     {"_pladdrr_textgrid_sound_extract_intervals_where", (DL_FUNC) &_pladdrr_textgrid_sound_extract_intervals_where, 6},
     {"_pladdrr_pladdrr_set_threads_cpp", (DL_FUNC) &_pladdrr_pladdrr_set_threads_cpp, 3},
+    {"_pladdrr_pladdrr_cpus_for_limits", (DL_FUNC) &_pladdrr_pladdrr_cpus_for_limits, 4},
     {"_pladdrr_pladdrr_get_threads_cpp", (DL_FUNC) &_pladdrr_pladdrr_get_threads_cpp, 0},
+    {"_pladdrr_pladdrr_thread_grains_cpp", (DL_FUNC) &_pladdrr_pladdrr_thread_grains_cpp, 2},
     {"_pladdrr_praat_error_to_r", (DL_FUNC) &_pladdrr_praat_error_to_r, 1},
     {"_pladdrr_vocaltract_create", (DL_FUNC) &_pladdrr_vocaltract_create, 2},
     {"_pladdrr_vocaltract_create_from_phone", (DL_FUNC) &_pladdrr_vocaltract_create_from_phone, 1},

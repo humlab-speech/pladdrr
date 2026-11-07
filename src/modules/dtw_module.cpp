@@ -55,7 +55,9 @@ private:
 
 public:
     RDTW() : ptr(R_NilValue) {}
-    RDTW(XPtr<structDTW> xptr) : ptr(xptr) {}
+    RDTW(XPtr<structDTW> xptr) : ptr(xptr) {
+        require_praat_class(ptr.get(), classDTW, "Not a DTW", "DTW", ".xptr");
+    }
 
     bool is_valid() { return ptr.get() != nullptr; }
 

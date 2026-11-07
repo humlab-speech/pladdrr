@@ -47,7 +47,9 @@ private:
 
 public:
     RPowerCepstrum() : ptr(R_NilValue) {}
-    RPowerCepstrum(XPtr<structPowerCepstrum> xptr) : ptr(xptr) {}
+    RPowerCepstrum(XPtr<structPowerCepstrum> xptr) : ptr(xptr) {
+        require_praat_class(ptr.get(), classPowerCepstrum, "Not a PowerCepstrum", "PowerCepstrum", ".xptr");
+    }
 
     bool is_valid() { return ptr.get() != nullptr; }
 
@@ -288,7 +290,9 @@ private:
 
 public:
     RPowerCepstrogram() : ptr(R_NilValue) {}
-    RPowerCepstrogram(XPtr<structPowerCepstrogram> xptr) : ptr(xptr) {}
+    RPowerCepstrogram(XPtr<structPowerCepstrogram> xptr) : ptr(xptr) {
+        require_praat_class(ptr.get(), classPowerCepstrogram, "Not a PowerCepstrogram", "PowerCepstrogram", ".xptr");
+    }
 
     bool is_valid() { return ptr.get() != nullptr; }
 

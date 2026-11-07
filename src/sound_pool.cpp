@@ -425,6 +425,11 @@ List sound_extract_parts_pooled(
             (void) use_pool;
             result[i] = make_praat_xptr<structSound>(part.releaseToAmbiguousOwner());
         } catch (...) {
+            // Sound_extractPart signals through Praat's global error buffer,
+            // which is emptied only by Melder_clearError(); swallowing the
+            // error here without it armed every later Praat error in the
+            // session with this segment's failure text.
+            Melder_clearError();
             result[i] = R_NilValue;
         }
     }

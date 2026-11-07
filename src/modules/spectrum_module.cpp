@@ -36,7 +36,9 @@ private:
 
 public:
     RSpectrum() : ptr(R_NilValue) {}
-    RSpectrum(XPtr<structSpectrum> xptr) : ptr(xptr) {}
+    RSpectrum(XPtr<structSpectrum> xptr) : ptr(xptr) {
+        require_praat_class(ptr.get(), classSpectrum, "Not a Spectrum", "Spectrum", ".xptr");
+    }
 
     bool is_valid() { return ptr.get() != nullptr; }
 

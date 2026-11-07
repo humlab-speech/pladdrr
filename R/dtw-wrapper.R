@@ -201,7 +201,7 @@ DTW <- function(.xptr = NULL) {
   }
 
   dtw_mod <- get_module("dtw_module")
-  cpp_obj <- dtw_mod$RDTW$new(.xptr)
+  cpp_obj <- with_pladdrr_errors(dtw_mod$RDTW$new(.xptr))
 
   obj <- structure(c(
     list(.cpp = cpp_obj,

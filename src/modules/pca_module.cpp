@@ -46,7 +46,9 @@ private:
 
 public:
     RPCA() : ptr(R_NilValue) {}
-    RPCA(XPtr<structPCA> xptr) : ptr(xptr) {}
+    RPCA(XPtr<structPCA> xptr) : ptr(xptr) {
+        require_praat_class(ptr.get(), classPCA, "Not a PCA", "PCA", ".xptr");
+    }
 
     bool is_valid() { return ptr.get() != nullptr; }
 

@@ -652,7 +652,9 @@ List pitch_get_adaptive_range(
 //' @param from_times Numeric vector of interval start times
 //' @param to_times Numeric vector of interval end times
 //' @param metrics Character vector: "min", "max", "mean", "stdev", "q25", "q50", "q75"
-//' @param averaging_method Integer (0=ENERGY, 1=SONES, 2=DB)
+//' @param averaging_method Integer Praat Intensity_averaging code
+//'   (0=MEDIAN, 1=ENERGY, 2=SONES, 3=DB); the default 0 is the median, while
+//'   Praat's legacy two-argument "Get mean" is the plain dB mean (= 3)
 //' @return NumericMatrix with intervals as rows, metrics as columns
 //' @keywords internal
 //' @examples
@@ -713,7 +715,8 @@ NumericMatrix intensity_get_statistics_batch(
                     value = Vector_getMaximum(intensity.get(), from, to,
                                              kVector_peakInterpolation::NONE);
                 } else if (metric == "mean") {
-                    // Intensity_getAverage takes int averaging_method (0=energy, 1=sones, 2=dB)
+                    // Intensity_getAverage takes int averaging_method
+                    // (0=median, 1=energy, 2=sones, 3=dB; fon/Intensity.h:64-67)
                     value = Intensity_getAverage(intensity.get(), from, to, averaging_method);
                 } else if (metric == "stdev") {
                     // Calculate std dev from quantiles (no direct function available)

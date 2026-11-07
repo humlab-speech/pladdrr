@@ -29,6 +29,7 @@
  */
 
 #include "Sound_to_Formant.h"
+#include "pladdrr_thread_thresholds.h"
 #include "NUM2.h"
 #include "Polynomial.h"
 #include "Roots.h"
@@ -364,7 +365,9 @@ static autoFormant Sound_to_Formant_any_inplace (Sound me, double dt_in, integer
 
 	integer maximumFrameLength = nsamp_window;
 
-	MelderThread_PARALLELIZE (numberOfFrames, 3)
+	// PLADDRR: was 3 frames per thread, i.e. one Burg frame per thread-spawn;
+	// same scale as the other LPC/formant sites, see the header.
+	MelderThread_PARALLELIZE (numberOfFrames, PLADDRR_FORMANT_FRAMES_PER_THREAD)
 		auto frameBuffer = raw_VEC (maximumFrameLength);
 		auto coefficients = raw_VEC (numberOfPoles);   // superfluous if which==2, but nobody uses that anyway
 	MelderThread_FOR (iframe) {

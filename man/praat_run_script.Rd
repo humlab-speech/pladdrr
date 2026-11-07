@@ -16,6 +16,8 @@ Invisibly returns NULL
 Executes a Praat script with automatic interpreter initialization.
 Objects created during script execution remain in Praat's internal object
  list.
+This includes objects created before a line that fails, as in Praat itself;
+empty the list with \code{PraatInterpreter$new()$clear_objects()}.
 }
 \examples{
 # Create a sound and extract pitch

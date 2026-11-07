@@ -104,7 +104,7 @@ long plain vectors — for example the batch statistics bridges (`mean`,
 `pladdrr_simd()` lets you toggle SIMD on and off at runtime so you can A/B
 your own workload:
 
-```{r simd-toggle}
+```{r simd-toggle, eval = requireNamespace("microbenchmark", quietly = TRUE)}
 library(microbenchmark)
 
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
@@ -528,7 +528,7 @@ intensity_stats <- pladdrr:::intensity_get_statistics_batch(
   from_times,
   to_times,
   c("min", "max", "mean"),
-  averaging_method = 0L  # Energy averaging
+  averaging_method = 1L  # Energy averaging
 )
 ```
 
@@ -585,7 +585,7 @@ pitch2 <- sound$to_pitch_cc(
 For custom window functions or transforms, use compiled C++ functions instead
 of an R callback evaluated once per sample:
 
-```{r xptr-windows}
+```{r xptr-windows, eval = requireNamespace("RcppXPtrUtils", quietly = TRUE)}
 # Requires: install.packages("RcppXPtrUtils")
 library(RcppXPtrUtils)
 
@@ -609,7 +609,7 @@ windowed2 <- apply_window_xptr(sound, hamming)
 
 Custom transforms work similarly:
 
-```{r xptr-transforms}
+```{r xptr-transforms, eval = requireNamespace("RcppXPtrUtils", quietly = TRUE)}
 # Create soft clipping function
 soft_clip <- cppXPtr(
   "double clip(double x) { return tanh(x * 2.0); }",

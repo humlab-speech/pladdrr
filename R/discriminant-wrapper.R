@@ -162,7 +162,7 @@ Discriminant <- function(.xptr = NULL) {
   }
 
   disc_mod <- get_module("discriminant_module")
-  cpp_obj <- disc_mod$RDiscriminant$new(.xptr)
+  cpp_obj <- with_pladdrr_errors(disc_mod$RDiscriminant$new(.xptr))
 
   structure(list(
     .cpp = cpp_obj,

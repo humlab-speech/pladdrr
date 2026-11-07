@@ -23,6 +23,7 @@
 #include <numeric>
 #include <algorithm>
 #include "praat_xptr_utils.h"
+#include "pladdrr_errors.h"
 #include "praat_error_handling.h"
 #include "simd_utils.h"
 #include "fon/Matrix.h"
@@ -90,7 +91,12 @@ SEXP matrix_read(std::string path) {
   try {
     structMelderFile file = {};
     Melder_relativePathToFile(Melder_peek8to32(path.c_str()), &file);
-    autoMatrix matrix = Data_readFromTextFile(&file).static_cast_move<structMatrix>();
+    // The file names the class to instantiate, so the result is only known to
+    // be a Matrix after checking -- casting blindly is layout confusion.
+    autoDaata data = Data_readFromTextFile(&file);
+    require_praat_class(data.get(), classMatrix, "File is not a Matrix: " + path,
+                        "matrix_read", "path");
+    autoMatrix matrix = data.static_cast_move<structMatrix>();
     return create_xptr_from_auto<structMatrix>(matrix);
   } catch (MelderError) {
     Melder_clearError();

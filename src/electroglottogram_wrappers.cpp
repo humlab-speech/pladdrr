@@ -17,6 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 #include <Rcpp.h>
+#include "modules/module_common.h"
 #include "praat.github.io/sys/Thing.h"
 #include "praat.github.io/sensors/Electroglottogram.h"
 #include "praat.github.io/fon/Sound.h"
@@ -38,6 +39,9 @@ SEXP electroglottogram_create_cpp(double xmin, double xmax, int nx, double dx, d
 SEXP sound_extract_electroglottogram_cpp(SEXP xptr, int channel, bool invert) {
   try {
     Sound sound = static_cast<Sound>(R_ExternalPtrAddr(xptr));
+    // Strictly 1-based (Praat's own Melder_require agrees); guarded here so the
+    // R error names the channel instead of the generic conversion failure.
+    VALIDATE_CHANNEL_RANGE(sound, channel);
     autoElectroglottogram egg = Sound_extractElectroglottogram(sound, channel, invert);
     return Rcpp::XPtr<structElectroglottogram>(egg.releaseToAmbiguousOwner());
   } catch (MelderError) {

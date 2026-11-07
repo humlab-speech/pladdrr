@@ -64,7 +64,8 @@ mkdir -p "$(dirname "$OUT")"
   done
 
   printf '\n## Threaded modules per CLAUDE.md\n\n'
-  printf -- '- `Sound_to_PowerCepstrogram` — `MelderThread_PARALLELIZE`, threshold=40 frames\n'
+  printf -- '- `Sound_to_PowerCepstrogram` — `MelderThread_PARALLELIZE`, threshold=250 frames\n'
+  printf -- '- `Sound_to_Formant` — `MelderThread_PARALLELIZE`, threshold=40 frames\n'
   printf -- '- `PowerCepstrogram_to_Matrix_CPP` — `SampledIntoSampled_mt`\n'
   printf -- '- `PowerCepstrogram_smooth_fast` — parallelised `Sampled_getMean`\n'
   printf -- '- `Sound_to_Harmonicity_GNE` (v4.8.30) — Loops B and C parallelised\n'

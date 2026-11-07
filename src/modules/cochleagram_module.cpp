@@ -36,7 +36,9 @@ private:
 
 public:
     RCochleagram() : ptr(R_NilValue) {}
-    RCochleagram(XPtr<structCochleagram> xptr) : ptr(xptr) {}
+    RCochleagram(XPtr<structCochleagram> xptr) : ptr(xptr) {
+        require_praat_class(ptr.get(), classCochleagram, "Not a Cochleagram", "Cochleagram", ".xptr");
+    }
 
     bool is_valid() { return ptr.get() != nullptr; }
 

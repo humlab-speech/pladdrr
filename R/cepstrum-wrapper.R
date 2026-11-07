@@ -89,7 +89,7 @@ Cepstrum <- function(.xptr) {
   }
   
   ceps_mod <- get_module("cepstrum_module")
-  cpp_obj <- ceps_mod$RCepstrum$new(.xptr)
+  cpp_obj <- with_pladdrr_errors(ceps_mod$RCepstrum$new(.xptr))
   
   structure(list(
     .cpp = cpp_obj,

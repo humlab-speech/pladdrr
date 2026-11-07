@@ -40,7 +40,9 @@ private:
 
 public:
     RLPC() : ptr(R_NilValue) {}
-    RLPC(XPtr<structLPC> xptr) : ptr(xptr) {}
+    RLPC(XPtr<structLPC> xptr) : ptr(xptr) {
+        require_praat_class(ptr.get(), classLPC, "Not a LPC", "LPC", ".xptr");
+    }
 
     bool is_valid() { return ptr.get() != nullptr; }
 
@@ -173,6 +175,11 @@ public:
     XPtr<structSound> filter_inverse_at_time_ptr(XPtr<structSound> sound, int channel, double time) {
         VALIDATE_PTR(ptr, LPC);
         if (!sound || !sound.get()) Rcpp::stop("Invalid Sound pointer");
+        // channel 0 = every channel; Praat clamps a too-large channel to 1, we
+        // error rather than silently inverse-filter the wrong channel.
+        if (channel < 0 || channel > sound->ny) {
+            Rcpp::stop("Channel out of range [0, %d]: %d", sound->ny, channel);
+        }
         try {
             autoSound source = LPC_Sound_filterInverseWithFilterAtTime(
                 ptr.get(), sound.get(), static_cast<integer>(channel), time

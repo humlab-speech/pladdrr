@@ -104,7 +104,7 @@ ComplexSpectrogram <- function(sound, window_length = 0.005,
   xptr <- cs_mod$complexspectrogram_create_from_sound(
     sound_ptr, window_length, maximum_frequency
   )
-  cpp_obj <- cs_mod$RComplexSpectrogram$new(xptr)
+  cpp_obj <- with_pladdrr_errors(cs_mod$RComplexSpectrogram$new(xptr))
 
   structure(list(
     .cpp = cpp_obj

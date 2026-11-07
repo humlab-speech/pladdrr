@@ -34,6 +34,9 @@
 #include "praat.github.io/dwsys/NUMlapack.h"
 #include "praat.github.io/melder/NUMrandom.h"
 #include <atomic>
+#include <cctype>
+#include <cstdlib>
+#include <string>
 
 #ifndef PLADDRR_FULL_PRAAT
 // ManPage enum implementations (needed by ManPages class)
@@ -193,6 +196,11 @@ void praat_show () { /* No-op */ }
 #include <exception>
 #include <system_error>
 #include <memory>
+#include <cstdio>
+
+#if defined (__linux__)
+	#include <sched.h>   // sched_getaffinity, cpu_set_t, CPU_COUNT (POSIX/GNU)
+#endif
 
 #if defined (_WIN32)
 	#define WIN32_LEAN_AND_MEAN
@@ -283,9 +291,114 @@ static struct {
     bool traceThreads = false;
 } melderthread_prefs;
 
+/*
+	How many CPUs this process may actually run on, as a pure function of the
+	three sources of that answer so the rule can be unit-tested with synthetic
+	inputs (`.pladdrr_cpus_for_limits`); reading the kernel's and the cgroup's
+	answers is the I/O around it.
+
+	`std::thread::hardware_concurrency()` says how many cores the *machine* has,
+	which is not how many this process may use: inside a container cpuset, under
+	taskset(1) or in a SLURM allocation it is several times too high, and every
+	thread above the usable CPU count only adds context switches, page faults and
+	spin-waiting (audit F-power-01: the 32-thread default on a 16-CPU mask cost
+	+15 % CPU-seconds and +9 % wall over 8 threads). Where the platform has no
+	affinity API (Windows, macOS) the argument is 0 and the answer stays the
+	machine's core count, i.e. exactly the pre-v5.0.7 behaviour.
+	shortcut: Windows job objects and macOS CPU limits are not read; upgrade by
+	adding GetProcessAffinityMask / sysctl QoS queries here.
+*/
+integer MelderThread_availableProcessorsForLimits (integer numberOfHardwareCores,
+    integer numberOfAffinityCores, integer quotaMicroseconds, integer periodMicroseconds)
+{
+    integer numberOfCores = numberOfAffinityCores > 0
+        ? numberOfAffinityCores : numberOfHardwareCores;
+    if (quotaMicroseconds > 0 && periodMicroseconds > 0) {
+        /* round a fractional quota (2.5 CPUs) up: 3 threads may still run, they
+           just do not all get the whole period */
+        integer quotaCores = (quotaMicroseconds + periodMicroseconds - 1)
+            / periodMicroseconds;
+        if (quotaCores < numberOfCores) numberOfCores = quotaCores;
+    }
+    return numberOfCores < 1 ? 1 : numberOfCores;
+}
+
+#if defined (__linux__)
+static integer readIntegerFile (const char *path) {
+    FILE *file = fopen (path, "r");
+    if (file == nullptr) return 0;
+    long long value = 0;
+    bool read = fscanf (file, " %lld", & value) == 1 && value > 0;
+    fclose (file);
+    return read ? (integer) value : 0;
+}
+
+/*
+	Cgroup CPU quota in microseconds (0 = no limit). cgroup v2 keeps quota and
+	period in one file and writes "max" when unlimited; cgroup v1 (older Docker
+	and Kubernetes hosts) splits them and uses -1. A quota is the case where the
+	affinity mask is the full machine but only part of its time is ours.
+*/
+static integer cgroupQuotaMicroseconds (integer *periodMicroseconds) {
+    *periodMicroseconds = 0;
+    FILE *file = fopen ("/sys/fs/cgroup/cpu.max", "r");
+    if (file != nullptr) {
+        long long quota = 0, period = 0;
+        bool limited = fscanf (file, " %lld %lld", & quota, & period) == 2
+            && quota > 0 && period > 0;
+        fclose (file);
+        if (! limited) return 0;
+        *periodMicroseconds = (integer) period;
+        return (integer) quota;
+    }
+    integer quota = readIntegerFile ("/sys/fs/cgroup/cpu/cpu.cfs_quota_us");
+    integer period = readIntegerFile ("/sys/fs/cgroup/cpu/cpu.cfs_period_us");
+    if (quota <= 0 || period <= 0) return 0;
+    *periodMicroseconds = period;
+    return quota;
+}
+#endif
+
+/*
+    R CMD check --as-cran sets _R_CHECK_LIMIT_CORES_ (anything but "false") to say
+    "use at most two cores"; parallel:::.check_ncores applies the same test on the
+    R side. Without it the default pool here is every core, and CRAN's timing check
+    (CPU time more than 2.5x elapsed) notes the CPPS examples at 4-6x.
+    shortcut: only the automatic default is capped; an explicit pladdrr_threads(n)
+    still wins, as everywhere else.
+*/
+static bool checkLimitsCores () {
+    const char *value = std::getenv ("_R_CHECK_LIMIT_CORES_");
+    if (value == nullptr || value [0] == '\0') return false;
+    std::string text (value);
+    for (char &c : text) c = (char) std::tolower ((unsigned char) c);
+    return text != "false";
+}
+
+static integer availableProcessors () {
+    integer affinityCores = 0, quotaMicroseconds = 0, periodMicroseconds = 0;
+    #if defined (__linux__)
+        cpu_set_t set;
+        CPU_ZERO (& set);
+        if (sched_getaffinity (0, sizeof set, & set) == 0)
+            affinityCores = (integer) CPU_COUNT (& set);
+        quotaMicroseconds = cgroupQuotaMicroseconds (& periodMicroseconds);
+    #endif
+    integer numberOfProcessors = MelderThread_availableProcessorsForLimits (
+        (integer) std::thread::hardware_concurrency (),
+        affinityCores, quotaMicroseconds, periodMicroseconds);
+    if (checkLimitsCores () && numberOfProcessors > 2) numberOfProcessors = 2;
+    return numberOfProcessors;
+}
+
 integer MelderThread_getNumberOfProcessors () {
-    return Melder_clippedLeft (1_integer,
-        (integer) std::thread::hardware_concurrency ());
+    /*
+        Computed once: neither the affinity mask nor the cgroup quota changes
+        during an R session in a way a thread pool should chase, and reading
+        /sys/fs/cgroup on every analysis would put a file open in the hot path.
+    */
+    static const integer numberOfProcessors = availableProcessors ();
+    return numberOfProcessors;
 }
 
 bool MelderThread_getUseMultithreading () {

@@ -21,6 +21,7 @@
 // Part of the pladdrr package - Phase 2.2 extension
 
 #include <Rcpp.h>
+#include "praat_xptr_utils.h"
 #include "module_common.h"
 #include "../datatable_utils.h"
 
@@ -98,7 +99,9 @@ public:
     RFormantPath() : ptr(R_NilValue) {}
 
     // Constructor from external pointer
-    RFormantPath(Rcpp::XPtr<structFormantPath> p) : ptr(p) {}
+    RFormantPath(Rcpp::XPtr<structFormantPath> p) : ptr(p) {
+        require_praat_class(ptr.get(), classFormantPath, "Not a FormantPath", "FormantPath", ".xptr");
+    }
 
     // ========================================================================
     // Validation

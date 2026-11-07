@@ -25,9 +25,11 @@
 #define PRAAT_XPTR_UTILS_H
 
 #include <Rcpp.h>
+#include <string>
 #include <type_traits>
 #include "sys/Thing.h"
 #include "melder/melder.h"
+#include "pladdrr_errors.h"
 
 // R finalizer that releases a Praat object with forget() (not C++ delete).
 // Registered explicitly via R_RegisterCFinalizerEx so there is no ambiguity
@@ -53,6 +55,23 @@ Rcpp::XPtr<T> make_praat_xptr(T* raw) {
 template<typename T, typename AutoType>
 Rcpp::XPtr<T> create_xptr_from_auto(AutoType& auto_obj) {
     return make_praat_xptr<T>(auto_obj.releaseToAmbiguousOwner());
+}
+
+// The one class check every hand-over of a Praat object into a wrapper must
+// pass. A text file names the class to instantiate and R can hand a pointer to
+// any constructor, so in both cases the object is only known to be a `T` after
+// this test; reinterpreting it before that is layout confusion (garbage fields,
+// and on the first out-of-range read an uncatchable SIGSEGV).
+// Thing_isa is a *subclass* test on the semantic chain, exactly like Praat's own
+// readers: Ltas/Sound still pass as Matrix, StylPitch still is PitchTier.
+// A null pointer is left to the existing null guards (Thing_isa fatals on one).
+inline void require_praat_class(Thing thing, ClassInfo expected,
+                                const std::string& what, const char* routine,
+                                const char* param) {
+    if (thing == nullptr || Thing_isa(thing, expected)) return;
+    PLADDRR_STOP_INPUT(routine, param,
+                       what + " (found " +
+                       Melder_peek32to8(Thing_className(thing)) + ")");
 }
 
 // Validate XPtr before use

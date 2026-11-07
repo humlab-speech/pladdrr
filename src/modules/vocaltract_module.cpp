@@ -35,7 +35,9 @@ private:
 
 public:
     RVocalTract() : ptr(R_NilValue) {}
-    RVocalTract(XPtr<structVocalTract> xptr) : ptr(xptr) {}
+    RVocalTract(XPtr<structVocalTract> xptr) : ptr(xptr) {
+        require_praat_class(ptr.get(), classVocalTract, "Not a VocalTract", "VocalTract", ".xptr");
+    }
 
     bool is_valid() { return ptr.get() != nullptr; }
 

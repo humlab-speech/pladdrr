@@ -490,7 +490,7 @@ ggplot(pitch_df, aes(x = time, y = frequency)) +
 
 ## Multi-Panel Figures
 
-```{r multipanel}
+```{r multipanel, eval = requireNamespace("gridExtra", quietly = TRUE)}
 library(gridExtra)
 
 # Create individual plots

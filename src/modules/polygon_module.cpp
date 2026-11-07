@@ -21,6 +21,7 @@
 // Part of the pladdrr package - Phase 2 extension
 
 #include <Rcpp.h>
+#include "praat_xptr_utils.h"
 #include "module_common.h"
 #include "../datatable_utils.h"
 
@@ -81,7 +82,9 @@ public:
     RPolygon() : ptr(R_NilValue) {}
 
     // Constructor from external pointer
-    RPolygon(Rcpp::XPtr<structPolygon> p) : ptr(p) {}
+    RPolygon(Rcpp::XPtr<structPolygon> p) : ptr(p) {
+        require_praat_class(ptr.get(), classPolygon, "Not a Polygon", "Polygon", ".xptr");
+    }
 
     // ========================================================================
     // Properties (read-only)

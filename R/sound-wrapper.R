@@ -21,7 +21,17 @@
 #'     were dropped from the vendored Praat tree in v4.9.5 to keep the CRAN
 #'     tarball within limits, so those formats need \code{av} installed
 #'     (\code{install.packages("av")}). Without it, reading a FLAC or MP3
-#'     file raises an error naming the missing package.
+#'     file raises an error naming the missing package. The fallback announces
+#'     itself once per file read with a \code{pladdrr_decoder_fallback}
+#'     warning (a warning rather than a console message, so a caller can catch
+#'     it, filter it or turn it into an error); sample values, channel count
+#'     and duration are then those of the file (a multichannel file comes back
+#'     as a multichannel Sound), so a lossless FLAC reads like the WAV it came
+#'     from. AAC/MP4 containers carry an encoder delay that libav does not
+#'     trim, so such a file comes back a few milliseconds longer than what was
+#'     written (the 2026-11 audit measured 8000 samples written, 8192 read at
+#'     8 kHz): trim with \code{Sound$extract()} when you need sample-exact
+#'     alignment.
 #' }
 #'
 #' Convert to WAV up front if you want to avoid the \code{av} dependency
@@ -49,8 +59,10 @@
 #' \item \code{get_rms()}, \code{get_energy()}, \code{get_power()} - energy
 #'  measures
 #'   \item \code{get_intensity_db()} - intensity in dB
-#' \item \code{get_minimum()}, \code{get_maximum()}, \code{get_mean()} -
-#'  amplitude statistics
+#' \item \code{get_minimum(from_time, to_time, channel)},
+#'  \code{get_maximum(from_time, to_time, channel)},
+#'  \code{get_mean(from_time, to_time, channel)} - amplitude statistics on one
+#'  channel, or on all of them when \code{channel = 0}
 #'   \item \code{get_values(channel)} - sample values as a numeric vector
 #'   \item \code{get_sample_times()} - sample times as a numeric vector
 #' }
@@ -203,17 +215,17 @@ NULL
 .sound_methods$get_intensity_db <- function(.self) .self$.cpp$get_intensity_db()
 
 .sound_methods$get_minimum <- function(.self, from_time = 0.0, to_time = 0.0,
-  channel = 1, interpolation = "parabolic")
+  channel = 0, interpolation = "parabolic")
   {
   .self$.cpp$get_minimum(as.numeric(from_time), as.numeric(to_time),
-    .praat_peak_interpolation_code(interpolation))
+    .praat_peak_interpolation_code(interpolation), as.integer(channel))
 }
 
 .sound_methods$get_maximum <- function(.self, from_time = 0.0, to_time = 0.0,
-  channel = 1, interpolation = "parabolic")
+  channel = 0, interpolation = "parabolic")
   {
   .self$.cpp$get_maximum(as.numeric(from_time), as.numeric(to_time),
-    .praat_peak_interpolation_code(interpolation))
+    .praat_peak_interpolation_code(interpolation), as.integer(channel))
 }
 
 .sound_methods$get_mean <- function(.self, from_time = 0.0, to_time = 0.0,
@@ -683,20 +695,28 @@ NULL
   TextGrid(.xptr = tg_ptr)
 }
 
+# Positive, finite, non-NA step sizes. A negative or zero step reaches Praat as a
+# negative band count and comes back as a Cochleagram whose as.matrix() fails
+# far from the call; the size bound for huge requests is in C++
+# (src/pladdrr_limits.h) because the script and module doors need it too.
+.check_cochleagram_steps <- function(routine, ...) {
+  steps <- list(...)
+  for (nm in names(steps)) {
+    v <- steps[[nm]]
+    if (!.is_numeric_scalar(v) || !is.finite(v) || v <= 0)
+      .stop_input(routine, nm, paste0(nm, " must be a positive number"))
+  }
+  invisible(NULL)
+}
+
 .sound_methods$to_cochleagram <- function(.self, dt = 0.01, df = 0.1,
   window_length = 0.03,
                                            forward_masking_time = 0.03) {
-  stopifnot(
-    "dt must be a positive number" = is.numeric(
-      dt) && length(dt) == 1 && dt > 0,
-    "df must be a positive number" = is.numeric(
-      df) && length(df) == 1 && df > 0,
-    "window_length must be a positive number" = is.numeric(
-      window_length) && length(window_length) == 1 &&
-      window_length > 0,
-    "forward_masking_time must be a non-negative number" = is.numeric(
-      forward_masking_time) &&
-      length(forward_masking_time) == 1 && forward_masking_time >= 0)
+  .check_cochleagram_steps("to_cochleagram", dt = dt, df = df,
+    window_length = window_length)
+  if (!.is_numeric_scalar(forward_masking_time) || forward_masking_time < 0)
+    .stop_input("to_cochleagram", "forward_masking_time",
+      "must be a non-negative number")
   cochleagram_ptr <- .sound_to_cochleagram(.self$.xptr, dt, df, window_length,
     forward_masking_time)
   Cochleagram(.xptr = cochleagram_ptr)
@@ -717,6 +737,7 @@ NULL
          "more stable.",
          call. = FALSE)
   }
+  .check_cochleagram_steps("to_cochleagram_edb", dtime = dtime, dfreq = dfreq)
   cochleagram_ptr <- .sound_to_cochleagram_edb(
     .self$.xptr, dtime, dfreq, has_synapse,
     replenishment_rate, loss_rate, return_rate, reprocessing_rate)
@@ -1161,24 +1182,60 @@ lockEnvironment(.sound_methods, bindings = TRUE)
 # Read a sound file: native Praat reader first, av fallback for exotic formats.
 .sound_ptr_from_path <- function(path) {
   if (!file.exists(path)) stop("Sound file not found: ", path)
-  tryCatch(
-    .sound_read_from_file_native(path),
+  loss <- NULL
+  ptr <- tryCatch(
+    withCallingHandlers(
+      .sound_read_from_file_native(path),
+      warning = function(w) {
+        if (!is.null(.parse_pladdrr_tag(conditionMessage(w)))) {
+          loss <<- w
+          invokeRestart("muffleWarning")
+        }
+      }),
     error = function(e) {
       if (!requireNamespace("av", quietly = TRUE)) {
         stop("Native reader failed and 'av' package not available.\n",
-             "Install av: remotes::install_github('humlab-speech/av')\n",
+             "Install av: install.packages('av')\n",
              "Native error: ", e$message)
       }
+      # A warning, not a console message: "you asked for a sound file and got
+      # it through another decoder" is exactly what a caller must be able to
+      # catch (house convention: warning = not what you asked for, see
+      # R/validators.R). Once per load, classed so it can be filtered.
+      warning(pladdrr_warning_cond("pladdrr_decoder_fallback", "Sound",
+        NA_character_,
+        paste0("'", path, "' decoded with the av (libav) fallback reader;",
+          " amplitudes are the file's own, channels and length come from",
+          " the container. Native reader said: ", e$message)))
+      # shortcut: AAC/MP4 encoder delay is left in (Praat has no reader for
+      # these, so there is no oracle behaviour to reproduce); the upgrade path
+      # is av's start_pts, dropping that many samples.
       audio_info <- av::av_media_info(path)
-      audio_data <- av::read_audio_bin(path)
-      max_value <- max(abs(audio_data))
-      if (max_value > 0) audio_data <- audio_data / max_value
-      if (is.matrix(audio_data)) audio_data <- t(audio_data)
-      else audio_data <- matrix(audio_data, nrow = 1)
+      channels <- audio_info$audio$channels
+      # NULL or NA (av reports NA when the container does not say): without this
+      # the NA reached matrix() and surfaced as "invalid 'dim'".
+      if (length(channels) != 1L || is.na(channels)) channels <- 1L
+      # av::read_audio_bin() returns one interleaved integer vector of raw
+      # S32LE samples (full scale 2^31), not a channels x samples matrix in
+      # +-1: scale by full scale, then de-interleave column-major (av fills
+      # L,R,L,R) so row 1 is channel 1 — same object as matrix(x, nrow =
+      # channels) but without copying the samples. Scaling by the file's own
+      # peak would destroy the absolute level, and one row would fold every
+      # multichannel file into a track of twice the length.
+      audio_data <- av::read_audio_bin(path) / 2147483648
+      dim(audio_data) <- c(channels, length(audio_data) / channels)
       sampling_rate <- audio_info$audio$sample_rate
       .sound_create_from_values(audio_data, sampling_rate)
     }
   )
+  # Report a file that was shorter than its own header claims (see
+  # .sound_read_from_file_native). Outside the tryCatch above, so that
+  # options(pladdrr.data_loss = "error") cannot be swallowed by the av retry.
+  if (!is.null(loss)) {
+    tag <- .parse_pladdrr_tag(conditionMessage(loss))
+    .warn_data_loss(tag$routine, tag$message)
+  }
+  ptr
 }
 
 #' @export
@@ -1194,7 +1251,7 @@ Sound <- function(path = NULL, .xptr = NULL) {
 
   # Load Rcpp Module and create C++ wrapper
   snd_mod <- get_module("sound_module")
-  cpp_snd <- snd_mod$RSound$new(ptr)
+  cpp_snd <- with_pladdrr_errors(snd_mod$RSound$new(ptr))
 
   # Minimal object: just fields, no closures. Methods via $.Sound dispatch.
   structure(list(.xptr = ptr, .cpp = cpp_snd),
@@ -1236,6 +1293,14 @@ sound_from_values <- function(values, sampling_rate = 44100, start_time = 0.0) {
   Sound(.xptr = ptr)
 }
 
+# Shared by the create_* factories: duration and rate are positive and finite and
+# their product is a sample count the allocator can be asked for.
+.check_sound_size <- function(routine, duration, sampling_rate) {
+  .check_positive_finite(duration, "duration", routine)
+  .check_positive_finite(sampling_rate, "sampling_rate", routine)
+  .check_cell_count(duration * sampling_rate, routine, duration = duration)
+}
+
 #' Create a pure tone Sound
 #'
 #' Factory function to generate a pure sine wave tone.
@@ -1255,6 +1320,7 @@ sound_from_values <- function(values, sampling_rate = 44100, start_time = 0.0) {
 #' sound <- Sound$create_tone(frequency = 440, duration = 1.0)
 sound_create_tone <- function(duration = 1.0, sampling_rate = 44100,
                               frequency = 440.0, amplitude = 0.99) {
+  .check_sound_size("sound_create_tone", duration, sampling_rate)
   ptr <- .sound_create_tone(duration, sampling_rate, frequency, amplitude)
   Sound(.xptr = ptr)
 }
@@ -1280,6 +1346,7 @@ sound_create_pure_tone <- function(frequency = 440.0, duration = 1.0,
                                     fade_in_duration = 0.01, fade_out_duration =
                                         0.01,
                                     channels = 1L) {
+  .check_sound_size("sound_create_pure_tone", duration, sampling_rate)
   ptr <- .sound_create_pure_tone(as.integer(channels), 0.0, duration,
     sampling_rate,
     frequency, amplitude, fade_in_duration, fade_out_duration)
@@ -1314,6 +1381,7 @@ sound_create_tone_complex <- function(frequency_step = 100.0, duration = 1.0,
                                        ceiling = 0.0,
                                        number_of_components = 0L) {
   phase <- match.arg(phase)
+  .check_sound_size("sound_create_tone_complex", duration, sampling_rate)
   phase_code <- if (phase == "sine") 0L else 1L
   if (ceiling <= 0.0) ceiling <- sampling_rate / 2.0
   if (first_frequency <= 0.0) first_frequency <- frequency_step

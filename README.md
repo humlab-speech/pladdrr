@@ -50,7 +50,7 @@ To provide optimized processing, the package leverages optimizations from the C/
 - **Zero-copy operations**: Avoid unnecessary data copying when processing large files
 - **Streaming support**: Process files too large for memory with LongSound
 
-The package provides three tiers of access to Praat's methods, with Tier 1 being most human friendly, Tier 2 provides more direct access to the C routines of Praat, and Tier 3 offers batch and parallel processing for common use cases. Tier 4 provides some abilities for parallel / batch processing of files, if beneficial. We provide coding agent friendly documentation of the package's capabilities in [inst/agents/AGENT_GUIDE.md](inst/agents/AGENT_GUIDE.md). 
+The package provides three tiers of access to Praat's methods, with Tier 1 being most human friendly, Tier 2 provides more direct access to the C routines of Praat, and Tier 3 offers batch and parallel processing for common use cases. Tier 4 provides some abilities for parallel / batch processing of files, if beneficial. We provide coding agent friendly documentation of the package's capabilities in [inst/agents/AGENT_GUIDE.md](https://github.com/humlab-speech/pladdrr/blob/main/inst/agents/AGENT_GUIDE.md). 
 
 ## Limitations and caveats
 
@@ -405,7 +405,7 @@ sound_segment <- longsound$extract_part(tmin = 0, tmax = 10)
 
 ### Getting Help
 
-- Check the [Agent Guide](inst/agents/AGENT_GUIDE.md) for detailed API reference
+- Check the [Agent Guide](https://github.com/humlab-speech/pladdrr/blob/main/inst/agents/AGENT_GUIDE.md) for detailed API reference
 - Contact the maintainer at `fredrik.nylen@umu.se`
 
 ## Citation
@@ -413,7 +413,7 @@ sound_segment <- longsound$extract_part(tmin = 0, tmax = 10)
 To cite **pladdrr** in publications, run `citation("pladdrr")` in R, or use:
 
 > Nylén, Fredrik, Skotare, Tomas & von Boer, Johan (2026). *pladdrr: Direct
-> Access to the Core Algorithms of Praat*. R package version 5.0.6.
+> Access to the Core Algorithms of Praat*. R package version 5.1.0.
 > <https://doi.org/10.5281/zenodo.21884217>
 
 Please also cite Praat itself:

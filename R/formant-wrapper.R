@@ -326,7 +326,7 @@ Formant <- function(.xptr = NULL) {
         "to_formant_burg() or to_formant_keepall()")
   }
   formant_mod <- get_module("formant_module")
-  cpp_obj <- formant_mod$RFormant$new(.xptr)
+  cpp_obj <- with_pladdrr_errors(formant_mod$RFormant$new(.xptr))
   structure(list(.xptr = .xptr, .cpp = cpp_obj),
     class = c("Formant", "PraatObject"))
 }

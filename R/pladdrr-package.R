@@ -10,7 +10,8 @@
 #' @section Acoustic Analysis:
 #'
 #' \itemize{
-#'   \item \strong{Sound}: read/write WAV, AIFF, FLAC, MP3, NIST; generate
+#'   \item \strong{Sound}: read/write WAV, AIFF and NIST (FLAC and MP3 are read
+#'         through the \code{av} fallback, see \code{\link{Sound}}); generate
 #'         tones and noise; \code{LongSound} for streaming files too large to
 #'         hold in memory
 #'   \item \strong{Pitch}: F0 contours, autocorrelation and cross-correlation
@@ -68,7 +69,17 @@
 #' Following R conventions, undefined analysis values (e.g. pitch in unvoiced
 #' segments, formants in silence) are returned as \code{NA}. Quality warnings
 #' are issued when a result may be unreliable, and can be suppressed with the
-#' usual R warning-control mechanisms.
+#' usual R warning-control mechanisms. Failures pladdrr can classify are
+#' signalled as \code{pladdrr_error} / \code{pladdrr_warning} subclasses, so a
+#' batch script can tell an invalid argument from a truncated file from a
+#' Praat-internal failure; see \code{\link{with_pladdrr_errors}}.
+#'
+#' @section Coercion:
+#'
+#' \code{as.matrix(x)} returns the sampled data of any object that has a matrix
+#' of its own and names the accessor for the classes that do not
+#' (\code{\link{as.matrix.PraatObject}}); \code{Formant}, \code{Pitch} and the
+#' other contours have no matrix, use \code{as.data.frame} on those.
 #'
 #' @section Getting Started:
 #'

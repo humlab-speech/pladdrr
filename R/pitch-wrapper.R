@@ -345,7 +345,7 @@ Pitch <- function(.xptr = NULL) {
   if (is.null(pitch_mod)) {
     stop("pitch_module not available - package installation may be incomplete")
   }
-  cpp_obj <- pitch_mod$RPitch$new(.xptr)
+  cpp_obj <- with_pladdrr_errors(pitch_mod$RPitch$new(.xptr))
   structure(list(.xptr = .xptr, .cpp = cpp_obj),
     class = c("Pitch", "PraatObject"))
 }

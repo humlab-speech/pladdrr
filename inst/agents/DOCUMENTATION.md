@@ -101,3 +101,22 @@ tools::Rd2HTML("man/ClassName.Rd", out = "/tmp/ClassName.html")  # eyeball the <
 
 Confirm method-list sections render as one bullet per line (`<li>` per method,
 or `•` per method in text mode), not one flowed paragraph.
+
+## Vignettes and Suggests packages
+
+A chunk that calls `library()` or `::` on a package that is only in `Suggests` must
+be guarded, or a build without that package fails: put
+`eval = requireNamespace("pkg", quietly = TRUE)` in the chunk header (all packages the
+chunk uses, joined with `&&`), and guard *every* chunk that uses the package, not just
+the first. Check by knitting the vignette with the package masked as absent and with
+`knitr::opts_chunk$set(error = FALSE)`: `knitr::knit()` swallows chunk errors by
+default, so a plain knit proves nothing. Chunks that are `eval = FALSE` need no guard.
+
+## Documenting validated arguments
+
+When a method validates an argument, say what is accepted and which condition class a
+bad value raises (`pladdrr_input_error`, with `$param` naming the argument); do not
+leave it to the example. A `unit` or `averaging_method` string that an unknown value
+used to fall back from now errors, and the Rd must name the accepted spellings
+(`?Ltas` and `?Intensity` are the model). Where a bound exists (2^29 cells), state it.
+

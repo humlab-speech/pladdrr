@@ -44,7 +44,9 @@ private:
 
 public:
     RFormantModeler() : ptr(R_NilValue) {}
-    RFormantModeler(XPtr<structFormantModeler> xptr) : ptr(xptr) {}
+    RFormantModeler(XPtr<structFormantModeler> xptr) : ptr(xptr) {
+        require_praat_class(ptr.get(), classFormantModeler, "Not a FormantModeler", "FormantModeler", ".xptr");
+    }
 
     bool is_valid() { return ptr.get() != nullptr; }
 

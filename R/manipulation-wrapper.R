@@ -140,7 +140,7 @@ Manipulation <- function(.xptr) {
   }
   
   manip_mod <- get_module("manipulation_module")
-  cpp_obj <- manip_mod$RManipulation$new(.xptr)
+  cpp_obj <- with_pladdrr_errors(manip_mod$RManipulation$new(.xptr))
   
   structure(list(
     .cpp = cpp_obj,

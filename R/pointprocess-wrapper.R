@@ -449,14 +449,14 @@ lockEnvironment(.pp_methods, bindings = TRUE)
 PointProcess <- function(tmin = NULL, tmax = NULL, .xptr = NULL) {
   pp_mod <- get_module("pointprocess_module")
   if (!is.null(.xptr)) {
-    cpp_pp <- pp_mod$RPointProcess$new(.xptr)
+    cpp_pp <- with_pladdrr_errors(pp_mod$RPointProcess$new(.xptr))
     return(
       structure(list(.xptr = .xptr, .cpp = cpp_pp),
         class = c("PointProcess", "PraatObject")))
   }
   if (!is.null(tmin) && !is.null(tmax)) {
     xptr <- pp_mod$create_empty(tmin, tmax)
-    cpp_pp <- pp_mod$RPointProcess$new(xptr)
+    cpp_pp <- with_pladdrr_errors(pp_mod$RPointProcess$new(xptr))
     return(
       structure(list(.xptr = xptr, .cpp = cpp_pp),
         class = c("PointProcess", "PraatObject")))

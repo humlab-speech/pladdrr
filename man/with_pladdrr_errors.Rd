@@ -2,7 +2,7 @@
 % Please edit documentation in R/error-classes.R
 \name{with_pladdrr_errors}
 \alias{with_pladdrr_errors}
-\title{Run an expression, reclassifying tagged pladdrr C++ errors/warnings.}
+\title{Run an expression, reclassifying tagged pladdrr C++ errors and warnings}
 \usage{
 with_pladdrr_errors(expr)
 }
@@ -23,19 +23,37 @@ Class hierarchy:
 \itemize{
   \item \code{pladdrr_input_error} — invalid argument or precondition failed
   \item \code{pladdrr_praat_error} — Praat-internal failure
-  \item \code{pladdrr_data_loss}   — output incomplete vs requested range
+  \item \code{pladdrr_data_loss}   — output incomplete vs requested range, or
+    input shorter than its own header (a WAV read shorter than the length its
+    \code{data} chunk declares)
+  \item \code{pladdrr_decoder_fallback} — the native reader refused the file
+    and the \code{av} fallback decoded it instead
 }
-All inherit from \code{pladdrr_error} so a single
-\code{tryCatch(pladdrr_error = ...)} catches them all.
+The error classes inherit from \code{pladdrr_error} and the warning classes
+from \code{pladdrr_warning}, so \code{tryCatch(pladdrr_error = ...)} catches
+the failures; \code{pladdrr_data_loss} as a warning and
+\code{pladdrr_decoder_fallback} are caught as warnings.
 
-Data-loss warnings additionally attach
-\code{attr(., "pladdrr_data_loss")} to the result, listing every routine
-that reported missing values during the call.
+Only conditions carrying the C++ tag above are reclassified here. The ones
+pladdrr raises at R level are already classed and pass through unchanged:
+\code{pladdrr_data_loss} from \code{.warn_data_loss()} (out-of-range
+extraction, and a file read shorter than its own header) and
+\code{pladdrr_decoder_fallback} from the \code{av} fallback in
+\code{Sound(path = )}. Those two need no \code{with_pladdrr_errors()}; they
+carry \code{$routine} and \code{$message} on the condition, and no attribute
+on the value they interrupted.
+
+Data loss reported by a tagged C++ routine additionally attaches
+\code{attr(., "pladdrr_data_loss")} to the value
+\code{with_pladdrr_errors()} returns, listing every routine that reported
+missing values during the call. Values that take no attributes (an external
+pointer, an R6 object) get none.
 
 The reaction to data loss is controlled by
 \code{options(pladdrr.data_loss = )}: \code{"warn"} (default) raises a
 classed warning per incident, \code{"error"} stops at the first incident,
-\code{"silent"} only records the attribute.
+\code{"silent"} only records the attribute. It does not govern
+\code{pladdrr_decoder_fallback}: a decode that succeeded lost nothing.
 }
 \examples{
 sound <- Sound$create_tone(frequency = 220, duration = 0.3, sampling_rate =

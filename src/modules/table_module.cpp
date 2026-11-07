@@ -35,7 +35,9 @@ private:
 
 public:
     RTable() : ptr(R_NilValue) {}
-    RTable(XPtr<structTable> xptr) : ptr(xptr) {}
+    RTable(XPtr<structTable> xptr) : ptr(xptr) {
+        require_praat_class(ptr.get(), classTable, "Not a Table", "Table", ".xptr");
+    }
 
     bool is_valid() { return ptr.get() != nullptr; }
 

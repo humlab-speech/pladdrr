@@ -244,7 +244,7 @@ Table <- function(numberOfRows = NULL, numberOfColumns = NULL,
   }
   
   tbl_mod <- get_module("table_module")
-  cpp_obj <- tbl_mod$RTable$new(ptr)
+  cpp_obj <- with_pladdrr_errors(tbl_mod$RTable$new(ptr))
   
   structure(list(
     .cpp = cpp_obj,

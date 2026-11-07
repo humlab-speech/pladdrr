@@ -211,7 +211,7 @@ write.csv(results_df, file.path(tempdir(), "results.csv"), row.names = FALSE)
 
 ### Integration with tidyverse
 
-```{r}
+```{r eval = requireNamespace("dplyr", quietly = TRUE) && requireNamespace("purrr", quietly = TRUE)}
 library(pladdrr)
 library(dplyr)
 library(purrr)

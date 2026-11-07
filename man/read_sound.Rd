@@ -7,8 +7,10 @@
 read_sound(file_path, channel = 0)
 }
 \arguments{
-\item{file_path}{Path to audio file (WAV/AIFF/FLAC/MP3 via Praat, others via
-av fallback)}
+\item{file_path}{Path to audio file. WAV and AIFF are read by Praat; FLAC, MP3,
+OGG and anything else Praat has no reader for go through the \code{av}
+fallback, which warns with \code{pladdrr_decoder_fallback} and needs
+\pkg{av} installed}
 
 \item{channel}{Channel to read (0 = left, 1 = right) - ignored in R6}
 }

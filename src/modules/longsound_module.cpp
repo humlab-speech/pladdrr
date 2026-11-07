@@ -33,7 +33,9 @@ private:
 
 public:
     RLongSound() : ptr(R_NilValue) {}
-    RLongSound(XPtr<structLongSound> xptr) : ptr(xptr) {}
+    RLongSound(XPtr<structLongSound> xptr) : ptr(xptr) {
+        require_praat_class(ptr.get(), classLongSound, "Not a LongSound", "LongSound", ".xptr");
+    }
 
     bool is_valid() { return ptr.get() != nullptr; }
 
@@ -119,6 +121,12 @@ public:
     // Streaming methods - get_window_extrema
     NumericVector get_window_extrema(double tmin, double tmax, int channel) {
         VALIDATE_PTR(ptr, LongSound);
+        // Strictly 1-based here: the channel picks a slot in Praat's interleaved
+        // 16-bit buffer. Praat clamps/wraps out-of-range indices, we error.
+        if (channel < 1 || channel > ptr->numberOfChannels) {
+            Rcpp::stop("Channel out of range [1, %d]: %d",
+                ptr->numberOfChannels, channel);
+        }
         double minimum = 0.0, maximum = 0.0;
         LongSound_getWindowExtrema(ptr.get(), tmin, tmax, channel, &minimum, &maximum);
         NumericVector result = NumericVector::create(
@@ -145,6 +153,11 @@ public:
 
     void save_channel(int audio_file_type, int channel, std::string path) {
         VALIDATE_PTR(ptr, LongSound);
+        // Praat's convention for this one: 0 = left, 1 = right; anything else
+        // silently wrote the right channel again.
+        if (channel != 0 && channel != 1) {
+            Rcpp::stop("Channel out of range [0, 1]: %d", channel);
+        }
         try {
             structMelderFile file {};
             Melder_relativePathToFile(Melder_8to32(path.c_str()).get(), &file);

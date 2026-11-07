@@ -274,6 +274,12 @@ Rcpp::XPtr<structSound> lpc_sound_filter_inverse_at_time(
     int channel,
     double time
 ) {
+    // channel 0 = every channel; Praat clamps a too-large channel to 1, we
+    // error rather than silently inverse-filter the wrong channel.
+    if (!sound_xptr || !sound_xptr.get()) Rcpp::stop("Invalid Sound pointer");
+    if (channel < 0 || channel > sound_xptr->ny) {
+        Rcpp::stop("Channel out of range [0, %d]: %d", sound_xptr->ny, channel);
+    }
     try {
         autoSound source = LPC_Sound_filterInverseWithFilterAtTime(
             lpc_xptr.get(),

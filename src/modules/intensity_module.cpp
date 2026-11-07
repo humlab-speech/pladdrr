@@ -34,7 +34,9 @@ private:
 
 public:
     RIntensity() : ptr(R_NilValue) {}
-    RIntensity(XPtr<structIntensity> xptr) : ptr(xptr) {}
+    RIntensity(XPtr<structIntensity> xptr) : ptr(xptr) {
+        require_praat_class(ptr.get(), classIntensity, "Not a Intensity", "Intensity", ".xptr");
+    }
 
     bool is_valid() { return ptr.get() != nullptr; }
 
@@ -154,7 +156,10 @@ public:
                     result[metric] = val;
                     
                 } else if (metric == "mean") {
-                    double val = Intensity_getAverage(ptr.get(), from_time, to_time, 0);
+                    /* 1 = Intensity_averaging_ENERGY (fon/Intensity.h:64-67),
+                     * so "mean" means what Intensity$get_mean() means by
+                     * default; metrics = "median" gives the 0.5 quantile. */
+                    double val = Intensity_getAverage(ptr.get(), from_time, to_time, 1);
                     result[metric] = val;
                     
                 } else if (metric == "stdev" || metric == "standard_deviation" || metric == "sd") {

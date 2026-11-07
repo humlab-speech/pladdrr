@@ -27,13 +27,13 @@ test_that("aggregate_measurements rejects unknown statistics", {
 })
 
 test_that("autoplot of empty tiers warns and returns an empty plot", {
-  expect_warning(autoplot(amplitude_tier_create(0, 1)),
+  expect_warning(ggplot2::autoplot(amplitude_tier_create(0, 1)),
                  "no data in the specified time range")
-  expect_warning(autoplot(DurationTier(0, 1)),
+  expect_warning(ggplot2::autoplot(DurationTier(0, 1)),
                  "no data in the specified time range")
-  expect_warning(autoplot(IntensityTier(0, 1)),
+  expect_warning(ggplot2::autoplot(IntensityTier(0, 1)),
                  "no data in the specified time range")
-  expect_warning(autoplot(PitchTier(0, 1)),
+  expect_warning(ggplot2::autoplot(PitchTier(0, 1)),
                  "no data in the specified time range")
 })
 
@@ -72,7 +72,7 @@ test_that("create_cepstrum_report saves the combined plot to disk", {
 test_that("autoplot.Pitch draws voicing strength when requested", {
   p <- Sound$create_tone(frequency = 220, duration = 0.5,
     sampling_rate = 16000)$to_pitch()
-  expect_no_error(autoplot(p, show_voicing = TRUE))
+  expect_no_error(ggplot2::autoplot(p, show_voicing = TRUE))
 })
 
 test_that("plot.PowerCepstrum marks the peak", {
@@ -111,22 +111,22 @@ test_that("point-tier measurements honor interval_filter, catch failing measures
 test_that("tier autoplot filters by time range", {
   at <- amplitude_tier_create(0, 1)
   at$add_point(0.25, 0.5)
-  expect_warning(autoplot(at, from_time = 5, to_time = 6),
+  expect_warning(ggplot2::autoplot(at, from_time = 5, to_time = 6),
     "no data in the specified time range")
 
   dt <- DurationTier(0, 1)
   dt$add_point(0.5, 1.2)
-  expect_warning(autoplot(dt, from_time = 5, to_time = 6),
+  expect_warning(ggplot2::autoplot(dt, from_time = 5, to_time = 6),
     "no data in the specified time range")
 
   it <- IntensityTier(0, 1)
   it$add_point(0.5, 70)
-  expect_warning(autoplot(it, from_time = 5, to_time = 6),
+  expect_warning(ggplot2::autoplot(it, from_time = 5, to_time = 6),
     "no data in the specified time range")
 
   pt <- PitchTier(0, 1)
   pt$add_point(0.5, 200)
-  expect_warning(autoplot(pt, from_time = 5, to_time = 6),
+  expect_warning(ggplot2::autoplot(pt, from_time = 5, to_time = 6),
     "no data in the specified time range")
 })
 
@@ -171,12 +171,12 @@ test_that("FormantTier and FormantGrid autoplot warns for an empty time range", 
   snd <- Sound$create_tone(frequency = 220, duration = 0.5,
     sampling_rate = 16000)
   ft <- FormantTier$from_formant(snd$to_formant_burg())
-  expect_warning(autoplot(ft, from_time = 5, to_time = 6), "no data")
+  expect_warning(ggplot2::autoplot(ft, from_time = 5, to_time = 6), "no data")
 
   # filtering a plain data.frame to empty hits the documented
   # paste0-on-empty-vector quirk in .prep_formant_df (see
   # test-autoplot-missing-gaps.R) rather than the warning branch
   grid <- FormantGrid(tmin = 0, tmax = 1, number_of_formants = 3)
-  expect_error(autoplot(grid, from_time = 5, to_time = 6),
+  expect_error(ggplot2::autoplot(grid, from_time = 5, to_time = 6),
     "replacement has 1 row")
 })

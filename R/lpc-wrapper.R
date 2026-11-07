@@ -217,7 +217,7 @@ LPC <- function(.xptr = NULL) {
   }
   
   lpc_mod <- get_module("lpc_module")
-  cpp_obj <- lpc_mod$RLPC$new(.xptr)
+  cpp_obj <- with_pladdrr_errors(lpc_mod$RLPC$new(.xptr))
   
   structure(list(
     .cpp = cpp_obj,

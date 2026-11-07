@@ -181,7 +181,7 @@ FormantGrid <- function(tmin = NULL, tmax = NULL, number_of_formants = 10,
   }
 
   grid_mod <- get_module("formantgrid_module")
-  cpp_obj <- grid_mod$RFormantGrid$new(ptr)
+  cpp_obj <- with_pladdrr_errors(grid_mod$RFormantGrid$new(ptr))
 
   structure(list(
     .cpp = cpp_obj,

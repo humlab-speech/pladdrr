@@ -20,9 +20,9 @@ Should accept a Sound object/pointer and return results.}
 
 \item{n_cores}{Integer. Number of CPU cores (default: auto)}
 
-\item{threads_per_worker}{Integer or `NULL`. C++ threads each worker may use
-for Praat kernels. `NULL` (default) auto-divides cores among workers to
-avoid oversubscription; set `1` to force single-threaded workers.}
+\item{threads_per_worker}{Integer or \code{NULL}. C++ threads each worker may use
+for Praat kernels. \code{NULL} (default) auto-divides cores among workers to
+avoid oversubscription; set \code{1} to force single-threaded workers.}
 
 \item{...}{Additional arguments passed to analysis_func}
 }

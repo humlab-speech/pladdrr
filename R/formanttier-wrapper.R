@@ -152,7 +152,7 @@ FormantTier <- function(tmin = 0, tmax = 1, .xptr = NULL) {
   }
 
   tier_mod <- get_module("formanttier_module")
-  cpp_obj <- tier_mod$RFormantTier$new(ptr)
+  cpp_obj <- with_pladdrr_errors(tier_mod$RFormantTier$new(ptr))
 
   structure(list(
     .cpp = cpp_obj,

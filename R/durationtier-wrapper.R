@@ -128,7 +128,7 @@ DurationTier <- function(tmin = NULL, tmax = NULL, .xptr = NULL) {
   }
 
   tier_mod <- get_module("durationtier_module")
-  cpp_obj <- tier_mod$RDurationTier$new(ptr)
+  cpp_obj <- with_pladdrr_errors(tier_mod$RDurationTier$new(ptr))
 
   structure(list(
     .cpp = cpp_obj,

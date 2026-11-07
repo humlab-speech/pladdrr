@@ -186,7 +186,9 @@ pitch_get_adaptive_range <- function(pitch_xptr, from_time = 0, to_time = 0, q1_
 #' @param from_times Numeric vector of interval start times
 #' @param to_times Numeric vector of interval end times
 #' @param metrics Character vector: "min", "max", "mean", "stdev", "q25", "q50", "q75"
-#' @param averaging_method Integer (0=ENERGY, 1=SONES, 2=DB)
+#' @param averaging_method Integer Praat Intensity_averaging code
+#'   (0=MEDIAN, 1=ENERGY, 2=SONES, 3=DB); the default 0 is the median, while
+#'   Praat's legacy two-argument "Get mean" is the plain dB mean (= 3)
 #' @return NumericMatrix with intervals as rows, metrics as columns
 #' @keywords internal
 #' @examples
@@ -1312,7 +1314,8 @@ intensity_get_value_direct <- function(intensity_xptr, time, interpolation = 2L)
 #' @param intensity_xptr External pointer to Intensity
 #' @param from_time Start time
 #' @param to_time End time
-#' @param averaging_method 0=energy, 1=sones, 2=dB
+#' @param averaging_method Praat Intensity_averaging code: 0=median (default),
+#'   1=energy, 2=sones, 3=dB
 #' @return Mean intensity
 #' @keywords internal
 #' @examples
@@ -3200,6 +3203,23 @@ textgrid_interval_all_features_batch <- function(textgrid_xptr, pitch_xptr = NUL
     invisible(.Call(`_pladdrr_pladdrr_set_threads_cpp`, use_multithreading, max_threads, min_elements_per_thread))
 }
 
+#' Usable CPU count for synthetic limits (internal)
+#'
+#' The pure rule behind `MelderThread_getNumberOfProcessors()`, exposed so the
+#' precedence between hardware cores, the CPU affinity mask and a cgroup CPU
+#' quota can be tested without cgroups. 0 (or negative) means "unknown".
+#'
+#' @param hardware_cores logical cores as reported by the machine
+#' @param affinity_cores CPUs in the process affinity mask
+#' @param quota_microseconds cgroup CPU quota (`cpu.max` field 1)
+#' @param period_microseconds cgroup quota period (`cpu.max` field 2)
+#' @return Number of CPUs the process may use, at least 1
+#' @keywords internal
+#' @noRd
+.pladdrr_cpus_for_limits <- function(hardware_cores, affinity_cores, quota_microseconds, period_microseconds) {
+    .Call(`_pladdrr_pladdrr_cpus_for_limits`, hardware_cores, affinity_cores, quota_microseconds, period_microseconds)
+}
+
 #' Get MelderThread parallelization state (internal)
 #'
 #' @return List with processors, enabled, max_threads, min_elements_per_thread
@@ -3207,6 +3227,21 @@ textgrid_interval_all_features_batch <- function(textgrid_xptr, pitch_xptr = NUL
 #' @noRd
 .pladdrr_get_threads_cpp <- function() {
     .Call(`_pladdrr_pladdrr_get_threads_cpp`)
+}
+
+#' How many threads a frame-parallel analysis uses for N frames (internal)
+#'
+#' Lets tests assert the parallel-decision of the sites whose threshold pladdrr
+#' retunes, instead of measuring timings. Uses the current thread cap, so call
+#' `pladdrr_threads()` first to pin it.
+#'
+#' @param work_size Number of analysis frames
+#' @param site "cepstrogram" or "formant"
+#' @return Integer vector with the number of threads each work size asks for
+#' @keywords internal
+#' @noRd
+.pladdrr_thread_grains_cpp <- function(work_size, site) {
+    .Call(`_pladdrr_pladdrr_thread_grains_cpp`, work_size, site)
 }
 
 #' Convert Praat errors to R exceptions

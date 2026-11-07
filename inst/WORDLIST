@@ -82,6 +82,7 @@ MFCC
 MFCCs
 MKL
 MPT
+MP3
 Maryn
 McAuliffe
 MelSpectrogram
@@ -133,8 +134,10 @@ Resynthesize
 Resynthesized
 Rtools
 SHS
+SIGSEGV
 SIGTRAP
 SIMD
+SLURM
 SPL
 SSD
 STFT
@@ -211,6 +214,10 @@ cepstrum
 cepstrum's
 changelog
 checkZeros
+cgroup
+cgroups
+cpuset
+cpusets
 cividis
 coarticulation
 cochleagram
@@ -326,7 +333,9 @@ roxygen
 scikit
 scipy
 sd
+segfault
 segfaulted
+segfaults
 shs
 silenceThreshold
 simd
@@ -346,6 +355,7 @@ subharmonic
 subharmonics
 submodules
 svg
+taskset
 tanh
 textgrid
 tidyverse

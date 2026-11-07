@@ -35,7 +35,9 @@ private:
 
 public:
     RAmplitudeTier() : ptr(R_NilValue) {}
-    RAmplitudeTier(XPtr<structAmplitudeTier> xptr) : ptr(xptr) {}
+    RAmplitudeTier(XPtr<structAmplitudeTier> xptr) : ptr(xptr) {
+        require_praat_class(ptr.get(), classAmplitudeTier, "Not a AmplitudeTier", "AmplitudeTier", ".xptr");
+    }
 
     bool is_valid() { return ptr.get() != nullptr; }
 

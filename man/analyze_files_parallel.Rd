@@ -19,12 +19,13 @@ analyze_files_parallel(
 Should accept a Sound object and return results.}
 
 \item{n_cores}{Integer. Number of CPU cores to use (default:
-parallel::detectCores() - 1)}
+one worker per usable CPU, minus one; see \code{pladdrr_threads()})}
 
-\item{threads_per_worker}{Integer or `NULL`. C++ threads each worker may use
-for Praat kernels. `NULL` (default) auto-divides cores among workers so
-total concurrency stays near the machine's core count, preventing
-oversubscription. Set `1` to force strictly single-threaded workers.}
+\item{threads_per_worker}{Integer or \code{NULL}. C++ threads each worker may use
+for Praat kernels. \code{NULL} (default) auto-divides the usable CPUs among
+workers so total concurrency stays near what the scheduler will run,
+preventing oversubscription. Set \code{1} to force strictly single-threaded
+workers.}
 
 \item{...}{Additional arguments passed to analysis_func}
 }

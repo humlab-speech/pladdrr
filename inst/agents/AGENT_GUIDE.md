@@ -1,8 +1,8 @@
 # pladdrr Agent Guide
 
-**Version:** 5.0.5 guide refresh (2026-09-04; perf/memory audit notes 2026-10-19)
+**Version:** 5.1.0 guide refresh (2026-09-04; perf/memory audit notes 2026-10-19; 2026-11 audit round 2026-11-06)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** Current through package 5.0.3. Shared-dispatch wrappers + threaded Praat backend + xsimd acceleration (enabled at build time, runtime toggle via `pladdrr_simd()`) + clinical Tier 4 helpers + wrapper dispatch migration (Sound/Formant/Spectrum/Spectrogram queries now use direct `.Call()` instead of Rcpp module dispatch) + current `praat.github.io/` build prefix guidance + current CPPS/CPP usage notes + macOS PSOCK parallelism + unified SIMD bridge header (`simd_bridge.h`) + GitHub Actions CI + code coverage + spectral-moments/data-frame allocation cleanup (v4.9.24) + CRAN pre-submission hygiene and full man/ coverage (v5.0.0) + Ltas full Praat-parity query coverage and new SpectrumTier peak-picking class (v5.0.3) + perf/memory audit: load-time RSS fix, FormantPath parity fix, 8 SIMD files removed (development version, 2026-10).
+**Status:** Current through package 5.1.0 (the 2026-11 audit round and its follow-ups, see `NEWS.md` under 5.0.7 and 5.1.0). Shared-dispatch wrappers + threaded Praat backend + xsimd acceleration (enabled at build time, runtime toggle via `pladdrr_simd()`) + clinical Tier 4 helpers + wrapper dispatch migration (Sound/Formant/Spectrum/Spectrogram queries now use direct `.Call()` instead of Rcpp module dispatch) + current `praat.github.io/` build prefix guidance + current CPPS/CPP usage notes + macOS PSOCK parallelism + unified SIMD bridge header (`simd_bridge.h`) + GitHub Actions CI + code coverage + spectral-moments/data-frame allocation cleanup (v4.9.24) + CRAN pre-submission hygiene and full man/ coverage (v5.0.0) + Ltas full Praat-parity query coverage and new SpectrumTier peak-picking class (v5.0.3) + perf/memory audit: load-time RSS fix, FormantPath parity fix, 8 SIMD files removed (development version, 2026-10).
 - **v4.9.18 — Performance + docs + CI (2026-08-05 assessment, Phases 1-4):**
   - **PointProcess jitter/shimmer batch cache:** First shimmer call fetches all 11 jitter+shimmer metrics via `get_jitter_shimmer_batch_cpp()`. Subsequent jitter or shimmer calls with matching parameters return from cache — no additional C++ crossing. Backward compatible: jitter methods unchanged (no Sound required); cache activates automatically after first shimmer call.
   - **Formant `get_all_values_at_time` — single C++ call:** Added `formant_get_all_values_at_time()` export; replaces `vapply` loop over N module calls with one direct wrapper call.
@@ -53,7 +53,9 @@ tryCatch(
 
 Conditions carry `$routine` and `$param` so callers can branch programmatically.
 Validators currently covering: pitch range, positive counts/numbers, `time_step`
-(0 = auto, matching Praat), quefrency ranges, trend-fit method.
+(0 = auto, matching Praat), quefrency ranges, trend-fit method, positive finite sizes
+and the 2^29-cell allocation bound (`.check_positive_finite()`, `.check_cell_count()`),
+cochleagram step sizes, and the `unit` of the Ltas locators (`"dB"` only).
 
 **Data loss (live).** When a routine returns something Praat fabricated, pladdrr
 returns Praat's value and says so:
@@ -67,6 +69,13 @@ Praat zero-pads a window that runs past the signal; goal 1 says reproduce the
 value, goal 6 says report the fabrication. Controlled by
 `options(pladdrr.data_loss = "warn" | "error" | "silent")`; default `"warn"`.
 
+A **file** can raise it too: `src/sound_wrappers.cpp` reports a WAV whose `data`
+chunk does not match the bytes that follow it — more, and the load returns
+exactly the samples that exist; fewer, and the load keeps Praat's shorter count
+(Praat 6.4.27 answers `nx = 4410` for a file holding 1750 samples) while naming
+the discarded ones. Reached by any file load (`Sound(path = )`, `Sound$new()`,
+deprecated `read_sound()`); locked in `tests/testthat/test-truncated-wav.R`.
+
 **C++ tags (partially wired).** Wrappers can emit tagged messages that
 `with_pladdrr_errors(expr)` reclassifies:
 
@@ -78,18 +87,37 @@ PLADDRR_STOP_PRAAT("routine_name", "Praat raised an error doing X");
 PLADDRR_WARN_DATA_LOSS("routine_name", "n of m values undefined");
 ```
 
-Only `src/batch_queries.cpp` uses them today. **Every other C++ wrapper still
-raises a plain `simpleError`**, so do not assume a `pladdrr_praat_error` will
+`src/batch_queries.cpp` and `src/sound_wrappers.cpp` use them today (the latter
+`PLADDRR_WARN_DATA_LOSS`, for a WAV shorter than its own `data` chunk; the R
+side muffles it and re-raises it through `.warn_data_loss()`, which is what
+applies `options(pladdrr.data_loss = )`), and `src/praat_xptr_utils.h` uses
+`PLADDRR_STOP_INPUT` for the class check behind the `.xptr` constructor door and
+the two file readers. **Every other C++ wrapper still raises an untagged
+error** — measured, a bare `Rcpp::stop()` arrives as `Rcpp::exception` (e.g. the
+channel guards' `Channel out of range [0, 3]: 9`), and `with_pladdrr_errors()`
+cannot class it either because it only reclassifies conditions that carry the
+tag. So do not assume a `pladdrr_praat_error` or a `pladdrr_input_error` will
 arrive from an arbitrary routine — check before you rely on it.
 
-| Class                 | Meaning                              | Where it comes from       |
-|-----------------------|--------------------------------------|---------------------------|
-| `pladdrr_input_error` | invalid argument / precondition fail | R validators (live)       |
-| `pladdrr_praat_error` | Praat internal failure               | C++ macros (2 sites only) |
-| `pladdrr_data_loss`   | output incomplete vs request         | R + C++ (live)            |
+| Class                       | Meaning                                       | Where it comes from                        |
+|-----------------------------|-----------------------------------------------|--------------------------------------------|
+| `pladdrr_input_error`       | invalid argument / precondition fail          | R validators + C++ `require_praat_class()` |
+| `pladdrr_praat_error`       | Praat internal failure                        | C++ macros (2 sites only)       |
+| `pladdrr_data_loss`         | output incomplete vs request, or input shorter than its own header | R + C++ (live) |
+| `pladdrr_decoder_fallback`  | native reader refused the file; `av` decoded it | R (`av` fallback in `.sound_ptr_from_path`) |
 
-All inherit from `pladdrr_error` → `error` → `condition`, so one
-`tryCatch(pladdrr_error = ...)` catches them all.
+The error classes inherit from `pladdrr_error` → `error` → `condition`, so one
+`tryCatch(pladdrr_error = ...)` catches them all; `pladdrr_data_loss` as a
+warning and `pladdrr_decoder_fallback` inherit from `pladdrr_warning` →
+`warning` → `condition` instead, so catch those as warnings. Both R-level
+classes are already classed and need no `with_pladdrr_errors()`:
+
+```r
+tryCatch(Sound(path = "truncated.wav"),
+  pladdrr_data_loss = function(w) conditionMessage(w))       # read N of M samples
+suppressWarnings(Sound(path = "song.mp3"))                   # hides pladdrr_decoder_fallback
+options(pladdrr.data_loss = "error")                         # does NOT affect decoder_fallback
+```
 
 When porting a new wrapper: call the shared validators at R level, replace bare
 `stop("...")` in C++ with the macros above, and emit `WARN_DATA_LOSS` whenever
@@ -124,13 +152,41 @@ Design principle 1 — faithfulness to Praat's own DSP output — is enforced by
 `/Applications/Praat.app/Contents/MacOS/Praat --run` against an extensible
 registry of routines in `tests/testthat/faithfulness/routines.R`, compares the
 output to the matching pladdrr call at a per-routine tolerance, and emits
-`inst/agents/FAITHFULNESS_REPORT.md`.
+`inst/agents/FAITHFULNESS_REPORT.md` (set `PLADDRR_FAITHFULNESS_OUTDIR` to regenerate it;
+the caveats in it live in the test file, and the report names the Praat version it ran
+against). **Always name the Praat version with a reference number**: the vendored source
+tracks 6.4.47, and the CPPS pipeline differs from 6.4.27 by about 0.13 dB (Praat rewrote
+its CPP-to-CPPS post-processing); against 6.4.47 all 19 registry rows pass and CPPS is
+0.003 dB away. `tests/testthat/test-fidelity-fingerprint.R` is the second gate: 81
+numbers from one signal, no oracle needed, refuses any ERR/NA row.
 
 When porting a new Praat routine into pladdrr, add a registry row. Default
 tolerance is `0` for exact-arithmetic routines; looser tolerances require a
 written rationale in the row. Failing rows are first-class regressions.
 
-## What's New in the development version (2026-10 perf/memory audit)
+## What's New in v5.1.0 (2026-11 audit round: numbers that change)
+
+Each item moves toward what the Praat application returns. Recompute anything you saved
+under the old behaviour; the magnitudes are in `NEWS.md`.
+
+- **Intensity averaging codes.** `Intensity$get_mean()`'s default `"energy"` used to return the *median* (codes were one too low). The strings now map onto Praat's enum (`"median"` 0, `"energy"` 1, `"sones"` 2, `"db"` 3); unknown strings and raw integers raise. `get_statistics()["mean"]` and `print()` use the energy average too. See "Unit Code Reference".
+- **Ltas units.** `unit = "energy"`/`"sones"` now return the dB number Praat prints (they returned the linear mean); `unit = "dB"` maps to code 3 so `get_slope()`/`get_local_peak_height()` return dB, not a ratio; band averages no longer interpolate (moves default-`dB` bands by up to 8.4 dB at bandwidth 100). Full-band means are unchanged. See "LTAS Units".
+- **Ltas locators accept only `"dB"`.** `get_value_at_frequency()`, `get_minimum()`, `get_maximum()` ignored `unit`; they now raise `pladdrr_input_error` for anything but `"dB"`.
+- **Script option arguments.** In `PraatInterpreter$run()`/`praat_run_script()`, CHOICE/OPTIONMENU arguments selected the wrong option (`base` offset stored unconverted in `src/uiform_libmode.cpp`); a numeric option argument changed meaning, and the first option of an enum (`"hertz"`, `"none"`) no longer errors.
+- **`av`-decoded audio** (FLAC, MP3, OGG): full-scale amplitude (it was 6.02 dB hot) and one row per channel (stereo used to arrive as double-length mono). The substitution is announced with a catchable `pladdrr_decoder_fallback` warning.
+
+## What's New in v5.0.7 (2026-11 audit round: safety and robustness)
+
+- **Sessions that used to die now raise.** A foreign-class `.xptr` handed to *any* wrapper constructor (`Sound(.xptr = <TextGrid>)` etc.; 10 of them segfaulted); a file whose `Object class` line names another class (`matrix_read()`, `PitchTier$from_file()`); an out-of-range `channel` (returned heap garbage, `channel = 1000` segfaulted); `to_cochleagram()` on a Sound sampled at 66 Hz or less (aborted R with exit 134; it now refuses anything below 200 Hz at the default window); step sizes that request an impossible tensor (`df = 1e-9` is 2.5 TB: Linux errors, macOS SIGKILLs R). All raise catchable `pladdrr_input_error`/Praat errors now.
+- **Input validation.** `sound_create_tone()`/`_pure_tone()`/`_tone_complex()`, `Matrix()`, `Excitation$to_formant()` and the cochleagram steps check positive, finite and at most 2^29 cells (`R/validators.R`: `.check_positive_finite()`, `.check_cell_count()`, `.check_cochleagram_steps()`).
+- **WAV sized from its `data` chunk.** A 46-byte file claiming 2^29 samples used to allocate 4.3 GB; the load now returns the samples that exist and reports the shortfall as `pladdrr_data_loss`.
+- **`as.matrix()`** returns the object's matrix or a typed error naming a conversion that class has (it returned a 2-element wrapper for 39 of 41 classes).
+- **Batch.** One unreadable file is one row (`error`, `error_class` columns), not a lost run. Conditions raised on a worker become rows, so `tryCatch(pladdrr_data_loss = )` around `batch_process()` cannot see them: filter on `error_class`. `.default_n_cores()` keeps a spare CPU only above 2 CPUs.
+- **Threads.** The automatic count is the affinity mask ∩ cgroup quota (Linux), capped at 2 under `_R_CHECK_LIMIT_CORES_` (what `R CMD check --as-cran` sets); cepstrogram and Burg-formant grains are 250/40 frames per thread. See `ARCHITECTURE.md` "Threading Model".
+- **Praat's global error buffer** is read then cleared in the cochleagram/excitation catch blocks, so one failed conversion no longer prefixes every later Praat error.
+- **Tests.** The 81-number fidelity fingerprint is a real test (`tests/testthat/test-fidelity-fingerprint.R`); the audit's 12 dead `NA` rows were repaired. See `ARCHITECTURE.md` "Test Gates".
+
+## What's New in v5.0.6 (2026-10 perf/memory audit)
 
 - **Load-time RSS 48 MB → 7 MB per R process / PSOCK worker.** Praat's `theForegroundPraatObjects` (10001 × ~4.2 KB) was *dynamically* initialised because `_autostring()` was not `constexpr`, so `dyn.load` dirtied all 42 MB. Fix needs **both** `constexpr _autostring()` (`melder_string32.h`) and value-init `structPraatObjects theForegroundPraatObjects {};` (`praat.cpp`); `constexpr` alone changed nothing. Never add a non-constexpr member/ctor to `structPraatObjects`.
 - **`FormantPath$path_finder()` bug fixed.** `formantpath_simd.cpp` clamped the frequency-change cost to 1, then the caller divided by the cutoff again (default 100) → cost capped at 0.01, wrong Viterbi path, F1 off by up to 1.7 kHz vs Praat. SIMD branch deleted; upstream scalar loop restored. New faithfulness row (`mpt2.wav`, mean F1/F2, tolerance 1e-6) passes at ~1e-12.
@@ -263,7 +319,7 @@ written rationale in the row. Failing rows are first-class regressions.
 - **v4.9.3 — Willems/split-Levinson crash fixed:** `Sound$to_formant_willems()` and `to_formant_sl()` no longer segfault on pure tones or silence. Root cause was a null console stream in the embedded build (`MelderConsole::write` → `fputc(NULL)`); guarded to fall back to libc `stderr`/`stdout` (see `PRAAT_MODIFICATIONS.md` v4.9.3). Formant values are unchanged. Both methods now reject `number_of_formants`/`number_of_poles < 1` with a clear R-level error. Also fixed `sound_extract_parts()` (was passing a dead R6 private pointer → NULL; now uses `$.xptr`).
 - **v4.9.2 — Thread control:** `pladdrr_threads(n)` caps or disables Praat's multi-threaded analyses at runtime. `pladdrr_threads(1)` forces single-threaded (use inside `parallel::mclapply()` workers so cores aren't oversubscribed); `pladdrr_threads(0)` restores automatic (all cores); `pladdrr_threads()` with no argument returns the current state (`processors`, `enabled`, `max_threads`, `min_elements_per_thread`). Threading never changes results — threads only partition analysis frames.
 
-- **v4.9.2 — Data-loss policy:** `options(pladdrr.data_loss=)` controls how routines that return NA for undefined values react: `"warn"` (default, classed warning per incident), `"error"` (stop at first incident), `"silent"` (only attach `attr(., "pladdrr_data_loss")`). Set `"error"` in batch pipelines where silent NA truncation would corrupt aggregates.
+- **v4.9.2 — Data-loss policy:** `options(pladdrr.data_loss=)` controls how routines that report incomplete output react — NA for undefined values, a result shorter than the requested range, or a sound file read shorter than its own header (`Sound()` / `Sound$new()` on a truncated or malformed WAV): `"warn"` (default, classed warning per incident), `"error"` (stop at first incident), `"silent"` (only attach `attr(., "pladdrr_data_loss")`, and only where `with_pladdrr_errors()` returns a value that takes attributes). Set `"error"` in batch pipelines where silent truncation would corrupt aggregates — note that this then aborts a corpus loop on the first truncated file, which is the point: before the clamp such a loop completed on fabricated samples with no signal at all. Reading a file through the `av` fallback is reported by the separate `pladdrr_decoder_fallback` class, which this option deliberately does not govern.
 
 - **v4.9.2 — Input validation:** `Sound$to_pitch*/to_manipulation/to_ltas_pitch_corrected/change_speaker/to_point_process_periodic_*` now reject `pitch_floor <= 0` or `pitch_ceiling <= pitch_floor` with a clear R-level error instead of a generic "Failed to create ..." from C++.
 
@@ -480,6 +536,19 @@ Pitch <- function(.xptr = NULL) {
 }
 ```
 
+**`.xptr` is a checked door, not a bare cast (5.0.7):** `RType$new(ptr)` is where
+Rcpp reinterprets the external pointer as the wrapper's C++ struct, so that module
+constructor is the last place a wrong-class pointer can still be refused. Every
+module constructor that takes one (`src/modules/*_module.cpp`, 37 types plus `Matrix`
+and `PitchTier`) calls `require_praat_class()` (`src/praat_xptr_utils.h`, Praat's
+`Thing_isa` *subclass* test — so an `Ltas` or `Sound` pointer still passes as a Matrix),
+and the R constructor wraps the call in `with_pladdrr_errors()`, so the refusal is a
+classed `pladdrr_input_error` naming the class found ("Not a Sound (found TextGrid)").
+`PowerCepstrogram` has no module object of its own; its constructor builds one only to
+run the check. Without the check the first field read after construction is out of
+bounds and the R session dies uncatchably. A new wrapper type needs both halves; the
+list of types is in `tests/testthat/test-xptr-all-constructors.R`.
+
 **Special cases:** Some wrappers have additional fields or no `.xptr`:
 - **FormantPath, KlattGrid, ComplexSpectrogram**: no `.xptr` — only `.cpp` stored
 - **PowerCepstrogram**: opposite of the above — pure `.xptr`, no `.cpp` module at all
@@ -621,32 +690,73 @@ integer value, check the specific call site below.
 
 There is no general-purpose "intensity unit" code. The only related parameter is `averaging_method`
 on `Intensity$get_mean(from_time, to_time, averaging_method)`, internally mapped by `.intensity_avg_code`
-(`R/intensity-wrapper.R:38`):
+(`R/intensity-wrapper.R`) onto Praat's `Intensity_averaging` enum (`fon/Intensity.h:64-67`);
+the returned number is always in dB, and any other string is an error:
 
-| R String | Code |
-|----------|------|
-| `"energy"` | `0` |
-| `"sones"` | `1` |
-| `"db"` | `2` |
+| R String | Code | What it averages |
+|----------|------|------------------|
+| `"median"` | `0` | 0.5 quantile of the contour |
+| `"energy"` | `1` | mean of `10^(dB/10)`, re-expressed in dB (DEFAULT) |
+| `"sones"` | `2` | mean of `2^(dB/10)`, re-expressed in dB |
+| `"db"` | `3` | arithmetic mean of the dB values |
 
-### LTAS Units (FIXED in v4.0.4)
+This is **not** the LTAS averaging enum (which has no median; see "LTAS Units" below).
+The integer APIs `intensity_get_mean_direct()` and `intensity_get_statistics_batch()` take the same
+raw codes and default to `0` = median; Praat's legacy two-argument `Intensity: Get mean: from, to`
+is the plain dB mean (= `3`), so those defaults are a pladdrr convention, not an oracle match.
+`Intensity$get_statistics(… , metrics = "mean")` and `print()`'s "Mean intensity" line use energy (= `1`),
+the same number `get_mean()` returns by default.
 
-**BREAKING CHANGE:** Prior to v4.0.4, LTAS unit codes were incorrectly mapped. The fix aligns with Praat's `Ltas.cpp:44-60`.
+### LTAS Units (fixed again in v5.1.0 — the v4.0.4 table this section used to carry was wrong)
 
-| R String | Code | Praat Behavior |
-|----------|------|----------------|
-| `"db"` | `0` | Passthrough (no conversion) |
-| `"energy"` | `1` | `10*log10(ratio)` → dB |
-| `"sones"` | `2` | `10*log2(ratio)` → dB |
+Five `Ltas` queries take a `unit` argument — `get_mean(fmin, fmax, unit)`,
+`get_means_batch(fmins, fmaxs, unit)`, `get_standard_deviation(fmin, fmax, unit)`,
+`get_slope(f1min, f1max, f2min, f2max, unit)` and
+`get_local_peak_height(environment_min, environment_max, peak_min, peak_max, unit)` —
+and **the number they return is always in dB**, whatever `unit` you name. `unit` selects
+the domain the *average* is taken in; Praat's own queries convert the result back
+(`Sampled_getMean_standardUnit`, `fon/Sampled.cpp:505-509`, and
+`Sampled_getStandardDeviation_standardUnit`, `fon/Sampled.cpp:550-554`, called at
+`fon/praat_uvafon_init.cpp:1107` and `:1156`). `.ltas_unit_code` (`R/ltas-wrapper.R`)
+maps the string onto Praat's Ltas averaging `CHOICE`, which is **1-based and has no
+median** (`fon/praat_uvafon_init.cpp:1101-1105`); any other string is an error:
 
-**Migration note:** If you used `unit="sones"` as a workaround for getting correct dB values, switch to `unit="energy"` or `unit="dB"`.
+| R String | Code | What it averages | Returned |
+|----------|------|------------------|----------|
+| `"energy"` | `1` | mean of `10^(dB/10)` | that mean converted back: `10*log10(...)` dB |
+| `"sones"` | `2` | mean of `2^(dB/10)` | that mean converted back: `10*log2(...)` dB |
+| `"dB"` | `3` | arithmetic mean of the dB values (DEFAULT) | the dB mean itself |
+
+`get_slope()` and `get_local_peak_height()` compare two band averages: code 3 subtracts
+them, the other two divide them and convert the ratio back (`fon/Ltas.cpp:83-97`). Code
+**3** — not 0 — is what selects the dB branch, which is why `"dB"` must map to 3.
+
+Three other Ltas queries — `get_value_at_frequency()`, `get_minimum()`, `get_maximum()` —
+also accept a `unit` argument, but they read bins that are already in dB and Praat's
+dialogs for them have no unit. They accept only `"dB"` (any case) and raise a
+`pladdrr_input_error` for anything else (before 5.1.0 the argument was silently ignored).
+
+A band average covers the whole bins between the two frequencies, weighting the bins at
+an incomplete range edge by the fraction of the bin inside the range; pladdrr does *not*
+interpolate between bins here, because Praat's Ltas queries pass `interpolate = false`
+(`fon/praat_uvafon_init.cpp:1108`, `:1159`). Values are frozen against the oracle in
+`tests/testthat/test-ltas-averaging-unit.R`.
+
+**Wrong in earlier editions of this guide:** the table read `"db" | 0 | Passthrough`, and
+the `10*log10(ratio) → dB` column described the *conversion helper* rather than the unit of
+the answer. Both readings cost users numbers: `unit = "energy"` returned the linear mean
+(`14170.064098` where Praat prints `41.513718` dB), and `get_slope()` with its default
+`unit = "dB"` returned a dimensionless ratio (`-0.115522`) instead of `-31.906946` dB.
 
 ```r
-# CORRECT (v4.0.4+):
-slope <- ltas$get_slope(0, 1000, 1000, 10000, unit = "energy")  # Returns dB
+# All three answers are dB; they differ because the average is taken in three domains:
+ltas$get_mean(0, 0, unit = "dB")       # -22.832719   mean of the bins
+ltas$get_mean(0, 0, unit = "energy")   #  41.513718   mean of 10^(dB/10), back in dB
+ltas$get_mean(0, 0, unit = "sones")    #  -1.519995   mean of 2^(dB/10), back in dB
 
-# WRONG (pre-v4.0.4 workaround - no longer needed):
-slope <- ltas$get_slope(0, 1000, 1000, 10000, unit = "sones")   # Was accidental fix
+# Spectral tilt in dB — the default spelling now works (values: inst/extdata/test.wav):
+ltas$get_slope(0, 1000, 1000, 4000, unit = "dB")        # -31.906946
+ltas$get_slope(0, 1000, 1000, 4000, unit = "energy")    # -52.513078
 ```
 
 ### Interpolation Methods
@@ -927,7 +1037,7 @@ intensities <- extract_intensity_parallel(files, n_cores = 4)
 - `benchmark_parallel(files, analysis_func, cores)` - Find optimal core count
 
 **Best practices:**
-- Use `n_cores = parallel::detectCores() - 1` to leave one core for system
+- The default (`n_cores = NULL`) is `pladdrr_threads()$processors - 1`, or all of them when there are only two — the CPUs this process may actually use (affinity mask ∩ cgroup quota), which `parallel::detectCores()` ignores. Under `R CMD check` (`_R_CHECK_LIMIT_CORES_` set) it is at most 2, and so is the C++ thread pool
 - `analyze_files_parallel()`: PSOCK (`parLapply`) on Windows and macOS, `mclapply` on Linux. `process_sounds_parallel()` on PSOCK sends one sound's samples per task (2026-10; previously the whole list went to every worker)
 - For very large files, consider batch processing + parallel combined
 
@@ -2628,6 +2738,12 @@ pitch_df <- pitch$as_data_frame(
 - In-place modification for memory efficiency
 - 5-15x faster for batch operations
 
+**Matrix export:** `as.matrix(x)` works on any object that has `$as_matrix()`
+(Sound, Pitch, Intensity, Spectrogram, Ltas, the tiers, Matrix, Polygon, ...) and
+returns exactly what that method returns; the classes without one raise a
+catchable `pladdrr_input_error` naming the class rather than returning a fake
+matrix, so use `as.data.frame(x)` for those.
+
 ### Pattern 4: Tier Manipulation (PitchTier v4.6.6+)
 
 ```r
@@ -3073,6 +3189,14 @@ batch_process("~/audio/", pattern = "\\.wav$", func = my_analysis, parallel = TR
 | `extract_measurements(sound, textgrid, ...)` | Per-interval pitch/formant/intensity via batch C++ |
 | `extract_measurements_custom(sound, textgrid, tier, measures)` | Custom measure functions per interval |
 | `batch_process(directory, pattern, func, parallel)` | Map function over files with optional parallelism |
+
+`batch_process()` returns one row per file, in file order: a file that cannot be
+read, or on which `func` errors, does not abort the batch but gets the message in
+an `error` column and `NA` in the measured columns (so `error` appears only when
+something failed). `error_class` next to it holds the first class of the condition
+(`"pladdrr_input_error"`, `"simpleError"`, ...): a worker turns a condition into a row,
+so a `tryCatch(pladdrr_data_loss = )` around `batch_process()` never fires; filter on
+`error_class` instead.
 
 ### SIMD Information
 
@@ -4099,6 +4223,16 @@ shimmer_percent <- js$shimmer_local * 100 # 2.551%
 ```
 
 ---
+
+### Known limitations after the 2026-11 audit round
+
+- **Praat is not bit-identical across platforms.** On Apple Silicon the Praat application and pladdrr differ by ~2e-6 dB in the default-grid Intensity energy mean (fused multiply-add flips the centre sample of 5 of 117 frames at exact rounding boundaries; pladdrr disables contraction on purpose). Tolerances in the faithfulness registry cover it. See `FAITHFULNESS_REPORT.md`.
+- **C++ errors are mostly untagged.** Only `batch_queries.cpp`, `sound_wrappers.cpp` and the `.xptr` check emit tagged conditions; check before relying on a class from an arbitrary routine (see "Typed Errors").
+- **Worker conditions are flattened** in `batch_process()` (rows with `error_class`) and the `parallel` helpers; they cannot be caught by class around the call.
+- **`praat_run_script()` leaves objects** in Praat's list, also from a script that fails part-way (as Praat does); empty it with `PraatInterpreter$new()$clear_objects()`.
+- **Automatic thread count** reads affinity and cgroup quota on Linux only; macOS and Windows use the machine's core count. `.pladdrr_available_cpus()` reports `$processors`, not a cap set with `pladdrr_threads(n)`, so a batch nested inside a capped worker still defaults to many workers.
+- **`av` fallback:** AAC/MP4 encoder delay is not trimmed (Praat has no reader for those containers).
+- **Allocation bound:** 2^29 cells (4 GiB of doubles) for tones, matrices and cochleagrams; longer inputs raise rather than run.
 
 ## Real-World Use Cases (v4.0.3 Optimizations)
 

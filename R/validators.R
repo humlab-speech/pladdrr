@@ -81,6 +81,33 @@
   invisible(TRUE)
 }
 
+# Sizes that become allocations. A negative duration gave a Sound with nx =
+# -16000, a negative row count a corrupt Matrix, and an enormous one a request
+# the OS answers by killing the session (macOS, exit 137; see
+# src/pladdrr_limits.h). Positive, finite, and no more cells than the C++ bound
+# allows (2^29, 4 GiB of doubles).
+.max_cells <- 2^29
+
+.check_positive_finite <- function(value, name, routine = name) {
+  if (!is.numeric(value) || length(value) != 1L || !is.finite(value) ||
+    value <= 0) {
+    .stop_input(routine, name,
+      paste0(name, " must be a single positive, finite number, got: ",
+        deparse(value)))
+  }
+  invisible(TRUE)
+}
+
+.check_cell_count <- function(cells, routine, ...) {
+  if (cells > .max_cells) {
+    .stop_input(routine, names(list(...))[1L],
+      paste0("would allocate ", format(cells, big.mark = ",", scientific = FALSE),
+        " cells; the limit is ", format(.max_cells, big.mark = ",",
+          scientific = FALSE)))
+  }
+  invisible(TRUE)
+}
+
 # Praat's "Robust slow" trend fit (kCepstrum_trendFit::ROBUST_SLOW ->
 #  SlopeSelector
 # THEILSEN) draws random samples via NUMrandomInteger inside Matousek's slope

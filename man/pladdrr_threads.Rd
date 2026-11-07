@@ -7,14 +7,15 @@
 pladdrr_threads(n = NULL)
 }
 \arguments{
-\item{n}{Maximum number of concurrent threads. Use `1` to disable
-threading, `NULL` (default) to leave the setting unchanged and just
-return the current state, or `0` to restore automatic mode (all cores).}
+\item{n}{Maximum number of concurrent threads. Use \code{1} to disable
+threading, \code{NULL} (default) to leave the setting unchanged and just
+return the current state, or \code{0} to restore automatic mode (all CPUs this
+process may use). An explicit \code{n} always wins over the automatic count.}
 }
 \value{
 Invisibly, a list describing the current state:
   \describe{
-    \item{processors}{Number of logical cores detected.}
+    \item{processors}{Number of CPUs this process may use (see Details).}
     \item{enabled}{Whether multi-threading is enabled.}
     \item{max_threads}{Effective maximum concurrent threads.}
     \item{min_elements_per_thread}{Minimum work per thread; 0 means each
@@ -23,14 +24,30 @@ Invisibly, a list describing the current state:
 }
 \description{
 Praat's compute kernels (pitch, formant, spectrogram, CPPS, ...) run
-multi-threaded by default, using all available processor cores. Use this
-function to cap or disable threading, or to restore the default.
+multi-threaded by default, using every CPU the process may actually use. Use
+this function to cap or disable threading, or to restore the default.
 }
 \details{
-The package's own batch helpers (`analyze_files_parallel()`,
-`process_sounds_parallel()`, `batch_process()`) already cap each
+"Every CPU the process may use" is narrower than the machine's core count
+wherever the process is confined: on Linux the automatic count is the CPU
+affinity mask (container cpusets, \code{taskset(1)}, SLURM allocations)
+intersected with the cgroup CPU quota visible to the process
+(\code{/sys/fs/cgroup/cpu.max}, or cgroup v1 \code{cpu.cfs_quota_us} /
+\code{cpu.cfs_period_us} — what \code{docker --cpus} sets). A quota placed on an
+ancestor cgroup is not readable from inside the process's own cgroup view and
+is therefore not subtracted. Where the platform exposes neither mask nor
+quota (Windows, macOS), it is the number of logical cores.
+Sizing the pool from the machine instead would leave threads with no CPU to
+run on, which costs both time and energy.
+When the environment variable \code{_R_CHECK_LIMIT_CORES_} is set to anything
+but \code{false} (as \code{R CMD check --as-cran} does), the automatic
+default is capped at two threads, the same limit \code{parallel} applies; an
+explicit \code{n} still wins.
+
+The package's own batch helpers (\code{analyze_files_parallel()},
+\code{process_sounds_parallel()}, \code{batch_process()}) already cap each
 worker's threads automatically, so you only need this when running your own
-parallel loop (e.g. a hand-written `mclapply()` where each worker should stay
+parallel loop (e.g. a hand-written \code{mclapply()} where each worker should stay
 single-threaded).
 
 Threading never changes results: threads partition analysis frames and each
@@ -39,5 +56,5 @@ frame is computed exactly as in single-threaded mode.
 \examples{
 pladdrr_threads()      # query current state
 pladdrr_threads(1)     # single-threaded (e.g. inside mclapply workers)
-pladdrr_threads(0)     # back to automatic (all cores)
+pladdrr_threads(0)     # back to automatic (all usable CPUs)
 }

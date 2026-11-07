@@ -34,7 +34,13 @@ private:
 
 public:
     RPitchTier() : ptr(R_NilValue) {}
-    RPitchTier(XPtr<structPitchTier> xptr) : ptr(xptr) {}
+    // The `.xptr` door: R hands this constructor a pointer it got from anywhere,
+    // and Rcpp's XPtr only reinterprets it -- nothing dereferences it until a
+    // method runs, so this is the last place a wrong-class object can be refused.
+    RPitchTier(XPtr<structPitchTier> xptr) : ptr(xptr) {
+        require_praat_class(ptr.get(), classPitchTier,
+                            "Not a PitchTier", "PitchTier", ".xptr");
+    }
 
     bool is_valid() { return ptr.get() != nullptr; }
 

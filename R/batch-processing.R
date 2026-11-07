@@ -89,7 +89,11 @@ NULL
     }
     as.data.frame(row, stringsAsFactors = FALSE)
   })
-  out <- do.call(rbind, agg_list)
+  # Rows can differ in names for the same reason as in .run_batch_process:
+  # a measure that is numeric under one label and character under another
+  # produces different columns per group, and base rbind then aborts with
+  # "names do not match previous names".
+  out <- as.data.frame(data.table::rbindlist(agg_list, fill = TRUE))
   rownames(out) <- NULL
   out
 }
@@ -106,7 +110,12 @@ NULL
     result
   }, error = function(e) {
     warning("Error processing ", filepath, ": ", e$message)
-    list(file = basename(filepath), path = filepath, error = e$message)
+    # error_class keeps what the condition was (pladdrr_data_loss,
+    # pladdrr_input_error, simpleError, ...): the row replaces the condition so
+    # the batch survives, and tryCatch(pladdrr_data_loss = ) around
+    # batch_process() can never see a worker's condition.
+    list(file = basename(filepath), path = filepath, error = e$message,
+         error_class = class(e)[1L])
   })
 }
 
@@ -164,11 +173,17 @@ NULL
 #' @param recursive Logical, search directories recursively (default: FALSE)
 #' @param parallel Logical, use parallel processing (default: FALSE)
 #' @param ncores Integer, number of cores for parallel processing (default: NULL
-#'  = all-1)
+#'  = one worker per usable CPU, minus one)
 #' @param progress Logical, show progress bar (default: TRUE)
 #' @param ... Additional arguments passed to func
 #'
-#' @return Data frame with results from all files
+#' @return Data frame with results from all files: exactly one row per file, in
+#'   the order the files were processed. A file that cannot be read, or where
+#'   \code{func} fails, does not abort the batch: its row carries the message in
+#'   an \code{error} column (and \code{error_class}, the first class of the
+#'   condition, e.g. \code{"pladdrr_input_error"}) and \code{NA} where the
+#'   other rows have a value. Conditions raised on a worker cannot be caught by
+#'   class around \code{batch_process()}; filter on \code{error_class} instead.
 #'
 #' @examples
 #' audio_dir <- tempfile("audio_")
@@ -215,11 +230,25 @@ batch_process <- function(directory, pattern = "\\.wav$", func,
   # Execute
   results <- .run_batch_process(files, func, parallel, ncores, progress, ...)
   
-  # Combine results
-  do.call(rbind, lapply(results, function(x) {
+  # Combine results. A failed file contributes `error` instead of the measure
+  # columns (see .process_batch_file), so the rows need not share names, and
+  # do.call(rbind, ...) then aborts the whole call with "names do not match
+  # previous names", losing every good file with the bad one. When every row
+  # has the same columns in the same order nothing was ever wrong with base
+  # rbind -- and base rbind also keeps row names and unions differing factor
+  # levels, which rbindlist does not -- so it stays on that path. Only
+  # genuinely ragged rows go through rbindlist(fill = TRUE), which takes the
+  # union of the columns, fills what a row lacks with NA and keeps the file
+  # order; as.data.frame keeps the documented return type. See ?batch_process.
+  rows <- lapply(results, function(x) {
     if (is.data.frame(x)) return(x)
     as.data.frame(x, stringsAsFactors = FALSE)
-  }))
+  })
+  shape <- vapply(rows, function(r) paste(names(r), collapse = "\r"), "")
+  if (length(unique(shape)) == 1L) {
+    return(as.data.frame(do.call(rbind, rows)))
+  }
+  as.data.frame(data.table::rbindlist(rows, fill = TRUE))
 }
 
 #' Pair Sound and TextGrid Files
@@ -721,7 +750,7 @@ aggregate_measurements <- function(measurements,
       !requireNamespace("parallel",
         quietly = TRUE)) stop(
             "Package 'parallel' is required for parallel processing")
-    if (is.null(ncores)) ncores <- parallel::detectCores() - 1
+    if (is.null(ncores)) ncores <- .default_n_cores()
     tpw <- .pladdrr_worker_thread_budget(ncores)
     parallel::mclapply(files, function(f) {
       pladdrr_threads(tpw)

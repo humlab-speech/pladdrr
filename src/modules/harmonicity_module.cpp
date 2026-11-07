@@ -20,6 +20,7 @@
 // Rcpp Module exposing Harmonicity (HNR) functionality (pladdrr 2.0)
 
 #include <Rcpp.h>
+#include "praat_xptr_utils.h"
 #include "module_common.h"
 #include "../datatable_utils.h"
 #include "praat.github.io/fon/Harmonicity.h"
@@ -32,7 +33,9 @@ private:
 
 public:
     RHarmonicity() : ptr(R_NilValue) {}
-    RHarmonicity(XPtr<structHarmonicity> xptr) : ptr(xptr) {}
+    RHarmonicity(XPtr<structHarmonicity> xptr) : ptr(xptr) {
+        require_praat_class(ptr.get(), classHarmonicity, "Not a Harmonicity", "Harmonicity", ".xptr");
+    }
 
     bool is_valid() { return ptr.get() != nullptr; }
 

@@ -26,7 +26,8 @@
 #' @section Statistics methods (over a time range):
 #' \itemize{
 #' \item \code{get_mean(from_time, to_time, averaging_method)} - mean intensity
-#'  (dB)
+#'  in dB, averaged as named by \code{averaging_method} (see "Interpolation"),
+#'  \code{"energy"} by default
 #' \item \code{get_standard_deviation(from_time, to_time)} - standard deviation
 #'  (dB)
 #' \item \code{get_minimum(from_time, to_time, interpolation)} - minimum
@@ -49,8 +50,19 @@
 #' Codes: \code{"nearest"} (0), \code{"linear"} (1), \code{"cubic"} (2,
 #'  default),
 #' \code{"sinc70"} (3), \code{"sinc700"} (4).
-#' Averaging methods: \code{"energy"} (0, default), \code{"sones"} (1),
-#'  \code{"db"} (2).
+#' Averaging methods for \code{get_mean()}, case-insensitive strings; the code in
+#'  brackets is Praat's \code{Intensity_averaging} value and the result is always
+#'  in dB:
+#' \itemize{
+#' \item \code{"median"} (0) - the 0.5 quantile of the contour
+#' \item \code{"energy"} (1, default) - mean of \code{10^(dB/10)}, re-expressed
+#'  in dB
+#' \item \code{"sones"} (2) - mean of \code{2^(dB/10)}, re-expressed in dB
+#' \item \code{"db"} (3) - arithmetic mean of the dB values
+#' }
+#' Any other string is an error. \code{get_statistics()}'s \code{"mean"} metric
+#'  is the energy average (code 1), the same as \code{get_mean()}'s default;
+#'  pass \code{metrics = "median"} for the 0.5 quantile.
 #'
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #'   Intensity object; set internally when a method returns a new Intensity.
@@ -82,9 +94,13 @@ NULL
 .intensity_methods <- new.env(hash = TRUE, parent = emptyenv())
 
 # Helpers
+# Praat's own enum, fon/Intensity.h:64-67 (Intensity_averaging_MEDIAN/ENERGY/
+# SONES/DB); note that this is *not* the Ltas averaging enum, which has no MEDIAN.
 .intensity_avg_code <- function(method) {
   switch(tolower(method),
-    "energy" = 0, "sones" = 1, "db" = 2, 0)
+    "median" = 0L, "energy" = 1L, "sones" = 2L, "db" = 3L,
+    .stop_input("get_mean", "averaging_method",
+      paste0('must be one of "energy", "sones", "db", "median": ', method)))
 }
 
 # --- Query ---
@@ -191,7 +207,8 @@ NULL
   cat(sprintf("  Duration: %.3f s\n", .self$.cpp$get_duration()))
   cat(sprintf("  Number of frames: %d\n", .self$.cpp$get_number_of_frames()))
   cat(sprintf("  Time step: %.4f s\n", .self$.cpp$get_time_step()))
-  cat(sprintf("  Mean intensity: %.2f dB\n", .self$.cpp$get_mean(0, 0, 0)))
+  # code 1 = energy, the value get_mean() reports by default
+  cat(sprintf("  Mean intensity: %.2f dB\n", .self$.cpp$get_mean(0, 0, 1)))
   cat(sprintf("  Range: [%.2f, %.2f] dB\n",
               .self$.cpp$get_minimum(0, 0, 1), .self$.cpp$get_maximum(0, 0, 1)))
   invisible(.self)
@@ -212,7 +229,7 @@ Intensity <- function(.xptr = NULL) {
         "to_intensity()")
   }
   intensity_mod <- get_module("intensity_module")
-  cpp_obj <- intensity_mod$RIntensity$new(.xptr)
+  cpp_obj <- with_pladdrr_errors(intensity_mod$RIntensity$new(.xptr))
   structure(list(.xptr = .xptr, .cpp = cpp_obj),
     class = c("Intensity", "PraatObject"))
 }

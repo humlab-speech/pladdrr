@@ -31,9 +31,25 @@ ltas <- sound$to_ltas_pitch_corrected(pitch_floor = 75, pitch_ceiling = 600)
 
 \section{Units and interpolation}{
 
-Power values default to decibels (\code{unit = "dB"}); pass
-\code{"energy"} or \code{"sones"} for Praat's other two averaging units.
-Methods that locate a peak or trough take an \code{interpolation} of
+The five averaging queries - \code{get_mean()}, \code{get_means_batch()},
+\code{get_standard_deviation()}, \code{get_slope()} and
+\code{get_local_peak_height()} - all \emph{return decibels}, whatever
+\code{unit} you name. \code{unit} selects the domain the average is taken
+in: \code{"dB"} (the default) averages the bin values, \code{"energy"}
+averages \code{10^(z/10)} and \code{"sones"} averages \code{2^(z/10)}
+(Praat's own conversions), and the result is converted back to dB, exactly
+as Praat's Ltas queries do. The three therefore give three different
+numbers - the \code{"energy"} mean is the one comparable with broadband
+energy sums. Spelling is case-insensitive, and an unrecognised \code{unit}
+is an error naming the accepted spellings (in the queries that average:
+\code{get_mean()}, \code{get_means_batch()}, \code{get_standard_deviation()},
+\code{get_slope()}, \code{get_local_peak_height()}). The peak/trough and
+value-at-frequency locators take a \code{unit} argument for compatibility but
+answer in the bins' own dB, so they accept only \code{"dB"} and raise a
+\code{pladdrr_input_error} for anything else. Averages cover the whole bins between the two frequencies, weighting
+the two bins at an incomplete range edge by the fraction of the bin inside
+the range (Praat's non-interpolating averaging window). Methods that locate
+a peak or trough take an \code{interpolation} of
 \code{"none"}, \code{"parabolic"} (the default), \code{"cubic"},
 \code{"sinc70"}, or \code{"sinc700"} - parabolic and cubic refine the
 peak's position between bins instead of snapping to the nearest one.
@@ -68,15 +84,15 @@ peak's position between bins instead of snapping to the nearest one.
  \code{get_frequency_of_maximum(fmin, fmax, interpolation)} - where those
  extremes occur
 \item \code{get_mean(fmin, fmax, unit)} - average power across a frequency
- range
+ range, in dB (see "Units and interpolation" for what \code{unit} changes)
 \item \code{get_standard_deviation(fmin, fmax, unit)} - how much the power
- varies across a frequency range
+ varies across a frequency range, in dB
 \item \code{get_slope(f1min, f1max, f2min, f2max, unit)} - the difference in
- average power between two bands, e.g. spectral tilt (high-frequency band
- minus low-frequency band)
+ average power between two bands in dB, e.g. spectral tilt (high-frequency
+ band minus low-frequency band)
 \item \code{get_local_peak_height(environment_min, environment_max, peak_min,
- peak_max, unit)} - how far a peak rises above its surrounding band, e.g.
- harmonic-to-noise prominence
+ peak_max, unit)} - how far a peak rises above its surrounding band, in dB,
+ e.g. harmonic-to-noise prominence
 }
 }
 
@@ -87,7 +103,7 @@ crosses into C++ once for the whole set of frequencies or ranges.
 \itemize{
 \item \code{get_values_at_frequencies(frequencies, interpolation)} - values
  at many frequencies at once
-\item \code{get_means_batch(fmins, fmaxs, unit)} - means for many frequency
+\item \code{get_means_batch(fmins, fmaxs, unit)} - means in dB for many frequency
  ranges at once
 \item \code{get_peaks_batch(fmins, fmaxs, interpolation)},
  \code{get_minima_batch(fmins, fmaxs, interpolation)} - peaks or troughs

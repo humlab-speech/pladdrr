@@ -115,7 +115,7 @@ PitchModule <- function(.ptr = NULL) {
   }
 
   mod <- get_pitch_module()
-  obj <- mod$RPitch$new(.ptr)
+  obj <- with_pladdrr_errors(mod$RPitch$new(.ptr))
 
   # Add convenience wrapper methods with unit conversion
   # These provide the user-friendly API matching the R6 version

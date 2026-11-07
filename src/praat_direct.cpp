@@ -370,7 +370,8 @@ double intensity_get_value_direct(SEXP intensity_xptr, double time, int interpol
 //' @param intensity_xptr External pointer to Intensity
 //' @param from_time Start time
 //' @param to_time End time
-//' @param averaging_method 0=energy, 1=sones, 2=dB
+//' @param averaging_method Praat Intensity_averaging code: 0=median (default),
+//'   1=energy, 2=sones, 3=dB
 //' @return Mean intensity
 //' @keywords internal
 //' @examples

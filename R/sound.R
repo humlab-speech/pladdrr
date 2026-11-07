@@ -41,8 +41,10 @@ create_sound <- function(values, sampling_rate = 44100, start_time = 0.0) {
 #' **DEPRECATED:** This S3 function is deprecated. Use the R6 interface instead:
 #' \code{Sound$new(file_path)}
 #'
-#' @param file_path Path to audio file (WAV/AIFF/FLAC/MP3 via Praat, others via
-#'  av fallback)
+#' @param file_path Path to audio file. WAV and AIFF are read by Praat; FLAC,
+#'  MP3, OGG and anything else Praat has no reader for go through the \code{av}
+#'  fallback, which warns with \code{pladdrr_decoder_fallback} and needs
+#'  \pkg{av} installed
 #' @param channel Channel to read (0 = left, 1 = right) - ignored in R6
 #'
 #' @return Sound R6 object

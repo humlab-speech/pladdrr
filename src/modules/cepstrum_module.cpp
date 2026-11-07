@@ -39,7 +39,9 @@ private:
 
 public:
     RCepstrum() : ptr(R_NilValue) {}
-    RCepstrum(XPtr<structCepstrum> xptr) : ptr(xptr) {}
+    RCepstrum(XPtr<structCepstrum> xptr) : ptr(xptr) {
+        require_praat_class(ptr.get(), classCepstrum, "Not a Cepstrum", "Cepstrum", ".xptr");
+    }
 
     bool is_valid() { return ptr.get() != nullptr; }
 

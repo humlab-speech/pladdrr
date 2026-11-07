@@ -4,6 +4,11 @@
 #'
 #' @details
 #' Matrix objects represent two-dimensional sampled data with x and y axes.
+#' A pointer handed in through \code{.xptr} must already be a Matrix (or a Praat
+#' Matrix subclass such as \code{Ltas} or \code{Sound}); any other object is
+#' refused with the package's \code{pladdrr_input_error} naming the class found,
+#' because reading a foreign object's fields is layout confusion (the same check
+#' \code{\link{matrix_read}} performs on the class a file names).
 #'
 #' @return A \code{Matrix} object with methods for two-dimensional sampled data
 #'  access.
@@ -126,9 +131,16 @@ Matrix <- function(xmin = NULL, xmax = NULL, nx = NULL, dx = NULL, x1 = NULL,
   if (!is.null(.xptr)) {
     ptr <- .xptr
   } else if (!is.null(numberOfRows) && !is.null(numberOfColumns)) {
+    .check_positive_count(numberOfRows, "numberOfRows")
+    .check_positive_count(numberOfColumns, "numberOfColumns")
+    .check_cell_count(as.numeric(numberOfRows) * as.numeric(numberOfColumns),
+      "Matrix", numberOfRows = numberOfRows)
     ptr <- .matrix_create_simple(numberOfRows, numberOfColumns)
   } else if (
     .matrix_has_full_params(xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1)) {
+    .check_positive_count(nx, "nx")
+    .check_positive_count(ny, "ny")
+    .check_cell_count(as.numeric(nx) * as.numeric(ny), "Matrix", nx = nx)
     ptr <- .matrix_create(xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1)
   } else {
     stop(
@@ -136,7 +148,10 @@ Matrix <- function(xmin = NULL, xmax = NULL, nx = NULL, dx = NULL, x1 = NULL,
   }
   
   mat_mod <- get_module("matrix_module")
-  cpp_obj <- mat_mod$RMatrix$new(ptr)
+  # The module constructor is where the pointer is reinterpreted as a Matrix;
+  # with_pladdrr_errors() turns its refusal of a foreign object into the classed
+  # pladdrr_input_error the typed-error contract promises (R/error-classes.R).
+  cpp_obj <- with_pladdrr_errors(mat_mod$RMatrix$new(ptr))
   
   structure(list(
     .cpp = cpp_obj,
@@ -198,7 +213,11 @@ matrix_create_simple <- function(numberOfRows, numberOfColumns) {
 
 #' Read a Matrix from file
 #'
-#' Reads a Praat Matrix object from a text or binary file.
+#' Reads a Praat Matrix object from a matrix text file (Praat's binary object
+#' files are not read - this is Praat's text-file reader). A Praat file names
+#' the class to instantiate; if it names a class other than Matrix, an error is
+#' raised naming the class found (casting blindly used to give garbage numbers
+#' or an uncatchable segfault).
 #'
 #' @param path Path to the Matrix file
 #' @return A Matrix object

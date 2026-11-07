@@ -24,6 +24,7 @@
 #include "praat.github.io/fon/Sound_to_Cochleagram.h"
 #include "praat.github.io/fon/Cochleagram_and_Excitation.h"
 #include "praat.github.io/fon/Sound.h"
+#include "praat_error_handling.h"   // get_melder_error()
 
 // [[Rcpp::export(.sound_to_cochleagram)]]
 SEXP sound_to_cochleagram(SEXP sound_xptr, double dt, double df,
@@ -45,7 +46,12 @@ SEXP sound_to_cochleagram(SEXP sound_xptr, double dt, double df,
     Rcpp::XPtr<structCochleagram> ptr(result.releaseToAmbiguousOwner());
     return ptr;
   } catch (MelderError) {
-    Rcpp::stop("Praat error in Sound_to_Cochleagram");
+    // Read the reason before clearing: Praat's error buffer is global and is
+    // only emptied here, so stopping without it leaks this failure into every
+    // later Praat error in the session.
+    std::string praat_error = get_melder_error();
+    Melder_clearError();
+    Rcpp::stop("Praat error in Sound_to_Cochleagram: " + praat_error);
   }
 }
 
@@ -72,7 +78,9 @@ SEXP sound_to_cochleagram_edb(SEXP sound_xptr, double dtime, double dfreq,
     Rcpp::XPtr<structCochleagram> ptr(result.releaseToAmbiguousOwner());
     return ptr;
   } catch (MelderError) {
-    Rcpp::stop("Praat error in Sound_to_Cochleagram_edb");
+    std::string praat_error = get_melder_error();
+    Melder_clearError();
+    Rcpp::stop("Praat error in Sound_to_Cochleagram_edb: " + praat_error);
   }
 }
 
@@ -93,7 +101,9 @@ SEXP cochleagram_to_excitation(SEXP xptr, double time) {
     Rcpp::XPtr<structExcitation> ptr(result.releaseToAmbiguousOwner());
     return ptr;
   } catch (MelderError) {
-    Rcpp::stop("Praat error in Cochleagram_to_Excitation");
+    std::string praat_error = get_melder_error();
+    Melder_clearError();
+    Rcpp::stop("Praat error in Cochleagram_to_Excitation: " + praat_error);
   }
 }
 

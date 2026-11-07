@@ -278,7 +278,7 @@ PowerCepstrum <- function(.xptr = NULL) {
     stop(".xptr must be an external pointer")
   }
   pc_mod <- get_module("powercepstrum_module")
-  cpp_pc <- pc_mod$RPowerCepstrum$new(.xptr)
+  cpp_pc <- with_pladdrr_errors(pc_mod$RPowerCepstrum$new(.xptr))
   structure(list(.xptr = .xptr, .cpp = cpp_pc),
     class = c("PowerCepstrum", "PraatObject"))
 }
@@ -472,7 +472,10 @@ PowerCepstrogram <- function(.xptr = NULL) {
   if (!inherits(.xptr, "externalptr")) {
     stop(".xptr must be an external pointer")
   }
-  # No module — pure Rcpp function wrapper
+  # The object is a plain list (its methods are Rcpp functions), but the module
+  # class still carries the Thing_isa check; construct one only to run it.
+  with_pladdrr_errors(
+    get_module("powercepstrum_module")$RPowerCepstrogram$new(.xptr))
   structure(list(.xptr = .xptr), class = c("PowerCepstrogram", "PraatObject"))
 }
 

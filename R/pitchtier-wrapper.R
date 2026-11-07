@@ -5,7 +5,12 @@
 #'
 #' PitchTiers are used together with Manipulation objects to modify the pitch
 #' contour of sounds. Unlike Pitch objects, which hold sampled data, PitchTiers
-#' hold discrete time-value pairs that can be edited directly.
+#' hold discrete time-value pairs that can be edited directly. Loading a file
+#' whose \code{Object class} line names another class is an error naming the
+#' class found (as for \code{\link{matrix_read}}). The same check guards the
+#' \code{.xptr} argument: \code{PitchTier(.xptr = )} refuses an object that is
+#' not a PitchTier or a Praat subclass of one, with the package's
+#' \code{pladdrr_input_error}.
 #'
 #' @section Usage:
 #' \preformatted{
@@ -352,7 +357,10 @@ PitchTier <- function(tmin = NULL, tmax = NULL, .xptr = NULL) {
   }
 
   tier_mod <- get_module("pitchtier_module")
-  cpp_obj <- tier_mod$RPitchTier$new(ptr)
+  # The module constructor is where the pointer is reinterpreted as a PitchTier;
+  # with_pladdrr_errors() turns its refusal of a foreign object into the classed
+  # pladdrr_input_error the typed-error contract promises (R/error-classes.R).
+  cpp_obj <- with_pladdrr_errors(tier_mod$RPitchTier$new(ptr))
 
   structure(list(
     .cpp = cpp_obj,

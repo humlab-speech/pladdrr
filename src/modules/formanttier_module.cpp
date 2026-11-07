@@ -35,7 +35,9 @@ private:
 
 public:
     RFormantTier() : ptr(R_NilValue) {}
-    RFormantTier(XPtr<structFormantTier> xptr) : ptr(xptr) {}
+    RFormantTier(XPtr<structFormantTier> xptr) : ptr(xptr) {
+        require_praat_class(ptr.get(), classFormantTier, "Not a FormantTier", "FormantTier", ".xptr");
+    }
 
     bool is_valid() { return ptr.get() != nullptr; }
 
