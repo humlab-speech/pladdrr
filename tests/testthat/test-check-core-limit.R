@@ -5,7 +5,10 @@
 # does. The pool size is read once per process, so each case is a child process.
 
 processors_with <- function(value) {
-  env <- if (is.na(value)) character() else paste0("_R_CHECK_LIMIT_CORES_=", value)
+  # "Unset" must be set to empty: an empty env vector makes system2 inherit the
+  # parent's variable, and R CMD check --as-cran exports it as TRUE. Empty is
+  # treated as uncapped, the same as unset.
+  env <- paste0("_R_CHECK_LIMIT_CORES_=", if (is.na(value)) "" else value)
   out <- system2(file.path(R.home("bin"), "Rscript"),
     c("-e", shQuote("suppressMessages(library(pladdrr)); cat('P=', pladdrr_threads()$max_threads, '\\n')")),
     stdout = TRUE, stderr = FALSE, env = env)
