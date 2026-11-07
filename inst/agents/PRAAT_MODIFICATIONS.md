@@ -16,7 +16,7 @@ This document details all modifications made to the Praat source code to enable 
 
 ---
 
-### v5.0.7 — automatic thread count follows the CPUs the process may use (2026-11-05, audit F-power-01/F-power-04)
+### v5.1.0 — automatic thread count follows the CPUs the process may use (2026-11-05, audit F-power-01/F-power-04)
 
 #### `src/melderthread_impl.cpp` — `MelderThread_getNumberOfProcessors()` is affinity- and quota-aware
 
@@ -55,7 +55,7 @@ CPU-over-elapsed timing check noted the CPPS examples (3 s clip: ratio 7.7, now
 2.0; `tests/testthat/test-check-core-limit.R`). An explicit `pladdrr_threads(n)`
 still wins.
 
-### v5.0.7 — threading thresholds at the cepstrogram and formant sites (2026-11-05)
+### v5.1.0 — threading thresholds at the cepstrogram and formant sites (2026-11-05)
 
 #### `LPC/Sound_to_PowerCepstrogram.cpp` + `fon/Sound_to_Formant.cpp` — minimum work per thread
 

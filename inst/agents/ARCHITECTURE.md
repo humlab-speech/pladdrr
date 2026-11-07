@@ -107,7 +107,7 @@ above 8 — but the risk is latent if you change chunk sizes or thresholds.
 each element writes a disjoint output slot and reads shared input only — that keeps
 results bit-identical at any thread count.
 
-**How many threads "automatic" means (5.0.7).** `MelderThread_getNumberOfProcessors()`
+**How many threads "automatic" means (5.1.0).** `MelderThread_getNumberOfProcessors()`
 (`src/melderthread_impl.cpp`) is the CPU affinity mask intersected with the cgroup
 CPU quota on Linux, `hardware_concurrency()` on macOS and Windows (job objects and
 macOS limits are not read), computed once per process. When `_R_CHECK_LIMIT_CORES_`
@@ -119,7 +119,7 @@ read once, a test that depends on it needs a child process
 (`.default_n_cores()`) follows the same CPU number, keeping one CPU spare only when
 there are more than two.
 
-**How much work a thread must get (5.0.7).** The minimum frames per thread at the
+**How much work a thread must get (5.1.0).** The minimum frames per thread at the
 cepstrogram and Burg-formant sites are pladdrr constants in
 `src/pladdrr_thread_thresholds.h` (250 and 40). The earlier values (40 and 3) were
 below the cost of starting a thread. Remember that the divisor in
@@ -135,7 +135,7 @@ The former custom thread pool in `batch_queries.cpp` (`parallel_for_range` templ
 
 ---
 
-## The `.xptr` door and input limits (5.0.7)
+## The `.xptr` door and input limits (5.1.0)
 
 **`.xptr` is a checked door.** Every wrapper constructor that accepts `.xptr` ends up
 in an Rcpp module constructor (`src/modules/*_module.cpp`) that reinterprets the

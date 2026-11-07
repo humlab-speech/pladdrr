@@ -2,7 +2,7 @@
 
 **Version:** 5.1.0 guide refresh (2026-09-04; perf/memory audit notes 2026-10-19; 2026-11 audit round 2026-11-06)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** Current through package 5.1.0 (the 2026-11 audit round and its follow-ups, see `NEWS.md` under 5.0.7 and 5.1.0). Shared-dispatch wrappers + threaded Praat backend + xsimd acceleration (enabled at build time, runtime toggle via `pladdrr_simd()`) + clinical Tier 4 helpers + wrapper dispatch migration (Sound/Formant/Spectrum/Spectrogram queries now use direct `.Call()` instead of Rcpp module dispatch) + current `praat.github.io/` build prefix guidance + current CPPS/CPP usage notes + macOS PSOCK parallelism + unified SIMD bridge header (`simd_bridge.h`) + GitHub Actions CI + code coverage + spectral-moments/data-frame allocation cleanup (v4.9.24) + CRAN pre-submission hygiene and full man/ coverage (v5.0.0) + Ltas full Praat-parity query coverage and new SpectrumTier peak-picking class (v5.0.3) + perf/memory audit: load-time RSS fix, FormantPath parity fix, 8 SIMD files removed (development version, 2026-10).
+**Status:** Current through package 5.1.0 (the 2026-11 audit round and its follow-ups, see `NEWS.md` under 5.1.0). Shared-dispatch wrappers + threaded Praat backend + xsimd acceleration (enabled at build time, runtime toggle via `pladdrr_simd()`) + clinical Tier 4 helpers + wrapper dispatch migration (Sound/Formant/Spectrum/Spectrogram queries now use direct `.Call()` instead of Rcpp module dispatch) + current `praat.github.io/` build prefix guidance + current CPPS/CPP usage notes + macOS PSOCK parallelism + unified SIMD bridge header (`simd_bridge.h`) + GitHub Actions CI + code coverage + spectral-moments/data-frame allocation cleanup (v4.9.24) + CRAN pre-submission hygiene and full man/ coverage (v5.0.0) + Ltas full Praat-parity query coverage and new SpectrumTier peak-picking class (v5.0.3) + perf/memory audit: load-time RSS fix, FormantPath parity fix, 8 SIMD files removed (development version, 2026-10).
 - **v4.9.18 — Performance + docs + CI (2026-08-05 assessment, Phases 1-4):**
   - **PointProcess jitter/shimmer batch cache:** First shimmer call fetches all 11 jitter+shimmer metrics via `get_jitter_shimmer_batch_cpp()`. Subsequent jitter or shimmer calls with matching parameters return from cache — no additional C++ crossing. Backward compatible: jitter methods unchanged (no Sound required); cache activates automatically after first shimmer call.
   - **Formant `get_all_values_at_time` — single C++ call:** Added `formant_get_all_values_at_time()` export; replaces `vapply` loop over N module calls with one direct wrapper call.
@@ -175,7 +175,7 @@ under the old behaviour; the magnitudes are in `NEWS.md`.
 - **Script option arguments.** In `PraatInterpreter$run()`/`praat_run_script()`, CHOICE/OPTIONMENU arguments selected the wrong option (`base` offset stored unconverted in `src/uiform_libmode.cpp`); a numeric option argument changed meaning, and the first option of an enum (`"hertz"`, `"none"`) no longer errors.
 - **`av`-decoded audio** (FLAC, MP3, OGG): full-scale amplitude (it was 6.02 dB hot) and one row per channel (stereo used to arrive as double-length mono). The substitution is announced with a catchable `pladdrr_decoder_fallback` warning.
 
-## What's New in v5.0.7 (2026-11 audit round: safety and robustness)
+## What's New in v5.1.0 (2026-11 audit round: safety and robustness)
 
 - **Sessions that used to die now raise.** A foreign-class `.xptr` handed to *any* wrapper constructor (`Sound(.xptr = <TextGrid>)` etc.; 10 of them segfaulted); a file whose `Object class` line names another class (`matrix_read()`, `PitchTier$from_file()`); an out-of-range `channel` (returned heap garbage, `channel = 1000` segfaulted); `to_cochleagram()` on a Sound sampled at 66 Hz or less (aborted R with exit 134; it now refuses anything below 200 Hz at the default window); step sizes that request an impossible tensor (`df = 1e-9` is 2.5 TB: Linux errors, macOS SIGKILLs R). All raise catchable `pladdrr_input_error`/Praat errors now.
 - **Input validation.** `sound_create_tone()`/`_pure_tone()`/`_tone_complex()`, `Matrix()`, `Excitation$to_formant()` and the cochleagram steps check positive, finite and at most 2^29 cells (`R/validators.R`: `.check_positive_finite()`, `.check_cell_count()`, `.check_cochleagram_steps()`).
@@ -536,7 +536,7 @@ Pitch <- function(.xptr = NULL) {
 }
 ```
 
-**`.xptr` is a checked door, not a bare cast (5.0.7):** `RType$new(ptr)` is where
+**`.xptr` is a checked door, not a bare cast (5.1.0):** `RType$new(ptr)` is where
 Rcpp reinterprets the external pointer as the wrapper's C++ struct, so that module
 constructor is the last place a wrong-class pointer can still be refused. Every
 module constructor that takes one (`src/modules/*_module.cpp`, 37 types plus `Matrix`

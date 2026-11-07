@@ -1,8 +1,11 @@
 # pladdrr 5.1.0
 
-5.1.0 is 5.0.7 plus the corrections below that change numbers a user can see,
-or make a call that used to succeed raise. Each moves toward what the Praat
-application returns, and each states by how much.
+5.1.0 collects the 2026-11 audit round: safety and robustness fixes (sessions
+that died, memory read or requested out of bounds, errors that named neither
+the file nor the cause), plus corrections that change numbers a user can see or
+make a call that used to succeed raise. Each of the latter moves toward what the
+Praat application returns, and each states by how much. The safety and
+robustness items are listed after "Behaviour changes".
 
 ## Numbers that change
 
@@ -115,11 +118,6 @@ application returns, and each states by how much.
   unit), so they now accept only `"dB"` (any case) and raise a
   `pladdrr_input_error` for anything else. **Behaviour change to expect:** a call
   that passed another unit used to return the dB number and now raises.
-
-# pladdrr 5.0.7
-
-Safety and robustness fixes: sessions that died, memory that was read or
-requested out of bounds, errors that named neither the file nor the cause.
 
 ## Bug fixes
 

@@ -7,7 +7,7 @@
 
 ## Recent Changes
 
-See `AGENT_GUIDE.md` sections "What's New in v5.1.0", "v5.0.7", "v5.0.6", "v5.0.4", "v5.0.3", "v5.0.2", "v5.0.1", "v5.0.0", "v4.9.x" and "v4.8.x" for recent feature additions and breaking changes (find them by heading; line numbers drift). The 2026-11 audit round is summarised under v5.0.7 (safety and robustness) and v5.1.0 (numbers that change); `NEWS.md` has the measurements.
+See `AGENT_GUIDE.md` sections "What's New in v5.1.0", "v5.1.0", "v5.0.6", "v5.0.4", "v5.0.3", "v5.0.2", "v5.0.1", "v5.0.0", "v4.9.x" and "v4.8.x" for recent feature additions and breaking changes (find them by heading; line numbers drift). The 2026-11 audit round is summarised under v5.1.0 (safety and robustness; numbers that change); `NEWS.md` has the measurements.
 
 ## Historical Archive
 

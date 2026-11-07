@@ -304,7 +304,7 @@ static struct {
 	spin-waiting (audit F-power-01: the 32-thread default on a 16-CPU mask cost
 	+15 % CPU-seconds and +9 % wall over 8 threads). Where the platform has no
 	affinity API (Windows, macOS) the argument is 0 and the answer stays the
-	machine's core count, i.e. exactly the pre-v5.0.7 behaviour.
+	machine's core count, i.e. exactly the pre-v5.1.0 behaviour.
 	shortcut: Windows job objects and macOS CPU limits are not read; upgrade by
 	adding GetProcessAffinityMask / sysctl QoS queries here.
 */
