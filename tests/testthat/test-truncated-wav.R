@@ -119,7 +119,10 @@ test_that("a lying data chunk does not allocate from the claim (subprocess)", {
   # catchable condition are still asserted everywhere.
   if (kv[3] != "-1") {
     expect_lt(as.numeric(kv[3]), 1500)  # MB of address space
-    expect_lt(as.numeric(kv[4]), 200)   # MB resident
+    # Resident is R + pladdrr + whatever instrumentation or devel build runs
+    # the child: 124 MB plain, 320 MB under covr and on R-devel. 800 MB is still
+    # far below the 8 GB the header claims, so a real allocation fails it.
+    expect_lt(as.numeric(kv[4]), 800)   # MB resident
   }
   expect_identical(kv[5], "1")        # ... and the loss was catchable in R
 })
