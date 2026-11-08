@@ -1,7 +1,6 @@
 # Composable Plotting with autoplot and autolayer
 
 ``` r
-
 library(pladdrr)
 library(ggplot2)
 ```
@@ -21,7 +20,6 @@ methods following the ggplot2 convention for visualizing acoustic data.
 This pattern allows combining multiple objects in one plot:
 
 ``` r
-
 autoplot(spec) +
   autolayer(pitch) +
   autolayer(formant)
@@ -34,7 +32,6 @@ Each Praat object type has an
 method that creates an appropriate visualization.
 
 ``` r
-
 # Load example sound
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 ```
@@ -42,7 +39,6 @@ sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 ### Sound Waveform
 
 ``` r
-
 autoplot(sound)
 ```
 
@@ -51,7 +47,6 @@ autoplot(sound)
 ### Pitch Contour
 
 ``` r
-
 pitch <- sound$to_pitch()
 autoplot(pitch)
 ```
@@ -61,7 +56,6 @@ autoplot(pitch)
 ### Spectrogram
 
 ``` r
-
 spec <- sound$to_spectrogram()
 autoplot(spec, to_freq = 5000)
 ```
@@ -71,7 +65,6 @@ autoplot(spec, to_freq = 5000)
 ### Spectrum
 
 ``` r
-
 spectrum <- sound$to_spectrum()
 autoplot(spectrum, to_freq = 5000)
 ```
@@ -81,7 +74,6 @@ autoplot(spectrum, to_freq = 5000)
 ### Intensity
 
 ``` r
-
 intensity <- sound$to_intensity()
 autoplot(intensity)
 ```
@@ -91,7 +83,6 @@ autoplot(intensity)
 ### Formants
 
 ``` r
-
 # Formant extraction may fail on some sounds (e.g., if too short or no voiced
 #  content)
 formant <- tryCatch(
@@ -115,7 +106,6 @@ A `PitchTier` stores sparse, hand-editable F0 points (as opposed to
 manipulate when resynthesizing prosody.
 
 ``` r
-
 pitch_tier <- pitch$down_to_pitch_tier()
 autoplot(pitch_tier)
 ```
@@ -126,7 +116,6 @@ Overlay the sparse tier points on the dense pitch contour with
 [`autolayer()`](https://ggplot2.tidyverse.org/reference/autolayer.html):
 
 ``` r
-
 autoplot(pitch) +
   autolayer(pitch_tier, color = "red")
 ```
@@ -142,7 +131,6 @@ switches between `"speckle"` (default, one point per Praat-selected
 candidate) and `"line"` (one interpolated point per fixed time step).
 
 ``` r
-
 grid <- FormantGrid(tmin = 0, tmax = 1, number_of_formants = 3)
 grid$add_formant_point(1, 0.5, 500)
 grid$add_formant_point(2, 0.5, 1500)
@@ -153,7 +141,6 @@ autoplot(grid)
 ![](autoplot-autolayer_files/figure-html/autoplot-formantgrid-1.png)
 
 ``` r
-
 formant_tier <- FormantTier$from_formant(formant)
 autoplot(formant_tier)                  # style = "speckle" (default)
 ```
@@ -161,7 +148,6 @@ autoplot(formant_tier)                  # style = "speckle" (default)
 ![](autoplot-autolayer_files/figure-html/autoplot-formanttier-styles-1.png)
 
 ``` r
-
 autoplot(formant_tier, style = "line")  # interpolated at a fixed time step
 ```
 
@@ -175,7 +161,6 @@ peak picking. `PowerCepstrogram` extends this over time and underlies
 CPPS-based voice-quality measures.
 
 ``` r
-
 cepstrum <- sound$to_cepstrum()
 autoplot(cepstrum)                # raw view
 ```
@@ -183,14 +168,12 @@ autoplot(cepstrum)                # raw view
 ![](autoplot-autolayer_files/figure-html/autoplot-cepstrum-power-1.png)
 
 ``` r
-
 autoplot(cepstrum, power = TRUE)  # power (dB) view
 ```
 
 ![](autoplot-autolayer_files/figure-html/autoplot-cepstrum-power-2.png)
 
 ``` r
-
 power_cepstrogram <- sound$to_powercepstrogram()
 autoplot(power_cepstrogram)
 ```
@@ -205,7 +188,6 @@ Combine objects using
 ### Spectrogram with Pitch Overlay
 
 ``` r
-
 autoplot(spec, to_freq = 5000) +
   autolayer(pitch, color = "cyan", geom = "point")
 ```
@@ -215,7 +197,6 @@ autoplot(spec, to_freq = 5000) +
 ### Spectrogram with Formant Tracks
 
 ``` r
-
 autoplot(spec, to_freq = 5000) +
   autolayer(formant, max_formant = 3)
 ```
@@ -225,7 +206,6 @@ autoplot(spec, to_freq = 5000) +
 ### Spectrogram with Pitch and Formants
 
 ``` r
-
 autoplot(spec, to_freq = 5000) +
   autolayer(formant, max_formant = 3) +
   autolayer(pitch, color = "white", geom = "point")
@@ -238,7 +218,6 @@ autoplot(spec, to_freq = 5000) +
 Overlay pitch points on waveform (useful for seeing voicing):
 
 ``` r
-
 # Scale pitch to amplitude range for overlay
 pitch_df <- pitch$as_data_frame()
 pitch_df <- pitch_df[!is.na(pitch_df$frequency) & pitch_df$frequency > 0, ]
@@ -261,7 +240,6 @@ customize freely.
 ### Custom Themes
 
 ``` r
-
 autoplot(pitch) +
   theme_classic() +
   labs(
@@ -275,7 +253,6 @@ autoplot(pitch) +
 ### Custom Colors
 
 ``` r
-
 autoplot(spec, to_freq = 5000) +
   scale_fill_viridis_c(option = "magma") +
   theme_dark()
@@ -288,7 +265,6 @@ autoplot(spec, to_freq = 5000) +
 ### Faceting by Time Windows
 
 ``` r
-
 # Create intensity plot with reference lines
 autoplot(intensity) +
   geom_hline(yintercept = c(50, 60, 70), linetype = "dashed", alpha = 0.3) +
@@ -312,7 +288,6 @@ a scores plot (observations projected onto the first two components), or
 `"both"` combined side-by-side via the optional patchwork package.
 
 ``` r
-
 set.seed(1)
 formant_matrix <- matrix(rnorm(200), nrow = 20)
 pca <- pca_from_matrix(formant_matrix)
@@ -322,14 +297,12 @@ autoplot(pca, type = "scree")
 ![](autoplot-autolayer_files/figure-html/autoplot-pca-1.png)
 
 ``` r
-
 autoplot(pca, type = "scores")
 ```
 
 ![](autoplot-autolayer_files/figure-html/autoplot-pca-2.png)
 
 ``` r
-
 autoplot(pca, type = "both")
 ```
 
@@ -345,7 +318,6 @@ plots the resulting warping path, and
 overlays it on an existing plot.
 
 ``` r
-
 dtw_sound <- generate_sine_wave(440, 0.1, sampling_rate = 16000)
 dtw <- sounds_to_dtw(dtw_sound, dtw_sound)
 autoplot(dtw)
@@ -354,7 +326,6 @@ autoplot(dtw)
 ![](autoplot-autolayer_files/figure-html/autoplot-dtw-1.png)
 
 ``` r
-
 autoplot(dtw) +
   autolayer(dtw, color = "orange")
 #> Warning: Duplicated aesthetics after name standardisation:
@@ -400,17 +371,16 @@ pladdrr also provides traditional
 [`plot()`](https://rdrr.io/r/graphics/plot.default.html) S3 methods.
 Here’s when to use each:
 
-| Use Case | Recommended |
-|----|----|
-| Quick single-object plot | `plot(object)` or `autoplot(object)` |
-| Multi-object composition | `autoplot() + autolayer()` |
-| Maximum customization | [`autoplot()`](https://ggplot2.tidyverse.org/reference/autoplot.html) (returns ggplot2) |
-| Base R graphics pipeline | [`plot()`](https://rdrr.io/r/graphics/plot.default.html) |
+| Use Case                 | Recommended                                                                             |
+|--------------------------|-----------------------------------------------------------------------------------------|
+| Quick single-object plot | `plot(object)` or `autoplot(object)`                                                    |
+| Multi-object composition | `autoplot() + autolayer()`                                                              |
+| Maximum customization    | [`autoplot()`](https://ggplot2.tidyverse.org/reference/autoplot.html) (returns ggplot2) |
+| Base R graphics pipeline | [`plot()`](https://rdrr.io/r/graphics/plot.default.html)                                |
 
 ## Saving Plots
 
 ``` r
-
 # Create composed plot
 p <- autoplot(spec, to_freq = 5000) +
   autolayer(formant, max_formant = 3) +

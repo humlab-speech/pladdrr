@@ -20,7 +20,6 @@ This approach is used for:
 - Speech resynthesis with modified parameters
 
 ``` r
-
 library(pladdrr)
 library(ggplot2)
 ```
@@ -55,7 +54,6 @@ The safest way to create a KlattGrid is with
 [`klattgrid_create_from_vowel()`](https://humlab-speech.github.io/pladdrr/reference/klattgrid_create_from_vowel.md):
 
 ``` r
-
 # Synthesize /a/ vowel (low central)
 kg <- klattgrid_create_from_vowel(
   duration = 0.5,           # 500 ms
@@ -81,7 +79,6 @@ cat("  Sampling rate:", sound$get_sampling_frequency(), "Hz\n")
 ### Save to File
 
 ``` r
-
 # Save synthesized audio
 sound$save(file.path(tempdir(), "vowel_a.wav"), "WAV")
 
@@ -94,7 +91,6 @@ kg$save(file.path(tempdir(), "vowel_a.KlattGrid"))
 Do not use the empty constructor for synthesis:
 
 ``` r
-
 # THIS WILL ERROR -- the error below is the point of the example.
 # Praat's own error text uses typographic quotes, which can break the
 # CRAN vignette-rebuild pass under a non-UTF-8 locale, so it's caught and
@@ -126,7 +122,6 @@ instead.**
 The three corner vowels (/i/, /a/, /u/) define the vowel space:
 
 ``` r
-
 # /i/ - high front vowel (English "beet")
 kg_i <- klattgrid_create_from_vowel(
   duration = 0.3, f0start = 200,
@@ -188,7 +183,6 @@ Adult male (~120 Hz pitch):
 Different speakers require different formant and pitch values:
 
 ``` r
-
 # Male voice (low pitch, lower formants)
 kg_male <- klattgrid_create_from_vowel(
   duration = 0.5, f0start = 100,
@@ -230,7 +224,6 @@ cat("  Child:  250-400 Hz (typical ~300 Hz)\n")
 Add pitch points to create dynamic intonation patterns:
 
 ``` r
-
 # Start with base vowel
 kg <- klattgrid_create_from_vowel(
   duration = 0.6, f0start = 120,
@@ -268,7 +261,6 @@ ggplot(df, aes(time, frequency)) +
 ### Common Pitch Patterns
 
 ``` r
-
 # Flat pitch (citation form)
 kg_flat <- klattgrid_create_from_vowel(
   duration = 0.5, f0start = 120,
@@ -298,7 +290,6 @@ kg_rise$add_pitch_point(0.5, 180)  # Rise from 100 to 180 Hz
 Create smooth vowel-to-vowel transitions:
 
 ``` r
-
 # /ai/ diphthong: /a/ -> /i/ (as in "buy")
 kg <- klattgrid_create_from_vowel(
   duration = 0.5, f0start = 150,
@@ -344,7 +335,6 @@ ggplot(df, aes(time, frequency, color = factor(formant_number))) +
 Generate perceptual continua for experiments:
 
 ``` r
-
 # Create /i/ to /u/ continuum (10 steps)
 f1_seq <- seq(280, 310, length.out = 10)  # F1: 280 (/i/) -> 310 (/u/)
 f2_seq <- seq(2250, 870, length.out = 10)  # F2: 2250 -> 870
@@ -371,7 +361,6 @@ for (i in 1:10) {
 ### Spectrogram of Synthetic Vowel
 
 ``` r
-
 # Synthesize /a/ vowel
 kg <- klattgrid_create_from_vowel(
   duration = 0.5, f0start = 120,
@@ -416,7 +405,6 @@ autoplot(spec) +
 ### Comparing Real vs Synthetic
 
 ``` r
-
 # Load real speech
 sound_real <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 
@@ -464,7 +452,6 @@ cat("\nSynthetic sound matches real speech formant averages\n")
 Manipulate voicing amplitude for breathiness or creaky voice:
 
 ``` r
-
 kg <- klattgrid_create_from_vowel(
   duration = 0.5, f0start = 120,
   f1 = 800, b1 = 80, f2 = 1200, b2 = 120, f3 = 2500, b3 = 150
@@ -482,7 +469,6 @@ sound <- kg$to_sound()
 Use the pre-configured example for complex synthesis:
 
 ``` r
-
 # Pre-configured grid with multiple tiers
 kg_complex <- klattgrid_create_example()
 
@@ -502,7 +488,6 @@ cat("  Uses multiple pitch points, formant tiers, and amplitude control\n")
 ### Complete Pipeline
 
 ``` r
-
 # 1. Load real speech
 sound_orig <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 
@@ -554,7 +539,6 @@ cat("\nResynthesis complete - compare original vs synthetic\n")
 Control stimuli precisely for categorical perception studies:
 
 ``` r
-
 # Voice onset time (VOT) continuum simulation
 # Generate /ba/ to /pa/ continuum by manipulating voice onset
 
@@ -582,7 +566,6 @@ stimuli <- lapply(vot_values, function(vot_ms) {
 Create intermediate voices between two speakers:
 
 ``` r
-
 # Male voice parameters
 f1_male <- 730
 f2_male <- 1090
@@ -616,7 +599,6 @@ morphed_voices <- lapply(morph_steps, function(alpha) {
 Demonstrate formant-vowel relationships interactively:
 
 ``` r
-
 # Function to synthesize any vowel from F1/F2
 synthesize_vowel <- function(f1, f2, label = "") {
   kg <- klattgrid_create_from_vowel(
@@ -657,7 +639,6 @@ or
 **Example of safe usage:**
 
 ``` r
-
 # safe
 kg <- klattgrid_create_from_vowel(
   duration = 0.5, f0start = 120,
@@ -797,7 +778,6 @@ audio
 ## Session Info
 
 ``` r
-
 sessionInfo()
 #> R version 4.6.2 (2026-10-29)
 #> Platform: x86_64-pc-linux-gnu
@@ -832,7 +812,7 @@ sessionInfo()
 #> [19] bslib_0.12.0        pillar_1.11.1       RColorBrewer_1.1-3 
 #> [22] rlang_1.3.0         cachem_1.1.0        xfun_0.62          
 #> [25] fs_2.1.0            sass_0.4.10         S7_0.2.2           
-#> [28] otel_0.2.0          cli_3.6.6           pkgdown_2.2.1      
+#> [28] otel_0.3.0          cli_3.6.6           pkgdown_2.2.1      
 #> [31] withr_3.0.3         magrittr_2.0.5      digest_0.6.39      
 #> [34] grid_4.6.2          lifecycle_1.0.5     vctrs_0.7.3        
 #> [37] evaluate_1.0.5      glue_1.8.1          data.table_1.18.6.1

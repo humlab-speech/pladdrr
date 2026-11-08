@@ -15,7 +15,6 @@ All 26 Rcpp modules that previously returned `data.frame` now return
 `data.table`:
 
 ``` r
-
 library(pladdrr)
 
 # Example: Pitch extraction
@@ -46,7 +45,6 @@ If your code uses standard data.frame operations, it continues to work
 without changes.
 
 ``` r
-
 # All of these work exactly as before:
 df$time              # Column access
 df[df$frequency > 100, ]  # Row filtering
@@ -62,7 +60,6 @@ ggplot(df, aes(time, frequency))  # Plotting
 **Why?** Because `data.table` **inherits from** `data.frame`:
 
 ``` r
-
 library(data.table)
 is.data.frame(df)  # TRUE
 is.data.table(df)  # TRUE (requires library(data.table))
@@ -77,7 +74,6 @@ is.data.table(df)  # TRUE (requires library(data.table))
 **BREAKS:**
 
 ``` r
-
 if (class(df) == "data.frame") {
   # class(df) is now c("data.table", "data.frame") - a length-2 vector.
   # On current R this raises "the condition has length > 1"
@@ -88,7 +84,6 @@ if (class(df) == "data.frame") {
 **FIX:**
 
 ``` r
-
 # Use inherits() instead
 if (inherits(df, "data.frame")) {
   # This works in both v3.0 and v4.0
@@ -100,14 +95,12 @@ if (inherits(df, "data.frame")) {
 **BREAKS:**
 
 ``` r
-
 stopifnot(class(df) == "data.frame")  # Fails
 ```
 
 **FIX:**
 
 ``` r
-
 stopifnot(inherits(df, "data.frame"))  # Works (preferred)
 # Older `class(df)` forms still work, but `inherits()` handles inherited
 # classes; e.g. `stopifnot("data.frame" %in% class(df))`.
@@ -120,7 +113,6 @@ Some packages may explicitly reject `data.table` objects:
 **SYMPTOM:**
 
 ``` r
-
 some_function(df)
 # Error: Expected data.frame, got data.table
 ```
@@ -128,7 +120,6 @@ some_function(df)
 **FIX:**
 
 ``` r
-
 # Convert back to plain data.frame
 some_function(as.data.frame(df))
 ```
@@ -142,7 +133,6 @@ some_function(as.data.frame(df))
 Once you have `data.table` loaded, you can use its syntax directly:
 
 ``` r
-
 library(data.table)
 
 # Fast filtering with keys
@@ -162,7 +152,6 @@ pitch_df[voiced, frequency_class := cut(frequency, breaks = 3)]
 #### Efficient Batch Processing
 
 ``` r
-
 library(data.table)
 
 # Fast rbind for multiple files
@@ -205,7 +194,6 @@ Replace with `inherits(x, "data.frame")`.
 #### Step 2: Test Your Code
 
 ``` r
-
 # Install v4.0
 # install.packages("pladdrr")
 
@@ -224,7 +212,6 @@ If you encounter errors:
 1.  **Check if the function rejects data.table:**
 
     ``` r
-
     # Wrap in as.data.frame()
     problematic_function(as.data.frame(df))
     ```
@@ -232,7 +219,6 @@ If you encounter errors:
 2.  **Check class comparisons:**
 
     ``` r
-
     # Use inherits() instead of ==
     if (inherits(df, "data.frame")) {
       # your code here
@@ -244,7 +230,6 @@ If you encounter errors:
 If you’re processing large datasets:
 
 ``` r
-
 library(data.table)
 
 # Learn data.table syntax
@@ -265,7 +250,6 @@ df[, lapply(.SD, mean), by = voiced]
 #### Case 1: Formant Extraction
 
 ``` r
-
 library(pladdrr)
 library(data.table)
 
@@ -286,7 +270,6 @@ df[, .(mean_freq = mean(frequency, na.rm = TRUE)), by = formant]
 #### Case 2: TextGrid Analysis
 
 ``` r
-
 library(pladdrr)
 library(data.table)
 
@@ -310,7 +293,6 @@ vowels[, .(
 #### Case 3: Batch Processing
 
 ``` r
-
 library(pladdrr)
 library(data.table)
 
@@ -352,7 +334,6 @@ results[, .(
 **Avoid (v3.0 pattern):**
 
 ``` r
-
 # Don't do this!
 results <- data.frame()
 for (file in files) {
@@ -364,7 +345,6 @@ for (file in files) {
 **Prefer (v4.0 pattern):**
 
 ``` r
-
 library(data.table)
 
 # Pre-allocate and combine once
@@ -374,7 +354,6 @@ results <- rbindlist(lapply(files, process_file))
 #### 2. Use Keys for Repeated Lookups
 
 ``` r
-
 library(data.table)
 
 # Set key once
@@ -390,7 +369,6 @@ for (t in time_points) {
 #### 3. Use In-Place Updates
 
 ``` r
-
 library(data.table)
 
 # Creates a copy of the column
@@ -407,7 +385,6 @@ df[, new_col := transform(old_col)]
 If you need to temporarily revert to `data.frame` behavior:
 
 ``` r
-
 # Option 1: Convert individual results
 df_plain <- as.data.frame(pitch$as_data_frame())
 
@@ -432,7 +409,6 @@ options(pladdrr.return_datatable = FALSE)
 data.frame.
 
 ``` r
-
 library(ggplot2)
 df <- pitch$as_data_frame()
 ggplot(df, aes(time, frequency)) + geom_line()
@@ -444,7 +420,6 @@ ggplot(df, aes(time, frequency)) + geom_line()
 [`as.data.frame()`](https://rdrr.io/r/base/as.data.frame.html):
 
 ``` r
-
 df_plain <- as.data.frame(df)
 class(df_plain)  # "data.frame"
 ```

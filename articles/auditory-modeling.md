@@ -25,7 +25,6 @@ spectral) analysis.
   to human listeners
 
 ``` r
-
 library(pladdrr)
 #> pladdrr: direct access to Praat's core algorithms from R.
 #> See ?pladdrr for an overview, or citation("pladdrr") for citation details.
@@ -40,7 +39,6 @@ The cochleagram represents sound on a frequency scale that matches the
 human cochlea’s tonotopic organization.
 
 ``` r
-
 # Load or create a sound
 sound <- Sound$create_tone(frequency = 440, duration = 0.5,
   sampling_rate = 44100)
@@ -61,7 +59,6 @@ critical band (frequency resolution of human hearing) - 0 Bark = 0 Hz -
 13 Bark ≈ 1500 Hz (center of speech range) - 25.6 Bark ≈ 20,000 Hz
 
 ``` r
-
 # Common frequency conversions
 # F1 (250 Hz) ≈ 2.5 Bark
 # F2 (2000 Hz) ≈ 15 Bark
@@ -71,7 +68,6 @@ critical band (frequency resolution of human hearing) - 0 Bark = 0 Hz -
 ### Querying Cochleagram Values
 
 ``` r
-
 # Get excitation at specific time and frequency
 # 440 Hz ≈ 4.2 Bark
 excitation_440hz <- cochlea$get_value_at_time_and_frequency(
@@ -86,7 +82,6 @@ print(paste("Excitation at 440 Hz:", round(excitation_440hz, 4)))
 ### Visualizing Cochleagrams
 
 ``` r
-
 # Export to matrix for plotting
 cochlea_matrix <- as.matrix(cochlea$as_matrix())
 
@@ -120,7 +115,6 @@ For more realistic auditory modeling, use the EDB ( Ear-Drum-Brain)
 method which includes synaptic processing:
 
 ``` r
-
 cochlea_edb <- sound$to_cochleagram_edb(
   dtime = 0.01,
   dfreq = 0.1,
@@ -144,7 +138,6 @@ Excitation patterns represent the instantaneous firing rate of auditory
 nerve fibers:
 
 ``` r
-
 # Create excitation from spectrum
 spectrum <- sound$to_spectrum()
 excitation <- spectrum$to_excitation(erb_density = 0.1)
@@ -161,7 +154,6 @@ You can also extract excitation patterns at specific times from a
 cochleagram:
 
 ``` r
-
 # Extract excitation pattern at t = 0.25s
 excitation_t <- cochlea$to_excitation(0.25)
 
@@ -176,7 +168,6 @@ print(paste("Excitation at 440 Hz:", round(exc_value, 4)))
 Quantify how different two sounds are perceptually:
 
 ``` r
-
 # Create two different sounds
 sound1 <- Sound$create_tone(frequency = 440, duration = 0.2,
   sampling_rate = 22050)
@@ -203,7 +194,6 @@ different.
 Compare cochleagrams of normal and impaired hearing:
 
 ``` r
-
 # Original speech sound
 sound_original <- Sound$new(
   system.file("extdata", "test.wav", package = "pladdrr"))
@@ -240,7 +230,6 @@ two recordings of the same material (clean and noisy); the pattern below
 uses the bundled test file for both, so `distance` will be 0.
 
 ``` r
-
 # Clean speech
 speech_clean <- Sound$new(
   system.file("extdata", "test.wav", package = "pladdrr"))
@@ -266,7 +255,6 @@ distance
 Track loudness perception across intensity levels:
 
 ``` r
-
 # Create sounds at different relative levels by scaling tone amplitude
 intensities <- seq(40, 80, by = 10)  # relative dB SPL
 loudnesses <- numeric(length(intensities))
@@ -298,7 +286,6 @@ Excitation patterns provide an alternative method for formant
 extraction:
 
 ``` r
-
 # Create vowel sound
 sound_vowel <- Sound$create_tone(duration = 0.2, sampling_rate = 22050)
 
@@ -341,7 +328,6 @@ Minimal masking: 0.01-0.02 s
 ### Performance Considerations
 
 ``` r
-
 # For batch processing, reuse objects when possible
 sounds <- list(sound1, sound2, sound_vowel)
 
@@ -361,7 +347,6 @@ loudnesses <- vapply(cochleagrams, function(c) {
 Cochleagrams and excitation patterns can be large. Clean up when done:
 
 ``` r
-
 # Process and extract only what you need
 cochlea <- sound$to_cochleagram()
 loudness_time_series <- vapply(seq(0, 0.5, by = 0.01),
@@ -370,9 +355,9 @@ loudness_time_series <- vapply(seq(0, 0.5, by = 0.01),
 # Remove large object if no longer needed
 rm(cochlea)
 gc()  # Force garbage collection
-#>           used  (Mb) gc trigger  (Mb) max used  (Mb)
-#> Ncells 1896515 101.3    3199555 170.9  3199555 170.9
-#> Vcells 3224371  24.6    8388608  64.0  7280287  55.6
+#>           used  (Mb) gc trigger (Mb) max used  (Mb)
+#> Ncells 1896783 101.3    3200264  171  3200264 171.0
+#> Vcells 3224671  24.7    8388608   64  7281189  55.6
 ```
 
 ## Comparison with Traditional Analysis
@@ -399,7 +384,6 @@ Psychoacoustic research - Hearing aid algorithm development
 ## Session Info
 
 ``` r
-
 sessionInfo()
 #> R version 4.6.2 (2026-10-29)
 #> Platform: x86_64-pc-linux-gnu
@@ -434,7 +418,7 @@ sessionInfo()
 #> [19] bslib_0.12.0        pillar_1.11.1       RColorBrewer_1.1-3 
 #> [22] rlang_1.3.0         cachem_1.1.0        xfun_0.62          
 #> [25] fs_2.1.0            sass_0.4.10         S7_0.2.2           
-#> [28] otel_0.2.0          viridisLite_0.4.3   cli_3.6.6          
+#> [28] otel_0.3.0          viridisLite_0.4.3   cli_3.6.6          
 #> [31] pkgdown_2.2.1       withr_3.0.3         magrittr_2.0.5     
 #> [34] digest_0.6.39       grid_4.6.2          lifecycle_1.0.5    
 #> [37] vctrs_0.7.3         evaluate_1.0.5      glue_1.8.1         

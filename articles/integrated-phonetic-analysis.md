@@ -52,7 +52,6 @@ For demonstration, we create a 5-second audio signal. In real research,
 you would load existing recordings.
 
 ``` r
-
 library(pladdrr)
 #> pladdrr: direct access to Praat's core algorithms from R.
 #> See ?pladdrr for an overview, or citation("pladdrr") for citation details.
@@ -79,7 +78,6 @@ cat("Channels:", sound$get_number_of_channels(), "\n")
 Create a TextGrid with word and phone annotations:
 
 ``` r
-
 # Create TextGrid with 2 interval tiers
 tg <- TextGrid$create(
   tmin = 0,
@@ -123,7 +121,6 @@ and
 methods let you compose TextGrid tier displays with ggplot2:
 
 ``` r
-
 p <- ggplot2::autoplot(tg)
 p2 <- p + ggplot2::autolayer(tg, tier = 2, color = "darkred")
 class(p2)
@@ -136,7 +133,6 @@ class(p2)
 ### Exploring Tier Structure
 
 ``` r
-
 # Get tier information
 tier_names <- tg$get_tier_names()
 for (i in 1:tg$get_number_of_tiers()) {
@@ -152,7 +148,6 @@ for (i in 1:tg$get_number_of_tiers()) {
 ### Extracting Interval Information
 
 ``` r
-
 # Get all intervals from the phones tier
 phone_tier <- 2
 n_intervals <- tg$get_number_of_intervals(phone_tier)
@@ -194,7 +189,6 @@ print(phone_data)
 Extract specific portions of audio based on TextGrid intervals:
 
 ``` r
-
 # Extract the "hello" word (interval 2 of word tier)
 hello_start <- tg$get_interval_start_time(1, 2)
 hello_end <- tg$get_interval_end_time(1, 2)
@@ -214,7 +208,6 @@ cat("Extracted 'hello':", hello_sound$get_total_duration(), "seconds\n")
 Change sampling rate for analysis or compatibility:
 
 ``` r
-
 # Resample to 8 kHz (e.g., for telephony simulations)
 sound_8k <- sound$resample(new_frequency = 8000, precision = 50)
 cat("Resampled to", sound_8k$get_sampling_frequency(), "Hz\n")
@@ -226,7 +219,6 @@ cat("Resampled to", sound_8k$get_sampling_frequency(), "Hz\n")
 Normalize loudness across recordings:
 
 ``` r
-
 # Scale to 70 dB SPL
 sound_normalized <- sound$scale_intensity(new_intensity = 70)
 cat("Normalized to 70 dB\n")
@@ -238,7 +230,6 @@ cat("Normalized to 70 dB\n")
 Apply pre-emphasis for formant analysis:
 
 ``` r
-
 # Pre-emphasize from 50 Hz
 sound_preemph <- sound$pre_emphasize(from_frequency = 50)
 cat("Applied pre-emphasis from 50 Hz\n")
@@ -250,7 +241,6 @@ cat("Applied pre-emphasis from 50 Hz\n")
 ### Fundamental Frequency (F0) Extraction
 
 ``` r
-
 # Extract pitch contour
 pitch <- sound$to_pitch(
   time_step = 0.01,
@@ -270,7 +260,6 @@ cat(sprintf("F0: Mean = %.1f Hz, SD = %.1f Hz\n", f0_mean, f0_sd))
 ### Formant Analysis
 
 ``` r
-
 # Extract formants using Burg's algorithm
 formant <- sound$to_formant_burg(
   time_step = 0.01,
@@ -297,7 +286,6 @@ cat(sprintf("Formants at %.2f s: F1 = %.0f Hz, F2 = %.0f Hz, F3 = %.0f Hz\n",
 ### Intensity
 
 ``` r
-
 # Extract intensity contour
 intensity <- sound$to_intensity(
   minimum_pitch = 100,
@@ -312,7 +300,6 @@ cat(sprintf("Mean intensity: %.1f dB\n", int_mean))
 ### Voice Quality (HNR)
 
 ``` r
-
 # Harmonics-to-Noise Ratio
 harmonicity <- sound$to_harmonicity_cc(
   time_step = 0.01,
@@ -331,7 +318,6 @@ cat(sprintf("Mean HNR: %.1f dB\n", hnr_mean))
 Process all vowel segments systematically:
 
 ``` r
-
 # Identify vowel intervals: labels containing an uppercase vowel letter
 # (X-SAMPA tense-vowel convention, e.g. "E", "oU") or "3" (rhotic vowel, as in
 #  "world")
@@ -397,7 +383,6 @@ print(vowel_features)
 ### Export to CSV
 
 ``` r
-
 # Save for statistical analysis (tempdir() here so the vignette writes nothing
 # into your working directory; use a real path in your own scripts)
 write.csv(
@@ -425,7 +410,6 @@ and voice quality reports, see
 Analyze vowel variation across speakers, dialects, or social groups:
 
 ``` r
-
 # Load multiple speakers
 speakers <- c("speaker1.wav", "speaker2.wav", "speaker3.wav")
 textgrids <- c("speaker1.TextGrid", "speaker2.TextGrid", "speaker3.TextGrid")
@@ -448,7 +432,6 @@ model <- lm(f1 ~ vowel * speaker, data = all_data)
 Track vowel development in second language learners:
 
 ``` r
-
 # Longitudinal data (same speaker, multiple sessions)
 sessions <- c("session1.wav", "session2.wav", "session3.wav")
 
@@ -461,7 +444,6 @@ sessions <- c("session1.wav", "session2.wav", "session3.wav")
 Multi-dimensional voice profiling:
 
 ``` r
-
 # Extract voice quality metrics
 pointprocess <- sound$to_point_process_periodic_cc(pitch_floor = 75,
   pitch_ceiling = 300)
@@ -500,7 +482,6 @@ for parameter effects and clinical interpretation.
 Always pre-emphasize before formant analysis:
 
 ``` r
-
 sound_preemph <- sound$pre_emphasize(from_frequency = 50)
 formant <- sound_preemph$to_formant_burg(...)
 ```
@@ -510,7 +491,6 @@ formant <- sound_preemph$to_formant_burg(...)
 Choose parameters based on speaker characteristics:
 
 ``` r
-
 # Adult male
 pitch <- sound$to_pitch(pitch_floor = 75, pitch_ceiling = 300)
 formant <- sound$to_formant_burg(max_frequency = 5000)
@@ -529,7 +509,6 @@ formant <- sound$to_formant_burg(max_frequency = 8000)
 Acoustic measurements may fail:
 
 ``` r
-
 f0 <- pitch$get_value_at_time(time, "hertz", interpolate = TRUE)
 if (is.na(f0)) {
   # Handle voiceless segments or tracking failures
@@ -542,7 +521,6 @@ if (is.na(f0)) {
 For large corpora, use vectorization and sampling:
 
 ``` r
-
 # Sample large datasets
 if (nrow(data) > 10000) {
   data <- data[sample(nrow(data), 1000), ]  # Random sample

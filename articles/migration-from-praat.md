@@ -19,7 +19,6 @@ sound = Read from file: "audio.wav"
 **pladdrr:**
 
 ``` r
-
 library(pladdrr)
 #> pladdrr: direct access to Praat's core algorithms from R.
 #> See ?pladdrr for an overview, or citation("pladdrr") for citation details.
@@ -51,7 +50,6 @@ pitch = To Pitch: 0.01, 75, 600
 **pladdrr:**
 
 ``` r
-
 pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
 ```
 
@@ -71,7 +69,6 @@ std_f0 = Get standard deviation: 0, 0, "Hertz"
 **pladdrr:**
 
 ``` r
-
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
 mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
@@ -93,7 +90,6 @@ f2 = Get value at time: 2, 0.5, "Hertz", "Linear"
 **pladdrr:**
 
 ``` r
-
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 formant <- sound$to_formant_burg(
   time_step = 0.01,
@@ -120,7 +116,6 @@ max_intensity = Get maximum: 0, 0, "Parabolic"
 **pladdrr:**
 
 ``` r
-
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 intensity <- sound$to_intensity(minimum_pitch = 100, time_step = 0.01,
   subtract_mean = TRUE)
@@ -143,7 +138,6 @@ cog = Get centre of gravity: 2.0
 **pladdrr:**
 
 ``` r
-
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 spectrum <- sound$to_spectrum(fast = TRUE)
 cog <- spectrum$get_centre_of_gravity(power = 2.0)
@@ -162,7 +156,6 @@ Set interval text: 1, 1, "hello"
 **pladdrr:**
 
 ``` r
-
 textgrid <- TextGrid$create(tmin = 0, tmax = 1, tier_names = "words phones",
   point_tiers = "phones")
 textgrid$insert_boundary(tier = 1, time = 0.5)
@@ -194,7 +187,6 @@ endfor
 ### pladdrr Approach
 
 ``` r
-
 library(pladdrr)
 
 # Get list of WAV files
@@ -223,7 +215,6 @@ write.csv(results_df, file.path(tempdir(), "results.csv"), row.names = FALSE)
 ### Integration with tidyverse
 
 ``` r
-
 library(pladdrr)
 library(dplyr)
 #> 
@@ -252,7 +243,6 @@ results <- tibble(file = list.files(pattern = "\\.wav$")) %>%
 ### Visualization with ggplot2
 
 ``` r
-
 library(ggplot2)
 
 # Extract pitch contour
@@ -293,7 +283,6 @@ removeObject: sound
 **pladdrr** uses R’s garbage collection (automatic):
 
 ``` r
-
 # Objects are automatically cleaned up when no longer referenced
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 # 'sound' is freed when it goes out of scope or is reassigned
@@ -310,7 +299,6 @@ mean_f0 = Get mean: 0, 0, "Hertz"
 **pladdrr** follows the same convention:
 
 ``` r
-
 mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
 ```
 
@@ -319,7 +307,6 @@ mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
 Use lowercase for units in pladdrr:
 
 ``` r
-
 # Correct
 pitch$get_mean(unit = "hertz")
 #> [1] 440.0102

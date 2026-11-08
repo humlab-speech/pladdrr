@@ -30,7 +30,6 @@ modification or resynthesis.
 
 ## Usage
 
-
     FormantTier(tmin, tmax)              # create an empty FormantTier
     FormantTier$from_formant(formant)    # convert from a Formant object
 

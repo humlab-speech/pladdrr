@@ -40,7 +40,6 @@ sound = pm.Sound("audio.wav")
 **pladdrr:**
 
 ``` r
-
 library(pladdrr)
 #> pladdrr: direct access to Praat's core algorithms from R.
 #> See ?pladdrr for an overview, or citation("pladdrr") for citation details.
@@ -63,7 +62,6 @@ mean_f0 = pm.praat.call(pitch, "Get mean", 0, 0, "Hertz")
 **pladdrr:**
 
 ``` r
-
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
 mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
@@ -83,7 +81,6 @@ f2 = pm.praat.call(formant, "Get value at time", 2, 0.5, "Hertz", "Linear")
 **pladdrr:**
 
 ``` r
-
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 formant <- sound$to_formant_burg(
   time_step = 0.01,
@@ -109,7 +106,6 @@ mean_int = pm.praat.call(intensity, "Get mean", 0, 0, "energy")
 **pladdrr:**
 
 ``` r
-
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 intensity <- sound$to_intensity(minimum_pitch = 100, time_step = 0.01,
   subtract_mean = TRUE)
@@ -130,7 +126,6 @@ cog = pm.praat.call(spectrum, "Get centre of gravity", 2.0)
 **pladdrr:**
 
 ``` r
-
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 spectrum <- sound$to_spectrum(fast = TRUE)
 cog <- spectrum$get_centre_of_gravity(power = 2.0)
@@ -164,7 +159,6 @@ df.to_csv('results.csv', index=False)
 ### pladdrr Approach
 
 ``` r
-
 library(pladdrr)
 
 files <- list.files(system.file("extdata", package = "pladdrr"),
@@ -211,7 +205,6 @@ df = pd.DataFrame({'time': times, 'frequency': frequencies})
 **pladdrr:**
 
 ``` r
-
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
 
@@ -246,7 +239,6 @@ plt.show()
 ### pladdrr with ggplot2
 
 ``` r
-
 library(pladdrr)
 library(ggplot2)
 
@@ -294,7 +286,6 @@ def analyze_voice(filename):
 **pladdrr:**
 
 ``` r
-
 analyze_voice <- function(filename) {
   sound <- Sound$new(filename)
   
@@ -337,7 +328,6 @@ df['speaker'] = ['A', 'B', 'C']
 ### pladdrr + tidyverse
 
 ``` r
-
 # Requires the dplyr, purrr, and tidyr packages (not pladdrr dependencies;
 # install separately if needed)
 library(pladdrr)

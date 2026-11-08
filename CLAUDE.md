@@ -67,9 +67,9 @@ silently render as one run-on paragraph.
 
 ## CPPS parameter defaults
 
-| Context | time_avg | quefrency_avg | pitch_ceiling | line_type |
-|----|----|----|----|----|
-| R6 `get_cpps()` | 0.001 | 0.0005 | 333.3 | straight (1) |
-| [`get_cpps_fast()`](https://humlab-speech.github.io/pladdrr/reference/get_cpps_fast.md) (AVQI) | 0.01 | 0.001 | 333.3 | straight (1) |
+| Context                                                                                        | time_avg | quefrency_avg | pitch_ceiling | line_type    |
+|------------------------------------------------------------------------------------------------|----------|---------------|---------------|--------------|
+| R6 `get_cpps()`                                                                                | 0.001    | 0.0005        | 333.3         | straight (1) |
+| [`get_cpps_fast()`](https://humlab-speech.github.io/pladdrr/reference/get_cpps_fast.md) (AVQI) | 0.01     | 0.001         | 333.3         | straight (1) |
 
 `calculate_cpps_ultra_cpp` matches R6 defaults.

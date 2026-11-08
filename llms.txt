@@ -120,7 +120,6 @@ alternative routes to do what you want:
 ### Development Version (Recommended)
 
 ``` r
-
 # Install devtools if needed
 if (!require("devtools")) install.packages("devtools")
 
@@ -148,7 +147,6 @@ devtools::install_github("humlab-speech/pladdrr")
 For full functionality:
 
 ``` r
-
 # Visualization (used in examples)
 install.packages("ggplot2")
 
@@ -159,7 +157,6 @@ install.packages("dplyr")
 ## Quick Start
 
 ``` r
-
 library(pladdrr)
 
 # Create a Sound object with a pure tone
@@ -190,7 +187,6 @@ hnr <- harmonicity$get_mean(from_time = 0, to_time = 0)
 ### Advanced Features
 
 ``` r
-
 # Robust formant tracking with FormantPath
 fp <- sound$to_formant_path(
   time_step = 0.005,
@@ -225,7 +221,6 @@ All Praat objects are exposed to as R objects with methods that mirror
 Praat’s native commands:
 
 ``` r
-
 # Create Sound objects
 sound <- Sound$create_tone(frequency = 440, duration = 2.0, sampling_rate = 44100)
 
@@ -243,7 +238,6 @@ mean_db <- intensity$get_mean(from_time = 0, to_time = 0)
 ### TextGrid Workflows
 
 ``` r
-
 # Create a TextGrid with one interval tier (tiers must exist at creation time)
 tg <- TextGrid$create(tmin = 0, tmax = 2.0, tier_names = "words")
 
@@ -265,7 +259,6 @@ label <- tg$get_interval_text(tier = 1, interval_number = 2)
 ### Batch Processing
 
 ``` r
-
 # Process multiple files
 library(pladdrr)
 
@@ -362,7 +355,6 @@ for complete workflow examples.
 formant tracking, speech synthesis, and migration guides. Highlights:
 
 ``` r
-
 # Complete phonetic analysis workflow
 vignette("integrated-phonetic-analysis", package = "pladdrr")
 
@@ -395,7 +387,6 @@ Ten complete, real-world examples in `inst/examples/`:
 Run examples:
 
 ``` r
-
 # View example code
 file.show(system.file("examples", "07_comprehensive_phonetic_analysis.R", package = "pladdrr"))
 
@@ -428,7 +419,6 @@ Solution: Install FFmpeg libraries first: - macOS:
 Solution: Reinstall with a clean build:
 
 ``` r
-
 remove.packages("pladdrr")
 devtools::install_github("humlab-speech/pladdrr", force = TRUE)
 ```
@@ -448,7 +438,6 @@ Out-of-range formants - Regions below/above analysis thresholds
 Use `na.rm = TRUE` when computing statistics:
 
 ``` r
-
 mean(pitch$get_values_vector(), na.rm = TRUE)
 ```
 
@@ -457,7 +446,6 @@ mean(pitch$get_values_vector(), na.rm = TRUE)
 Use `LongSound` for files too large for memory:
 
 ``` r
-
 longsound <- LongSound$open("large_file.wav")
 # Extract only the portion you need
 sound_segment <- longsound$extract_part(tmin = 0, tmax = 10)

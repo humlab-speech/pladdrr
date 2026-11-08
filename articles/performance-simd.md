@@ -9,7 +9,6 @@ supports, and how to measure the effect on your own hardware and
 workload.
 
 ``` r
-
 library(pladdrr)
 #> pladdrr: direct access to Praat's core algorithms from R.
 #> See ?pladdrr for an overview, or citation("pladdrr") for citation details.
@@ -62,7 +61,6 @@ only what the compiler guarantees for the target ABI:
 Check what your installation actually built with:
 
 ``` r
-
 # Get SIMD information
 info <- simd_info()
 print(info)
@@ -114,7 +112,6 @@ lets you toggle SIMD on and off at runtime so you can A/B your own
 workload:
 
 ``` r
-
 library(microbenchmark)
 
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
@@ -127,12 +124,12 @@ simd_time <- microbenchmark(sound$to_pitch(), times = 50)
 
 print(scalar_time)
 #> Unit: milliseconds
-#>              expr      min       lq     mean   median       uq      max neval
-#>  sound$to_pitch() 3.807117 4.162902 7.748155 4.209193 4.282786 181.2593    50
+#>              expr      min      lq     mean   median       uq      max neval
+#>  sound$to_pitch() 3.763522 4.12234 7.701584 4.145981 4.172495 182.3423    50
 print(simd_time)
 #> Unit: milliseconds
-#>              expr      min      lq     mean   median       uq      max neval
-#>  sound$to_pitch() 3.817908 4.14024 4.171818 4.164745 4.198058 5.148813    50
+#>              expr      min      lq     mean  median       uq      max neval
+#>  sound$to_pitch() 3.825847 4.13273 4.163733 4.15121 4.195287 5.100516    50
 ```
 
 Gains vary by routine, CPU, compiler, and vector length — there is no
@@ -176,7 +173,6 @@ and hardware you actually care about.
 ### FFT Performance
 
 ``` r
-
 # Create test sound
 sound <- Sound$create_pure_tone(frequency = 440, duration = 1.0,
   sampling_rate = 44100)
@@ -200,7 +196,6 @@ rather than relying on a quoted figure.
 ### Formant Extraction Performance
 
 ``` r
-
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 
 result <- microbenchmark(
@@ -219,7 +214,6 @@ relative cost depends on formant order, time step, and signal length.
 ### Cochleagram Performance
 
 ``` r
-
 # The EDB algorithm requires a sampling rate of at least 44.1 kHz
 sound <- Sound$create_pure_tone(frequency = 440, duration = 2.0,
   sampling_rate = 44100)
@@ -243,7 +237,6 @@ measure the ratio on your own hardware if it matters for your pipeline.
 Higher sample rates mean more samples to process:
 
 ``` r
-
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 
 # For speech analysis, 16-22 kHz is often sufficient
@@ -260,7 +253,6 @@ formant_48k <- sound_48k$to_formant_burg()
 Smaller time steps mean more frames to process:
 
 ``` r
-
 # Standard time step (good balance)
 formant_standard <- sound$to_formant_burg(time_step = 0.005)  # 5 ms
 
@@ -277,7 +269,6 @@ frames to compute without necessarily adding useful information.
 ### 3. Process Multiple Files Together
 
 ``` r
-
 # Load all sounds first
 sound_files <- list.files("data/", pattern = "\\.wav$", full.names = TRUE)
 sounds <- lapply(sound_files, Sound$new)
@@ -299,7 +290,6 @@ f1_f2 <- do.call(rbind, lapply(formants, function(f) {
 ### 4. Reuse Objects When Possible
 
 ``` r
-
 wav_path <- system.file("extdata", "test.wav", package = "pladdrr")
 
 # Good: Reuse sound object
@@ -317,7 +307,6 @@ intensity <- Sound$new(wav_path)$to_intensity()
 ### 5. FFT Sizes
 
 ``` r
-
 # pladdrr handles all FFT sizes correctly, including non-power-of-2 sizes
 
 # If you can choose duration:
@@ -364,7 +353,6 @@ duration_any <- 0.05  # 800 samples (not power of 2, still works)
 ### Basic Timing
 
 ``` r
-
 # Time a single operation
 start_time <- Sys.time()
 formant <- sound$to_formant_burg()
@@ -375,7 +363,6 @@ print(end_time - start_time)
 ### Detailed Profiling
 
 ``` r
-
 library(profvis)
 
 profvis({
@@ -397,7 +384,6 @@ profvis({
 ### Benchmarking Multiple Methods
 
 ``` r
-
 library(microbenchmark)
 
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
@@ -420,7 +406,6 @@ SIMD operations in pladdrr are **numerically equivalent** to scalar
 operations:
 
 ``` r
-
 sound <- Sound$create_pure_tone(frequency = 440, duration = 0.5,
   sampling_rate = 22050)
 
@@ -451,7 +436,6 @@ If SIMD is not available:
 4.  **No user action needed**: Everything works transparently
 
 ``` r
-
 # This code works identically on all systems, with or without SIMD
 formant <- sound$to_formant_burg()
 ```
@@ -466,7 +450,6 @@ still applying to CRAN’s own build), compile from source with your own
 `~/.R/Makevars`:
 
 ``` r
-
 # Install from source
 install.packages("pladdrr", type = "source")
 
@@ -485,7 +468,6 @@ CRAN binary packages are compiled per the capability table above: -
 ### SIMD Not Detected
 
 ``` r
-
 # Check SIMD availability
 simd_info()$available
 #> [1] TRUE
@@ -542,7 +524,6 @@ When calculating statistics over multiple time intervals, use batch
 functions instead of repeated R method calls:
 
 ``` r
-
 # Create pitch object
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 pitch <- sound$to_pitch_cc()
@@ -575,7 +556,6 @@ stats_matrix <- pladdrr:::pitch_get_statistics_batch(
 Similar functions exist for Intensity:
 
 ``` r
-
 intensity <- sound$to_intensity()
 intensity_stats <- pladdrr:::intensity_get_statistics_batch(
   intensity$.xptr,
@@ -591,7 +571,6 @@ intensity_stats <- pladdrr:::intensity_get_statistics_batch(
 For AVQI and voice quality analysis, use the fast CPPS functions:
 
 ``` r
-
 # R6 method dispatch
 cpps_standard <- {
   pcep <- sound$to_powercepstrogram(60, 0.002, 5000, 50)
@@ -615,7 +594,6 @@ For two-pass pitch analysis, get quartiles and adaptive range in a
 single call:
 
 ``` r
-
 # Create initial pitch estimate
 pitch <- sound$to_pitch_cc(pitch_floor = 50, pitch_ceiling = 800)
 
@@ -643,7 +621,6 @@ For custom window functions or transforms, use compiled C++ functions
 instead of an R callback evaluated once per sample:
 
 ``` r
-
 # Requires: install.packages("RcppXPtrUtils")
 library(RcppXPtrUtils)
 
@@ -668,7 +645,6 @@ windowed2 <- apply_window_xptr(sound, hamming)
 Custom transforms work similarly:
 
 ``` r
-
 # Create soft clipping function
 soft_clip <- cppXPtr(
   "double clip(double x) { return tanh(x * 2.0); }",
@@ -681,14 +657,14 @@ clipped <- apply_transform_xptr(sound, soft_clip)
 
 ### When to Use Advanced APIs
 
-| API | Use When |
-|----|----|
-| `pitch_get_statistics_batch()` | \>10 intervals, multiple metrics |
-| `intensity_get_statistics_batch()` | \>10 intervals, multiple metrics |
-| [`calculate_cpps_fast()`](https://humlab-speech.github.io/pladdrr/reference/calculate_cpps_fast.md) | AVQI, voice quality analysis |
-| `pitch_get_adaptive_range()` | Two-pass pitch analysis |
-| [`apply_window_xptr()`](https://humlab-speech.github.io/pladdrr/reference/apply_window_xptr.md) | Custom windowing on large files |
-| [`apply_transform_xptr()`](https://humlab-speech.github.io/pladdrr/reference/apply_transform_xptr.md) | Custom DSP on large files |
+| API                                                                                                   | Use When                         |
+|-------------------------------------------------------------------------------------------------------|----------------------------------|
+| `pitch_get_statistics_batch()`                                                                        | \>10 intervals, multiple metrics |
+| `intensity_get_statistics_batch()`                                                                    | \>10 intervals, multiple metrics |
+| [`calculate_cpps_fast()`](https://humlab-speech.github.io/pladdrr/reference/calculate_cpps_fast.md)   | AVQI, voice quality analysis     |
+| `pitch_get_adaptive_range()`                                                                          | Two-pass pitch analysis          |
+| [`apply_window_xptr()`](https://humlab-speech.github.io/pladdrr/reference/apply_window_xptr.md)       | Custom windowing on large files  |
+| [`apply_transform_xptr()`](https://humlab-speech.github.io/pladdrr/reference/apply_transform_xptr.md) | Custom DSP on large files        |
 
 ## Further Reading
 
@@ -701,7 +677,6 @@ clipped <- apply_transform_xptr(sound, soft_clip)
 ## Session Info
 
 ``` r
-
 sessionInfo()
 #> R version 4.6.2 (2026-10-29)
 #> Platform: x86_64-pc-linux-gnu
@@ -736,7 +711,7 @@ sessionInfo()
 #> [19] bslib_0.12.0        pillar_1.11.1       RColorBrewer_1.1-3 
 #> [22] rlang_1.3.0         cachem_1.1.0        xfun_0.62          
 #> [25] fs_2.1.0            sass_0.4.10         S7_0.2.2           
-#> [28] otel_0.2.0          cli_3.6.6           pkgdown_2.2.1      
+#> [28] otel_0.3.0          cli_3.6.6           pkgdown_2.2.1      
 #> [31] magrittr_2.0.5      digest_0.6.39       grid_4.6.2         
 #> [34] lifecycle_1.0.5     vctrs_0.7.3         evaluate_1.0.5     
 #> [37] glue_1.8.1          data.table_1.18.6.1 farver_2.1.2       

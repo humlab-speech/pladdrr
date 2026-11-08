@@ -113,13 +113,13 @@
 <h2 id="performance-1">Performance<a class="anchor" aria-label="anchor" href="#performance-1"></a></h2>
 <ul><li>
 <p><strong>The SlopeSelector SIMD kernels are now off by default.</strong> They were shipped default-on claiming “~25% faster than scalar”. That claim did not survive measurement: on the CPPS robust trend fit they are a 1.7-2.4x <em>slowdown</em>, with bit-identical output. Measured on M1 Pro / ppq1.wav (2.92 s) with the Praat script’s parameter profile, <code>-O3 -march=native</code>:</p>
-<table class="table"><thead><tr><th></th>
+<table class="table"><thead><tr class="header"><th></th>
 <th>SIMD on</th>
 <th>SIMD off</th>
-</tr></thead><tbody><tr><td><code>calculate_cpps_ultra</code></td>
+</tr></thead><tbody><tr class="odd"><td><code>calculate_cpps_ultra</code></td>
 <td>4.06 s / 31.2 s CPU</td>
 <td>2.35 s / 17.6 s CPU</td>
-</tr><tr><td>AVQI v2.03 (R)</td>
+</tr><tr class="even"><td>AVQI v2.03 (R)</td>
 <td>6.87 s / 35.3 s CPU</td>
 <td>2.84 s / 20.3 s CPU</td>
 </tr></tbody></table><p>CPPS 19.36722538 dB and AVQI 3.471873 either way, so nothing was traded for the cost. <code>sample</code>-based profiling shows ~94% of <code>getSlope_Siegel</code> is the median selection (<code>num::NUMquantile_e</code> -&gt; <code>adaptiveQuickselect</code>), not the pairwise slope divides the kernels vectorize; as out-of-line <code>extern "C"</code> calls (no cross-TU inlining, and NEON f64 divide has no throughput edge over scalar <code>fdiv</code> on Apple silicon) they ran far slower than the inlined scalar loop they replaced. Any future SIMD work here must target <code>NUMquantile_e</code>.</p>
@@ -253,7 +253,7 @@
 <div class="section level2">
 <h2 id="documentation-2">Documentation<a class="anchor" aria-label="anchor" href="#documentation-2"></a></h2>
 <ul><li>
-<strong><code><a href="reference/get_voice_quality_ultra.html">get_voice_quality_ultra()</a></code> gains a <code>pitch_method = "periodic_cc"</code> alias.</strong> Tracing Praat’s own source confirmed that <code>Sound: To PointProcess (periodic, cc)...</code> is exactly <code>Sound_to_Pitch()</code> (i.e. <code>Sound_to_Pitch_rawAc</code> with <code>veryAccurate = FALSE</code> and Praat’s raw defaults) followed by <code>Sound_Pitch_to_PointProcess_cc</code> — which is byte-for-byte what this function already computed via <code>pitch_method = "ac", very_accurate = FALSE</code> (added in 4.9.11). That combination didn’t need a new C++ path, just a name: <code>pitch_method = "periodic_cc"</code> is now a pure alias for it, so callers porting a Praat script that uses <code>To PointProcess (periodic, cc)...</code> can request the matching Tier 4 fast path directly instead of having to independently discover the equivalence.</li>
+<strong><code><a href="reference/get_voice_quality_ultra.html">get_voice_quality_ultra()</a></code> gains a <code>pitch_method = "periodic_cc"</code> alias.</strong> Tracing Praat’s own source confirmed that <code>Sound: To PointProcess (periodic, cc)...</code> is exactly <code>Sound_to_Pitch()</code> (i.e. <code>Sound_to_Pitch_rawAc</code> with <code>veryAccurate = FALSE</code> and Praat’s raw defaults) followed by <code>Sound_Pitch_to_PointProcess_cc</code> — which is byte-for-byte what this function already computed via <code>pitch_method = "ac", very_accurate = FALSE</code> (added in 4.9.11). That combination didn’t need a new C++ path, just a name: <code>pitch_method =   "periodic_cc"</code> is now a pure alias for it, so callers porting a Praat script that uses <code>To PointProcess (periodic, cc)...</code> can request the matching Tier 4 fast path directly instead of having to independently discover the equivalence.</li>
 <li>
 <strong>Documented which Praat pitch/harmonicity algorithm every Tier 4 “Ultra” function hardcodes.</strong> Added a consolidated table to <code>inst/agents/AGENT_GUIDE.md</code> (new “Tier 4 Ultra: Hardcoded Algorithm Choices” section) and a matching <code>@section Algorithm choice:</code> to each of the 6 Ultra functions’ roxygen (<code><a href="reference/calculate_f0_stats_ultra.html">calculate_f0_stats_ultra()</a></code>, <code><a href="reference/calculate_minimum_intensity_ultra.html">calculate_minimum_intensity_ultra()</a></code>, <code><a href="reference/get_voice_quality_ultra.html">get_voice_quality_ultra()</a></code>, <code><a href="reference/calculate_multiband_hnr_ultra.html">calculate_multiband_hnr_ultra()</a></code>, <code><a href="reference/calculate_cpps_ultra.html">calculate_cpps_ultra()</a></code>, <code><a href="reference/extract_voiced_segments_ultra.html">extract_voiced_segments_ultra()</a></code>), stating which algorithm/constants are fixed, which params are configurable, and which reference Praat script (if any) each one matches. No algorithm changes — an audit of all 6 found the other hardcoded choices already correct against their reference scripts; this closes the “how would a caller find out without reading C++” gap.</li>
 </ul></div>
@@ -474,21 +474,21 @@
 <div class="section level2">
 <h2 id="bug-fixes---ultra-api-v462-issues">Bug Fixes - Ultra API v4.6.2 Issues<a class="anchor" aria-label="anchor" href="#bug-fixes---ultra-api-v462-issues"></a></h2>
 <div class="section level3">
-<h3 id="white_check_mark-fixed-extract_voiced_segments_ultra-version-parameter-bug">✅ Fixed: <code>extract_voiced_segments_ultra()</code> Version Parameter Bug<a class="anchor" aria-label="anchor" href="#white_check_mark-fixed-extract_voiced_segments_ultra-version-parameter-bug"></a></h3>
+<h3 id="id_-fixed-extract_voiced_segments_ultra-version-parameter-bug">✅ Fixed: <code>extract_voiced_segments_ultra()</code> Version Parameter Bug<a class="anchor" aria-label="anchor" href="#id_-fixed-extract_voiced_segments_ultra-version-parameter-bug"></a></h3>
 <p><strong>Issue:</strong> v2.03 and v3.01 used different algorithms when they should be identical per AVQI specification.</p>
 <p><strong>Root Cause:</strong> Version parameter incorrectly applied intensity-only filtering for v2.03 vs power+ZCR filtering for v3.01.</p>
 <p><strong>Fix:</strong> Both versions now use identical algorithm (power + ZCR filtering) as specified in both AVQI203.praat and AVQI301.praat scripts. The only difference between AVQI versions is in the final equation coefficients, not the voiced extraction algorithm.</p>
 <p><strong>Impact:</strong> - v2.03 now extracts ~17.73s from test data (was 27.66s - 56% too much) - v3.01 unchanged at ~17.97s (already correct) - AVQI v2.03 scores now calculated on correct audio segments - Eliminates need for explicit R workaround (5-10x performance penalty)</p>
 </div>
 <div class="section level3">
-<h3 id="white_check_mark-fixed-calculate_cpps_ultra-returns-na">✅ Fixed: <code>calculate_cpps_ultra()</code> Returns NA<a class="anchor" aria-label="anchor" href="#white_check_mark-fixed-calculate_cpps_ultra-returns-na"></a></h3>
+<h3 id="id_-fixed-calculate_cpps_ultra-returns-na">✅ Fixed: <code>calculate_cpps_ultra()</code> Returns NA<a class="anchor" aria-label="anchor" href="#id_-fixed-calculate_cpps_ultra-returns-na"></a></h3>
 <p><strong>Issue:</strong> Function always returned NA instead of numeric CPPS value.</p>
 <p><strong>Root Cause:</strong> Overly aggressive <code>isundef()</code> check and potential cepstrogram creation issues.</p>
 <p><strong>Fix:</strong> - Added proper null checking for PowerCepstrogram creation - Improved error handling with debug information - Ensured valid CPPS values are returned (not just NA for edge cases)</p>
 <p><strong>Impact:</strong> - AVQI/VQ workflows can now use Tier 4 Ultra API for CPPS calculation - 1.6x performance improvement over Tier 2 approach - Matches <code><a href="reference/calculate_cpps_fast.html">calculate_cpps_fast()</a></code> output within reasonable tolerance</p>
 </div>
 <div class="section level3">
-<h3 id="white_check_mark-confirmed-calculate_minimum_intensity_ultra-algorithm-fix-v462">✅ Confirmed: <code>calculate_minimum_intensity_ultra()</code> Algorithm Fix (v4.6.2)<a class="anchor" aria-label="anchor" href="#white_check_mark-confirmed-calculate_minimum_intensity_ultra-algorithm-fix-v462"></a></h3>
+<h3 id="id_-confirmed-calculate_minimum_intensity_ultra-algorithm-fix-v462">✅ Confirmed: <code>calculate_minimum_intensity_ultra()</code> Algorithm Fix (v4.6.2)<a class="anchor" aria-label="anchor" href="#id_-confirmed-calculate_minimum_intensity_ultra-algorithm-fix-v462"></a></h3>
 <p><strong>Status:</strong> Already fixed in v4.6.2 - verified working correctly.</p>
 <p><strong>Before:</strong> 52.87 dB (incorrect algorithm - not extracting from voiced regions only) <strong>After:</strong> 65.94 dB (correct DSI-compliant algorithm) <strong>Expected:</strong> 66.21 dB (within 0.3 dB tolerance ✅)</p>
 <p><strong>Impact:</strong> DSI workflows can now fully leverage Tier 4 Ultra API for maximum performance (5-77x speedup).</p>
@@ -933,21 +933,21 @@
 <div class="section level3">
 <h3 id="ltas-get_slope-unit-parameter-fix-breaking-change">LTAS <code>get_slope()</code> Unit Parameter Fix (BREAKING CHANGE)<a class="anchor" aria-label="anchor" href="#ltas-get_slope-unit-parameter-fix-breaking-change"></a></h3>
 <p>Fixed incorrect unit code mapping in <code>Ltas$get_slope()</code>. The unit parameter now correctly matches Praat’s behavior:</p>
-<table class="table"><thead><tr><th>Unit</th>
+<table class="table"><thead><tr class="header"><th>Unit</th>
 <th>Before (WRONG)</th>
 <th>After (CORRECT)</th>
 <th>Praat Behavior</th>
-</tr></thead><tbody><tr><td><code>"energy"</code></td>
+</tr></thead><tbody><tr class="odd"><td><code>"energy"</code></td>
 <td>Code 0</td>
 <td>Code 1</td>
 <td>
 <code>10*log10(ratio)</code> → dB</td>
-</tr><tr><td><code>"sones"</code></td>
+</tr><tr class="even"><td><code>"sones"</code></td>
 <td>Code 1</td>
 <td>Code 2</td>
 <td>
 <code>10*log2(ratio)</code> → dB</td>
-</tr><tr><td><code>"dB"</code></td>
+</tr><tr class="odd"><td><code>"dB"</code></td>
 <td>Code 2</td>
 <td>Code 0</td>
 <td>Passthrough</td>
@@ -1001,7 +1001,7 @@
 <div class="section level2">
 <h2 id="new-features-4">New Features<a class="anchor" aria-label="anchor" href="#new-features-4"></a></h2>
 <div class="section level3">
-<h3 id="high-performance-batch-operations-star">High-Performance Batch Operations ⭐<a class="anchor" aria-label="anchor" href="#high-performance-batch-operations-star"></a></h3>
+<h3 id="high-performance-batch-operations-">High-Performance Batch Operations ⭐<a class="anchor" aria-label="anchor" href="#high-performance-batch-operations-"></a></h3>
 <ul><li>
 <strong><code><a href="reference/sound_load_window.html">sound_load_window()</a></code> - Window-only audio loading (27x faster)</strong>
 <ul><li>Load audio segments without reading entire file</li>
@@ -1081,7 +1081,7 @@
 <div class="section level2">
 <h2 id="new-features-5">New Features<a class="anchor" aria-label="anchor" href="#new-features-5"></a></h2>
 <div class="section level3">
-<h3 id="full-parameter-direct-api-pitch-functions-star">Full-Parameter Direct API Pitch Functions ⭐<a class="anchor" aria-label="anchor" href="#full-parameter-direct-api-pitch-functions-star"></a></h3>
+<h3 id="full-parameter-direct-api-pitch-functions-">Full-Parameter Direct API Pitch Functions ⭐<a class="anchor" aria-label="anchor" href="#full-parameter-direct-api-pitch-functions-"></a></h3>
 <ul><li>
 <strong><code><a href="reference/to_pitch_ac_direct.html">to_pitch_ac_direct()</a></code> - Autocorrelation with all 10 parameters</strong>
 <ul><li>NEW function providing Direct API performance (2x faster than Tier 1)</li>
@@ -1506,23 +1506,23 @@
 </div>
 <div class="section level2">
 <h2 id="summary-of-performance-tiers">Summary of Performance Tiers<a class="anchor" aria-label="anchor" href="#summary-of-performance-tiers"></a></h2>
-<table class="table"><colgroup><col width="17%"><col width="29%"><col width="26%"><col width="26%"></colgroup><thead><tr><th>Tier</th>
+<table class="table"><colgroup><col width="17%"><col width="29%"><col width="26%"><col width="26%"></colgroup><thead><tr class="header"><th>Tier</th>
 <th>Use Case</th>
 <th>Example</th>
 <th>Speedup</th>
-</tr></thead><tbody><tr><td>1 (Standard)</td>
+</tr></thead><tbody><tr class="odd"><td>1 (Standard)</td>
 <td>Interactive, &lt;10 files</td>
 <td><code>sound$to_pitch()</code></td>
 <td>1x (baseline)</td>
-</tr><tr><td>2 (Direct)</td>
+</tr><tr class="even"><td>2 (Direct)</td>
 <td>Loops, 10-100 files</td>
 <td><code><a href="reference/to_pitch_direct.html">to_pitch_direct()</a></code></td>
 <td>2-3x</td>
-</tr><tr><td>3 (Batch)</td>
+</tr><tr class="odd"><td>3 (Batch)</td>
 <td>Production, &gt;100 files</td>
 <td><code><a href="reference/sound_to_pitch_batch.html">sound_to_pitch_batch()</a></code></td>
 <td>5-10x</td>
-</tr><tr><td>3 (Parallel)</td>
+</tr><tr class="even"><td>3 (Parallel)</td>
 <td>Large datasets</td>
 <td><code><a href="reference/extract_pitch_parallel.html">extract_pitch_parallel()</a></code></td>
 <td>10-20x</td>
@@ -1702,34 +1702,34 @@
 </ul></div>
 <div class="section level3">
 <h3 id="expected-impact-on-plabench-tools">Expected Impact on plabench Tools<a class="anchor" aria-label="anchor" href="#expected-impact-on-plabench-tools"></a></h3>
-<table class="table"><colgroup><col width="20%"><col width="26%"><col width="23%"><col width="30%"></colgroup><thead><tr><th>Tool</th>
+<table class="table"><colgroup><col width="20%"><col width="26%"><col width="23%"><col width="30%"></colgroup><thead><tr class="header"><th>Tool</th>
 <th>Before</th>
 <th>After</th>
 <th>Speedup</th>
-</tr></thead><tbody><tr><td>VUV</td>
+</tr></thead><tbody><tr class="odd"><td>VUV</td>
 <td>0.36s</td>
 <td>0.10s</td>
 <td>
 <strong>3.6x</strong> (includes get_adaptive_range)</td>
-</tr><tr><td>AVQI v2.03</td>
+</tr><tr class="even"><td>AVQI v2.03</td>
 <td>7.48s</td>
 <td>2.5s</td>
 <td>
 <strong>3.0x</strong> (includes extract_intervals_batch)</td>
-</tr><tr><td>DSI</td>
+</tr><tr class="odd"><td>DSI</td>
 <td>0.98s</td>
 <td>0.45s</td>
 <td><strong>2.2x</strong></td>
-</tr><tr><td>AVQI v3.01</td>
+</tr><tr class="even"><td>AVQI v3.01</td>
 <td>6.19s</td>
 <td><strong>2.5-3.0s</strong></td>
 <td>
 <strong>2.1-2.5x</strong> (includes fast CPPS API)</td>
-</tr><tr><td>Tremor</td>
+</tr><tr class="odd"><td>Tremor</td>
 <td>0.30s</td>
 <td>0.15s</td>
 <td><strong>2.0x</strong></td>
-</tr><tr><td>VQ</td>
+</tr><tr class="even"><td>VQ</td>
 <td>3.06s</td>
 <td>1.5s</td>
 <td><strong>2.0x</strong></td>
@@ -1915,19 +1915,19 @@
 </ul></div>
 <div class="section level3">
 <h3 id="performance-summary-1">Performance Summary<a class="anchor" aria-label="anchor" href="#performance-summary-1"></a></h3>
-<table class="table"><thead><tr><th>Operation</th>
+<table class="table"><thead><tr class="header"><th>Operation</th>
 <th>Old (calls)</th>
 <th>New (calls)</th>
 <th>Speedup</th>
-</tr></thead><tbody><tr><td>Formant F1-F4 × 50 times</td>
+</tr></thead><tbody><tr class="odd"><td>Formant F1-F4 × 50 times</td>
 <td>200</td>
 <td>1</td>
 <td>3-5x</td>
-</tr><tr><td>Pitch contour × 100 times</td>
+</tr><tr class="even"><td>Pitch contour × 100 times</td>
 <td>100</td>
 <td>1</td>
 <td>2-3x</td>
-</tr><tr><td>PointProcess all times (n=500)</td>
+</tr><tr class="odd"><td>PointProcess all times (n=500)</td>
 <td>500</td>
 <td>1</td>
 <td>5-10x</td>
@@ -2313,28 +2313,28 @@
 <div class="section level3">
 <h3 id="voice-quality-tests-user-feedback">Voice Quality Tests (User Feedback)<a class="anchor" aria-label="anchor" href="#voice-quality-tests-user-feedback"></a></h3>
 <p>All 7 voice quality analysis tests now pass with corrected parameters:</p>
-<table class="table"><thead><tr><th>Analysis</th>
+<table class="table"><thead><tr class="header"><th>Analysis</th>
 <th>pladdrr vs Praat</th>
 <th>pladdrr vs Parselmouth</th>
-</tr></thead><tbody><tr><td>DSI</td>
+</tr></thead><tbody><tr class="odd"><td>DSI</td>
 <td>✅</td>
 <td>✅</td>
-</tr><tr><td>AVQI v2.03</td>
+</tr><tr class="even"><td>AVQI v2.03</td>
 <td>✅</td>
 <td>✅</td>
-</tr><tr><td>AVQI v3.01</td>
+</tr><tr class="odd"><td>AVQI v3.01</td>
 <td>✅</td>
 <td>✅</td>
-</tr><tr><td>VUV</td>
+</tr><tr class="even"><td>VUV</td>
 <td>✅</td>
 <td>✅</td>
-</tr><tr><td>VQ (Voice Quality)</td>
+</tr><tr class="odd"><td>VQ (Voice Quality)</td>
 <td>✅</td>
 <td>✅</td>
-</tr><tr><td>Tremor</td>
+</tr><tr class="even"><td>Tremor</td>
 <td>⚠ differs</td>
 <td>⚠ differs</td>
-</tr><tr><td>Pharyngeal</td>
+</tr><tr class="odd"><td>Pharyngeal</td>
 <td>⏭ skipped</td>
 <td>⏭ skipped (TextGrid)</td>
 </tr></tbody></table><p><strong>Notes</strong>: - Tremor differences under investigation (may be algorithm variation) - Pharyngeal test skipped due to TextGrid reading issues</p>
@@ -2418,7 +2418,7 @@
 </ul><hr></div>
 </div>
 <div class="section level1">
-<h1 id="pladdrr-200-2026-01-03-tada">pladdrr 2.0.0 (2026-01-03) 🎉<a class="anchor" aria-label="anchor" href="#pladdrr-200-2026-01-03-tada"></a></h1>
+<h1 id="pladdrr-200-2026-01-03-">pladdrr 2.0.0 (2026-01-03) 🎉<a class="anchor" aria-label="anchor" href="#pladdrr-200-2026-01-03-"></a></h1>
 <div class="section level2">
 <h2 id="major-release---phase-2--3-complete">Major Release - Phase 2 &amp; 3 Complete<a class="anchor" aria-label="anchor" href="#major-release---phase-2--3-complete"></a></h2>
 <p>pladdrr 2.0.0 represents a major milestone with <strong>31 Praat modules</strong> (32% coverage), advanced analysis capabilities, speech synthesis, and comprehensive documentation.</p>

@@ -11,7 +11,6 @@ that follows Praat’s conventions.
 ## Installation
 
 ``` r
-
 # Install from source
 install.packages("pladdrr", type = "source")
 
@@ -20,7 +19,6 @@ install.packages("pladdrr", type = "source")
 ```
 
 ``` r
-
 library(pladdrr)
 #> pladdrr: direct access to Praat's core algorithms from R.
 #> See ?pladdrr for an overview, or citation("pladdrr") for citation details.
@@ -33,7 +31,6 @@ library(pladdrr)
 The package includes functions to generate test signals:
 
 ``` r
-
 # Generate a 440 Hz sine wave (A4 note)
 sound_a4 <- generate_sine_wave(frequency = 440, duration = 0.5, 
                                amplitude = 0.7, sampling_rate = 44100)
@@ -48,7 +45,6 @@ print(sound_a4)
 ```
 
 ``` r
-
 # Generate white noise
 noise <- generate_noise(duration = 0.2, sampling_rate = 44100, 
                        amplitude = 0.3)
@@ -65,7 +61,6 @@ print(noise)
 ### Load Audio Files
 
 ``` r
-
 # Load a WAV file using the object-oriented interface
 speech <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 speech
@@ -86,7 +81,6 @@ speech
 Extract basic information from sound objects using object methods:
 
 ``` r
-
 # Duration in seconds
 cat("Duration:", sound_a4$get_duration(), "seconds\n")
 #> Duration: 0.5 seconds
@@ -109,7 +103,6 @@ cat("Channels:", sound_a4$get_number_of_channels(), "\n")
 Calculate amplitude statistics:
 
 ``` r
-
 # Individual statistics
 cat("Mean amplitude:", sound_mean(sound_a4), "\n")
 #> Mean amplitude: -2.783407e-17
@@ -151,7 +144,6 @@ Extract fundamental frequency ( F0) from speech or sustained tones using
 object methods:
 
 ``` r
-
 # For speech, use typical settings
 # pitch <- speech$to_pitch(pitch_floor = 75, pitch_ceiling = 600)
 
@@ -166,7 +158,6 @@ object methods:
 ### Pitch Parameters
 
 ``` r
-
 # Male voice
 pitch_male <- speech$to_pitch(pitch_floor = 50, pitch_ceiling = 300)
 
@@ -180,7 +171,6 @@ pitch_child <- speech$to_pitch(pitch_floor = 150, pitch_ceiling = 800)
 ### Querying Pitch Values
 
 ``` r
-
 pitch <- speech$to_pitch(pitch_floor = 75, pitch_ceiling = 600)
 
 # Get F0 at specific time point
@@ -199,7 +189,6 @@ max_f0 <- pitch$get_maximum()
 Analyze vocal tract resonances (formants) for vowel characterization:
 
 ``` r
-
 # Extract formants (default settings for adult female)
 formants <- sound_a4$to_formant_burg(max_frequency = 5500, max_formants = 5)
 
@@ -215,7 +204,6 @@ formants
 ### Speaker-Specific Settings
 
 ``` r
-
 # Adult male
 formants_male <- speech$to_formant_burg(max_frequency = 5000, max_formants = 5)
 
@@ -230,7 +218,6 @@ formants_child <- speech$to_formant_burg(max_frequency = 8000, max_formants = 5)
 ### Querying Formant Values
 
 ``` r
-
 # Get F1 and F2 at specific time (vowel quality)
 f1 <- formants$get_value_at_time(formant_number = 1, time = 0.25)
 f2 <- formants$get_value_at_time(formant_number = 2, time = 0.25)
@@ -242,7 +229,6 @@ cat("F2:", round(f2, 1), "Hz\n")
 ```
 
 ``` r
-
 # Get mean formant over time range
 mean_f1 <- formants$get_mean(formant_number = 1, 
                              from_time = 0.1, to_time = 0.4)
@@ -260,7 +246,6 @@ cat("Mean F2:", round(mean_f2, 1), "Hz\n")
 Measure sound power (loudness) over time:
 
 ``` r
-
 # Extract intensity
 intensity <- sound_a4$to_intensity(minimum_pitch = 100)
 
@@ -277,7 +262,6 @@ intensity
 ### Intensity Statistics
 
 ``` r
-
 # Mean intensity
 mean_db <- intensity$get_mean()
 cat("Mean intensity:", round(mean_db, 2), "dB\n")
@@ -298,7 +282,6 @@ cat("SD intensity:", round(sd_db, 2), "dB\n")
 ### Intensity at Specific Time
 
 ``` r
-
 # Query intensity at time point
 int_at_time <- intensity$get_value_at_time(time = 0.25)
 cat("Intensity at 0.25s:", round(int_at_time, 2), "dB\n")
@@ -316,7 +299,6 @@ All analysis objects can be converted to data frames for plotting and
 further analysis:
 
 ``` r
-
 # Convert to data frame using the object's method
 formant_df <- formants$as_data_frame()
 head(formant_df)
@@ -332,7 +314,6 @@ head(formant_df)
 ```
 
 ``` r
-
 intensity_df <- intensity$as_data_frame()
 head(intensity_df)
 #> Key: <time>
@@ -368,7 +349,6 @@ which covers:
 Here’s a complete analysis workflow:
 
 ``` r
-
 # 1. Load sound
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 
@@ -415,7 +395,6 @@ Praat scripts:
 ### pladdrr Equivalent
 
 ``` r
-
 # R with pladdrr
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 pitch <- sound$to_pitch(time_step = 0.01,
@@ -428,7 +407,6 @@ f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
 ### Custom Analysis Parameters
 
 ``` r
-
 # Fine-tune formant detection
 formants <- sound$to_formant_burg(
   time_step = 0.005,           # 5 ms steps
@@ -452,7 +430,6 @@ Analysis methods return `NA` for undefined values (e.g. unvoiced pitch
 frames) rather than erroring:
 
 ``` r
-
 # Pitch may be NA for unvoiced segments
 f0 <- pitch$get_value_at_time(time = 0.5)
 if (is.na(f0)) {
@@ -469,7 +446,6 @@ mean_f0 <- pitch$get_mean()  # NA values excluded
 ## Package Information
 
 ``` r
-
 # Package version
 packageVersion("pladdrr")
 #> [1] '5.1.0'

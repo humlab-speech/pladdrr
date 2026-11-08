@@ -20,7 +20,6 @@ This workflow supports several speech research applications:
 - **Speech restoration** - Clean and regenerate degraded audio
 
 ``` r
-
 library(pladdrr)
 library(ggplot2)
 ```
@@ -56,7 +55,6 @@ and perceptual reality:
 ### Step 1: Load and Analyze Audio
 
 ``` r
-
 # Load audio file
 sound_orig <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 
@@ -94,7 +92,6 @@ cat("  Formant frames:", frm_result$get_number_of_frames(), "\n")
 ### Step 2: Extract Mean Formant Values
 
 ``` r
-
 # Convert to data frame for easy manipulation
 df <- as.data.frame(frm_result)
 
@@ -123,7 +120,6 @@ cat(sprintf("  F0 (pitch): %.0f Hz\n", f0_mean))
 ### Step 3: Resynthesize with KlattGrid
 
 ``` r
-
 # Create KlattGrid with extracted parameters
 kg <- klattgrid_create_from_vowel(
   duration = min(sound_orig$get_duration(), 1.0),  # Limit for demo
@@ -147,7 +143,6 @@ cat("  Samples:", sound_resynth$get_number_of_samples(), "\n")
 ### Step 4: Compare Original vs Resynthesized
 
 ``` r
-
 # Create spectrograms for comparison
 spec_orig <- sound_orig$to_spectrogram(
   window_length = 0.005,
@@ -199,7 +194,6 @@ ggplot(df_combined, aes(time, frequency, color = factor(formant_num))) +
 ### Create Synthetic Vowel with Known Parameters
 
 ``` r
-
 # Define target /a/ vowel parameters
 target_f1 <- 730
 target_f2 <- 1090
@@ -229,7 +223,6 @@ sound_vowel <- kg_vowel$to_sound()
 ### Analyze Synthetic Vowel
 
 ``` r
-
 # Analyze with FormantPath
 fp_vowel <- sound_vowel$to_formant_path(
   time_step = 0.005,
@@ -275,7 +268,6 @@ cat(sprintf("  F3 error: %.1f%%\n", f3_error))
 ### Visualize Round-Trip
 
 ``` r
-
 # Create comparison data frame
 df_comparison <- data.frame(
   Formant = rep(c("F1", "F2", "F3"), 2),
@@ -304,7 +296,6 @@ ggplot(df_comparison, aes(Formant, Frequency, fill = Type)) +
 ### Synthesize Vowel Triangle
 
 ``` r
-
 # Define cardinal vowels
 vowels <- list(
   i = list(label = "/i/ (beet)", f1 = 280, f2 = 2250, f3 = 2890),
@@ -341,7 +332,6 @@ for (v_name in names(vowels)) {
 ### Analyze Vowel Triangle
 
 ``` r
-
 # Analyze each synthetic vowel
 for (v_name in names(vowels)) {
   sound <- vowel_sounds[[v_name]]
@@ -378,7 +368,6 @@ vowel_space <- do.call(rbind, vowel_results)
 ### Plot Vowel Space
 
 ``` r
-
 # Create vowel space plot (F1 vs F2)
 vowel_space_long <- rbind(
   data.frame(
@@ -423,7 +412,6 @@ ggplot(vowel_space_long, aes(F2, F1, color = type, shape = vowel)) +
 ### Verify Vowel Space Relationships
 
 ``` r
-
 # Check phonetic relationships are preserved
 cat("Vowel space relationships:\n\n")
 #> Vowel space relationships:
@@ -479,7 +467,6 @@ cat(sprintf("  /a/ F2 > /u/ F2: %s\n", f2_a > f2_u))
 ### Morph Between Two Speakers
 
 ``` r
-
 # Define two speaker profiles
 speaker_male <- list(
   f1 = 730, f2 = 1090, f3 = 2440,
@@ -539,7 +526,6 @@ for (i in seq_along(morph_alphas)) {
 ### Visualize Morph Continuum
 
 ``` r
-
 # Plot formant trajectories across morph
 morph_long <- tidyr::pivot_longer(
   morph_results,
@@ -574,7 +560,6 @@ ggplot(morph_long, aes(alpha, frequency, color = parameter)) +
 Systematically vary one formant while holding others constant:
 
 ``` r
-
 # Create F1 continuum (F2/F3 constant)
 f1_values <- seq(400, 800, by = 50)  # Low to high
 
@@ -598,7 +583,6 @@ stimuli <- lapply(f1_values, function(f1) {
 Test perception with impossible voice combinations:
 
 ``` r
-
 # Male formants + Female pitch (impossible in nature)
 kg_impossible <- klattgrid_create_from_vowel(
   duration = 0.5,
@@ -616,7 +600,6 @@ sound_impossible <- kg_impossible$to_sound()
 Verify formant tracking accuracy on known stimuli:
 
 ``` r
-
 # Generate test vowels with known formants
 test_vowels <- expand.grid(
   f1 = seq(300, 800, by = 100),
@@ -761,7 +744,6 @@ validation
 ## Session Info
 
 ``` r
-
 sessionInfo()
 #> R version 4.6.2 (2026-10-29)
 #> Platform: x86_64-pc-linux-gnu
@@ -795,7 +777,7 @@ sessionInfo()
 #> [16] tibble_3.3.1        desc_1.4.3          bslib_0.12.0       
 #> [19] pillar_1.11.1       RColorBrewer_1.1-3  rlang_1.3.0        
 #> [22] cachem_1.1.0        xfun_0.62           fs_2.1.0           
-#> [25] sass_0.4.10         S7_0.2.2            otel_0.2.0         
+#> [25] sass_0.4.10         S7_0.2.2            otel_0.3.0         
 #> [28] cli_3.6.6           pkgdown_2.2.1       withr_3.0.3        
 #> [31] magrittr_2.0.5      digest_0.6.39       grid_4.6.2         
 #> [34] lifecycle_1.0.5     vctrs_0.7.3         evaluate_1.0.5     

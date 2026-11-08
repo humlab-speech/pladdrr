@@ -94,7 +94,6 @@ Subsequent builds only recompile what changed.
 3.  Document exported functions with roxygen2 comments, then regenerate:
 
     ``` r
-
     devtools::document()
     ```
 
@@ -106,7 +105,6 @@ Subsequent builds only recompile what changed.
 5.  Run the checks:
 
     ``` r
-
     devtools::test()
     ```
 

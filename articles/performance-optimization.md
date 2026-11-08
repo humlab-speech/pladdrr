@@ -70,7 +70,6 @@ chaining - Full error checking and validation - Easy to read and
 maintain
 
 ``` r
-
 library(pladdrr)
 #> pladdrr: direct access to Praat's core algorithms from R.
 #> See ?pladdrr for an overview, or citation("pladdrr") for citation details.
@@ -105,7 +104,6 @@ directly - Skip R6 object dispatch overhead - Return raw values or
 pointers - Require manual pointer extraction
 
 ``` r
-
 # Extract pointer once
 sound_ptr <- sound$.xptr
 
@@ -128,7 +126,6 @@ formants <- get_formants_direct(formant_ptr, time = 0.5)
 #### Fewer R→C boundary crossings
 
 ``` r
-
 # Tier 1 approach: one boundary crossing per query
 min_f0 <- pitch$get_minimum(0, 0, "hertz")
 max_f0 <- pitch$get_maximum(0, 0, "hertz")
@@ -182,7 +179,6 @@ Single formant value
 Process multiple sounds in a single C++ call:
 
 ``` r
-
 # In practice `files` would be a vector of paths to distinct recordings, e.g.
 # list.files("audio/", pattern = "\\.wav$", full.names = TRUE). This example
 # repeats the bundled test file to keep the vignette self-contained.
@@ -215,7 +211,6 @@ Batch intensity extraction
 Extract values at multiple time points in one call:
 
 ``` r
-
 # Tier 1 approach: one R->C crossing per time point
 times <- seq(0.1, 1.0, by = 0.01)
 f0_values <- vapply(times, function(t) {
@@ -239,7 +234,6 @@ Batch intensity queries
 Distribute file-level work across multiple CPU cores:
 
 ``` r
-
 # Analyze files in parallel. In practice `files` is a vector of paths to
 # distinct recordings, e.g. list.files("audio/", pattern = "\\.wav$",
 # full.names = TRUE); this example repeats the bundled test file.
@@ -291,7 +285,6 @@ here.
 #### Example 1: Single File Analysis
 
 ``` r
-
 sound <- Sound(wav_file)
 
 # Tier 1: Standard API
@@ -312,14 +305,13 @@ system.time({
   stats <- get_pitch_stats_direct(pitch_ptr)
 })
 #>    user  system elapsed 
-#>   0.009   0.001   0.004
+#>   0.010   0.001   0.004
 # fewer crossings; measure on your own data
 ```
 
 #### Example 2: Batch Processing
 
 ``` r
-
 # In practice `files` is a vector of paths to distinct recordings, e.g.
 # list.files("audio/", full.names = TRUE)[1:100]; this example repeats the
 # bundled test file to keep the vignette self-contained and fast to build.
@@ -331,7 +323,7 @@ system.time({
   pitches <- lapply(sounds, function(s) s$to_pitch())
 })
 #>    user  system elapsed 
-#>   0.206   0.004   0.098
+#>   0.212   0.006   0.105
 # measure on your own data
 
 # Tier 3: Batch
@@ -340,7 +332,7 @@ system.time({
   pitches <- sound_to_pitch_batch(sounds)
 })
 #>    user  system elapsed 
-#>   0.207   0.006   0.098
+#>   0.208   0.006   0.099
 # scales with cores; measure on your own data
 
 # Tier 3: Parallel (2 cores)
@@ -349,14 +341,13 @@ system.time({
 })
 #> Processing 20 files using 2 cores (2 thread(s)/worker)
 #>    user  system elapsed 
-#>   0.096   0.104   0.400
+#>   0.095   0.107   0.409
 # includes file I/O; measure on your own data
 ```
 
 #### Example 3: Formant Tracking Over Time
 
 ``` r
-
 sound <- Sound(wav_file)
 formant <- sound$to_formant()
 times <- seq(0.1, 0.5, by = 0.001)
@@ -368,7 +359,7 @@ system.time({
   }, numeric(1))
 })
 #>    user  system elapsed 
-#>   0.012   0.000   0.013
+#>   0.013   0.000   0.013
 # one R->C crossing per time point
 
 # Tier 3: Vectorized
@@ -376,7 +367,7 @@ system.time({
   f1_values <- get_formants_at_times(formant, times, formant_numbers = 1)
 })
 #>    user  system elapsed 
-#>   0.000   0.000   0.001
+#>   0.001   0.000   0.001
 # one R->C crossing for the whole vector — this is where batching pays off
 ```
 
@@ -405,7 +396,6 @@ system.time({
 Don’t prematurely optimize. Use the standard API first:
 
 ``` r
-
 # Good: Clear and maintainable
 pitch <- sound$to_pitch()$smooth()
 mean_f0 <- pitch$get_mean(0, 0, "hertz")
@@ -418,7 +408,6 @@ workflow
 #### 2. Batch Similar Operations
 
 ``` r
-
 # Tier 1: Multiple individual queries
 f1 <- formant$get_value_at_time(1, 0.5, "hertz")
 f2 <- formant$get_value_at_time(2, 0.5, "hertz")
@@ -432,7 +421,6 @@ formants <- get_formants_direct(formant, time = 0.5)
 #### 3. Reuse Pointers in Loops
 
 ``` r
-
 # Avoid: Repeated single-value queries in a loop
 for (time in times) {
   val <- get_pitch_value_direct(pitch, time)
@@ -453,7 +441,6 @@ to test a range of core counts on a representative subset of your own
 files before committing to a setting for a full run:
 
 ``` r
-
 # Test different core counts on a subset
 benchmark_results <- benchmark_parallel(
   files[1:10],  # Use subset for a quick test
@@ -467,15 +454,14 @@ benchmark_results <- benchmark_parallel(
 
 print(benchmark_results)
 #>   cores   time_sec   speedup
-#> 1     1 0.05355954 1.0000000
-#> 2     2 0.07122922 0.7519322
+#> 1     1 0.05799270 1.0000000
+#> 2     2 0.07937813 0.7305879
 # Inspect the returned table to see where returns diminish on your machine
 ```
 
 #### 5. Combine Batch and Parallel Processing
 
 ``` r
-
 # Define the per-file constants *inside* the worker function rather than
 # capturing them from the enclosing environment. On Windows (and on macOS,
 # where analyze_files_parallel() also uses a PSOCK cluster to avoid known
@@ -1131,12 +1117,12 @@ If parallelizing or batching your own workload isn’t helping, check:
 
 ### Summary Table
 
-| Tier | Use Case | Functions | Learning Curve |
-|----|----|----|----|
-| 1 | Interactive, \<10 files | `sound$to_pitch()` | Easy |
-| 2 | Loops, 10-100 files | [`to_pitch_direct()`](https://humlab-speech.github.io/pladdrr/reference/to_pitch_direct.md) | Medium |
-| 3 | Production, \>100 files | [`sound_to_pitch_batch()`](https://humlab-speech.github.io/pladdrr/reference/sound_to_pitch_batch.md) | Medium |
-| 3+ | Large datasets | [`extract_pitch_parallel()`](https://humlab-speech.github.io/pladdrr/reference/extract_pitch_parallel.md) | Easy |
+| Tier | Use Case                | Functions                                                                                                 | Learning Curve |
+|------|-------------------------|-----------------------------------------------------------------------------------------------------------|----------------|
+| 1    | Interactive, \<10 files | `sound$to_pitch()`                                                                                        | Easy           |
+| 2    | Loops, 10-100 files     | [`to_pitch_direct()`](https://humlab-speech.github.io/pladdrr/reference/to_pitch_direct.md)               | Medium         |
+| 3    | Production, \>100 files | [`sound_to_pitch_batch()`](https://humlab-speech.github.io/pladdrr/reference/sound_to_pitch_batch.md)     | Medium         |
+| 3+   | Large datasets          | [`extract_pitch_parallel()`](https://humlab-speech.github.io/pladdrr/reference/extract_pitch_parallel.md) | Easy           |
 
 ------------------------------------------------------------------------
 

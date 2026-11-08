@@ -26,7 +26,6 @@ compute shimmer.
 
 ## Usage
 
-
     tier <- amplitude_tier_create(0, 1)
     tier <- amplitude_tier_from_point_process(point_process, sound)
     tier <- intensity_tier_to_amplitude_tier(intensity_tier)

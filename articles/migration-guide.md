@@ -41,16 +41,15 @@ Update your code to use the preferred alternatives.
 
 Three functions have been deprecated in favor of more consistent naming:
 
-| Deprecated (batch-ops.R) | Use Instead (batch-queries.R) | Status |
-|----|----|----|
-| `pitch_get_values_at_times()` | [`get_pitch_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_pitch_at_times.md) | Will be removed in v3.0.0 |
-| `formant_get_values_at_times()` | [`get_formants_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_formants_at_times.md) | Will be removed in v3.0.0 |
+| Deprecated (batch-ops.R)          | Use Instead (batch-queries.R)                                                                             | Status                    |
+|-----------------------------------|-----------------------------------------------------------------------------------------------------------|---------------------------|
+| `pitch_get_values_at_times()`     | [`get_pitch_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_pitch_at_times.md)         | Will be removed in v3.0.0 |
+| `formant_get_values_at_times()`   | [`get_formants_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_formants_at_times.md)   | Will be removed in v3.0.0 |
 | `intensity_get_values_at_times()` | [`get_intensity_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_intensity_at_times.md) | Will be removed in v3.0.0 |
 
 **Migration:**
 
 ``` r
-
 # OLD (deprecated, shows warning)
 f0_values <- pitch_get_values_at_times(pitch, times)
 
@@ -73,7 +72,6 @@ consistency.
 **Old R6 style:**
 
 ``` r
-
 # This NO LONGER works
 pcg <- PowerCepstrogram$new(.xptr = ptr)
 ```
@@ -81,7 +79,6 @@ pcg <- PowerCepstrogram$new(.xptr = ptr)
 **New function wrapper style:**
 
 ``` r
-
 # Use this instead
 pcg <- PowerCepstrogram(.xptr = ptr)
 ```
@@ -91,7 +88,6 @@ pcg <- PowerCepstrogram(.xptr = ptr)
 **If you create PowerCepstrogram objects:**
 
 ``` r
-
 # OLD (R6)
 pcg <- PowerCepstrogram$new(.xptr = some_ptr)
 
@@ -104,7 +100,6 @@ pcg <- PowerCepstrogram(.xptr = some_ptr)
 No changes needed. All methods work identically:
 
 ``` r
-
 # These work exactly the same in both versions
 cpps <- pcg$get_cpps()
 mean_cpp <- pcg$get_mean_cpp()
@@ -126,7 +121,6 @@ been standardized.
 #### Old Pattern (May Fail)
 
 ``` r
-
 # This relied on R6 private environment
 ptr <- obj$.__enclos_env__$private$ptr  # Fails with new objects
 ```
@@ -134,7 +128,6 @@ ptr <- obj$.__enclos_env__$private$ptr  # Fails with new objects
 #### New Pattern (Always Works)
 
 ``` r
-
 # Use the standardized utility (internal, not exported - call with :::)
 ptr <- pladdrr:::extract_xptr(obj, "Sound")
 
@@ -160,7 +153,6 @@ functions.
 If you process many files, you can now easily use parallel processing:
 
 ``` r
-
 # OLD: Sequential processing
 results <- lapply(files, function(f) {
   sound <- Sound(f)
@@ -184,7 +176,6 @@ optimal core count
 Four new direct conversion functions that skip R6 object dispatch:
 
 ``` r
-
 # OLD: Standard API
 spec <- sound$to_spectrum()
 spg <- sound$to_spectrogram()
@@ -210,7 +201,6 @@ spec <- Spectrum(.xptr = spec_ptr)
 **Action Required:** Update deprecated function calls to avoid warnings.
 
 ``` r
-
 # Before
 f0_vals <- pitch_get_values_at_times(pitch, times)
 f1_vals <- formant_get_values_at_times(formant, times, 1)
@@ -227,7 +217,6 @@ int_vals <- get_intensity_at_times(intensity, times)
 returns a list with F1, F2, F3, F4:
 
 ``` r
-
 # Get all formants at once
 formants <- get_formants_at_times(formant, times, formant_numbers = 1:4)
 f1_vals <- formants$F1
@@ -242,7 +231,6 @@ f4_vals <- formants$F4
 processing.
 
 ``` r
-
 # Before: Sequential
 corpus_files <- list.files("corpus/", pattern = "\\.wav$", full.names = TRUE)
 results <- lapply(corpus_files, function(file) {
@@ -261,7 +249,6 @@ results <- analyze_files_parallel(corpus_files, function(sound) {
 **Opportunity:** If you have performance-critical loops, use Direct API.
 
 ``` r
-
 # Before: Standard API in loop
 for (i in 1:length(sounds)) {
   pitch <- sounds[[i]]$to_pitch()
@@ -294,7 +281,6 @@ If you work with Praat unit codes directly, use the new `unit_to_code()`
 utility (internal, not exported - call with `pladdrr:::`):
 
 ``` r
-
 # Before: Inconsistent mappings in different files
 unit_code <- switch(unit, hertz = 0L, mel = 2L, erb = 3L)  # Different files had different codes!
 
@@ -313,7 +299,6 @@ unit_code <- pladdrr:::unit_to_code("bark", "formant")  # Returns 1L
 Run your code and look for warnings:
 
 ``` r
-
 # If you see this warning:
 # Warning: pitch_get_values_at_times() is deprecated. Use get_pitch_at_times() instead.
 
@@ -325,7 +310,6 @@ Run your code and look for warnings:
 After updating, verify results match:
 
 ``` r
-
 # Old function (deprecated)
 old_result <- pitch_get_values_at_times(pitch, times)
 
@@ -343,7 +327,6 @@ all.equal(old_result, new_result)
 #### Scenario 1: AVQI Voice Quality Analysis
 
 ``` r
-
 # Before (v2.2.6)
 sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 tg <- TextGrid(system.file("extdata", "test.TextGrid", package = "pladdrr"))
@@ -380,7 +363,6 @@ formants <- sound_extract_and_formant(sound, start_times, end_times)
 #### Scenario 2: Large Corpus Analysis
 
 ``` r
-
 # Before (v2.2.6)
 files <- list.files("corpus/", pattern = "\\.wav$", full.names = TRUE)
 
@@ -413,7 +395,6 @@ names(results) <- basename(files)
 #### Scenario 3: Formant Tracking
 
 ``` r
-
 # Before (v2.2.6)
 sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 formant <- sound$to_formant()
@@ -471,21 +452,21 @@ for v3.0.0.
 
 #### Function Replacements
 
-| Old (Deprecated) | New (Preferred) | Change Required |
-|----|----|----|
-| `pitch_get_values_at_times()` | [`get_pitch_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_pitch_at_times.md) | Rename only |
-| `formant_get_values_at_times()` | [`get_formants_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_formants_at_times.md) | Rename + access `$F1`, `$F2` |
-| `intensity_get_values_at_times()` | [`get_intensity_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_intensity_at_times.md) | Rename only |
-| `PowerCepstrogram$new()` | [`PowerCepstrogram()`](https://humlab-speech.github.io/pladdrr/reference/PowerCepstrogram.md) | Remove `$new` |
+| Old (Deprecated)                  | New (Preferred)                                                                                           | Change Required              |
+|-----------------------------------|-----------------------------------------------------------------------------------------------------------|------------------------------|
+| `pitch_get_values_at_times()`     | [`get_pitch_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_pitch_at_times.md)         | Rename only                  |
+| `formant_get_values_at_times()`   | [`get_formants_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_formants_at_times.md)   | Rename + access `$F1`, `$F2` |
+| `intensity_get_values_at_times()` | [`get_intensity_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_intensity_at_times.md) | Rename only                  |
+| `PowerCepstrogram$new()`          | [`PowerCepstrogram()`](https://humlab-speech.github.io/pladdrr/reference/PowerCepstrogram.md)             | Remove `$new`                |
 
 #### New Features to Adopt
 
-| Feature | Function | What It Does |
-|----|----|----|
-| Parallel processing | [`analyze_files_parallel()`](https://humlab-speech.github.io/pladdrr/reference/analyze_files_parallel.md) | Distributes file-level work across cores |
-| Direct API | `to_*_direct()` | Skips R6 object dispatch |
-| Batch stats | [`get_pitch_stats_direct()`](https://humlab-speech.github.io/pladdrr/reference/get_pitch_stats_direct.md) | Returns all statistics in one call |
-| Combined ops | [`sound_extract_and_pitch()`](https://humlab-speech.github.io/pladdrr/reference/sound_extract_and_pitch.md) | Combines extraction and analysis in one call |
+| Feature             | Function                                                                                                    | What It Does                                 |
+|---------------------|-------------------------------------------------------------------------------------------------------------|----------------------------------------------|
+| Parallel processing | [`analyze_files_parallel()`](https://humlab-speech.github.io/pladdrr/reference/analyze_files_parallel.md)   | Distributes file-level work across cores     |
+| Direct API          | `to_*_direct()`                                                                                             | Skips R6 object dispatch                     |
+| Batch stats         | [`get_pitch_stats_direct()`](https://humlab-speech.github.io/pladdrr/reference/get_pitch_stats_direct.md)   | Returns all statistics in one call           |
+| Combined ops        | [`sound_extract_and_pitch()`](https://humlab-speech.github.io/pladdrr/reference/sound_extract_and_pitch.md) | Combines extraction and analysis in one call |
 
 ------------------------------------------------------------------------
 

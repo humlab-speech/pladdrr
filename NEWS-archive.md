@@ -875,7 +875,6 @@ Quality Index) and VQ (Voice Quality) assessment workflows.
 Direct Sound→CPPS calculation in single C++ call:
 
 ``` r
-
 cpps <- calculate_cpps_ultra(sound)  # 1.6x faster than sound$to_powercepstrogram()$get_cpps()
 ```
 
@@ -891,7 +890,6 @@ AVQI-compliant voiced segment extraction with optional windowed
 filtering:
 
 ``` r
-
 voiced <- extract_voiced_segments_ultra(sound, version = "v3.01")
 ```
 
@@ -911,7 +909,6 @@ voiced <- extract_voiced_segments_ultra(sound, version = "v3.01")
 Multi-band HNR for VQ (Voice Quality) measurements:
 
 ``` r
-
 hnr <- calculate_multiband_hnr_ultra(sound)
 # Returns: list(full_mean, full_sd, band500_mean, band500_sd, ..., band3500_mean, band3500_sd)
 ```
@@ -991,7 +988,6 @@ boundary crossings.
 Fast WAV header reading for MPT (Maximum Phonation Time):
 
 ``` r
-
 durations <- get_durations_batch(c("file1.wav", "file2.wav", "file3.wav"))
 max_mpt <- max(durations)
 # 77x faster than LongSound()$get_total_duration()
@@ -1002,7 +998,6 @@ max_mpt <- max(durations)
 Single-call F0 statistics for FH (Highest F0) component:
 
 ``` r
-
 max_f0 <- calculate_f0_stats_ultra(sound, stat = "max", min_pitch = 75, max_pitch = 600)
 # 5x faster than sound$to_pitch_cc()$get_maximum()
 ```
@@ -1012,7 +1007,6 @@ max_f0 <- calculate_f0_stats_ultra(sound, stat = "max", min_pitch = 75, max_pitc
 Minimum intensity in voiced regions for IM component:
 
 ``` r
-
 min_int <- calculate_minimum_intensity_ultra(sound, min_pitch = 75)
 # 6x faster than Tier 2/3 workflow
 ```
@@ -1022,7 +1016,6 @@ min_int <- calculate_minimum_intensity_ultra(sound, min_pitch = 75)
 Complete jitter/shimmer/HNR metrics for PPQ component:
 
 ``` r
-
 vq <- get_voice_quality_ultra(sound, metrics = "all", min_pitch = 75)
 ppq5 <- vq$jitter_ppq5
 # 3.6x faster than get_jitter_shimmer_batch()
@@ -1085,7 +1078,6 @@ ppq5 <- vq$jitter_ppq5
 Robust pitch extraction across speaker voice ranges:
 
 ``` r
-
 # Automatic adaptive pitch range
 result <- two_pass_adaptive_pitch(sound)
 pitch <- Pitch(.xptr = result$pitch)
@@ -1106,7 +1098,6 @@ Parameters: `voicing_threshold`, `silence_threshold`, `q1_factor`,
 All 11 voice quality measures in single C++ call:
 
 ``` r
-
 pp <- to_point_process_from_sound_and_pitch(sound, pitch)
 metrics <- get_jitter_shimmer_batch(pp, sound)
 
@@ -1120,7 +1111,6 @@ metrics <- get_jitter_shimmer_batch(pp, sound)
 ### Complete Voice Quality Workflow
 
 ``` r
-
 sound <- Sound("voice.wav")
 
 # Robust two-pass pitch extraction
@@ -1158,7 +1148,6 @@ cat("Shimmer:", metrics$shimmer_local * 100, "%\n")
     mean period:
 
     ``` r
-
     tg <- pitch$to_textgrid_vuv(max_period = 0.02, mean_period = calculated_period)
     ```
 
@@ -1187,7 +1176,6 @@ cat("Shimmer:", metrics$shimmer_local * 100, "%\n")
   - Example:
 
     ``` r
-
     sound <- Sound("voice.wav")
     pitch <- sound$to_pitch_cc(voicing_threshold = 0.45)
     pp <- to_point_process_from_sound_and_pitch(sound, pitch)  # Correct method
@@ -1215,7 +1203,6 @@ tight loops
 **Example - VUV Analysis Workflow:**
 
 ``` r
-
 # Fast adaptive pitch range calculation
 pitch_rough <- to_pitch_cc_direct(sound_filtered, 50, 800, voicing_threshold = 0.45)
 q1 <- get_pitch_quantile_direct(pitch_rough, 0.25, unit = "hertz")
@@ -1242,7 +1229,6 @@ mean_period <- pp_get_mean_period_direct(pp)
   - Example:
 
     ``` r
-
     quantiles <- get_pitch_quantiles_batch(pitch, c(0.25, 0.5, 0.75))
     q1 <- quantiles["q0.25"]
     median <- quantiles["q0.5"]
@@ -1408,7 +1394,6 @@ slope values should now use `unit="energy"` or `unit="dB"`.
 > contract.
 
 ``` r
-
 # Before (workaround):
 slope <- ltas$get_slope(0, 1000, 1000, 10000, "sones")  # Accidentally correct
 
@@ -1434,7 +1419,6 @@ slope <- ltas$get_slope(0, 1000, 1000, 10000, "energy")  # Correct
   - Set `use_zcr = FALSE` for intensity-only detection
 
 ``` r
-
 # AVQI-compatible extraction (with ZCR, default)
 voiced <- extract_voiced_segments(
   sound,
@@ -1482,7 +1466,6 @@ voiced <- extract_voiced_segments(sound, use_zcr = FALSE)
 **Performance Impact:**
 
 ``` r
-
 # Before: Load 10-min file to extract 50ms window
 sound <- Sound("long_audio.wav")              # Load 600s
 window <- sound$extract_part(10.5, 10.55)     # Extract 0.05s
@@ -1553,7 +1536,6 @@ window <- sound_load_window("long_audio.wav", 10.5, 10.55, resample_to = 10000)
 **Example Usage:**
 
 ``` r
-
 # Fast pitch extraction with custom voicing parameters
 pitch_ptr <- to_pitch_cc_direct(
   sound,
@@ -1795,7 +1777,6 @@ functions
 ### Migration Guide
 
 ``` r
-
 # OLD (v2.x - no longer works in v3.0)
 values <- pitch_get_values_at_times(pitch, times, unit = "hertz")
 
@@ -1866,7 +1847,6 @@ analysis favors using existing high-performance functions
 **Recommended approach:**
 
 ``` r
-
 # Instead of disabled voice_quality_batch():
 # Use Direct API (2-3x faster) + R statistics (negligible overhead)
 pitch_ptr <- to_pitch_direct(sound$.xptr, 0.01, 75, 500)
@@ -1920,7 +1900,6 @@ are now deprecated in favor of their clearer alternatives.
 **Example migration:**
 
 ``` r
-
 # Old (deprecated)
 values <- pitch_get_values_at_times(pitch_obj, times, unit = "hertz")
 
@@ -1991,7 +1970,6 @@ files efficiently with parallel processing.
 **Example:**
 
 ``` r
-
 # Process 100 files using 4 cores (3-4x faster)
 files <- list.files("audio/", pattern = "\\.wav$", full.names = TRUE)
 results <- analyze_files_parallel(files, function(sound) {
@@ -2020,7 +1998,6 @@ consistent pointer extraction.
 **Example:**
 
 ``` r
-
 # Direct API: 2-3x faster than R6
 sound_ptr <- sound$.xptr
 spec_ptr <- to_spectrum_direct(sound_ptr)
@@ -2044,12 +2021,12 @@ spec <- Spectrum(.xptr = spec_ptr)
 
 ## Summary of Performance Tiers
 
-| Tier | Use Case | Example | Speedup |
-|----|----|----|----|
-| 1 (Standard) | Interactive, \<10 files | `sound$to_pitch()` | 1x (baseline) |
-| 2 (Direct) | Loops, 10-100 files | [`to_pitch_direct()`](https://humlab-speech.github.io/pladdrr/reference/to_pitch_direct.md) | 2-3x |
-| 3 (Batch) | Production, \>100 files | [`sound_to_pitch_batch()`](https://humlab-speech.github.io/pladdrr/reference/sound_to_pitch_batch.md) | 5-10x |
-| 3 (Parallel) | Large datasets | [`extract_pitch_parallel()`](https://humlab-speech.github.io/pladdrr/reference/extract_pitch_parallel.md) | 10-20x |
+| Tier         | Use Case                | Example                                                                                                   | Speedup       |
+|--------------|-------------------------|-----------------------------------------------------------------------------------------------------------|---------------|
+| 1 (Standard) | Interactive, \<10 files | `sound$to_pitch()`                                                                                        | 1x (baseline) |
+| 2 (Direct)   | Loops, 10-100 files     | [`to_pitch_direct()`](https://humlab-speech.github.io/pladdrr/reference/to_pitch_direct.md)               | 2-3x          |
+| 3 (Batch)    | Production, \>100 files | [`sound_to_pitch_batch()`](https://humlab-speech.github.io/pladdrr/reference/sound_to_pitch_batch.md)     | 5-10x         |
+| 3 (Parallel) | Large datasets          | [`extract_pitch_parallel()`](https://humlab-speech.github.io/pladdrr/reference/extract_pitch_parallel.md) | 10-20x        |
 
 ## Files Added/Modified
 
@@ -2758,7 +2735,6 @@ analysis workflows**
   - Example:
 
     ``` r
-
     sound <- Sound$new("voice.wav")
     gne_matrix <- sound$to_harmonicity_gne(fmin = 500, fmax = 4500)
     ```

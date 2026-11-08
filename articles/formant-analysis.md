@@ -7,7 +7,6 @@ covers when to use each method, how to troubleshoot formant detection
 issues, and parameter tuning for formant analysis.
 
 ``` r
-
 library(pladdrr)
 #> pladdrr: direct access to Praat's core algorithms from R.
 #> See ?pladdrr for an overview, or citation("pladdrr") for citation details.
@@ -46,7 +45,6 @@ The most commonly used method, based on the Burg algorithm for LPC
 analysis:
 
 ``` r
-
 # Create a synthesized vowel sound (pure tones don't have formants)
 # KlattGrid synthesizes speech with formant structure
 # Use a longer duration (1s) for stable analysis
@@ -116,7 +114,6 @@ formants)
 Retains all detected LPC formants without filtering:
 
 ``` r
-
 formant_keepall <- sound$to_formant_keepall(
   time_step = 0.005,
   max_formants = 5,                    # Maximum formants to track
@@ -143,7 +140,6 @@ filtered out
 ### Keep All vs. Burg Example
 
 ``` r
-
 # Same sound, both methods
 formant_b <- sound$to_formant_burg(max_formants = 4)
 formant_k <- sound$to_formant_keepall(max_formants = 4)
@@ -184,7 +180,6 @@ refits Burg while down-weighting outlier frames (`num_std_dev`,
 these are for comparison or specific research needs.
 
 ``` r
-
 formant_robust <- sound$to_formant_robust(
   time_step = 0.005,
   max_formants = 5,
@@ -209,7 +204,6 @@ The maximum formant frequency affects which formants are tracked:
 ### Speaker-Specific Ceilings
 
 ``` r
-
 # Speaker-specific formant ceilings demonstration
 # Only run if sound was created successfully
 if (exists("sound") && !is.null(sound)) {
@@ -272,7 +266,6 @@ if (exists("sound") && !is.null(sound)) {
 ### Window Length
 
 ``` r
-
 if (exists("sound") && !is.null(sound)) {
   # Short window (better time resolution)
   formant_short <- tryCatch(
@@ -312,7 +305,6 @@ if (exists("sound") && !is.null(sound)) {
 ### Time Step
 
 ``` r
-
 if (exists("sound") && !is.null(sound)) {
   # Coarse (fast, less detail)
   formant_coarse <- tryCatch(
@@ -351,7 +343,6 @@ speech**: 0.005 s - **Rapid transitions**: 0.002 s
 ### Number of Formants
 
 ``` r
-
 if (exists("sound") && !is.null(sound)) {
   # Track only F1-F2 (faster)
   # Note: Low max_formants can fail on some sounds due to polynomial constraints
@@ -400,7 +391,6 @@ if (exists("sound") && !is.null(sound)) {
 ### Problem: No Formants Detected
 
 ``` r
-
 formant <- sound$to_formant_burg()
 f1 <- formant$get_value_at_time(1, 0.1, unit = "hertz")
 # Returns: NA
@@ -411,7 +401,6 @@ f1 <- formant$get_value_at_time(1, 0.1, unit = "hertz")
 1.  **Lower the ceiling**:
 
 ``` r
-
 # Try lower maximum frequency
 formant <- sound$to_formant_burg(max_frequency = 4500)
 ```
@@ -419,14 +408,12 @@ formant <- sound$to_formant_burg(max_frequency = 4500)
 2.  **Increase window length**:
 
 ``` r
-
 formant <- sound$to_formant_burg(window_length = 0.050)
 ```
 
 3.  **Check if sound is silent**:
 
 ``` r
-
 intensity <- sound$to_intensity()
 mean_intensity <- intensity$get_mean(0, 0)  # in dB
 # If < 30 dB, may be too quiet
@@ -435,7 +422,6 @@ mean_intensity <- intensity$get_mean(0, 0)  # in dB
 ### Problem: Formants Jump Erratically
 
 ``` r
-
 # F1 jumps from 500 Hz to 2000 Hz between frames
 ```
 
@@ -444,7 +430,6 @@ mean_intensity <- intensity$get_mean(0, 0)  # in dB
 1.  **Use robust tracking**:
 
 ``` r
-
 formant <- sound$to_formant_robust(
   num_std_dev = 1.5,       # outlier threshold in standard deviations
   max_iterations = 5       # refit iterations
@@ -454,21 +439,18 @@ formant <- sound$to_formant_robust(
 2.  **Increase window length**:
 
 ``` r
-
 formant <- sound$to_formant_burg(window_length = 0.040)
 ```
 
 3.  **Reduce time step**:
 
 ``` r
-
 formant <- sound$to_formant_burg(time_step = 0.002)
 ```
 
 ### Problem: F3 Detected as F2
 
 ``` r
-
 # F2 shows values ~3000 Hz (likely F3)
 ```
 
@@ -477,7 +459,6 @@ formant <- sound$to_formant_burg(time_step = 0.002)
 1.  **Adjust formant ceiling**:
 
 ``` r
-
 # Lower ceiling may force re-evaluation
 formant <- sound$to_formant_burg(max_frequency = 4800)
 ```
@@ -485,14 +466,12 @@ formant <- sound$to_formant_burg(max_frequency = 4800)
 2.  **Try Keep All method for comparison**:
 
 ``` r
-
 formant <- sound$to_formant_keepall(max_formants = 5)
 ```
 
 3.  **Check bandwidth**:
 
 ``` r
-
 bandwidth <- formant$get_bandwidth_at_time(2, 0.1, unit = "hertz")
 # Very wide bandwidth may indicate spurious formant
 ```
@@ -502,7 +481,6 @@ bandwidth <- formant$get_bandwidth_at_time(2, 0.1, unit = "hertz")
 ### Extracting F1-F2 for Vowel Plot
 
 ``` r
-
 # Analyze multiple vowel tokens. In practice, pass paths to your own
 # recordings of each vowel; the test file is reused here for illustration.
 wav_path <- system.file("extdata", "test.wav", package = "pladdrr")
@@ -545,7 +523,6 @@ ggplot(vowel_data, aes(x = F2, y = F1, label = vowel)) +
 ### Formant Tracking Over Time
 
 ``` r
-
 sound <- Sound$new(wav_path)
 formant <- sound$to_formant_burg(time_step = 0.005)
 
@@ -582,7 +559,6 @@ For noisy or breathy speech, excitation-based formant extraction is an
 alternative:
 
 ``` r
-
 # For noisy recordings, use excitation-based formant extraction
 sound <- Sound$new(wav_path)
 
@@ -614,7 +590,6 @@ voice - Whispered speech
 ### Quality Checks
 
 ``` r
-
 time <- 0.2  # the time point being checked, in seconds
 
 # 1. Check if formants are in expected ranges
@@ -646,7 +621,6 @@ if (!is.na(f1) && !is.na(f1_prev)) {
 ## Session Info
 
 ``` r
-
 sessionInfo()
 #> R version 4.6.2 (2026-10-29)
 #> Platform: x86_64-pc-linux-gnu
@@ -681,7 +655,7 @@ sessionInfo()
 #> [19] bslib_0.12.0        pillar_1.11.1       RColorBrewer_1.1-3 
 #> [22] rlang_1.3.0         cachem_1.1.0        xfun_0.62          
 #> [25] fs_2.1.0            sass_0.4.10         S7_0.2.2           
-#> [28] otel_0.2.0          cli_3.6.6           pkgdown_2.2.1      
+#> [28] otel_0.3.0          cli_3.6.6           pkgdown_2.2.1      
 #> [31] withr_3.0.3         magrittr_2.0.5      digest_0.6.39      
 #> [34] grid_4.6.2          lifecycle_1.0.5     vctrs_0.7.3        
 #> [37] evaluate_1.0.5      glue_1.8.1          data.table_1.18.6.1

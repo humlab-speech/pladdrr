@@ -27,7 +27,6 @@ requested time window and hands back a normal Sound.
 
 ## Usage
 
-
     ls <- LongSound$open("recording.wav")
     part <- ls$extract_part(10, 15)   # 5 seconds as a Sound
 
@@ -109,7 +108,7 @@ Sound$create_tone(frequency = 150, duration = 1.0)$save(tmp)
 ls <- LongSound$open(tmp)
 print(ls)
 #> <Praat LongSound>
-#>   File: /tmp/RtmppimeU1/file229b791ec73c.wav 
+#>   File: /tmp/Rtmp8xSclc/file229a195af575.wav 
 #>   Duration: 1.000 seconds
 #>   Sample rate: 44100 Hz
 #>   Channels: 1 

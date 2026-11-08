@@ -25,7 +25,6 @@ one with `ltas$to_spectrum_tier_peaks()`, then inspect or export it.
 
 ## Usage
 
-
     peaks <- ltas$to_spectrum_tier_peaks()
 
 ## Query methods

@@ -53,7 +53,6 @@ entirely.
 
 ## Usage
 
-
     # From file
     sound <- Sound(path = "audio.wav")
 

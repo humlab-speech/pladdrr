@@ -26,7 +26,6 @@ inspection.
 
 ## Usage
 
-
     cepstrogram <- sound$to_powercepstrogram(pitch_floor = 60)
 
 ## Query methods

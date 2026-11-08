@@ -17,7 +17,6 @@ frequencies, then uses statistical criteria to select the best path
 frame-by-frame.
 
 ``` r
-
 library(pladdrr)
 library(ggplot2)
 ```
@@ -40,7 +39,6 @@ ceiling** - the maximum frequency for formant detection:
 ### Standard vs FormantPath Comparison
 
 ``` r
-
 # Load example audio
 sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 
@@ -98,7 +96,6 @@ The key parameter is `num_steps_up_down` - how many ceiling values to
 test above and below the center:
 
 ``` r
-
 # Test 3 ceilings (±5% around 5500 Hz)
 fp <- sound$to_formant_path(
   time_step = 0.005,
@@ -139,7 +136,6 @@ More candidates = more robust but slower and more memory.
 ### Inspecting Candidates
 
 ``` r
-
 fp <- sound$to_formant_path(num_steps_up_down = 2L)
 
 # Get all tested ceilings
@@ -168,7 +164,6 @@ cat("  Ceiling:", round(chosen_ceiling), "Hz\n")
 Each candidate has a “stress” value - lower is better:
 
 ``` r
-
 fp <- sound$to_formant_path(num_steps_up_down = 2L)
 
 # Calculate stress for each candidate
@@ -207,7 +202,6 @@ cat("\nLowest stress: Candidate", best_idx,
 ### Automatic Extraction
 
 ``` r
-
 fp <- sound$to_formant_path(num_steps_up_down = 2L)
 
 # Extract the automatically selected optimal path
@@ -243,7 +237,6 @@ cat("  F3:", round(f3), "Hz\n")
 selected candidate for a time range:
 
 ``` r
-
 # Set candidate 3 for time range 0.2-0.4s
 fp$set_path(tmin = 0.2, tmax = 0.4, selected_candidate = 3)
 
@@ -264,7 +257,6 @@ frm_result <- fp$extract_formant()
 ### Comparing All Candidates
 
 ``` r
-
 fp <- sound$to_formant_path(num_steps_up_down = 2L)
 
 # Export optimal formant track
@@ -297,7 +289,6 @@ ggplot(df_plot, aes(time, frequency, color = factor(formant_num))) +
 ### Optimal Path vs Standard
 
 ``` r
-
 # Get optimal formant from FormantPath
 fp <- sound$to_formant_path(num_steps_up_down = 2L)
 formant_optimal <- fp$extract_formant()
@@ -345,7 +336,6 @@ FormantPath can use a Viterbi-like algorithm to find the globally
 optimal path:
 
 ``` r
-
 fp <- sound$to_formant_path(num_steps_up_down = 3L)
 
 # Find optimal path with custom weights
@@ -377,7 +367,6 @@ frm_result <- fp$extract_formant()
 When you don’t know if the speaker is male, female, or child:
 
 ``` r
-
 # Test wide range of ceilings
 fp <- sound$to_formant_path(
   formant_ceiling = 5500,      # Middle ground
@@ -400,7 +389,6 @@ frm_result <- fp$extract_formant()
 For poor quality audio, use more candidates and tighter steps:
 
 ``` r
-
 fp <- sound$to_formant_path(
   formant_ceiling = 5500,
   ceiling_step_fraction = 0.05,  # Finer steps
@@ -417,7 +405,6 @@ cat("Using", fp$get_number_of_candidates(), "candidates for robustness\n")
 Compare formants across time-aligned segments using a TextGrid:
 
 ``` r
-
 textgrid <- TextGrid(
   system.file("extdata", "test.TextGrid", package = "pladdrr"))
 
@@ -456,7 +443,6 @@ print(phone_formants)
 ### 4. Batch Processing Multiple Files
 
 ``` r
-
 # Process multiple recordings with unknown speaker characteristics.
 # Replace `files` with your own vector of file paths; here we reuse the
 # bundled example file to show the pattern.
@@ -481,7 +467,6 @@ names(formants) <- files
 FormantPath stores multiple formant candidates:
 
 ``` r
-
 # 5 candidates = 5× the memory of standard Formant
 fp <- sound$to_formant_path(num_steps_up_down = 2L)  # 5 candidates
 # Memory ≈ 5 × size of single Formant object
@@ -499,7 +484,6 @@ one, so expect its cost to scale roughly with the number of candidates
 requested. Measure on your own data:
 
 ``` r
-
 system.time(frm_result <- sound$to_formant_burg())
 #>    user  system elapsed 
 #>   0.016   0.001   0.008
@@ -519,7 +503,6 @@ system.time(fp <- sound$to_formant_path(num_steps_up_down = 2L))
 3.  **Extract the formant immediately** to save memory:
 
     ``` r
-
     frm_result <- sound$to_formant_path(num_steps_up_down = 2L)$extract_formant()
     ```
 
@@ -546,14 +529,14 @@ system.time(fp <- sound$to_formant_path(num_steps_up_down = 2L))
 
 pladdrr provides direct R access to Praat’s FormantPath algorithm:
 
-| Feature | pladdrr | Praat GUI |
-|----|----|----|
-| Multiple candidates | Yes | Yes |
-| Automatic path selection | Yes | Yes |
-| Manual path override | Yes, but see the known crash noted above | Yes |
-| Data export | Yes (data.frame) | Yes (text file) |
-| Batch processing | Yes (R loops) | No (manual) |
-| Visualization | Yes (ggplot2) | Yes (built-in) |
+| Feature                  | pladdrr                                  | Praat GUI       |
+|--------------------------|------------------------------------------|-----------------|
+| Multiple candidates      | Yes                                      | Yes             |
+| Automatic path selection | Yes                                      | Yes             |
+| Manual path override     | Yes, but see the known crash noted above | Yes             |
+| Data export              | Yes (data.frame)                         | Yes (text file) |
+| Batch processing         | Yes (R loops)                            | No (manual)     |
+| Visualization            | Yes (ggplot2)                            | Yes (built-in)  |
 
 ### vs Parselmouth
 
@@ -569,7 +552,6 @@ Parselmouth does not currently expose FormantPath - only standard
 **Solution**: Increase `ceiling_step_fraction` to 0.10 or higher
 
 ``` r
-
 # Instead of this (too narrow)
 fp <- sound$to_formant_path(
   formant_ceiling = 5500,
@@ -592,7 +574,6 @@ fp <- sound$to_formant_path(
 **Solution**: Increase `max_num_formants` or adjust `formant_ceiling`
 
 ``` r
-
 fp <- sound$to_formant_path(
   max_num_formants = 6,  # Instead of 5
   formant_ceiling = 5500,
@@ -605,7 +586,6 @@ fp <- sound$to_formant_path(
 **Solution**: Reduce candidates or increase time step
 
 ``` r
-
 # Faster: fewer candidates, larger time step
 fp <- sound$to_formant_path(
   time_step = 0.010,         # Instead of 0.005
@@ -638,7 +618,6 @@ audio - `ceiling_step_fraction`: 0.05 (narrow) to 0.10 (wide)
 ## Session Info
 
 ``` r
-
 sessionInfo()
 #> R version 4.6.2 (2026-10-29)
 #> Platform: x86_64-pc-linux-gnu
@@ -673,7 +652,7 @@ sessionInfo()
 #> [19] bslib_0.12.0        pillar_1.11.1       RColorBrewer_1.1-3 
 #> [22] rlang_1.3.0         cachem_1.1.0        xfun_0.62          
 #> [25] fs_2.1.0            sass_0.4.10         S7_0.2.2           
-#> [28] otel_0.2.0          cli_3.6.6           pkgdown_2.2.1      
+#> [28] otel_0.3.0          cli_3.6.6           pkgdown_2.2.1      
 #> [31] withr_3.0.3         magrittr_2.0.5      digest_0.6.39      
 #> [34] grid_4.6.2          lifecycle_1.0.5     vctrs_0.7.3        
 #> [37] evaluate_1.0.5      glue_1.8.1          data.table_1.18.6.1

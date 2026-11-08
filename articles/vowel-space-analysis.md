@@ -68,7 +68,6 @@ example pair for experimentation:
 `system.file("extdata", "test.TextGrid", package = "pladdrr")`.
 
 ``` r
-
 library(pladdrr)
 #> pladdrr: direct access to Praat's core algorithms from R.
 #> See ?pladdrr for an overview, or citation("pladdrr") for citation details.
@@ -155,7 +154,6 @@ methods for `TextGrid` (see
 give a quick view of the annotation tier:
 
 ``` r
-
 autoplot(tg)
 ```
 
@@ -168,7 +166,6 @@ autoplot(tg)
 Formant analysis parameters must match speaker characteristics:
 
 ``` r
-
 # Parameter guidelines:
 # Adult male: max_formant = 5000 Hz
 # Adult female: max_formant = 5500 Hz  
@@ -186,7 +183,6 @@ pre_emphasis <- 50
 Apply pre-emphasis to boost higher frequencies before formant analysis:
 
 ``` r
-
 # Note: pre_emphasize modifies sound in-place, so we skip for demonstration
 # sound$pre_emphasize(from_frequency = pre_emphasis)
 ```
@@ -196,7 +192,6 @@ Apply pre-emphasis to boost higher frequencies before formant analysis:
 Use Burg’s algorithm (Praat’s default):
 
 ``` r
-
 # Extract formants from the original sound
 formant <- sound$to_formant_burg(
   time_step = time_step,
@@ -225,7 +220,6 @@ Measure formants at **three time points** per vowel:
 This captures vowel trajectories and diphthongization.
 
 ``` r
-
 # Initialize results data frame
 vowel_features <- data.frame(
   vowel = character(),
@@ -318,7 +312,6 @@ print(vowel_features)
 Normalize formants to remove speaker-specific variation:
 
 ``` r
-
 # Function to compute Lobanov z-scores
 lobanov_normalize <- function(formant_values) {
   (formant_values - mean(formant_values, na.rm = TRUE)) / 
@@ -347,7 +340,6 @@ cat("F2_norm: mean =", round(mean(vowel_features$f2_norm), 2),
 ### Descriptive Statistics by Vowel
 
 ``` r
-
 # Aggregate by vowel type
 vowel_stats <- aggregate(
   cbind(f1_50, f2_50, f1_norm, f2_norm) ~ vowel,
@@ -378,7 +370,6 @@ print(vowel_stats)
 Calculate vowel space area using the convex hull of F1-F2 points:
 
 ``` r
-
 # Use normalized values for comparison across speakers
 f1_coords <- vowel_features$f1_norm
 f2_coords <- vowel_features$f2_norm
@@ -415,7 +406,6 @@ Developmental changes (child vs. adult) - Clinical applications
 Compare onset (20%) and offset (80%) formants:
 
 ``` r
-
 # Calculate formant movement
 vowel_features$f1_movement <- abs(vowel_features$f1_80 - vowel_features$f1_20)
 vowel_features$f2_movement <- abs(vowel_features$f2_80 - vowel_features$f2_20)
@@ -442,7 +432,6 @@ cat(toString(unique(potential_diphthongs)), "\n")
 ### Basic F1-F2 Vowel Plot
 
 ``` r
-
 # Using base R graphics
 plot(
   vowel_features$f2_50,
@@ -469,7 +458,6 @@ text(
 ### Advanced Plotting with ggplot2
 
 ``` r
-
 library(ggplot2)
 
 # Normalized vowel space
@@ -490,7 +478,6 @@ ggplot(vowel_features, aes(x = f2_norm, y = f1_norm, label = vowel, color = vowe
 ![](vowel-space-analysis_files/figure-html/vowel_plot_ggplot2-1.png)
 
 ``` r
-
 
 # With trajectories
 ggplot(vowel_features) +
@@ -513,7 +500,6 @@ ggplot(vowel_features) +
 ### Faceted by Speaker or Condition
 
 ``` r
-
 # With multi-speaker data you would already have a speaker column. The demo
 # data above comes from a single synthesised talker, so label it as such to
 # show the faceting call working.
@@ -541,7 +527,6 @@ ggplot(vowel_features, aes(x = f2_norm, y = f1_norm, label = vowel, color = vowe
 ### ANOVA: Vowel Differences
 
 ``` r
-
 # Test if vowels differ in F1
 f1_model <- aov(f1_50 ~ vowel, data = vowel_features)
 summary(f1_model)
@@ -579,7 +564,6 @@ and fit a random intercept (requires the `lme4` package, not a pladdrr
 dependency):
 
 ``` r
-
 # Not evaluated here: lme4 is not a pladdrr dependency, and a random intercept
 # needs genuine repeated measures across several speakers, which the synthetic
 # single-talker demo data above does not have.
@@ -596,7 +580,6 @@ summary(model)
 Compare vowel systems across dialects:
 
 ``` r
-
 # Load data from multiple dialect regions
 northeast <- load_vowels("northeast_speakers/*.wav")
 south <- load_vowels("south_speakers/*.wav")
@@ -616,7 +599,6 @@ model <- lm(f1_norm ~ vowel * dialect, data = all_data)
 Track vowel learning over time:
 
 ``` r
-
 # Longitudinal data (same learner, multiple sessions)
 learner_data$session <- as.factor(learner_data$session)
 
@@ -634,7 +616,6 @@ model <- lmer(
 Compare clear vs. conversational speech:
 
 ``` r
-
 # Calculate vowel space area for each style
 clear_area <- compute_vowel_space_area(clear_speech_data)
 casual_area <- compute_vowel_space_area(casual_speech_data)
@@ -656,7 +637,6 @@ cat("Expansion ratio:", clear_area / casual_area, "\n")
 - Test with known tokens and adjust iteratively
 
 ``` r
-
 # Test multiple ceilings
 ceilings <- c(5000, 5500, 6000, 6500)
 for (ceiling in ceilings) {
@@ -676,7 +656,6 @@ for (ceiling in ceilings) {
 Check for outliers and tracking errors:
 
 ``` r
-
 # Flag extreme values
 f1_outliers <- vowel_features$f1_50 > 1000 | vowel_features$f1_50 < 200
 f2_outliers <- vowel_features$f2_50 > 3000 | vowel_features$f2_50 < 500
@@ -703,7 +682,6 @@ Select normalization based on research question:
 Handle tracking failures gracefully:
 
 ``` r
-
 # Remove rows with missing formants
 vowel_features_clean <- vowel_features[
   complete.cases(vowel_features[, c("f1_50", "f2_50")]),

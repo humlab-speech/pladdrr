@@ -37,7 +37,6 @@ with the package's `pladdrr_input_error`.
 
 ## Usage
 
-
     PitchTier$new(path)          # load from file
     PitchTier(tmin, tmax)        # create an empty PitchTier
     pitch$down_to_pitch_tier()   # extract from a Pitch object

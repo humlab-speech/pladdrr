@@ -658,7 +658,6 @@ The autoplot/autolayer pattern enables flexible plot composition:
 
 This allows combining multiple objects:
 
-
     autoplot(spectrogram) +
       autolayer(formant, max_formant = 3) +
       autolayer(pitch, color = "blue")

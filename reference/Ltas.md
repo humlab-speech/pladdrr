@@ -24,7 +24,6 @@ quality across speakers or checking a recording's frequency balance.
 
 ## Usage
 
-
     ltas <- sound$to_ltas(bandwidth = 100)
     ltas <- sound$to_ltas_pitch_corrected(pitch_floor = 75, pitch_ceiling = 600)
 

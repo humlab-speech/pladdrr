@@ -24,7 +24,6 @@ loudness can be read off.
 
 ## Usage
 
-
     cochleagram <- sound$to_cochleagram()
 
 ## Query methods

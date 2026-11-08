@@ -15,7 +15,6 @@ processing multiple files or querying multiple time points.
 adding overhead.
 
 ``` r
-
 sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 formant <- sound$to_formant()
 
@@ -30,7 +29,6 @@ for (i in seq_along(times)) {
 **Solution:** Batch operations process everything in a single C++ call.
 
 ``` r
-
 # 1 R->C crossing for the whole vector of time points
 f1_values <- formant$get_values_at_times(formant_number = 1, times = times)
 ```
@@ -53,7 +51,6 @@ Cross-correlation pitch (batch) -
 **Example:**
 
 ``` r
-
 # Load multiple sounds (here, the bundled test file repeated;
 # point list.files() at your own directory of WAV files in practice)
 files <- rep(system.file("extdata", "test.wav", package = "pladdrr"), 3)
@@ -78,7 +75,6 @@ Extract + formant
 **Example:**
 
 ``` r
-
 # Analyze multiple intervals from a recording, using its TextGrid annotation
 sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 textgrid <- TextGrid(system.file("extdata", "test.TextGrid", package = "pladdrr"))
@@ -118,7 +114,6 @@ Pitch strength at multiple times
 **Example: Formant Tracking**
 
 ``` r
-
 sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 formant <- sound$to_formant()
 
@@ -151,7 +146,6 @@ multiple sounds
 **Example:**
 
 ``` r
-
 # Concatenate multiple recordings
 sounds <- lapply(files, Sound)
 
@@ -173,7 +167,6 @@ voice-quality or vowel-space measurements) is a typical use of the
 extract-and-analyze batch functions.
 
 ``` r
-
 library(pladdrr)
 
 # Load recording and its TextGrid
@@ -210,7 +203,6 @@ mean_f1 <- mean(all_f1, na.rm = TRUE)
 Analyze voice tremor by tracking pitch and intensity modulation.
 
 ``` r
-
 sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 
 # Extract pitch and intensity
@@ -251,7 +243,6 @@ tremor_power <- max(tremor_spectrum$spec[tremor_freq_idx])
 Process many files efficiently.
 
 ``` r
-
 # Get all files (here, the package's bundled extdata directory;
 # point this at your own corpus directory in practice)
 corpus_files <- list.files(system.file("extdata", package = "pladdrr"),
@@ -302,7 +293,6 @@ write.csv(results_df, "corpus_analysis_results.csv", row.names = FALSE)
 #### 1. Always Vectorize Time Queries
 
 ``` r
-
 # Avoid: one R->C crossing per query
 for (t in times) {
   val <- pitch$get_value_at_time(t, "hertz")
@@ -315,7 +305,6 @@ values <- pitch$get_values_at_times(times, unit = "hertz")
 #### 2. Combine Batch Operations
 
 ``` r
-
 starts <- c(0.1, 0.4, 0.7)
 ends <- c(0.3, 0.6, 0.9)
 
@@ -330,7 +319,6 @@ pitches <- sound_extract_and_pitch(sound, starts, ends)
 #### 3. Use Batch for TextGrid Workflows
 
 ``` r
-
 # Extract intervals from TextGrid
 tg <- TextGrid(system.file("extdata", "test.TextGrid", package = "pladdrr"))
 intervals <- tg$get_all_intervals(tier = "words")
@@ -347,7 +335,6 @@ formants <- sound_extract_and_formant(
 #### 4. Leverage Return Types
 
 ``` r
-
 # Batch functions support return_r6 parameter
 # Set to FALSE to get raw pointers instead of wrapped R6 objects
 pitch_ptrs <- sound_to_pitch_batch(sounds, return_r6 = FALSE)
@@ -360,15 +347,15 @@ stats <- lapply(pitch_ptrs, get_pitch_stats_direct)
 
 ### Function Reference Table
 
-| Function | Input | Output | Use Case |
-|----|----|----|----|
-| [`sound_to_pitch_batch()`](https://humlab-speech.github.io/pladdrr/reference/sound_to_pitch_batch.md) | List of Sounds | List of Pitch | Batch pitch extraction |
-| [`sound_to_formant_batch()`](https://humlab-speech.github.io/pladdrr/reference/sound_to_formant_batch.md) | List of Sounds | List of Formant | Batch formant extraction |
-| [`sound_extract_and_pitch()`](https://humlab-speech.github.io/pladdrr/reference/sound_extract_and_pitch.md) | Sound + times | List of Pitch | Interval analysis |
-| `pitch$get_values_at_times()` | Pitch + times | Numeric vector | F0 tracking (R6 method) |
-| [`get_formants_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_formants_at_times.md) | Formant + times | List (F1,F2,F3,F4) | Formant tracking |
-| `formant$get_values_at_times()` | Formant + times | Numeric vector | Single formant tracking (R6 method) |
-| [`sound_concatenate_all()`](https://humlab-speech.github.io/pladdrr/reference/sound_concatenate_all.md) | List of Sounds | Sound | Concatenation |
+| Function                                                                                                    | Input           | Output             | Use Case                            |
+|-------------------------------------------------------------------------------------------------------------|-----------------|--------------------|-------------------------------------|
+| [`sound_to_pitch_batch()`](https://humlab-speech.github.io/pladdrr/reference/sound_to_pitch_batch.md)       | List of Sounds  | List of Pitch      | Batch pitch extraction              |
+| [`sound_to_formant_batch()`](https://humlab-speech.github.io/pladdrr/reference/sound_to_formant_batch.md)   | List of Sounds  | List of Formant    | Batch formant extraction            |
+| [`sound_extract_and_pitch()`](https://humlab-speech.github.io/pladdrr/reference/sound_extract_and_pitch.md) | Sound + times   | List of Pitch      | Interval analysis                   |
+| `pitch$get_values_at_times()`                                                                               | Pitch + times   | Numeric vector     | F0 tracking (R6 method)             |
+| [`get_formants_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_formants_at_times.md)     | Formant + times | List (F1,F2,F3,F4) | Formant tracking                    |
+| `formant$get_values_at_times()`                                                                             | Formant + times | Numeric vector     | Single formant tracking (R6 method) |
+| [`sound_concatenate_all()`](https://humlab-speech.github.io/pladdrr/reference/sound_concatenate_all.md)     | List of Sounds  | Sound              | Concatenation                       |
 
 ------------------------------------------------------------------------
 
@@ -383,7 +370,6 @@ when an element of the input list is neither a `Sound` object nor a raw
 external pointer:
 
 ``` r
-
 sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 
 # Fails: batch functions expect a list of Sound objects, not a bare path
@@ -399,7 +385,6 @@ Batch query functions return NA when measurements fail (e.g., pitch
 unvoiced):
 
 ``` r
-
 # Handle NA values appropriately
 f0_values <- pitch$get_values_at_times(times, unit = "hertz")
 f0_clean <- na.omit(f0_values)
@@ -411,7 +396,6 @@ mean_f0 <- mean(f0_values, na.rm = TRUE)
 Process in chunks if you run out of memory:
 
 ``` r
-
 # files and analysis_func come from your own workflow, e.g. the
 # corpus_files list and analysis function from Example 3 above
 files <- corpus_files
