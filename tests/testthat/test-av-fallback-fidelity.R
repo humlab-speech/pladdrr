@@ -58,12 +58,13 @@ test_that("FLAC (lossless, av fallback) reads back at the file's own level", {
 })
 
 test_that("OGG Vorbis (lossy, av fallback) reads back near the file's level", {
-  # Without libvorbis, ffmpeg offers only its experimental native vorbis
-  # encoder, which fails at avcodec_open2 ("Invalid argument") on CI runners
-  # and Homebrew builds. That is a fixture limit, not a decode defect.
-  skip_if_not("libvorbis" %in% av::av_encoders()$name,
-    "ffmpeg built without libvorbis cannot encode the OGG fixture")
-  ogg <- av_convert(av_wav_mono, "ogg")
+  # av picks its own Vorbis encoder: listing "libvorbis" in av_encoders() does
+  # not mean the one used opens (CI and Homebrew builds fail at avcodec_open2,
+  # "Invalid argument"). That is a fixture limit, not a decode defect, so
+  # skip when the fixture cannot be encoded.
+  ogg <- tryCatch(av_convert(av_wav_mono, "ogg"),
+    error = function(e) skip(paste("ffmpeg cannot encode the OGG fixture:",
+      conditionMessage(e))))
   s <- suppressWarnings(Sound(ogg))
   wav <- Sound(av_wav_mono)
   wav_peak <- max(abs(wav$get_values(1)))
