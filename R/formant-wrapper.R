@@ -293,7 +293,7 @@ NULL
 }
 .formant_methods$to_formant_modeler <- function(.self, tmin = 0.0, tmax = 0.0,
   num_tracks = 4, num_params = 5) {
-  if (tmax == 0.0) tmax <- .self$.cpp$get_xmax()
+  if (identical(as.numeric(tmax), 0)) tmax <- .self$.cpp$get_xmax()  # 0 = whole object (sentinel, not a measurement)
   fm_mod <- get_module("formantmodeler_module")
   fm_ptr <- fm_mod$Formant_to_FormantModeler(
     .self$.xptr, tmin, tmax, as.integer(num_tracks), as.integer(num_params)

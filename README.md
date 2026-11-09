@@ -60,10 +60,15 @@ We do not expose a fully working interpreter that has been extensively tested. F
 
 ## Other similar packages
 
+To our knowledge `pladdrr` is the first R package that compiles Praat's own C/C++ algorithms into R and calls them in-process, with no Praat executable, Python bridge or intermediate files. It is therefore not an improvement on, or a new implementation of, Praat's methods: its aim is to return what the Praat application returns (checked against Praat in `tests/testthat/test-praat-faithfulness.R`), and to make that available as typed R objects.
+
 This package was developed to serve our specific needs and does not suit everyone. If our needs do not overlap with yours, please consider these alternative routes to do what you want:
 
 - [parselmouth](https://github.com/YannickJadoul/Parselmouth) is a Python package which directly exposes the abilities of the Praat C code base and also lets you run a full script. As a Python package, it can be called in R using the `reticulate` package. It provides all functionality of Praat as far as we can tell, but cannot produce for instance PDF versions of a Praat drawing.
 - [speakr](https://github.com/stefanocoretta/speakr) makes the functionality of Praat available to R users by using the Praat executable as a DSP engine. As such it can be used to do all that Praat could do, but may struggle with parallelism and relies on callouts to the shell that can be inefficient and sensitive to errors in expectations at the handoff between R and Praat.
+- [rPraat](https://cran.r-project.org/package=rPraat) reads and writes Praat file formats (TextGrid, PitchTier, Pitch, Formant, ...) natively in R and provides functions to manipulate those objects, but does not run Praat's signal-processing algorithms.
+- [PraatR](https://github.com/usagi5886/PraatR) calls the Praat executable from R, exchanging data through files.
+- [wrassp](https://cran.r-project.org/package=wrassp) wraps the libassp speech-signal-processing library (F0, formants, spectra). It is a different implementation, so its numbers are not Praat's.
 
 ## Documentation
 

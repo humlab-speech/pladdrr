@@ -123,7 +123,7 @@ extract_formants <- function(sound,
   sr <- sound$sampling_rate
 
   # Auto time step (Praat default: 4 times Nyquist frequency / max_formant)
-  if (time_step == 0.0) {
+  if (identical(as.numeric(time_step), 0)) {  # 0 = automatic (sentinel, not a measurement)
     time_step <- window_length / 4
   }
   

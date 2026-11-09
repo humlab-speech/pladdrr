@@ -8,6 +8,13 @@ exposes them through Rcpp modules.
 Everyone participating is expected to follow the
 [Code of Conduct](CODE_OF_CONDUCT.md).
 
+## Life cycle
+
+pladdrr is in a stable state of development, with some degree of active
+subsequent development as envisioned by the primary authors. Numerical results
+are held to Praat's own output by the faithfulness tests, and any change that
+moves a number a user can see is called out in `NEWS.md`.
+
 ## Ways to contribute
 
 * **Bug reports** — open an issue at
