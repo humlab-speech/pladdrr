@@ -77,7 +77,7 @@ for (fixture in fixtures) {
 
       db <- vapply(seq_len(nrow(golden)), function(i) {
         t <- intensity$get_time_from_frame(i)
-        intensity$get_value_at_time(t, interpolation = "none")
+        intensity$get_value_at_time(t, interpolation = "nearest")
       }, numeric(1))
 
       expect_equal(db, golden$db, tolerance = 1e-3)

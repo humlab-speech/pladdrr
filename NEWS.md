@@ -37,6 +37,9 @@
   2)` selected the second name by position, which is linear. The peak
   interpolation of `get_maximum()` and friends (`"none"`, `"parabolic"`, ...)
   follows the same rule.
+* The deprecated `get_intensity_at_time(interpolate = FALSE)`, which is the
+  default, now returns the nearest frame. It passed `"none"`, an unknown value
+  interpolation that silently became cubic, so the argument had no effect.
 * An unknown pitch unit (`"banana"`, `"semitone"`) now raises
   `pladdrr_input_error` at the direct getters and the batch queries. They used
   to answer in hertz.
