@@ -128,3 +128,6 @@ GPATH
 # pkgcheck diagnostic report (generated)
 /pkgcheck.log
 
+
+# testthat failure snapshots
+tests/testthat/_problems/
