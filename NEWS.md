@@ -1,3 +1,25 @@
+# pladdrr (development version)
+
+## Behaviour changes
+
+* `Sound$from_values()` / `sound_from_values()` now reject non-numeric input
+  (including complex, whose imaginary part used to be dropped with a warning)
+  and any NA, NaN or Inf sample, with a `pladdrr_input_error` that says how many
+  samples were bad. Praat has no missing-value representation for samples, so
+  a non-finite sample used to flow silently through every analysis.
+* Error and warning messages that were word-for-word identical in different
+  functions now begin with the function name (`autoplot.Pitch(): Package
+  'ggplot2' is required...`), so each message identifies its origin. Code that
+  matches on the full old text needs the new prefix; matching on the
+  condition class is unaffected.
+
+## Testing
+
+* New tests for parameter recovery, machine-precision noise susceptibility and a
+  degenerate-input matrix; random test data is now seeded.
+* Timing, large-fixture and compile-at-test-time tests moved behind
+  `PLADDRR_EXTENDED_TESTS=true` (see `.github/CONTRIBUTING.md`).
+
 # pladdrr 5.1.0
 
 5.1.0 collects the 2026-11 audit round: safety and robustness fixes (sessions

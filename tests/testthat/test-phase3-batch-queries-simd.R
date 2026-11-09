@@ -1,3 +1,6 @@
+# Fixed seed for reproducible random test data (rOpenSci G5.5).
+withr::local_seed(20261109L)
+
 # Phase 3 Task 3.2: Batch Query SIMD Tests
 #
 # Tests for SIMD-optimized batch query operations

@@ -1288,6 +1288,7 @@ sound_from_values <- function(values, sampling_rate = 44100, start_time = 0.0) {
   if (!is.matrix(values)) {
     stop("values must be a numeric vector or matrix")
   }
+  .check_finite_samples(values, "sound_from_values")
 
   ptr <- .sound_create_from_values(values, sampling_rate, start_time)
   Sound(.xptr = ptr)

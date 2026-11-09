@@ -1,3 +1,6 @@
+# Fixed seed for reproducible random test data (rOpenSci G5.5).
+withr::local_seed(20261109L)
+
 test_that("SIMD sound statistics are accurate", {
   skip_if_not_installed("pladdrr")
   

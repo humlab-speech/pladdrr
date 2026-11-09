@@ -41,6 +41,24 @@
   invisible(TRUE)
 }
 
+# Praat has no missing-value representation for sample data: a NaN or Inf sample
+# silently propagates through every analysis (and Inf can overflow filters).
+# Reject non-finite input at the boundary and say how many samples are bad.
+.check_finite_samples <- function(values, routine) {
+  if (!is.numeric(values)) {
+    .stop_input(routine, "values",
+                paste0(routine, "(): values must be numeric, got ",
+                       class(values)[1L]))
+  }
+  bad <- sum(!is.finite(values))
+  if (bad > 0L) {
+    .stop_input(routine, "values",
+                paste0(routine, "(): values must be finite; found ", bad,
+                       " NA, NaN or Inf sample(s) out of ", length(values)))
+  }
+  invisible(TRUE)
+}
+
 # Praat refuses pitch_floor >= pitch_ceiling in its forms; without this check
 # the C++ analysis either fails opaquely or silently computes on an inverted
 # range.

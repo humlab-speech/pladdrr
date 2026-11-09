@@ -1,3 +1,6 @@
+# Fixed seed for reproducible random test data (rOpenSci G5.5).
+withr::local_seed(20261109L)
+
 # tests/testthat/test-phase4-formantpath-simd.R
 #
 # Test suite for Phase 4 Task 4.1: FormantPath SIMD optimization

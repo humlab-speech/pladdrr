@@ -1,3 +1,6 @@
+# Fixed seed for reproducible random test data (rOpenSci G5.5).
+withr::local_seed(20261109L)
+
 test_that("deprecated S3 extract functions emit warnings", {
 
   sound <- Sound$create_tone(frequency = 440, duration = 0.5,

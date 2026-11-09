@@ -64,7 +64,8 @@ Suggests:
     speakr,
     dplyr,
     purrr,
-    tidyr
+    tidyr,
+    withr
 SystemRequirements: C++17 compiler (GCC >= 7, Clang >= 5, MSVC >= 2017),
     GNU Scientific Library (GSL >= 1.10)
 VignetteBuilder: knitr
