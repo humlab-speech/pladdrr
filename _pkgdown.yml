@@ -378,6 +378,7 @@ articles:
   - getting-started
   - migration-from-praat
   - migration-from-parselmouth
+  - terminology
 
 - title: Analysis Workflows
   desc: Common phonetic analysis tasks
