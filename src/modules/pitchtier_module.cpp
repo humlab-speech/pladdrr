@@ -131,6 +131,16 @@ public:
     // PitchTier-specific
     void shift_frequencies(double from_time, double to_time, double shift, int unit) {
         VALIDATE_PTR(ptr, PitchTier);
+        // A shift is relative, so semitones re 100/200/440 Hz equal re 1 Hz;
+        // Praat's PitchTier_shiftFrequencies handles only that one. Any other
+        // code fell through its default branch and left the contour unchanged.
+        if (unit >= (int)kPitch_unit::SEMITONES_100 && unit <= (int)kPitch_unit::SEMITONES_440)
+            unit = (int)kPitch_unit::SEMITONES_1;
+        if (unit != (int)kPitch_unit::HERTZ && unit != (int)kPitch_unit::MEL &&
+            unit != (int)kPitch_unit::LOG_HERTZ && unit != (int)kPitch_unit::SEMITONES_1 &&
+            unit != (int)kPitch_unit::ERB)
+            PLADDRR_STOP_INPUT("PitchTier$shift_frequencies", "unit",
+                "cannot shift in unit code " + std::to_string(unit));
         PitchTier_shiftFrequencies(ptr.get(), from_time, to_time, shift, (kPitch_unit)unit);
     }
 

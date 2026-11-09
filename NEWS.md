@@ -15,6 +15,14 @@
   `"hertz"` and `"mel"` were already right and do not move. New unit strings:
   `"hertz_logarithmic"`, `"semitones_re_1hz"`, `"semitones_re_100hz"`,
   `"semitones_re_200hz"`, `"semitones_re_440hz"`, `"st"`.
+* `PitchTier$shift_frequencies()` and `$shift_frequencies_in_range()` shift in
+  every unit Praat supports. On 5.1.x `unit = "semitones"` was a silent no-op
+  (150.0017 stayed 150.0017; Praat gives 158.9212) and `unit = "erb"` shifted in
+  logHertz, multiplying the contour by 10 (1500.017 where Praat gives 194.797).
+  A shift is relative, so every semitones reference gives the same result.
+  `unit = "hertz_logarithmic"`, which Praat cannot shift in, raises
+  `pladdrr_input_error` instead of leaving the contour unchanged; the module
+  door refuses the same codes.
 * An unknown pitch unit (`"banana"`, `"semitone"`) now raises
   `pladdrr_input_error` at the direct getters and the batch queries. They used
   to answer in hertz.

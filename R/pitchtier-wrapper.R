@@ -107,11 +107,18 @@ NULL
 # Helpers
 # ============================================================================
 
-# Helper: pitch unit string -> integer code.
-# Same mapping as .pitch_unit_code() in pitch-wrapper.R — delegate to avoid
-#  drift.
+# Helper: pitch unit string -> the code PitchTier_shiftFrequencies handles
+# (hertz, mel, logHertz, semitones, ERB). A shift is relative, so every
+# semitones reference gives the same result. The module enforces the same set.
 .pitchtier_unit_code <- function(unit) {
-  .pitch_unit_code(unit)
+  code <- .pitch_unit_code(unit)
+  if (code %in% 5:7) code <- 4L
+  if (!code %in% c(0L, 2L, 3L, 4L, 8L)) {
+    .stop_input("PitchTier$shift_frequencies", "unit",
+      paste0("cannot shift in unit ", deparse(unit),
+        "; use hertz, mel, loghertz, semitones or erb"))
+  }
+  code
 }
 
 # ============================================================================
