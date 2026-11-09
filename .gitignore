@@ -131,3 +131,8 @@ GPATH
 
 # testthat failure snapshots
 tests/testthat/_problems/
+
+# autotest raw output (regenerate with dev/run-autotest.R); summary.csv and findings.csv are kept
+dev/autotest/*
+!dev/autotest/summary.csv
+!dev/autotest/findings.csv

@@ -2483,7 +2483,7 @@ XPtr<structMatrix> band_filter_spectrogram_to_matrix(
     SEXP xptr,
     bool to_db
 ) {
-    structBandFilterSpectrogram* bfs = static_cast<structBandFilterSpectrogram*>(R_ExternalPtrAddr(xptr));
+    structBandFilterSpectrogram* bfs = get_ptr(Rcpp::XPtr<structBandFilterSpectrogram>(xptr), "BandFilterSpectrogram");
     if (!bfs) stop("Invalid BandFilterSpectrogram pointer");
 
     try {
@@ -2502,7 +2502,7 @@ XPtr<structMatrix> band_filter_spectrogram_to_matrix(
 XPtr<structIntensity> band_filter_spectrogram_to_intensity(
     SEXP xptr
 ) {
-    structBandFilterSpectrogram* bfs = static_cast<structBandFilterSpectrogram*>(R_ExternalPtrAddr(xptr));
+    structBandFilterSpectrogram* bfs = get_ptr(Rcpp::XPtr<structBandFilterSpectrogram>(xptr), "BandFilterSpectrogram");
     if (!bfs) stop("Invalid BandFilterSpectrogram pointer");
 
     try {
