@@ -21,6 +21,11 @@
 * `Sound$from_values()` also accepts integer, `units` and `ts` vectors; a `ts`
   supplies `sampling_rate` and `start_time` when you leave them out.
 
+* `amplitude_tier_from_point_process()`, `intensity_tier_to_amplitude_tier()`,
+  the electroglottogram extractor and the BandFilterSpectrogram accessors no
+  longer crash R when given an object whose external pointer is NULL (what
+  `readRDS()` returns for a saved object); they raise an R error.
+
 ## Testing
 
 * New tests for parameter recovery, machine-precision noise susceptibility and a
