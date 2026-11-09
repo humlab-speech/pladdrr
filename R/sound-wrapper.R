@@ -341,6 +341,7 @@ NULL
   max_formants <- max_number_of_formants %||% max_formants
   max_frequency <- maximum_formant %||% max_frequency
   pre_emphasis_from <- pre_emphasis %||% pre_emphasis_from
+  .check_positive_count(max_formants, "max_formants", max = 1000)
   formant_ptr <- .self$.cpp$to_formant_burg(
     as.numeric(time_step), as.numeric(max_formants),
     as.numeric(max_frequency), as.numeric(window_length),
@@ -1011,6 +1012,7 @@ NULL
                                               pre_emphasis_from = 50.0,
                                               num_std_dev = 1.5,
                                                   max_iterations = 5L) {
+  .check_positive_count(max_formants, "max_formants", max = 1000)
   formant_ptr <- .sound_to_formant_robust(
     .self$.xptr, time_step, max_formants, max_frequency, window_length,
         pre_emphasis_from,

@@ -40,6 +40,27 @@ test_that("Matrix refuses non-positive and absurd dimensions", {
   expect_identical(dim(as.matrix(m)), c(3L, 4L))
 })
 
+test_that("Sound$to_formant* refuse a non-positive or non-finite formant count", {
+  ## max_formants = -1 used to segfault (address 0xfffffffffffffff0) in Burg/robust.
+  s <- Sound$create_tone(frequency = 440, duration = 0.2, sampling_rate = 22050)
+  doors <- list(
+    function(x) s$to_formant(max_formants = x),
+    function(x) s$to_formant_burg(max_formants = x),
+    function(x) s$to_formant_robust(max_formants = x))
+  for (door in doors) {
+    for (bad in list(-1, 0, NA_real_, Inf, 1e9, "a")) {
+      expect_input_error(door(bad), "max_formants")
+    }
+  }
+  expect_s3_class(s$to_formant(max_formants = 5), "Formant")
+  expect_s3_class(s$to_formant_robust(max_formants = 5), "Formant")
+})
+
+test_that(".check_positive_count refuses Inf", {
+  expect_input_error(pladdrr:::.check_positive_count(Inf, "n"), "n")
+  expect_true(pladdrr:::.check_positive_count(2e6, "n"))
+})
+
 test_that("Excitation$to_formant needs a positive formant count", {
   ex <- Sound$create_tone(frequency = 440, duration = 0.2, sampling_rate = 22050)$
     to_spectrum()$to_excitation()

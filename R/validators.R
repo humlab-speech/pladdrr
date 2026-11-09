@@ -63,10 +63,12 @@
 # Formant/pole counts must be positive; a zero or negative count makes the
 # split-Levinson/Burg solver produce garbage frames (and, for Willems, spew
 # "no zero" diagnostics) instead of failing cleanly.
-.check_positive_count <- function(value, name) {
-  if (!is.numeric(value) || length(value) != 1L || is.na(value) || value < 1) {
+.check_positive_count <- function(value, name, max = Inf) {
+  if (!is.numeric(value) || length(value) != 1L || !is.finite(value) ||
+    value < 1 || value > max) {
     .stop_input("check_positive_count", name,
-                paste0(name, " must be a single number >= 1, got: ",
+                paste0(name, " must be a single finite number >= 1",
+                  if (is.finite(max)) paste0(" and <= ", max), ", got: ",
                   deparse(value)))
   }
   invisible(TRUE)
