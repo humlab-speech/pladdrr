@@ -49,6 +49,15 @@ fmt("pitch.stdev", p$get_standard_deviation())
 fmt("pitch.quantile90", p$get_quantile(0.9))
 fmt("pitch.voiced", p$count_voiced_frames())
 fmt("pitch.df_sum", dfsum(p))
+# Non-hertz units (kPitch_unit). A wrong code answers in another unit with no
+# error, and a row with unit = "hertz" cannot see it. Checked against Praat 6.4.47
+# on the same samples (see NEWS 5.2.0).
+fmt("pitch.q50_semitones", p$get_quantile(0, 0, 0.5, unit = "semitones"))
+fmt("pitch.q50_erb", p$get_quantile(0, 0, 0.5, unit = "erb"))
+fmt("pitch.mean_loghertz", get_pitch_mean_direct(p$.xptr, 0, 0, "loghertz"))
+pt <- p$down_to_pitch_tier()
+pt$shift_frequencies(1, "semitones")
+fmt("tier.shift_semitones", pt$get_value_at_index(48))
 fmt("pitch_ac.mean", s$to_pitch_ac()$get_mean())
 fmt("pitch_ac.nframes", s$to_pitch_ac()$get_number_of_frames())
 fmt("pitch_shs.mean", tryCatch(s$to_pitch_shs()$get_mean(), error = function(e) NA))
@@ -64,6 +73,7 @@ fmt("intensity.mean", it$get_mean())
 fmt("intensity.maximum", it$get_maximum())
 fmt("intensity.stdev", it$get_standard_deviation())
 fmt("intensity.q25", it$get_quantile(0.25))
+fmt("intensity.mean_db", it$get_mean(0, 0, averaging_method = "db"))
 
 # Ltas: the averaging unit, the dB code and the non-interpolating window are
 # what fix/009 moved; without these keys the guard could not see a 3-decade
@@ -78,6 +88,7 @@ fmt("ltas.slope_energy", lt$get_slope(0, 1000, 1000, 4000, unit = "energy"))
 # environment must end before the peak window starts (Praat 6.4.27 errors
 # otherwise; pladdrr does not -- filed as a separate validation gap)
 fmt("ltas.local_peak", lt$get_local_peak_height(0, 5000, 1000, 2000, unit = "dB"))
+fmt("ltas.full.mean_sones", lt$get_mean(0, 0, unit = "sones"))
 
 hh <- s$to_harmonicity_cc()
 fmt("hnr.nframes", hh$get_number_of_frames())

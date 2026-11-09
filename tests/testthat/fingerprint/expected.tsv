@@ -79,3 +79,9 @@ dtw.weighted_distance	19.84278397272961
 pca.eigenvalue_sum	2.59226291613902
 textgrid.total_duration	3
 textgrid.nrows_df	13
+pitch.q50_semitones	3.1568083477097502
+pitch.q50_erb	3.5257705558059627
+pitch.mean_loghertz	2.0791841274321046
+tier.shift_semitones	127.13847560160589
+intensity.mean_db	87.415716551687169
+ltas.full.mean_sones	6.3653292680284004
