@@ -9,6 +9,27 @@ Ordering rule: do what is useful whatever the editors answer first (Phases
 1–5), and defer the `srr` annotation (Phase 7) until scope is confirmed
 (Phase 0). Every phase ends in a command that proves it.
 
+## Status (2026-11-09, end of the implementation pass)
+
+Phases 1-7 are implemented on branch `ropensci-stats-gaps`; Phase 0 (post the
+scope enquiry) is deliberately not done. The srr record
+(`R/srr-stats-standards.R`) classifies 123 General + Time Series standards:
+62 addressed, 44 not applicable, 17 open or partial.
+
+Still open, and why:
+
+| Standard(s) | What is missing |
+|-------------|-----------------|
+| G1.5, G1.6 | no benchmark against another *R* package (speakr, rPraat); needs those packages and a Praat install to verify |
+| G2.0, G2.0a, G2.1, G2.1a, G2.2, TS1.2 | argument validation/documentation is uniform only for the validated functions; 96 autotest mutation diagnostics not triaged one by one |
+| G5.2, G5.2b | 37 messages untriggered: absent Suggests packages, broken-install branches, empty objects (`dev/message-baseline.txt`) |
+| G5.3 | no-NA/NaN return check not run for every exported numeric return |
+| TS2.4, TS2.4a, TS2.4b | no run-time stationarity diagnostics; a "signal shorter than the analysis window" check would need per-method thresholds |
+| TS4.1 | `units` of vector input are dropped, not carried to results |
+| TS4.2, TS4.3 | return class / unit not stated for every function |
+| `pkgcheck` | cannot run: installed `srr` 1.0.0.5 fails against the live standards book; needs `srr` >= 1.1.0 (r-universe) |
+| autotest | 130 of 256 functions hit autotest's own errors (regex on the `C++Error` class); report upstream |
+
 ---
 
 ## Phase 0 — scope gate (blocks only Phase 7)

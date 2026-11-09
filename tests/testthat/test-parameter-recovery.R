@@ -60,3 +60,22 @@ test_that("harmonicity tracks the injected signal-to-noise ratio (3 seeds)", {
     expect_true(all(diff(hnr) < 0), info = paste("monotone in SNR, seed", seed))
   }
 })
+
+test_that("F0 error of a noisy tone shrinks as the recording gets longer (G5.7)", {
+  mean_error <- function(duration, snr_db = 0, seeds = 1:8) {
+    mean(vapply(seeds, function(seed) {
+      withr::with_seed(seed, {
+        sr <- 16000
+        t <- (seq_len(round(duration * sr)) - 1) / sr
+        x <- sin(2 * pi * 150 * t)
+        noise <- stats::rnorm(length(x))
+        noise <- noise * stats::sd(x) / stats::sd(noise) * 10^(-snr_db / 20)
+        y <- x + noise
+        snd <- Sound$from_values(0.5 * y / max(abs(y)), sr)
+        abs(snd$to_pitch_cc(pitch_floor = 75, pitch_ceiling = 600)$get_mean(0, 0, "Hertz") - 150)
+      })
+    }, numeric(1)), na.rm = TRUE)
+  }
+  # measured on 2026-11-09: 0.3 s -> 1.00 Hz, 3 s -> 0.21 Hz (8 seeds, 0 dB SNR)
+  expect_lt(mean_error(3), 0.5 * mean_error(0.3))
+})

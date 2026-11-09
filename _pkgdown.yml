@@ -98,6 +98,7 @@ reference:
   contents:
   - pladdrr-package
   - pladdrr-references
+  - pladdrr-test-data
   - with_pladdrr_errors
   - pladdrr_threads
   - pladdrr_simd

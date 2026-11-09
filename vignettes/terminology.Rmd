@@ -95,6 +95,14 @@ shimmer local, shimmer local dB, LTAS slope and tilt) from a concatenated
 sustained vowel and running speech sample into one score (Maryn et al., 2010;
 Maryn & Weenink, 2015).
 
+## Option strings
+
+Parameters that select an option by name (units, window shapes, averaging
+methods, file formats) are matched case-insensitively: `"Hertz"` and `"hertz"`
+are the same unit. Where a parameter's help page lists its choices as a vector,
+the argument is matched exactly with `match.arg()` and is case-sensitive, as
+that listing shows.
+
 ## Missing and undefined values
 
 Praat has no missing-value type for *samples*, and a frame in which a measure

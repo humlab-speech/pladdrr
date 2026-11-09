@@ -49,6 +49,17 @@ BandFilterSpectrogram accessors. Regression test: `tests/testthat/test-dead-poin
 | `negate_logical`, `int_range`, `subst_int_for_logical`, `random_char_string`, `single_par_as_length_2` | 96 | Diagnostics: the function accepted a mutated argument. Candidates for stricter validation (G2.0-G2.2); not triaged one by one. |
 | `par_is_documented`, `par_matches_docs` | 3 | Parameter/Rd mismatch. Cheap to fix. |
 
+## Addressed since
+
+* Mutation diagnostics for `create_file_list`, `pair_files`, `pair_sound_textgrid`,
+  `batch_process` and the pitch `*_batch`/`*_direct` functions: arguments are now
+  validated (`tests/testthat/test-argument-validation.R`).
+* 24 `@return` statements now name the returned class (scalar getters, data-frame
+  helpers; `generate_noise`/`generate_sine_wave` return a `Sound`).
+* `KlattGrid` `tmin`/`tmax` and `aggregate_measurements(measurements)` doc
+  mismatches remain; the other 96 diagnostics concern parameters whose handling
+  is left to Praat (for example `KlattGrid` formant counts).
+
 ## Still to do
 
 * Per-function triage of the 96 mutation diagnostics and 3 doc mismatches.
