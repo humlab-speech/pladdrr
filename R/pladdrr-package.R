@@ -98,6 +98,11 @@
 #'         from Praat scripting or Python
 #' }
 #'
+#' @section References:
+#'
+#' The published sources of the algorithms are listed in
+#' \code{\link{pladdrr-references}}.
+#'
 #' @section License and Attribution:
 #'
 #' pladdrr is licensed under GPL-3, compatible with Praat's own GPL-2+

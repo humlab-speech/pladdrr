@@ -97,6 +97,7 @@ reference:
     change global behaviour.
   contents:
   - pladdrr-package
+  - pladdrr-references
   - with_pladdrr_errors
   - pladdrr_threads
   - pladdrr_simd
