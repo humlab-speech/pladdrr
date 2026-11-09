@@ -155,11 +155,6 @@ plot_powercepstrum <- function(cepstrum,
                               title = NULL,
                               theme = c("minimal", "bw", "classic")) {
   
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("plot_powercepstrum(): Package 'ggplot2' is required for plotting. Please install it.")
-  }
-# nocov end
   
   if (!inherits(cepstrum, "PowerCepstrum")) {
     stop("cepstrum must be a PowerCepstrum object")
@@ -245,11 +240,6 @@ plot_powercepstrogram <- function(cepstrogram,
                                  title = NULL,
                                  theme = c("minimal", "bw", "classic")) {
   
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("plot_powercepstrogram(): Package 'ggplot2' is required for plotting. Please install it.")
-  }
-# nocov end
   
   if (!inherits(cepstrogram, "PowerCepstrogram")) {
     stop("plot_powercepstrogram(): cepstrogram must be a PowerCepstrogram object")
@@ -332,10 +322,6 @@ plot_cpp_timeseries <- function(cepstrogram,
                                title = NULL,
                                theme = c("minimal", "bw", "classic")) {
   
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("plot_cpp_timeseries(): Package 'ggplot2' is required for plotting. Please install it.")
-  }
-  
   if (!inherits(cepstrogram, "PowerCepstrogram")) {
     stop("plot_cpp_timeseries(): cepstrogram must be a PowerCepstrogram object")
   }
@@ -414,11 +400,6 @@ create_cepstrum_report <- function(cepstrogram,
                                   format = c("png", "pdf", "svg"),
                                   dpi = 300) {
   
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("create_cepstrum_report(): Package 'ggplot2' is required. Please install it.")
-  }
-# nocov end
   
   if (!requireNamespace("gridExtra", quietly = TRUE)) {
     stop(

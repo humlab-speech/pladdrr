@@ -59,11 +59,6 @@ plot.Sound <- function(x, from_time = NULL, to_time = NULL,
                       garnish = TRUE, title = "Sound", 
                       color = "steelblue", ...) {
   
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("plot.Sound(): Package 'ggplot2' is required for plotting. Please install it.")
-  }
-# nocov end
   
   if (!inherits(x, "Sound")) {
     stop("x must be a Sound object")
@@ -132,10 +127,6 @@ plot.Sound <- function(x, from_time = NULL, to_time = NULL,
 plot.Pitch <- function(x, from_time = NULL, to_time = NULL,
                       garnish = TRUE, title = "Pitch",
                       color = "darkgreen", show_voicing = TRUE, ...) {
-  
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("plot.Pitch(): Package 'ggplot2' is required for plotting. Please install it.")
-  }
   
   if (!inherits(x, "Pitch")) {
     stop("x must be a Pitch object")
@@ -229,11 +220,6 @@ plot.Formant <- function(x, from_time = NULL, to_time = NULL,
                         max_formant = 3, garnish = TRUE, 
                         title = "Formant", colors = NULL, ...) {
   
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("plot.Formant(): Package 'ggplot2' is required for plotting. Please install it.")
-  }
-# nocov end
   
   if (!inherits(x, "Formant")) {
     stop("x must be a Formant object")
@@ -304,11 +290,6 @@ plot.Intensity <- function(x, from_time = NULL, to_time = NULL,
                           garnish = TRUE, title = "Intensity",
                           color = "darkorange", ...) {
   
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("plot.Intensity(): Package 'ggplot2' is required for plotting. Please install it.")
-  }
-# nocov end
   
   if (!inherits(x, "Intensity")) {
     stop("x must be an Intensity object")
@@ -377,11 +358,6 @@ plot.Spectrogram <- function(x, from_time = NULL, to_time = NULL,
                             garnish = TRUE, title = "Spectrogram",
                             dynamic_range = 70, ...) {
   
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("plot.Spectrogram(): Package 'ggplot2' is required for plotting. Please install it.")
-  }
-# nocov end
   
   if (!inherits(x, "Spectrogram")) {
     stop("x must be a Spectrogram object")
@@ -445,10 +421,6 @@ plot.Spectrogram <- function(x, from_time = NULL, to_time = NULL,
 plot.Spectrum <- function(x, from_freq = NULL, to_freq = NULL,
                          log_freq = FALSE, garnish = TRUE,
                          title = "Spectrum", color = "navy", ...) {
-  
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("plot.Spectrum(): Package 'ggplot2' is required for plotting. Please install it.")
-  }
   
   if (!inherits(x, "Spectrum")) {
     stop("x must be a Spectrum object")
@@ -525,11 +497,6 @@ plot.Ltas <- function(x, from_freq = NULL, to_freq = NULL,
                      log_freq = FALSE, garnish = TRUE,
                      title = "LTAS", color = "darkred", ...) {
   
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("plot.Ltas(): Package 'ggplot2' is required for plotting. Please install it.")
-  }
-# nocov end
   
   if (!inherits(x, "Ltas")) {
     stop("x must be an Ltas object")
@@ -600,11 +567,6 @@ plot.Harmonicity <- function(x, from_time = NULL, to_time = NULL,
                             garnish = TRUE, title = "Harmonicity (HNR)",
                             color = "darkviolet", ...) {
   
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("plot.Harmonicity(): Package 'ggplot2' is required for plotting. Please install it.")
-  }
-# nocov end
   
   if (!inherits(x, "Harmonicity")) {
     stop("x must be a Harmonicity object")
@@ -669,10 +631,6 @@ plot.Harmonicity <- function(x, from_time = NULL, to_time = NULL,
 plot.PointProcess <- function(x, from_time = NULL, to_time = NULL,
                              garnish = TRUE, title = "PointProcess",
                              color = "black", ...) {
-  
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("plot.PointProcess(): Package 'ggplot2' is required for plotting. Please install it.")
-  }
   
   if (!inherits(x, "PointProcess")) {
     stop("x must be a PointProcess object")
@@ -778,11 +736,6 @@ plot.Matrix <- function(x, from_x = NULL, to_x = NULL,
                         garnish = TRUE, title = "Matrix",
                         x_label = "X", y_label = "Y",
                         color_scale = "viridis", ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("plot.Matrix(): Package 'ggplot2' is required for plotting. Please install it.")
-  }
-# nocov end
   if (!inherits(x, "Matrix")) {
     stop("x must be a Matrix object")
   }
@@ -894,11 +847,6 @@ plot.PowerCepstrum <- function(x, from_quefrency = NULL,
                                to_quefrency = NULL, garnish = TRUE,
                                title = "Power Cepstrum", color = "darkblue",
                                mark_peak = TRUE, ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("plot.PowerCepstrum(): Package 'ggplot2' is required for plotting. Please install it.")
-  }
-# nocov end
   if (!inherits(x, "PowerCepstrum")) {
     stop("x must be a PowerCepstrum object")
   }
@@ -995,11 +943,6 @@ plot.PowerCepstrum <- function(x, from_quefrency = NULL,
 plot.TextGrid <- function(x, tier = NULL, from_time = NULL, to_time = NULL,
   ...) {
 
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("plot.TextGrid(): Package 'ggplot2' is required for plotting. Please install it.")
-  }
-# nocov end
 
   if (!inherits(x, "TextGrid")) {
     stop("x must be a TextGrid object")

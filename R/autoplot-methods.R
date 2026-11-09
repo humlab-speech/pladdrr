@@ -45,11 +45,6 @@ NULL
 #' @export
 autoplot.Sound <- function(object, from_time = NULL, to_time = NULL,
                            color = "steelblue", ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("autoplot.Sound(): Package 'ggplot2' is required. Please install it.")
-  }
-# nocov end
 
 
   df <- object$as_data_frame()
@@ -89,11 +84,6 @@ autolayer.Sound <- function(object, from_time = NULL, to_time = NULL,
 #' @export
 autoplot.Pitch <- function(object, from_time = NULL, to_time = NULL,
                            color = "darkgreen", show_voicing = FALSE, ...) {
-# nocov start
- if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("autoplot.Pitch(): Package 'ggplot2' is required. Please install it.")
-  }
-# nocov end
 
   df <- object$as_data_frame(include_strength = show_voicing)
 
@@ -167,11 +157,6 @@ autolayer.Pitch <- function(object, from_time = NULL, to_time = NULL,
 #' @export
 autoplot.Formant <- function(object, from_time = NULL, to_time = NULL,
                              max_formant = 3, colors = NULL, ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("autoplot.Formant(): Package 'ggplot2' is required. Please install it.")
-  }
-# nocov end
 
   # object$as_data_frame() is already long format (time, formant, frequency,
   # bandwidth), one row per (frame, formant number) - no reshape needed.
@@ -249,11 +234,6 @@ autolayer.Formant <- function(object, from_time = NULL, to_time = NULL,
 #' @export
 autoplot.Intensity <- function(object, from_time = NULL, to_time = NULL,
                                color = "darkorange", ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("autoplot.Intensity(): Package 'ggplot2' is required. Please install it.")
-  }
-# nocov end
 
   df <- object$as_data_frame()
 
@@ -295,11 +275,6 @@ autolayer.Intensity <- function(object, from_time = NULL, to_time = NULL,
 autoplot.Spectrogram <- function(object, from_time = NULL, to_time = NULL,
                                  from_freq = NULL, to_freq = NULL,
                                  dynamic_range = 70, ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("autoplot.Spectrogram(): Package 'ggplot2' is required. Please install it.")
-  }
-# nocov end
 
   df <- object$as_data_frame()
   df$power_db <- 10 * log10(pmax(df$power, 1e-20))
@@ -360,11 +335,6 @@ autolayer.Spectrogram <- function(object, from_time = NULL, to_time = NULL,
 #' @export
 autoplot.Spectrum <- function(object, from_freq = NULL, to_freq = NULL,
                               log_freq = FALSE, color = "navy", ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("autoplot.Spectrum(): Package 'ggplot2' is required. Please install it.")
-  }
-# nocov end
 
   df <- object$as_data_frame()
 
@@ -417,11 +387,6 @@ autolayer.Spectrum <- function(object, from_freq = NULL, to_freq = NULL,
 #' @export
 autoplot.Ltas <- function(object, from_freq = NULL, to_freq = NULL,
                           log_freq = FALSE, color = "darkred", ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("autoplot.Ltas(): Package 'ggplot2' is required. Please install it.")
-  }
-# nocov end
 
   df <- object$as_data_frame()
 
@@ -466,11 +431,6 @@ autolayer.Ltas <- function(object, from_freq = NULL, to_freq = NULL,
 #' @export
 autoplot.Harmonicity <- function(object, from_time = NULL, to_time = NULL,
                                  color = "darkviolet", ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("autoplot.Harmonicity(): Package 'ggplot2' is required. Please install it.")
-  }
-# nocov end
 
   df <- object$as_data_frame()
 
@@ -509,11 +469,6 @@ autolayer.Harmonicity <- function(object, from_time = NULL, to_time = NULL,
 #' @export
 autoplot.PointProcess <- function(object, from_time = NULL, to_time = NULL,
                                   color = "black", ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("autoplot.PointProcess(): Package 'ggplot2' is required. Please install it.")
-  }
-# nocov end
 
   n_points <- object$get_number_of_points()
   if (n_points == 0) {
@@ -571,11 +526,6 @@ autolayer.PointProcess <- function(object, from_time = NULL, to_time = NULL,
 autoplot.PowerCepstrum <- function(object, from_quefrency = NULL,
   to_quefrency = NULL,
                                    color = "darkblue", mark_peak = TRUE, ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("autoplot.PowerCepstrum(): Package 'ggplot2' is required. Please install it.")
-  }
-# nocov end
 
   df <- object$as_data_frame()
   if (nrow(df) == 0) {

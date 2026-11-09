@@ -194,11 +194,6 @@ plot_textgrid_sound <- function(textgrid, sound, tier = NULL,
                                tier_colors = NULL,
                                title = NULL, ...) {
   
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("plot_textgrid_sound(): Package 'ggplot2' is required for plotting. Please install it.")
-  }
-# nocov end
   
   if (!requireNamespace("patchwork", quietly = TRUE)) {
     warning(
@@ -282,11 +277,6 @@ plot_textgrid_pitch <- function(textgrid, pitch, tier = NULL,
                                tier_colors = NULL,
                                title = NULL, ...) {
   
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("plot_textgrid_pitch(): Package 'ggplot2' is required for plotting. Please install it.")
-  }
-# nocov end
   
   if (!inherits(textgrid, "TextGrid")) {
     stop("plot_textgrid_pitch(): textgrid must be a TextGrid object")
@@ -358,11 +348,6 @@ plot_pitch_intensity <- function(pitch, intensity,
                                 intensity_color = "darkorange",
                                 title = "Pitch and Intensity", ...) {
   
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("plot_pitch_intensity(): Package 'ggplot2' is required for plotting. Please install it.")
-  }
-# nocov end
   
   if (!inherits(pitch, "Pitch")) {
     stop("plot_pitch_intensity(): pitch must be a Pitch object")
@@ -431,11 +416,6 @@ plot_spectrogram_formants <- function(spectrogram, formant,
                                      dynamic_range = 70,
                                      title = "Spectrogram + Formants", ...) {
   
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("plot_spectrogram_formants(): Package 'ggplot2' is required for plotting. Please install it.")
-  }
-# nocov end
   
   if (!inherits(spectrogram, "Spectrogram")) {
     stop("plot_spectrogram_formants(): spectrogram must be a Spectrogram object")
@@ -520,11 +500,6 @@ plot_spectrogram_pitch <- function(spectrogram, pitch,
                                   pitch_ceiling = NULL,
                                   title = "Spectrogram with Pitch", ...) {
   
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("plot_spectrogram_pitch(): Package 'ggplot2' is required for plotting. Please install it.")
-  }
-# nocov end
   
   if (!inherits(spectrogram, "Spectrogram")) {
     stop("plot_spectrogram_pitch(): spectrogram must be a Spectrogram object")
@@ -604,10 +579,6 @@ plot_sound_pitch <- function(sound, pitch,
                             waveform_color = "steelblue",
                             pitch_color = "darkblue",
                             title = NULL, ...) {
-  
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("plot_sound_pitch(): Package 'ggplot2' is required for plotting. Please install it.")
-  }
   
   if (!inherits(sound, "Sound")) {
     stop("plot_sound_pitch(): sound must be a Sound object")
