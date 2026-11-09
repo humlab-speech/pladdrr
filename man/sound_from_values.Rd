@@ -8,7 +8,11 @@ sound_from_values(values, sampling_rate = 44100, start_time = 0)
 }
 \arguments{
 \item{values}{Numeric matrix with channels as rows, samples as columns (or
-vector for mono)}
+vector for mono). Integer vectors, \code{units} vectors (units are dropped)
+and \code{\link[stats]{ts}} series are accepted. For a \code{ts}, a
+\code{sampling_rate} or \code{start_time} you leave out is taken from the
+series' \code{frequency} and start, which are then read as samples per
+second and seconds. NA, NaN, Inf and non-numeric input are an error.}
 
 \item{sampling_rate}{Sampling rate in Hz (default: 44100)}
 

@@ -1268,7 +1268,11 @@ Sound <- function(path = NULL, .xptr = NULL) {
 #' Use `Sound$from_values()` for backward compatibility (calls this function).
 #'
 #' @param values Numeric matrix with channels as rows, samples as columns (or
-#'  vector for mono)
+#'  vector for mono). Integer vectors, \code{units} vectors (units are dropped)
+#'  and \code{\link[stats]{ts}} series are accepted. For a \code{ts}, a
+#'  \code{sampling_rate} or \code{start_time} you leave out is taken from the
+#'  series' \code{frequency} and start, which are then read as samples per
+#'  second and seconds. NA, NaN, Inf and non-numeric input are an error.
 #' @inheritParams pladdrr_shared_params sampling_rate
 #' @param start_time Start time of the sound in seconds (default: 0.0)
 #' @return A Sound object
@@ -1281,6 +1285,14 @@ Sound <- function(path = NULL, .xptr = NULL) {
 #' # Or using Sound$from_values() (same thing)
 #' sound <- Sound$from_values(values, 4410)
 sound_from_values <- function(values, sampling_rate = 44100, start_time = 0.0) {
+  if (stats::is.ts(values)) {
+    if (missing(sampling_rate)) sampling_rate <- stats::frequency(values)
+    if (missing(start_time)) start_time <- stats::tsp(values)[1L]
+  }
+  # ts, units and similar classed vectors: keep the numbers, drop the class
+  if (is.numeric(values) && !is.matrix(values) && !is.null(attributes(values))) {
+    values <- as.vector(unclass(values))
+  }
   if (is.vector(values)) {
     values <- matrix(values, nrow = 1)
   }

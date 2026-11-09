@@ -75,3 +75,20 @@ test_that("a pitch ceiling above Nyquist is accepted (documented Praat behaviour
   snd <- Sound$from_values(tone(8000), sr)
   expect_s3_class(snd$to_pitch_cc(pitch_floor = 75, pitch_ceiling = 20000), "Pitch")
 })
+
+test_that("integer, ts and units vectors are accepted as sample input (G2.6)", {
+  ints <- as.integer(round(1000 * tone(1600)))
+  expect_equal(Sound$from_values(ints, sr)$get_number_of_samples(), 1600L)
+
+  series <- stats::ts(tone(1600), start = 0.5, frequency = sr)
+  from_ts <- Sound$from_values(series)
+  expect_equal(from_ts$get_sampling_frequency(), sr)
+  expect_equal(from_ts$get_start_time(), 0.5)
+  # explicit arguments win over the series' own attributes
+  expect_equal(Sound$from_values(series, sampling_rate = 8000)$get_sampling_frequency(), 8000)
+
+  skip_if_not_installed("units")
+  with_units <- units::set_units(tone(1600), "Pa")
+  expect_equal(Sound$from_values(with_units, sr)$get_values(), tone(1600),
+               tolerance = 1e-12)
+})
