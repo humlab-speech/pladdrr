@@ -29,32 +29,6 @@ get_pitch_module <- function() {
 }
 
 # ============================================================================
-# Unit Code Conversion Helper
-# ============================================================================
-
-#' Convert unit string to integer code
-#' @param unit Unit string: "hertz", "hz", "semitones", "mel", "erb"
-#' @return Integer unit code for Praat API
-#' @examples
-#' pladdrr:::pitch_unit_code("hertz")
-#' pladdrr:::pitch_unit_code("semitones")
-#' @keywords internal
-#' @noRd
-pitch_unit_code <- function(unit) {
-  code <- switch(tolower(unit),
-    "hertz" = 0L,
-    "hz" = 0L,
-    "semitones" = 1L,
-    "mel" = 2L,
-    "erb" = 3L
-  )
-  if (is.null(code)) {
-    stop("Unknown unit: ", unit)
-  }
-  code
-}
-
-# ============================================================================
 # PitchModule Class (New API)
 # ============================================================================
 
@@ -177,62 +151,62 @@ as.data.frame.PitchModule <- function(x, row.names = NULL, optional = FALSE,
 .pitch_module_methods <- list(
   get_value_at_time = function(obj) {
     function(time, unit = "hertz", interpolate = TRUE) {
-      obj$get_value_at_time(as.numeric(time), pitch_unit_code(unit),
+      obj$get_value_at_time(as.numeric(time), .pitch_unit_code(unit),
         as.logical(interpolate))
     }
   },
   get_mean = function(obj) {
     function(from_time = 0, to_time = 0, unit = "hertz") {
       obj$get_mean(as.numeric(from_time), as.numeric(to_time),
-        pitch_unit_code(unit))
+        .pitch_unit_code(unit))
     }
   },
   get_standard_deviation = function(obj) {
     function(from_time = 0, to_time = 0, unit = "hertz") {
       obj$get_standard_deviation(as.numeric(from_time), as.numeric(to_time),
-        pitch_unit_code(unit))
+        .pitch_unit_code(unit))
     }
   },
   get_quantile = function(obj) {
     function(from_time = 0, to_time = 0, quantile = 0.5, unit = "hertz") {
       obj$get_quantile(as.numeric(from_time), as.numeric(to_time),
-                       as.numeric(quantile), pitch_unit_code(unit))
+                       as.numeric(quantile), .pitch_unit_code(unit))
     }
   },
   get_minimum = function(obj) {
     function(from_time = 0, to_time = 0, unit = "hertz", interpolate = TRUE) {
       obj$get_minimum(as.numeric(from_time), as.numeric(to_time),
-                      pitch_unit_code(unit), as.logical(interpolate))
+                      .pitch_unit_code(unit), as.logical(interpolate))
     }
   },
   get_maximum = function(obj) {
     function(from_time = 0, to_time = 0, unit = "hertz", interpolate = TRUE) {
       obj$get_maximum(as.numeric(from_time), as.numeric(to_time),
-                      pitch_unit_code(unit), as.logical(interpolate))
+                      .pitch_unit_code(unit), as.logical(interpolate))
     }
   },
   get_time_of_minimum = function(obj) {
     function(from_time = 0, to_time = 0, unit = "hertz", interpolate = TRUE) {
       obj$get_time_of_minimum(as.numeric(from_time), as.numeric(to_time),
-                               pitch_unit_code(unit), as.logical(interpolate))
+                               .pitch_unit_code(unit), as.logical(interpolate))
     }
   },
   get_time_of_maximum = function(obj) {
     function(from_time = 0, to_time = 0, unit = "hertz", interpolate = TRUE) {
       obj$get_time_of_maximum(as.numeric(from_time), as.numeric(to_time),
-                               pitch_unit_code(unit), as.logical(interpolate))
+                               .pitch_unit_code(unit), as.logical(interpolate))
     }
   },
   get_strength_at_time = function(obj) {
     function(time, unit = "hertz", interpolate = TRUE) {
-      obj$get_strength_at_time(as.numeric(time), pitch_unit_code(unit),
+      obj$get_strength_at_time(as.numeric(time), .pitch_unit_code(unit),
         as.logical(interpolate))
     }
   },
   get_mean_strength = function(obj) {
     function(from_time = 0, to_time = 0, unit = "hertz") {
       obj$get_mean_strength(as.numeric(from_time), as.numeric(to_time),
-        pitch_unit_code(unit))
+        .pitch_unit_code(unit))
     }
   },
   as_data_frame = function(obj) {

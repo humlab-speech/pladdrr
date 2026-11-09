@@ -667,17 +667,26 @@ result <- interp$eval('y')  # 84 (numeric tried first, then string)
 
 ### Frequency Units (Pitch, Formant)
 
-**WARNING:** Frequency/pitch unit codes are NOT consistent across the codebase — there are 4 different,
-mutually-incompatible int-code schemes depending on which R file the call goes through. Always use the
-string API (`"hertz"`, `"semitones"`, etc.) rather than passing raw integer codes, and if you must know the
-integer value, check the specific call site below.
+Every pitch door (`Pitch$` methods, `PitchTier$`, the batch queries, `praat-direct.R`) now resolves the
+string through one table, `.pitch_unit_code()` in `R/utils-internal.R`, which is Praat's `kPitch_unit` enum
+(`src/praat.github.io/fon/Pitch_enums.h`). An unknown string raises `pladdrr_input_error`; it no longer
+falls back to hertz. Use the strings; the codes are listed only for reading C++.
 
-| Call site | `hertz` | `semitones` | `mel` | `erb` | `loghertz` |
-|-----------|---------|--------------|-------|-------|------------|
-| `R/pitch-wrapper.R` (`Pitch$` methods) | `0` | `1` | `2` | `3` | not supported |
-| `R/batch-queries.R`, `R/pitchtier-wrapper.R` | `0` | `3` | `1` | `4` | `2` |
-| `R/praat-direct.R` | `0` | `1` | `2` | `3` | `4` |
-| `R/utils-internal.R` (`unit_to_code`, matches Praat's `kPitch_unit` enum) | `0` | `1` | `2` | `3` | `4` |
+| Code | `kPitch_unit` | R string(s) |
+|------|---------------|-------------|
+| `0` | `HERTZ` | `"hertz"`, `"hz"` |
+| `1` | `HERTZ_LOGARITHMIC` | `"hertz_logarithmic"` |
+| `2` | `MEL` | `"mel"` |
+| `3` | `LOG_HERTZ` | `"loghertz"` |
+| `4` | `SEMITONES_1` | `"semitones_re_1hz"` |
+| `5` | `SEMITONES_100` | `"semitones_re_100hz"`, `"semitones"`, `"st"` |
+| `6` | `SEMITONES_200` | `"semitones_re_200hz"` |
+| `7` | `SEMITONES_440` | `"semitones_re_440hz"` |
+| `8` | `ERB` | `"erb"` |
+
+A bare `"semitones"` is Praat's default, semitones re 100 Hz. Before 5.2.0 four tables disagreed with the
+enum: `unit = "semitones"` and `"erb"` returned log10(Hz) from `Pitch$` methods, and the direct getters
+answered `"loghertz"` in semitones re 1 Hz.
 
 ### Formant Units
 

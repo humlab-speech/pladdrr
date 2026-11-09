@@ -80,9 +80,7 @@ get_pitch_stats_direct <- function(pitch, from_time = 0, to_time = 0,
 
   # Convert unit
   unit <- match.arg(unit)
-  unit_code <- switch(unit,
-    hertz = 0L, semitones = 1L, mel = 2L, erb = 3L, loghertz = 4L
-  )
+  unit_code <- .pitch_unit_code(unit)
 
   pitch_get_all_stats_direct(pitch_ptr, from_time, to_time, unit_code)
 }
@@ -540,8 +538,7 @@ to_harmonicity_direct <- function(sound, time_step = 0.01, minimum_pitch = 75,
 get_pitch_value_direct <- function(pitch, time, unit = "hertz",
   interpolate = TRUE) {
   pitch_ptr <- if (inherits(pitch, "Pitch")) pitch$.xptr else pitch
-  unit_code <- switch(unit, hertz = 0L, semitones = 1L, mel = 2L, erb = 3L,
-    loghertz = 4L, 0L)
+  unit_code <- .pitch_unit_code(unit)
   pitch_get_value_direct(pitch_ptr, time, unit_code, interpolate)
 }
 
@@ -624,9 +621,7 @@ get_pitch_quantile_direct <- function(pitch, quantile, from_time = 0,
                                          "erb", "loghertz")) {
   pitch_ptr <- if (inherits(pitch, "Pitch")) pitch$.xptr else pitch
   unit <- match.arg(unit)
-  unit_code <- switch(unit,
-    hertz = 0L, semitones = 1L, mel = 2L, erb = 3L, loghertz = 4L
-  )
+  unit_code <- .pitch_unit_code(unit)
   pitch_get_quantile_direct(pitch_ptr, quantile, from_time, to_time, unit_code)
 }
 
@@ -654,9 +649,7 @@ get_pitch_mean_direct <- function(pitch, from_time = 0, to_time = 0,
                                      "erb", "loghertz")) {
   pitch_ptr <- if (inherits(pitch, "Pitch")) pitch$.xptr else pitch
   unit <- match.arg(unit)
-  unit_code <- switch(unit,
-    hertz = 0L, semitones = 1L, mel = 2L, erb = 3L, loghertz = 4L
-  )
+  unit_code <- .pitch_unit_code(unit)
   pitch_get_mean_direct(pitch_ptr, from_time, to_time, unit_code)
 }
 
@@ -684,9 +677,7 @@ get_pitch_stdev_direct <- function(pitch, from_time = 0, to_time = 0,
                                       "erb", "loghertz")) {
   pitch_ptr <- if (inherits(pitch, "Pitch")) pitch$.xptr else pitch
   unit <- match.arg(unit)
-  unit_code <- switch(unit,
-    hertz = 0L, semitones = 1L, mel = 2L, erb = 3L, loghertz = 4L
-  )
+  unit_code <- .pitch_unit_code(unit)
   pitch_get_stdev_direct(pitch_ptr, from_time, to_time, unit_code)
 }
 

@@ -53,8 +53,8 @@ test_that("unit_to_code covers all pitch unit aliases", {
     tolerance = sqrt(.Machine$double.eps))
   expect_equal(pladdrr:::unit_to_code("erb", "pitch"), 8L,
     tolerance = sqrt(.Machine$double.eps))
-  expect_equal(pladdrr:::unit_to_code("nonsense", "pitch"), 0L,
-    tolerance = sqrt(.Machine$double.eps))
+  expect_error(pladdrr:::unit_to_code("nonsense", "pitch"), "Unknown unit",
+    class = "pladdrr_input_error")
 })
 
 test_that("unit_to_code covers formant units", {

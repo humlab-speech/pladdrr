@@ -55,6 +55,38 @@ extract_xptr <- function(obj, class_name) {
 }
 
 
+# Pitch unit name -> kPitch_unit code (src/praat.github.io/fon/Pitch_enums.h):
+#   0 HERTZ, 1 HERTZ_LOGARITHMIC, 2 MEL, 3 LOG_HERTZ,
+#   4-7 SEMITONES re 1/100/200/440 Hz, 8 ERB.
+# The single table every pitch door uses. A bare "semitones" is Praat's own
+# default, semitones re 100 Hz. Unknown names raise pladdrr_input_error: they
+# used to fall through to hertz at some doors.
+.pitch_unit_codes <- c(
+  hertz = 0L, hz = 0L,
+  hertz_logarithmic = 1L,
+  mel = 2L,
+  loghertz = 3L,
+  semitones_re_1hz = 4L,
+  semitones_re_100hz = 5L, semitones = 5L, st = 5L,
+  semitones_re_200hz = 6L,
+  semitones_re_440hz = 7L,
+  erb = 8L
+)
+
+.pitch_unit_code <- function(unit) {
+  code <- if (is.character(unit) && length(unit) == 1L && !is.na(unit)) {
+    .pitch_unit_codes[tolower(unit)]
+  } else {
+    NA_integer_
+  }
+  if (is.na(code)) {
+    .stop_input("pitch_unit", "unit",
+      paste0("Unknown unit: ", deparse(unit), ". Use one of: ",
+        paste(names(.pitch_unit_codes), collapse = ", ")))
+  }
+  unname(code)
+}
+
 #' Convert Unit Name to Praat Unit Code
 #'
 #' Standardized mapping from unit names to Praat integer codes.
@@ -73,20 +105,7 @@ unit_to_code <- function(unit, type = "pitch") {
   unit <- tolower(unit)
   
   code <- switch(type,
-    pitch = switch(unit,
-      hertz = 0L,
-      hz = 0L,
-      hertz_logarithmic = 1L,
-      semitones = 1L, st = 1L,
-      mel = 2L,
-      loghertz = 3L,
-      semitones_re_1hz = 4L,
-      semitones_re_100hz = 5L,
-      semitones_re_200hz = 6L,
-      semitones_re_440hz = 7L,
-      erb = 8L,
-      0L  # default to hertz
-    ),
+    pitch = .pitch_unit_code(unit),
     
     formant = switch(unit,
       hertz = 0L,

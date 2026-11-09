@@ -1,3 +1,24 @@
+# pladdrr 5.2.0
+
+5.2.0 corrects pitch units and Intensity interpolation, which 5.1.0 still got wrong
+(the audit's open items F-api-01, F-api-02). Numbers that moved are listed first.
+
+## Numbers that change
+
+* Pitch units follow Praat's `kPitch_unit` enum at every door. Four R tables
+  (`Pitch$` methods, `PitchTier$`, the batch queries, `praat-direct.R`) disagreed
+  with it, so on 5.1.x `Pitch$get_value_at_time(t, unit = "semitones")` and
+  `unit = "erb"` both returned log10(Hz) (2.176 at 150 Hz), and the direct
+  getters answered `unit = "loghertz"` in semitones re 1 Hz (86.746). Now
+  `"semitones"` is semitones re 100 Hz (7.0195 at 150 Hz, Praat's default),
+  `"erb"` is the ERB value (4.2530), `"loghertz"` is log10(Hz) at every door.
+  `"hertz"` and `"mel"` were already right and do not move. New unit strings:
+  `"hertz_logarithmic"`, `"semitones_re_1hz"`, `"semitones_re_100hz"`,
+  `"semitones_re_200hz"`, `"semitones_re_440hz"`, `"st"`.
+* An unknown pitch unit (`"banana"`, `"semitone"`) now raises
+  `pladdrr_input_error` at the direct getters and the batch queries. They used
+  to answer in hertz.
+
 # pladdrr 5.1.1
 
 5.1.1 closes input doors the 5.1.0 guards missed. No result a valid call returned

@@ -96,20 +96,6 @@ NULL
 
 .pitch_methods <- new.env(hash = TRUE, parent = emptyenv())
 
-# Helper: pitch unit string → integer code
-.pitch_unit_code <- function(unit) {
-  code <- switch(tolower(unit),
-    "hertz" = 0L, "hz" = 0L,
-    "semitones" = 1L,
-    "mel" = 2L,
-    "erb" = 3L
-  )
-  if (is.null(code)) {
-    stop("Unknown unit: ", unit, ". Use: hertz, semitones, mel, erb")
-  }
-  code
-}
-
 # --- Properties ---
 .pitch_methods$is_valid <- function(.self) .self$.cpp$is_valid()
 .pitch_methods$xmin <- function(.self) .self$.cpp$get_xmin()
