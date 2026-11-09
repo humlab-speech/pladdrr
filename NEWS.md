@@ -1,3 +1,28 @@
+# pladdrr 5.1.1
+
+5.1.1 closes input doors the 5.1.0 guards missed. No result a valid call returned
+before changes; calls that used to crash R, read the wrong object or allocate
+without bound now raise a `pladdrr_input_error`.
+
+* `Sound$to_formant()`, `$to_formant_burg()` and `$to_formant_robust()` refuse a
+  `max_formants` that is not a finite number between 1 and 1000. `max_formants =
+  -1` used to segfault R. `.check_positive_count()` (also behind `Matrix`,
+  `Excitation$to_formant` and the Willems/split-Levinson formant methods) now
+  rejects `Inf`, which 5.1.0 NEWS already claimed it did.
+* The exported `*_direct` getters (`get_pitch_mean_direct()`,
+  `get_pitch_value_direct()`, `get_formants_direct()`,
+  `get_intensity_value_direct()` and the rest of `src/praat_direct.cpp`) check the
+  class of the pointer they are given. A pointer of another class used to be
+  reinterpreted: `get_pitch_mean_direct(<TextGrid>)` aborted R and
+  `sound_get_duration_direct(<TextGrid>)` returned 3. They now stop with `Not a
+  Pitch (found TextGrid)` and the usual `pladdrr_input_error` tag.
+* `sound_create_pure_tone()` counts `channels` in its cell budget and validates
+  it, so a request that fits per channel but not in total (64 channels of 1e7
+  samples) is refused instead of allocated.
+* CI: the skip gate accepts the "no cgroup CPU quota" skip of
+  `test-affinity-thread-count.R`, so a runner without a CPU quota no longer fails
+  a green test run.
+
 # pladdrr 5.1.0
 
 5.1.0 collects the 2026-11 audit round: safety and robustness fixes (sessions
