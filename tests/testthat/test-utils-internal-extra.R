@@ -1,7 +1,5 @@
 # test-utils-internal-extra.R - Extra branches of R/utils-internal.R not
-# already hit incidentally by other tests (extract_xptr fallback paths,
-# unit_to_code's semitones_re_*/erb/formant/intensity branches and its
-# unknown-type error).
+# already hit incidentally by other tests (extract_xptr fallback paths).
 
 test_that("extract_xptr uses the .xptr field when present", {
   sound <- Sound$create_tone(frequency = 150, duration = 0.1,
@@ -38,44 +36,4 @@ test_that(
 test_that("extract_xptr errors for non-object, non-pointer input", {
   expect_error(pladdrr:::extract_xptr(42, "Sound"),
     "Expected Sound or externalptr")
-})
-
-test_that("unit_to_code covers all pitch unit aliases", {
-  expect_equal(pladdrr:::unit_to_code("hertz", "pitch"), 0L,
-    tolerance = sqrt(.Machine$double.eps))
-  expect_equal(pladdrr:::unit_to_code("HZ", "pitch"), 0L,
-    tolerance = sqrt(.Machine$double.eps))
-  expect_equal(pladdrr:::unit_to_code("semitones_re_100hz", "pitch"), 5L,
-    tolerance = sqrt(.Machine$double.eps))
-  expect_equal(pladdrr:::unit_to_code("semitones_re_200hz", "pitch"), 6L,
-    tolerance = sqrt(.Machine$double.eps))
-  expect_equal(pladdrr:::unit_to_code("semitones_re_440hz", "pitch"), 7L,
-    tolerance = sqrt(.Machine$double.eps))
-  expect_equal(pladdrr:::unit_to_code("erb", "pitch"), 8L,
-    tolerance = sqrt(.Machine$double.eps))
-  expect_error(pladdrr:::unit_to_code("nonsense", "pitch"), "Unknown unit",
-    class = "pladdrr_input_error")
-})
-
-test_that("unit_to_code covers formant units", {
-  expect_equal(pladdrr:::unit_to_code("hertz", "formant"), 0L,
-    tolerance = sqrt(.Machine$double.eps))
-  expect_equal(pladdrr:::unit_to_code("Hz", "formant"), 0L,
-    tolerance = sqrt(.Machine$double.eps))
-  expect_equal(pladdrr:::unit_to_code("bark", "formant"), 1L,
-    tolerance = sqrt(.Machine$double.eps))
-  expect_equal(pladdrr:::unit_to_code("nonsense", "formant"), 0L,
-    tolerance = sqrt(.Machine$double.eps))
-})
-
-test_that("unit_to_code covers intensity units", {
-  expect_equal(pladdrr:::unit_to_code("db", "intensity"), 0L,
-    tolerance = sqrt(.Machine$double.eps))
-  expect_equal(pladdrr:::unit_to_code("nonsense", "intensity"), 0L,
-    tolerance = sqrt(.Machine$double.eps))
-})
-
-test_that("unit_to_code errors for an unknown type", {
-  expect_error(pladdrr:::unit_to_code("hertz", "bogus_type"),
-    "Unknown unit type")
 })

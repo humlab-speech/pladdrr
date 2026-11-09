@@ -1,8 +1,8 @@
 # pladdrr Agent Guide
 
-**Version:** 5.1.1 guide refresh (2026-09-04; perf/memory audit notes 2026-10-19; 2026-11 audit round 2026-11-06)
+**Version:** 5.2.0 guide refresh (2026-09-04; perf/memory audit notes 2026-10-19; 2026-11 audit round 2026-11-06)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** Current through package 5.1.1 (the 2026-11 audit round and its follow-ups, see `NEWS.md` under 5.1.0 and 5.1.1). Shared-dispatch wrappers + threaded Praat backend + xsimd acceleration (enabled at build time, runtime toggle via `pladdrr_simd()`) + clinical Tier 4 helpers + wrapper dispatch migration (Sound/Formant/Spectrum/Spectrogram queries now use direct `.Call()` instead of Rcpp module dispatch) + current `praat.github.io/` build prefix guidance + current CPPS/CPP usage notes + macOS PSOCK parallelism + unified SIMD bridge header (`simd_bridge.h`) + GitHub Actions CI + code coverage + spectral-moments/data-frame allocation cleanup (v4.9.24) + CRAN pre-submission hygiene and full man/ coverage (v5.0.0) + Ltas full Praat-parity query coverage and new SpectrumTier peak-picking class (v5.0.3) + perf/memory audit: load-time RSS fix, FormantPath parity fix, 8 SIMD files removed (development version, 2026-10).
+**Status:** Current through package 5.2.0 (the 2026-11 audit round and its follow-ups, see `NEWS.md` under 5.1.0, 5.1.1 and 5.2.0). Shared-dispatch wrappers + threaded Praat backend + xsimd acceleration (enabled at build time, runtime toggle via `pladdrr_simd()`) + clinical Tier 4 helpers + wrapper dispatch migration (Sound/Formant/Spectrum/Spectrogram queries now use direct `.Call()` instead of Rcpp module dispatch) + current `praat.github.io/` build prefix guidance + current CPPS/CPP usage notes + macOS PSOCK parallelism + unified SIMD bridge header (`simd_bridge.h`) + GitHub Actions CI + code coverage + spectral-moments/data-frame allocation cleanup (v4.9.24) + CRAN pre-submission hygiene and full man/ coverage (v5.0.0) + Ltas full Praat-parity query coverage and new SpectrumTier peak-picking class (v5.0.3) + perf/memory audit: load-time RSS fix, FormantPath parity fix, 8 SIMD files removed (development version, 2026-10).
 - **v4.9.18 — Performance + docs + CI (2026-08-05 assessment, Phases 1-4):**
   - **PointProcess jitter/shimmer batch cache:** First shimmer call fetches all 11 jitter+shimmer metrics via `get_jitter_shimmer_batch_cpp()`. Subsequent jitter or shimmer calls with matching parameters return from cache — no additional C++ crossing. Backward compatible: jitter methods unchanged (no Sound required); cache activates automatically after first shimmer call.
   - **Formant `get_all_values_at_time` — single C++ call:** Added `formant_get_all_values_at_time()` export; replaces `vapply` loop over N module calls with one direct wrapper call.
@@ -157,12 +157,22 @@ the caveats in it live in the test file, and the report names the Praat version 
 against). **Always name the Praat version with a reference number**: the vendored source
 tracks 6.4.47, and the CPPS pipeline differs from 6.4.27 by about 0.13 dB (Praat rewrote
 its CPP-to-CPPS post-processing); against 6.4.47 all 19 registry rows pass and CPPS is
-0.003 dB away. `tests/testthat/test-fidelity-fingerprint.R` is the second gate: 81
+0.003 dB away. `tests/testthat/test-fidelity-fingerprint.R` is the second gate: 88
 numbers from one signal, no oracle needed, refuses any ERR/NA row.
 
 When porting a new Praat routine into pladdrr, add a registry row. Default
 tolerance is `0` for exact-arithmetic routines; looser tolerances require a
 written rationale in the row. Failing rows are first-class regressions.
+
+## What's New in v5.2.0 (pitch units and Intensity interpolation)
+
+Recompute anything you saved with a non-hertz pitch unit or a non-linear Intensity lookup; the
+magnitudes are in `NEWS.md`.
+
+- **Pitch units follow `kPitch_unit` at every door.** `unit = "semitones"` is semitones re 100 Hz and `"erb"` is ERB (both used to return log10(Hz)); `"loghertz"` is log10(Hz). See "Frequency Units" for the table. Unknown units raise `pladdrr_input_error` instead of answering in hertz.
+- **`PitchTier$shift_frequencies()`** works in semitones (was a silent no-op) and ERB (was a logHertz shift, x10); `"hertz_logarithmic"` is refused.
+- **`Intensity$get_value_at_time()`** interpolates as asked: the default `"cubic"` returned the linear value. An interpolation is a name or the code 0 to 4; anything else raises (it used to become cubic). `get_intensity_at_time(interpolate = FALSE)` is nearest.
+- **5.1.1 (guards):** `max_formants` outside 1 to 1000 and a wrong-class pointer at the `*_direct` getters raise instead of crashing; `sound_create_pure_tone()` counts `channels` in its size budget.
 
 ## What's New in v5.1.0 (2026-11 audit round: numbers that change)
 

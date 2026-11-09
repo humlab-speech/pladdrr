@@ -64,6 +64,17 @@ test_that("Pitch units return Praat's numbers through every door", {
     hz_to_erb(get_pitch_quantile_direct(p$.xptr, 0.5)), tolerance = 1e-12)
 })
 
+test_that("the batch doors use the same table", {
+  p <- Sound$create_tone(1.0, 44100, 150, 0.5)$to_pitch_cc()
+  times <- c(0.3, 0.5, 0.7)
+  hz <- get_pitch_at_times(p, times)
+  expect_equal(get_pitch_at_times(p, times, unit = "semitones"), 12 * log2(hz / 100),
+    tolerance = 1e-12)
+  expect_equal(get_pitch_at_times(p, times, unit = "erb"), hz_to_erb(hz),
+    tolerance = 1e-12)
+  expect_error(get_pitch_at_times(p, times, unit = "banana"), "Unknown unit")
+})
+
 test_that("direct doors refuse an unknown unit", {
   p <- Sound$create_tone(0.5, 22050, 150, 0.5)$to_pitch_cc()
   expect_error(get_pitch_value_direct(p$.xptr, 0.25, "banana"), "Unknown unit")
