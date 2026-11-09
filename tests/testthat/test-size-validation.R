@@ -22,6 +22,19 @@ test_that("Sound factories refuse non-positive, non-finite and absurd sizes", {
   }
 })
 
+test_that("the cell budget counts channels", {
+  # 1e7 samples is fine for one channel; 64 channels of it is 6.4e8 cells
+  # (over the 2^29 limit, ~5 GB) and used to pass a guard that ignored channels.
+  expect_input_error(
+    sound_create_pure_tone(duration = 100, sampling_rate = 1e5, channels = 64),
+    "channels")
+  for (bad in list(0, -1, NA_real_, Inf, "a")) {
+    expect_input_error(sound_create_pure_tone(channels = bad), "channels")
+  }
+  s <- sound_create_pure_tone(duration = 0.1, sampling_rate = 8000, channels = 2)
+  expect_identical(s$get_number_of_channels(), 2L)
+})
+
 test_that("Sound factories still build ordinary sounds", {
   s <- sound_create_tone(duration = 0.5, sampling_rate = 8000)
   expect_identical(s$get_number_of_samples(), 4000L)

@@ -1296,11 +1296,18 @@ sound_from_values <- function(values, sampling_rate = 44100, start_time = 0.0) {
 }
 
 # Shared by the create_* factories: duration and rate are positive and finite and
-# their product is a sample count the allocator can be asked for.
-.check_sound_size <- function(routine, duration, sampling_rate) {
+# their product (times the channel count) is a cell count the allocator can be
+# asked for.
+.check_sound_size <- function(routine, duration, sampling_rate, channels = 1L) {
   .check_positive_finite(duration, "duration", routine)
   .check_positive_finite(sampling_rate, "sampling_rate", routine)
-  .check_cell_count(duration * sampling_rate, routine, duration = duration)
+  .check_positive_count(channels, "channels", max = 1000)
+  cells <- duration * sampling_rate * channels
+  if (channels > 1) {
+    .check_cell_count(cells, routine, channels = channels)
+  } else {
+    .check_cell_count(cells, routine, duration = duration)
+  }
 }
 
 #' Create a pure tone Sound
@@ -1348,7 +1355,7 @@ sound_create_pure_tone <- function(frequency = 440.0, duration = 1.0,
                                     fade_in_duration = 0.01, fade_out_duration =
                                         0.01,
                                     channels = 1L) {
-  .check_sound_size("sound_create_pure_tone", duration, sampling_rate)
+  .check_sound_size("sound_create_pure_tone", duration, sampling_rate, channels)
   ptr <- .sound_create_pure_tone(as.integer(channels), 0.0, duration,
     sampling_rate,
     frequency, amplitude, fade_in_duration, fade_out_duration)
