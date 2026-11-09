@@ -1,4 +1,4 @@
-# Fidelity fingerprint: 87 numbers from one fixed synthetic signal, covering the
+# Fidelity fingerprint: 88 numbers from one fixed synthetic signal, covering the
 # tier-1 R6 methods, the direct/batch/ultra entry points, Ltas, Intensity, DTW,
 # PCA and TextGrid. It exists because a change to DSP arithmetic or to a unit/enum
 # mapping shows up as a moved number long before any hand-written expectation

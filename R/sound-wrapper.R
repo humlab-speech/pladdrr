@@ -270,8 +270,7 @@ NULL
 .sound_methods$get_values_at_times <- function(.self, times, channel = 1,
   interpolation = "linear") {
   .self$.cpp$get_values_at_times(as.numeric(times), as.integer(channel),
-                                   .praat_interpolation_code(interpolation,
-                                     default = 1L))
+                                   .praat_interpolation_code(interpolation))
 }
 
 .sound_methods$get_values_in_range <- function(.self, from_time = 0.0,

@@ -23,6 +23,20 @@
   `unit = "hertz_logarithmic"`, which Praat cannot shift in, raises
   `pladdrr_input_error` instead of leaving the contour unchanged; the module
   door refuses the same codes.
+* `Intensity$get_value_at_time()` and `$get_values_at_times()` interpolate as
+  asked. The default, `interpolation = "cubic"`, returned the linear value on
+  5.1.x (87.41128870 where Praat gives 87.41129728 in the fingerprint fixture;
+  up to ~1.4e-4 dB elsewhere), because the module passed the method code to
+  `Sampled_getValueAtX`, whose last parameter is a `bool`. `"nearest"`,
+  `"sinc70"` and `"sinc700"` were also answered linearly. `Harmonicity`, `Ltas`
+  and `Sound` already used the right call.
+* An interpolation method is a name (`"nearest"`, `"linear"`, `"cubic"`,
+  `"sinc70"`, `"sinc700"`) or its code 0 to 4, and anything else raises
+  `pladdrr_input_error`. An unknown name (`"banana"`) or a code the lookup did
+  not know (`0`) used to answer as cubic, and `get_intensity_value_direct(x, t,
+  2)` selected the second name by position, which is linear. The peak
+  interpolation of `get_maximum()` and friends (`"none"`, `"parabolic"`, ...)
+  follows the same rule.
 * An unknown pitch unit (`"banana"`, `"semitone"`) now raises
   `pladdrr_input_error` at the direct getters and the batch queries. They used
   to answer in hertz.

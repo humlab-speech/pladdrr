@@ -561,8 +561,7 @@ get_intensity_value_direct <- function(intensity, time,
   interpolation = "cubic") {
   intensity_ptr <- if (
     inherits(intensity, "Intensity")) intensity$.xptr else intensity
-  interp_code <- switch(interpolation, nearest = 0L, linear = 1L, cubic = 2L,
-    sinc70 = 3L, sinc700 = 4L, 2L)
+  interp_code <- .praat_interpolation_code(interpolation)
   intensity_get_value_direct(intensity_ptr, time, interp_code)
 }
 

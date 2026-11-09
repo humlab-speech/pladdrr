@@ -74,6 +74,8 @@ fmt("intensity.maximum", it$get_maximum())
 fmt("intensity.stdev", it$get_standard_deviation())
 fmt("intensity.q25", it$get_quantile(0.25))
 fmt("intensity.mean_db", it$get_mean(0, 0, averaging_method = "db"))
+# Cubic, not linear: Praat gives 87.41129728213643; 5.1.x returned the linear value.
+fmt("intensity.value_cubic", it$get_value_at_time(0.4035, interpolation = "cubic"))
 
 # Ltas: the averaging unit, the dB code and the non-interpolating window are
 # what fix/009 moved; without these keys the guard could not see a 3-decade
