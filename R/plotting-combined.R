@@ -22,6 +22,10 @@ NULL
 # Resolve from_time/to_time from both objects' data frames (lazily: only
 # computes the frames when a bound is missing). Behavior identical to the
 # per-function inline logic it replaces.
+#' Time range for a combined TextGrid + object plot.
+#' Explicit `from_time`/`to_time` win; a missing end is taken from the overlap of
+#' the TextGrid and the object's time axis.
+#' @noRd
 .resolve_plot_time_range <- function(textgrid, obj, from_time, to_time) {
   if (!is.null(from_time) && !is.null(to_time)) return(c(from_time, to_time))
   tg_df <- textgrid$as_data_frame()

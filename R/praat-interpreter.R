@@ -2,6 +2,8 @@
 # R interface for Praat interpreter functionality
 
 # Validate a single non-empty character string argument.
+#' Require `x` to be a single non-empty string; a plain `stop()` without call.
+#' @noRd
 .check_character1 <- function(x, arg = "expression") {
   if (!is.character(x) || length(x) != 1L || !nzchar(x)) {
     stop(sprintf("'%s' must be a single non-empty character string", arg),

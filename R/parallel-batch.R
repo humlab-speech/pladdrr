@@ -10,6 +10,9 @@
 # The getter is a .Call that also runs inside worker processes; if it fails
 # (namespace/build mismatch there) fall back to the machine's count rather than
 # turn a core count into a hard error.
+#' CPUs available to this process, as reported by the C++ thread controller
+#' (affinity mask and cgroup quota aware); falls back to `parallel::detectCores()`.
+#' @noRd
 .pladdrr_available_cpus <- function() {
   tryCatch(.pladdrr_get_threads_cpp()$processors,
            error = function(e) parallel::detectCores())
@@ -22,6 +25,10 @@
 # storms, higher power draw, often slower than either level alone). Divide the
 # usable CPUs among the workers so total concurrency ~= the CPUs we may run on.
 # NULL means auto; an explicit value is passed through unchanged.
+#' Threads each parallel worker may use.
+#' An explicit `threads_per_worker` wins; otherwise the available CPUs divided
+#' by the number of workers, never below one.
+#' @noRd
 .pladdrr_worker_thread_budget <- function(n_cores, threads_per_worker = NULL) {
   if (!is.null(threads_per_worker)) {
     return(max(1L, as.integer(threads_per_worker)))
@@ -43,6 +50,9 @@
 # (see parallel:::.check_ncores).
 # Honor that limit in the default so package checks pass while dev/CI still
 # uses the full machine.
+#' Default worker count: one fewer than the available CPUs (at least one), capped
+#' at two while `_R_CHECK_LIMIT_CORES_` is set.
+#' @noRd
 .default_n_cores <- function(available = .pladdrr_available_cpus()) {
   n <- if (available > 2) available - 1 else max(1, available)
   chk <- tolower(Sys.getenv("_R_CHECK_LIMIT_CORES_", ""))
@@ -50,6 +60,8 @@
 }
 
 # Analyze one file on a worker: cap threads, load Sound, run analysis_func.
+#' Parallel-worker body: cap the worker's threads, load the Sound, run `analysis_func`.
+#' @noRd
 .analyze_one_file <- function(f, tpw, analysis_func, ...) {
   pladdrr_threads(tpw)
   sound <- Sound(f)
@@ -440,6 +452,10 @@ benchmark_parallel <- function(files, analysis_func,
 }
 
 # Build a PSOCK worker cluster with pladdrr attached and vars exported.
+#' Start a PSOCK cluster whose workers share this session's library paths and
+#' have pladdrr attached, then export `export_vars` from the caller's frame.
+#' The cluster is stopped again if setup fails.
+#' @noRd
 .make_worker_cluster <- function(n_cores, export_vars) {
   cl <- parallel::makeCluster(n_cores)
   ok <- FALSE

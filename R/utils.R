@@ -5,6 +5,9 @@
 # error messages.
 
 # Raise a classed pladdrr_input_error (consistent with R/validators.R).
+#' Raise a `pladdrr_input_error` for a validation failure in `routine`/`name`.
+#' Older sibling of `.stop_input()`; the condition's call is the caller's caller.
+#' @noRd
 .stop_validate <- function(routine, name, message) {
   stop(pladdrr_error_cond("pladdrr_input_error", routine, name, message,
                           call = sys.call(-1L)))
@@ -331,12 +334,18 @@ is_praat_intensity <- function(x) {
 # codes everywhere they're used (Sound, Harmonicity, Intensity, Ltas); these
 # were previously copy-pasted per wrapper file with an inconsistent default.
 
+#' Map an interpolation name (nearest, linear, cubic, sinc70, sinc700) to Praat's
+#' integer code; an unrecognised name gives `default`.
+#' @noRd
 .praat_interpolation_code <- function(method, default = 2L) {
   switch(tolower(method),
     "nearest" = 0L, "linear" = 1L, "cubic" = 2L,
     "sinc70" = 3L, "sinc700" = 4L, as.integer(default))
 }
 
+#' Map a peak-interpolation name (none, parabolic, cubic, sinc70, sinc700) to
+#' Praat's integer code; an unrecognised name gives `default`.
+#' @noRd
 .praat_peak_interpolation_code <- function(method, default = 1L) {
   switch(tolower(method),
     "none" = 0L, "parabolic" = 1L, "cubic" = 2L,

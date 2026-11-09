@@ -110,6 +110,8 @@ NULL
 # Helper: pitch unit string -> integer code.
 # Same mapping as .pitch_unit_code() in pitch-wrapper.R — delegate to avoid
 #  drift.
+#' Alias of `.pitch_unit_code()` for PitchTier methods.
+#' @noRd
 .pitchtier_unit_code <- function(unit) {
   .pitch_unit_code(unit)
 }

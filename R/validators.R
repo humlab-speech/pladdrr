@@ -9,6 +9,9 @@
 
 # Raise a classed input error. `routine` and `param` are carried on the
 # condition so programmatic callers can branch on them.
+#' Raise a classed `pladdrr_input_error`.
+#' `routine` and `param` are carried on the condition so callers can branch on them.
+#' @noRd
 .stop_input <- function(routine, param, msg, call = sys.call(-2L)) {
   stop(
     pladdrr_error_cond("pladdrr_input_error", routine, param, msg, call = call))
@@ -19,15 +22,25 @@
 # user must be told. Honours options(pladdrr.data_loss =
 #  "warn"|"error"|"silent").
 # Is x a single (length-1) non-NA numeric scalar?
+#' Is `x` a single, non-NA number?
+#' @noRd
 .is_numeric_scalar <- function(x) is.numeric(x) && length(x) == 1L && !is.na(x)
 
 
 # Is x a single (length-1) character string?
+#' Is `x` a single character string?
+#' @noRd
 .is_string_scalar <- function(x) is.character(x) && length(x) == 1L
 
 # Is x a single (length-1) logical?
+#' Is `x` a single logical value?
+#' @noRd
 .is_logical_scalar <- function(x) is.logical(x) && length(x) == 1L
 
+#' Signal that output is incomplete relative to what was requested.
+#' Behaviour follows `options(pladdrr.data_loss = "warn" | "error" | "silent")`;
+#' the condition is classed `pladdrr_data_loss`.
+#' @noRd
 .warn_data_loss <- function(routine, msg, call = sys.call(-2L)) {
   mode <- getOption("pladdrr.data_loss", "warn")
   if (identical(mode, "silent")) return(invisible(FALSE))
@@ -45,6 +58,9 @@
 # caller gave a path without one ("out/pitch" -> "out/pitch.Pitch"). A path that
 # already has an extension is used as given, so an explicit choice such as
 # "pitch.txt" is respected. Tilde paths are expanded.
+#' Append a file suffix when a path has no extension (G4.0).
+#' A path whose basename already has an extension is used as given.
+#' @noRd
 .ensure_suffix <- function(path, suffix) {
   if (!is.character(path) || length(path) != 1L || is.na(path) || !nzchar(path)) {
     .stop_input("ensure_suffix", "path",
@@ -75,6 +91,8 @@
 # Praat refuses pitch_floor >= pitch_ceiling in its forms; without this check
 # the C++ analysis either fails opaquely or silently computes on an inverted
 # range.
+#' Require `0 < pitch_floor < pitch_ceiling`, both single numbers in Hz.
+#' @noRd
 .check_pitch_range <- function(pitch_floor, pitch_ceiling) {
   if (!.is_numeric_scalar(pitch_floor) || pitch_floor <= 0) {
     .stop_input("check_pitch_range", "pitch_floor",
@@ -94,6 +112,8 @@
 # Formant/pole counts must be positive; a zero or negative count makes the
 # split-Levinson/Burg solver produce garbage frames (and, for Willems, spew
 # "no zero" diagnostics) instead of failing cleanly.
+#' Require `value` to be a single number >= 1.
+#' @noRd
 .check_positive_count <- function(value, name) {
   if (!is.numeric(value) || length(value) != 1L || is.na(value) || value < 1) {
     .stop_input("check_positive_count", name,
@@ -103,6 +123,8 @@
   invisible(TRUE)
 }
 
+#' Require `value` to be a single number > 0.
+#' @noRd
 .check_positive_number <- function(value, name) {
   if (!is.numeric(value) || length(value) != 1L || is.na(value) || value <= 0) {
     .stop_input("check_positive_number", name,
@@ -119,6 +141,8 @@
 # allows (2^29, 4 GiB of doubles).
 .max_cells <- 2^29
 
+#' Require `x` to be a single positive, finite number (named `name` in errors).
+#' @noRd
 .check_positive_finite <- function(value, name, routine = name) {
   if (!is.numeric(value) || length(value) != 1L || !is.finite(value) ||
     value <= 0) {
@@ -129,6 +153,8 @@
   invisible(TRUE)
 }
 
+#' Refuse an allocation of more than `.max_cells` cells with a `pladdrr_input_error`.
+#' @noRd
 .check_cell_count <- function(cells, routine, ...) {
   if (cells > .max_cells) {
     .stop_input(routine, names(list(...))[1L],
@@ -152,6 +178,9 @@
 # See dev/ASSESSMENT_2026-08-05.md section 2.6.
 .warned_robust_slow <- new.env(parent = emptyenv())
 
+#' Warn once per session when `fit_method = "robust slow"`, whose Theil-Sen fit
+#' is not reproducible in Praat itself.
+#' @noRd
 .check_trend_fit_method <- function(fit_method) {
   if (identical(fit_method, "robust slow") &&
       is.null(.warned_robust_slow$done)) {
@@ -174,6 +203,9 @@
 # Praat autowindows a reversed or zero quefrency range, but a caller who passes
 # qstart > qend almost always means the opposite of what they get. Fail loudly
 # rather than return a silently different measurement.
+#' Require `qstart` and `qend` to be single non-negative numbers (s) with
+#' `qend > qstart`; `qend = 0` is allowed and means the full quefrency range.
+#' @noRd
 .check_quefrency_range <- function(qstart, qend, qstart_name = "qstart_fit",
                                    qend_name = "qend_fit") {
   if (!.is_numeric_scalar(qstart) || qstart < 0) {
@@ -205,6 +237,8 @@
 # a documented Praat idiom unusable in to_formant_keepall/willems/sl. Negative
 #  or
 # non-finite values are still errors.
+#' Require `time_step` to be a single non-negative number (0 means automatic).
+#' @noRd
 .check_time_step <- function(time_step) {
   if (!is.numeric(time_step) || length(time_step) != 1L || is.na(time_step) ||
       time_step < 0) {
@@ -221,6 +255,9 @@
 # 1 s Sound yields 5 s of fabricated silence. pladdrr reproduces the value (goal
 #  1)
 # but reports the fabrication (goal 6).
+#' Warn (class `pladdrr_data_loss`) when a requested extraction range extends
+#' outside the Sound, since Praat zero-pads the excess.
+#' @noRd
 .check_extract_range <- function(.self, from_time, to_time) {
   dur <- tryCatch(.self$get_total_duration(), error = function(e) NA_real_)
   if (is.na(dur)) return(invisible(FALSE))

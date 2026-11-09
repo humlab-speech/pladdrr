@@ -97,6 +97,8 @@ NULL
 .pitch_methods <- new.env(hash = TRUE, parent = emptyenv())
 
 # Helper: pitch unit string → integer code
+#' Map a pitch unit name (hertz/hz, semitones, mel, erb) to Praat's integer code.
+#' @noRd
 .pitch_unit_code <- function(unit) {
   code <- switch(tolower(unit),
     "hertz" = 0L, "hz" = 0L,

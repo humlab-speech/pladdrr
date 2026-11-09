@@ -113,6 +113,11 @@ NULL
 # Helper: resolve tier name/number
 # ============================================================================
 
+#' Resolve a TextGrid tier given by number or name to its integer index.
+#' Numeric input is returned as an integer unchanged; a name is looked up in the
+#' tier names and the first match is used. Errors if the name is absent or the
+#' type is neither numeric nor character.
+#' @noRd
 .textgrid_resolve_tier <- function(cpp_tg, tier) {
   if (is.numeric(tier)) {
     return(as.integer(tier))

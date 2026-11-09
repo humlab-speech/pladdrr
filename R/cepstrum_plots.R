@@ -15,6 +15,8 @@ NULL
 #'
 
 # Apply the shared cepstrum plot theme (minimal/bw/classic + title styling).
+#' Add the named ggplot2 theme (minimal, bw, classic) plus the cepstrum title styling to `p`.
+#' @noRd
 .apply_cepstrum_theme <- function(p, theme) {
   p + switch(theme,
     minimal = ggplot2::theme_minimal(),

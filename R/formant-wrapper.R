@@ -113,6 +113,8 @@ NULL
 .formant_methods <- new.env(hash = TRUE, parent = emptyenv())
 
 # Helper: formant unit code
+#' Map a formant frequency unit (hertz or bark) to Praat's integer code.
+#' @noRd
 .formant_unit_code <- function(unit) {
   unit <- match.arg(tolower(unit), c("hertz", "bark"))
   if (unit == "hertz") 0L else 1L

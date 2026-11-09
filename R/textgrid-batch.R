@@ -208,6 +208,9 @@ get_textgrid_interval_stats <- function(textgrid, tier) {
 
 
 # Validate extract_textgrid_intervals arguments; returns resolved tier.
+#' Validate the arguments of the interval-extraction helpers and return the tier
+#' as a positive integer (a tier name is resolved through the TextGrid).
+#' @noRd
 .validate_textgrid_intervals_args <- function(textgrid, sound, tier,
   extract_sounds) {
   if (

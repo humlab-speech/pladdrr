@@ -185,6 +185,9 @@ plot.Pitch <- function(x, from_time = NULL, to_time = NULL,
 
 # Filter a long-format formant data frame to time range, formant number,
 # and defined frequencies.
+#' Keep formant rows inside the time range, with formant number <= `max_formant`
+#' and a defined frequency.
+#' @noRd
 .filter_formant_df <- function(df, from_time, to_time, max_formant) {
   if (!is.null(from_time)) df <- df[df$time >= from_time, ]
   if (!is.null(to_time)) df <- df[df$time <= to_time, ]

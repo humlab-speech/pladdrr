@@ -99,6 +99,10 @@ NULL
 }
 
 # Process one batch file: load Sound, run func, tag with file/path.
+#' Load one file as a Sound and apply `func`, without letting one bad file stop a batch.
+#' A list result gains `file` and `path`. On error a warning is raised and a row
+#' with `file`, `path`, `error` and `error_class` replaces the result.
+#' @noRd
 .process_batch_file <- function(filepath, func, ...) {
   tryCatch({
     sound <- Sound$new(filepath)
@@ -744,6 +748,8 @@ aggregate_measurements <- function(measurements,
 
 
 # Run batch processing (parallel mclapply or sequential with progress).
+#' Parallel-worker body for `batch_process()`: cap threads, then `.process_batch_file()`.
+#' @noRd
 .batch_file_worker <- function(f, tpw, func, ...) {
   pladdrr_threads(tpw)
   .process_batch_file(f, func, ...)

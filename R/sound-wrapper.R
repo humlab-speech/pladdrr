@@ -161,6 +161,9 @@ NULL
 .sound_methods <- new.env(hash = TRUE, parent = emptyenv())
 
 # --- Helpers (package-level, not per-instance) ---
+#' Map a window shape name (rectangular ... kaiser2) to Praat's integer code;
+#' an unrecognised name gives rectangular.
+#' @noRd
 .window_shape_code <- function(window_shape) {
   switch(tolower(window_shape),
     "rectangular" = 0L, "triangular" = 1L, "parabolic" = 2L,
@@ -702,6 +705,8 @@ NULL
 # negative band count and comes back as a Cochleagram whose as.matrix() fails
 # far from the call; the size bound for huge requests is in C++
 # (src/pladdrr_limits.h) because the script and module doors need it too.
+#' Require every named step (`dt`, `df`, `window_length`) to be a positive, finite number.
+#' @noRd
 .check_cochleagram_steps <- function(routine, ...) {
   steps <- list(...)
   for (nm in names(steps)) {
@@ -1183,6 +1188,9 @@ lockEnvironment(.sound_methods, bindings = TRUE)
 
 
 # Read a sound file: native Praat reader first, av fallback for exotic formats.
+#' Read an audio file into a Sound pointer: Praat's own reader first, then the `av`
+#' fallback (with a `pladdrr_decoder_fallback` warning) for formats Praat cannot read.
+#' @noRd
 .sound_ptr_from_path <- function(path) {
   if (!file.exists(path)) stop("Sound file not found: ", path)
   loss <- new.env(parent = emptyenv())
@@ -1311,6 +1319,8 @@ sound_from_values <- function(values, sampling_rate = 44100, start_time = 0.0) {
 
 # Shared by the create_* factories: duration and rate are positive and finite and
 # their product is a sample count the allocator can be asked for.
+#' Validate `duration` and `sampling_rate` and that their product is an allocatable cell count.
+#' @noRd
 .check_sound_size <- function(routine, duration, sampling_rate) {
   .check_positive_finite(duration, "duration", routine)
   .check_positive_finite(sampling_rate, "sampling_rate", routine)

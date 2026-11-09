@@ -31,6 +31,10 @@
 
 .pladdrr_tag_re <- "^\\[pladdrr_([a-z_]+):([^:]*):([^\\]]*)\\] (.*)$"
 
+#' Split a C++-side error message of the form
+#' `[pladdrr_<class>:<routine>:<param>] <message>` into its parts.
+#' Returns NULL when the message does not carry a tag.
+#' @noRd
 .parse_pladdrr_tag <- function(msg) {
   # perl=TRUE required: the pattern uses \] inside a bracket expression, which
   # only parses correctly under PCRE (TRE never matches, silently disabling the

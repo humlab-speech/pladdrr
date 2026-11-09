@@ -6,6 +6,9 @@
 # Helpers
 # ===========================================================================
 
+#' Colours for formant lines: the user's `colors` if given, otherwise an
+#' eight-colour palette recycled to the number of distinct formant labels.
+#' @noRd
 .formant_colors <- function(df, colors) {
   if (!is.null(colors)) return(colors)
   n <- length(unique(df$formant_label))
@@ -14,6 +17,10 @@
   rep_len(pal, max(n, 1L))
 }
 
+#' Normalise a formant data frame for plotting.
+#' Renames `formant` to `formant_number` where needed and keeps rows inside
+#' `from_time`/`to_time` with `formant_number <= max_formant`.
+#' @noRd
 .prep_formant_df <- function(df, from_time, to_time, max_formant) {
   if (!"formant_number" %in% names(df) && "formant" %in% names(df)) {
     names(df)[names(df) == "formant"] <- "formant_number"
@@ -25,6 +32,9 @@
   df
 }
 
+#' Map a KlattGrid formant type name (oral, nasal, frication, tracheal,
+#' nasal_anti, tracheal_anti, delta) to Praat's integer code.
+#' @noRd
 .klattgrid_formant_type_code <- function(type) {
   codes <- c(oral = 1L, nasal = 2L, frication = 3L, tracheal = 4L,
              nasal_anti = 5L, tracheal_anti = 6L, delta = 7L)
@@ -487,6 +497,9 @@ autolayer.Excitation <- function(object, color = "darkred", ...) {
 }
 
 # Ensure a ComplexSpectrogram data frame has an amplitude_dB column.
+#' Add an `amplitude_dB` column (re the maximum) to a ComplexSpectrogram data frame
+#' unless it already has one; errors when there is no `amplitude` column.
+#' @noRd
 .to_amplitude_db <- function(df, dynamic_range) {
   if ("amplitude_dB" %in% names(df)) return(df)
   if (
@@ -1140,6 +1153,9 @@ autolayer.Discriminant <- function(object, ...) {
 # need long format (time, formant_number, frequency) filtered to a track
 # range; this reshapes on the *_modeled columns (the fitted/smoothed track,
 # the point of a Modeler).
+#' Reshape a wide FormantModeler data frame to long form (time, formant_number,
+#' frequency) for tracks `from_track`..`to_track` (0 = through the last track).
+#' @noRd
 .formant_modeler_long_df <- function(wide, from_track, to_track, n_tracks) {
   empty <- data.frame(time = numeric(0), formant_number = integer(0),
                        frequency = numeric(0))
@@ -1548,6 +1564,8 @@ autolayer.KlattGrid <- function(object, from_time = NULL, to_time = NULL,
 
 # Is t within [tmin, tmax]?
 .in_time_range <- function(t, tmin, tmax) t >= tmin && t <= tmax
+#' Append one (time, formant number, frequency) row to `rows`, skipping undefined values.
+#' @noRd
 .append_formant_row <- function(rows, object, f, t) {
   freq <- tryCatch(object$get_value_at_time(f, t), error = function(e) NA_real_)
   if (!is.na(freq)) {
@@ -1557,6 +1575,9 @@ autolayer.KlattGrid <- function(object, from_time = NULL, to_time = NULL,
   }
   rows
 }
+#' Collect plot rows from a FormantTier: its stored points ("speckle") or values
+#' sampled every `time_step` between `tmin` and `tmax`.
+#' @noRd
 .formant_tier_rows <- function(object, tmin, tmax, n_max, style, time_step) {
   rows <- list()
   if (style == "speckle") {
@@ -1582,6 +1603,8 @@ autolayer.KlattGrid <- function(object, from_time = NULL, to_time = NULL,
 
 
 # PCA scree plot (variance + cumulative).
+#' Scree plot (variance and cumulative variance per component) for a PCA-like object.
+#' @noRd
 .scree_plot <- function(object, prefix, title, garnish) {
   eigenvals <- object$get_eigenvalues()
   variance <- eigenvals / sum(eigenvals) * 100
@@ -1606,6 +1629,9 @@ autolayer.KlattGrid <- function(object, from_time = NULL, to_time = NULL,
 }
 
 # PCA component-scores scatter plot.
+#' Scatter plot of the first two columns of `as.data.frame(object)`; warns when
+#' there are fewer than two.
+#' @noRd
 .scores_plot <- function(object, type, title, garnish = TRUE, ...) {
   df <- as.data.frame(object)
   if (ncol(df) < 2) {
