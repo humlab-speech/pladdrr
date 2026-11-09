@@ -91,7 +91,7 @@ double calculate_stdev_simd(const double* values, integer n, double mean) {
     if (n < 2) return 0.0;
 
     // Compute mean if not provided
-    if (mean == 0.0) {
+    if (mean == 0.0) {  // G3.0: exact - division-by-zero guard; a tolerance would change the result
         mean = calculate_mean_simd(values, n);
     }
 
@@ -120,7 +120,7 @@ double calculate_stdev_simd(const double* values, integer n, double mean) {
 double calculate_stdev_simd(const double* values, integer n, double mean) {
     if (n < 2) return 0.0;
 
-    if (mean == 0.0) {
+    if (mean == 0.0) {  // G3.0: exact - division-by-zero guard; a tolerance would change the result
         mean = calculate_mean_simd(values, n);
     }
 

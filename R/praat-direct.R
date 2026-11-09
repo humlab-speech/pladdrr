@@ -977,6 +977,8 @@ pp_get_stdev_period_direct <- function(pointprocess,
 
 
 # Run one pitch-extraction pass at the given floor/ceiling.
+#' Run one pitch-extraction pass with `pitch_fn` and the given range and cost parameters.
+#' @noRd
 .run_pitch_pass <- function(pitch_fn, sound_ptr, pitch_floor, pitch_ceiling,
   time_step,
                             voicing_threshold, silence_threshold, octave_cost,
@@ -1108,6 +1110,11 @@ two_pass_adaptive_pitch <- function(sound,
 # Compute the adaptive pitch range for the second pass. Returns a list with
 # min_pitch/max_pitch/q1/q3 plus a fallback flag set when no voiced frames
 # were found (q1/q3 missing or non-positive).
+#' Pitch floor and ceiling derived from the quartiles of a rough first pass
+#' (`q1_factor`, `q3_factor`). Falls back to the initial floor and ceiling when a
+#' quartile is undefined or non-positive. Returns `min_pitch`, `max_pitch`, `q1`, `q3`
+#' and a `fallback` flag.
+#' @noRd
 .adaptive_pitch_range <- function(pitch_rough, q1_factor, q3_factor,
                                   initial_floor, initial_ceiling) {
   range <- pitch_get_adaptive_range(pitch_rough, q1_factor = q1_factor,

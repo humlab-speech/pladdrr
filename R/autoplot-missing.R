@@ -487,6 +487,9 @@ autolayer.Excitation <- function(object, color = "darkred", ...) {
 
 
 # Filter a ComplexSpectrogram data frame to time/freq ranges.
+#' Restrict a ComplexSpectrogram data frame to the given time and frequency ranges
+#' (NULL leaves a bound open).
+#' @noRd
 .filter_complex_spectrogram_df <- function(df, from_time, to_time, from_freq,
   to_freq) {
   if (!is.null(from_time)) df <- df[df$time >= from_time, ]
@@ -990,6 +993,10 @@ autolayer.MelSpectrogram <- function(object, ...) {
 
 
 # Resolve auto-detectable plot columns for a Matrix autoplot.
+#' Pick the x, y and fill columns of a data frame for plotting: the caller's choice,
+#' else the first conventional name present (x/time/col, y/frequency/row,
+#' value/power_db), else the first, second and third column.
+#' @noRd
 .resolve_plot_columns <- function(df, x_col, y_col, fill_col) {
   if (is.null(x_col)) {
     x_col <- if ("x" %in% names(df)) "x"
@@ -1467,6 +1474,9 @@ autolayer.LPC <- function(object, frame = 1L, color = "darkred", ...) {
 
 
 # Extract KlattGrid formant rows for a formant type over a time grid.
+#' Sample a KlattGrid formant track of type `ftype` at 100 times between `tmin` and `tmax`
+#' into plot rows for up to `nf` formants.
+#' @noRd
 .klattgrid_formant_rows <- function(obj, ftype, nf, tmin, tmax) {
   times <- seq(tmin, tmax, length.out = 100)
   rows <- list()
@@ -1563,6 +1573,8 @@ autolayer.KlattGrid <- function(object, from_time = NULL, to_time = NULL,
 # Build one formant row at (formant_number, time); skip if uncomputable.
 
 # Is t within [tmin, tmax]?
+#' Is `t` within [`tmin`, `tmax`]?
+#' @noRd
 .in_time_range <- function(t, tmin, tmax) t >= tmin && t <= tmax
 #' Append one (time, formant number, frequency) row to `rows`, skipping undefined values.
 #' @noRd

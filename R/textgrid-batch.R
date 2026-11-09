@@ -8,6 +8,8 @@
 # Resolve the interval text-comparison criterion to a type + target.
 
 # Wrap extracted Sound external pointers into Sound objects.
+#' Wrap a list of Sound pointers as Sound objects (NULL entries stay NULL).
+#' @noRd
 .wrap_sound_xptrs <- function(xptrs) {
   lapply(xptrs, function(xptr) {
     if (is.null(xptr)) return(NULL)
@@ -15,6 +17,9 @@
   })
 }
 
+#' Turn the `text_equals` / `text_contains` / `text_starts_with` arguments into a single
+#' criterion (type and target).
+#' @noRd
 .resolve_interval_criterion <- function(text_equals, text_contains,
   text_starts_with) {
   if (!is.null(text_equals)) list(type = "equals",

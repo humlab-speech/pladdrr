@@ -879,10 +879,14 @@ build_multiband_harmonicity <- function(
 
 
 # Do multiband names form a non-empty set of unique non-blank labels?
+#' Are the band names present, non-NA, non-empty and unique?
+#' @noRd
 .valid_multiband_names <- function(multiband) {
   !is.null(names(multiband)) && !anyNA(names(multiband)) &&
     !any(names(multiband) == "") && !anyDuplicated(names(multiband))
 }
+#' Validate a `multiband` argument: a named list of five Harmonicity objects with unique band names.
+#' @noRd
 .coerce_multiband_harmonicity <- function(multiband) {
   if (!is.list(multiband) || length(multiband) != 5L) {
     stop("multiband must be a named list of 5 Harmonicity objects")
@@ -904,6 +908,8 @@ build_multiband_harmonicity <- function(
 
 
 # Validate a (from_time, to_time) pair as single numeric values.
+#' Require `from_time` and `to_time` to be single numbers.
+#' @noRd
 .validate_time_pair <- function(from_time, to_time) {
   if (!.is_numeric_scalar(from_time) || !.is_numeric_scalar(to_time)) {
     stop("from_time and to_time must be single numeric values")
@@ -912,6 +918,8 @@ build_multiband_harmonicity <- function(
 }
 
 # Build the _mean/_sd result names for multi-band HNR.
+#' Result names for multiband statistics: `<band>_mean` and `<band>_sd` interleaved.
+#' @noRd
 .multiband_result_names <- function(band_names) {
   as.vector(rbind(paste0(band_names, "_mean"), paste0(band_names, "_sd")))
 }

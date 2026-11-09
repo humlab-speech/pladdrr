@@ -679,6 +679,8 @@ autolayer.TextGrid <- function(object, tier = 1, from_time = NULL,
 }
 
 # ggplot layers for an interval tier: filled rectangles plus centered labels
+#' ggplot2 layers (rectangles and labels) for the intervals of one TextGrid tier.
+#' @noRd
 .textgrid_interval_layer <- function(object, tier, from_time, to_time,
                                      color, alpha, ...) {
   tier_data <- .textgrid_interval_data(object, tier, from_time, to_time)
@@ -700,6 +702,8 @@ autolayer.TextGrid <- function(object, tier = 1, from_time = NULL,
 }
 
 # ggplot layers for a point tier: vertical lines plus labels
+#' ggplot2 layers (vertical lines and labels) for the points of one TextGrid tier.
+#' @noRd
 .textgrid_point_layer <- function(object, tier, from_time, to_time,
                                   color, ...) {
   tier_data <- .textgrid_point_data(object, tier, from_time, to_time)

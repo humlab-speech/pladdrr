@@ -107,6 +107,9 @@ check_audio_quality <- function(sound,
 
 
 # Detect quality issues from metrics; returns character vector of issues.
+#' List the quality problems found in the metrics `m` (clipping, very low level,
+#' underused dynamic range, low intensity range) as a character vector.
+#' @noRd
 .assess_quality_issues <- function(m) {
   issues <- character(0)
   if (m$is_clipped) issues <- c(issues, "CLIPPING DETECTED")
@@ -117,6 +120,8 @@ check_audio_quality <- function(sound,
 }
 
 # Summarize issue count into an overall status label.
+#' Overall verdict from the issue list: GOOD (none), POOR (clipping) or FAIR.
+#' @noRd
 .overall_quality_status <- function(issues, is_clipped) {
   if (length(issues) == 0) "GOOD"
   else if (is_clipped) "POOR (clipping)"
@@ -188,6 +193,10 @@ format_quality_report <- function(quality_metrics, detailed = TRUE) {
 
 
 # Intensity statistics via Praat Intensity object.
+#' Intensity metrics for the audio-quality report: build an Intensity (mean subtracted)
+#' and return its energy-averaged mean, parabolic-interpolated minimum and maximum, and
+#' their difference as the range.
+#' @noRd
 .analyze_intensity <- function(sound, intensity_floor, time_step) {
   intensity <- sound$to_intensity(
     minimum_pitch = intensity_floor, time_step = time_step, subtract_mean =
@@ -206,6 +215,9 @@ format_quality_report <- function(quality_metrics, detailed = TRUE) {
 
 
 # Amplitude + clipping analysis.
+#' Amplitude metrics for the audio-quality report: peak and RMS amplitude, and whether
+#' the peak exceeds `clipping_threshold`.
+#' @noRd
 .analyze_amplitude <- function(sound, clipping_threshold, sampling_frequency,
   duration) {
   max_amplitude <- max(abs(sound$get_minimum(from_time = 0, to_time = 0)),
@@ -224,6 +236,8 @@ format_quality_report <- function(quality_metrics, detailed = TRUE) {
 
 
 # Append the detailed intensity/recommendation section to a report.
+#' Append the intensity and amplitude sections of the detailed text report to `lines`.
+#' @noRd
 .append_detailed_report <- function(lines, m) {
   lines <- c(lines, "\nIntensity Metrics:",
     sprintf("  Mean: %.1f dB", m$mean_intensity_db),

@@ -41,6 +41,9 @@ NULL
 }
 
 # Resolve which tiers to plot: all, a numeric subset, or a named tier.
+#' Tier numbers to plot: all when `tier` is NULL, numbers as given, a name looked up among
+#' the tier names (error when absent).
+#' @noRd
 .resolve_tiers_to_plot <- function(textgrid, tier) {
   n_tiers <- textgrid$get_number_of_tiers()
   if (is.null(tier)) return(seq_len(n_tiers))
@@ -52,6 +55,8 @@ NULL
 }
 
 # Build a single tier's ggplot (interval rectangles or point segments).
+#' Plot of one TextGrid tier (interval rectangles or point segments) limited to the time range.
+#' @noRd
 .build_tier_plot <- function(textgrid, tier_idx, tier_color, from_time,
   to_time) {
   tier_name <- textgrid$get_tier_name(tier_idx)
@@ -101,6 +106,9 @@ NULL
 
 # Combine the main plot with tier plots (patchwork preferred, gridExtra
 #  fallback).
+#' Stack the tier plots under the main plot (heights 2:1:...) with patchwork, or gridExtra when
+#' patchwork is absent; error when neither is installed.
+#' @noRd
 .combine_tier_plots <- function(main, tier_plots) {
   if (requireNamespace("patchwork", quietly = TRUE)) {
     combined <- main
@@ -117,6 +125,9 @@ NULL
 }
 
 # Resolve from_time/to_time from a single object's data frame (lazy).
+#' Time range for a single-object plot: explicit bounds win, missing ones come from the object's
+#' time column.
+#' @noRd
 .resolve_single_time_range <- function(obj, from_time, to_time) {
   if (!is.null(from_time) && !is.null(to_time)) return(c(from_time, to_time))
   df <- obj$as_data_frame()
@@ -126,6 +137,9 @@ NULL
 }
 
 # Scale intensity values onto the pitch axis for a dual-axis plot.
+#' Linearly rescale intensity (dB) onto the pitch frequency range so both fit one axis.
+#' Returns `df` (with `scaled_intensity` added), `scale_factor` and `offset`.
+#' @noRd
 .scale_intensity_to_pitch <- function(pitch_df, intensity_df) {
   pitch_range <- range(pitch_df$frequency, na.rm = TRUE)
   intensity_range <- range(intensity_df$intensity_db, na.rm = TRUE)
@@ -641,6 +655,9 @@ plot_sound_pitch <- function(sound, pitch,
 
 
 # Build the pitch/intensity dual-axis combined plot.
+#' Pitch track with the rescaled intensity curve overlaid (secondary axis from `scale_factor`
+#' and `offset`).
+#' @noRd
 .build_pitch_intensity_plot <- function(pitch_df, intensity_df, pitch_color,
                                         intensity_color, scale_factor, offset,
                                             title) {
@@ -665,6 +682,9 @@ plot_sound_pitch <- function(sound, pitch,
 
 
 # Filter a pitch-track data frame to time/pitch ranges and voiced frames.
+#' Restrict a pitch data frame to the time range and to frequencies within the floor and
+#' ceiling; undefined and non-positive frequencies are dropped.
+#' @noRd
 .filter_pitch_track <- function(pitch_df, from_time, to_time, pitch_floor,
   pitch_ceiling) {
   if (!is.null(from_time)) pitch_df <- pitch_df[pitch_df$time >= from_time, ]
@@ -681,6 +701,8 @@ plot_sound_pitch <- function(sound, pitch,
 
 
 # Overlay formant tracks on a spectrogram plot.
+#' Add coloured formant tracks (one colour per formant label) to a plot.
+#' @noRd
 .overlay_formant_tracks <- function(p, formant_df, formant_colors) {
   p + ggplot2::geom_line(data = formant_df,
     ggplot2::aes(x = .data$time, y = .data$frequency,

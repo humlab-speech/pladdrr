@@ -19,6 +19,9 @@ NULL
 
 # Extract measurements for every interval tier, applying measure functions
 # to each extracted sound part. Returns a list of row lists.
+#' Measure every labelled interval of a TextGrid tier on `sound`, honouring `interval_filter`;
+#' one result row per interval.
+#' @noRd
 .extract_interval_measurements <- function(sound, textgrid, tier_idx,
   measures, interval_filter) {
   n_items <- textgrid$get_number_of_intervals(tier_idx)
@@ -49,6 +52,9 @@ NULL
 
 # Extract measurements at each point tier, applying measure functions to the
 # sound at the point time. Returns a list of row lists.
+#' Measure every labelled point of a TextGrid point tier on `sound`, honouring
+#' `interval_filter`; one result row per point.
+#' @noRd
 .extract_point_measurements <- function(sound, textgrid, tier_idx, measures,
   interval_filter) {
   n_items <- textgrid$get_number_of_points(tier_idx)
@@ -75,6 +81,9 @@ NULL
 }
 
 # Aggregate a measurements data frame by label (mean/sd of numeric columns).
+#' Summarise a measurement data frame per label: the count `n` and the mean and SD
+#' of every numeric measure column (identifier and time columns are skipped).
+#' @noRd
 .aggregate_measurements_by_label <- function(df) {
   measure_cols <- setdiff(names(df), c("tier", "interval", "point", "label",
                                         "tmin", "tmax", "time", "duration"))
@@ -124,6 +133,9 @@ NULL
 }
 
 # Pair sound and TextGrid files by shared basename.
+#' Pair sound and TextGrid files that share a basename (extension removed); unmatched
+#' files are kept with an NA partner.
+#' @noRd
 .pair_files_by_basename <- function(sound_files, textgrid_files) {
   sound_base <- tools::file_path_sans_ext(basename(sound_files))
   tg_base <- tools::file_path_sans_ext(basename(textgrid_files))
@@ -145,6 +157,9 @@ NULL
 }
 
 # Create the requested analysis objects (pitch/formants/intensity).
+#' Create only the pitch, formant and intensity objects named in `measurements`,
+#' using the supplied parameter lists; the others stay NULL.
+#' @noRd
 .create_analysis_objects <- function(sound, measurements, pitch_params,
   formant_params, intensity_params) {
   pitch_obj <- formant_obj <- intensity_obj <- NULL
@@ -727,6 +742,9 @@ aggregate_measurements <- function(measurements,
 
 
 # Apply pitch/formant/intensity batch measurements to a results frame.
+#' Add f0 / formant / intensity values at the measurement times to `results` from the
+#' analysis objects that exist.
+#' @noRd
 .apply_batch_measurements <- function(results, meas_times, pitch_obj,
   formant_obj,
                                      intensity_obj, formant_params) {
@@ -755,6 +773,10 @@ aggregate_measurements <- function(measurements,
   .process_batch_file(f, func, ...)
 }
 
+#' Run `func` over `files`: in parallel (forked workers, or a PSOCK cluster on Windows;
+#' `ncores` defaults to `.default_n_cores()`) or serially, with a progress bar in the
+#' serial case. Returns the list of per-file results.
+#' @noRd
 .run_batch_process <- function(files, func, parallel, ncores, progress, ...) {
   if (parallel) {
     if (
@@ -787,6 +809,9 @@ aggregate_measurements <- function(measurements,
 
 
 # Fetch intervals and filter to non-empty labels (NULL if none).
+#' Labelled (non-empty) intervals of a TextGrid tier as a data frame, or NULL when
+#' every interval is empty.
+#' @noRd
 .get_filtered_intervals <- function(textgrid, tier) {
   intervals <- textgrid_interval_statistics_batch(textgrid$get_xptr(),
     as.integer(tier))
@@ -796,6 +821,8 @@ aggregate_measurements <- function(measurements,
 }
 
 # Measurement times for each interval per the requested time_point.
+#' Time inside each interval at which to measure: midpoint, start, end or mean.
+#' @noRd
 .measurement_times <- function(intervals, time_point) {
   switch(time_point,
     midpoint = (intervals$start + intervals$end) / 2,

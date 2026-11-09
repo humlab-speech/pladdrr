@@ -664,6 +664,9 @@ textgrid_merge <- function(textgrids, equalize_domains = FALSE) {
 
 
 # Validate sound_load_window arguments.
+#' Validate the arguments of the windowed sound loader: existing file path, numeric
+#' start/end, resampling rate and the `preserve_times` flag.
+#' @noRd
 .validate_sound_load_window <- function(path, start, end, resample_to,
   preserve_times) {
   if (!.is_string_scalar(path)) stop("path must be a single character string")

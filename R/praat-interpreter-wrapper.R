@@ -64,6 +64,9 @@
   )
 }
 
+#' External pointer behind a pladdrr object: its `.xptr` field, else the result of its
+#' `get_xptr()` method.
+#' @noRd
 .praat_object_xptr <- function(object) {
   xptr <- .subset2(object, ".xptr")
   if (!is.null(xptr)) return(xptr)

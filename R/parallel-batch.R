@@ -151,6 +151,9 @@ analyze_files_parallel <- function(files, analysis_func, n_cores = NULL,
 # Distribute batch analysis across worker processes. Called with n_cores >= 2;
 # caps each worker's C++ threads so N workers x cores threads don't
 # oversubscribe the machine (see .pladdrr_worker_thread_budget).
+#' Run `analysis_func` over `files` on `n_cores` workers with a per-worker thread budget,
+#' announcing the core and thread counts with a message.
+#' @noRd
 .run_files_parallel <- function(files, analysis_func, n_cores,
                                 threads_per_worker, ...) {
   tpw <- .pladdrr_worker_thread_budget(n_cores, threads_per_worker)
@@ -439,6 +442,8 @@ benchmark_parallel <- function(files, analysis_func,
 
 
 # Serialize a Sound to worker-safe data (raw samples + metadata).
+#' Reduce a Sound to what a worker needs to rebuild it: sample matrix, sampling rate, start time.
+#' @noRd
 .sound_to_worker_data <- function(s) {
   # as_matrix() is one allocation, already channels x samples.
   list(values = s$as_matrix(), sr = s$get_sampling_frequency(),
@@ -446,6 +451,8 @@ benchmark_parallel <- function(files, analysis_func,
 }
 
 # Rebuild a Sound from worker data on a PSOCK worker and analyse it.
+#' Parallel-worker body: cap the worker's threads, rebuild the Sound from `d`, run `analysis_func`.
+#' @noRd
 .analyze_one_sound_data <- function(d, tpw, analysis_func, ...) {
   pladdrr_threads(tpw)
   analysis_func(sound_from_values(d$values, d$sr, d$start), ...)

@@ -96,6 +96,9 @@ NULL
 # Helpers
 # Praat's own enum, fon/Intensity.h:64-67 (Intensity_averaging_MEDIAN/ENERGY/
 # SONES/DB); note that this is *not* the Ltas averaging enum, which has no MEDIAN.
+#' Map an Intensity averaging method (median, energy, sones, db) to Praat's integer code;
+#' anything else is a `pladdrr_input_error`.
+#' @noRd
 .intensity_avg_code <- function(method) {
   switch(tolower(method),
     "median" = 0L, "energy" = 1L, "sones" = 2L, "db" = 3L,

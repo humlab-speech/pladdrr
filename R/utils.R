@@ -105,6 +105,8 @@ validate_positive_int <- function(x, name = deparse(substitute(x))) {
 
 
 # Validate a legacy praat_sound-shaped object (deprecated S3 path).
+#' Does `x` have the structure of a legacy `praat_sound` list (class and required fields)?
+#' @noRd
 .is_valid_praat_sound_legacy <- function(x) {
   if (!inherits(x, "praat_sound")) return(FALSE)
   if (!is.list(x)) return(FALSE)

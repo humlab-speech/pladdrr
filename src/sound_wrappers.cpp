@@ -527,8 +527,8 @@ double sound_get_rms(
     // was removed entirely since it had no callers left.
     structSound* sound = get_ptr(xptr, "Sound");
     
-    if (from_time == 0.0) from_time = sound->xmin;
-    if (to_time == 0.0) to_time = sound->xmax;
+    if (from_time == 0.0) from_time = sound->xmin;  // G3.0: exact - 0 means "default / whole range" (user-typed sentinel)
+    if (to_time == 0.0) to_time = sound->xmax;  // G3.0: exact - 0 means "default / whole range" (user-typed sentinel)
     
     try {
         double rms = 0.0;
@@ -557,8 +557,8 @@ double sound_get_energy(
     
     structSound* sound = get_ptr(xptr, "Sound");
     
-    if (from_time == 0.0) from_time = sound->xmin;
-    if (to_time == 0.0) to_time = sound->xmax;
+    if (from_time == 0.0) from_time = sound->xmin;  // G3.0: exact - 0 means "default / whole range" (user-typed sentinel)
+    if (to_time == 0.0) to_time = sound->xmax;  // G3.0: exact - 0 means "default / whole range" (user-typed sentinel)
     
     try {
         return Sound_getEnergy(sound, from_time, to_time);
@@ -581,8 +581,8 @@ double sound_get_power(
     // SIMD reduction is not bit-exact with Praat's Sound_getPower.
     structSound* sound = get_ptr(xptr, "Sound");
 
-    if (from_time == 0.0) from_time = sound->xmin;
-    if (to_time == 0.0) to_time = sound->xmax;
+    if (from_time == 0.0) from_time = sound->xmin;  // G3.0: exact - 0 means "default / whole range" (user-typed sentinel)
+    if (to_time == 0.0) to_time = sound->xmax;  // G3.0: exact - 0 means "default / whole range" (user-typed sentinel)
 
     try {
         return Sound_getPower(sound, from_time, to_time);
@@ -1480,7 +1480,7 @@ XPtr<structSound> sound_mix(
 
         // balance == -1.0 makes the (1 + balance) normalizer zero, producing
         // Inf/NaN throughout the mix formula below.
-        if (balance == -1.0) {
+        if (balance == -1.0) {  // G3.0: exact - boundary value typed by the caller, not a computed result
             Melder_throw(U"balance cannot be -1.0 (division by zero in (1 + balance) normalizer)");
         }
 

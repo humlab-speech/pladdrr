@@ -116,6 +116,8 @@ lockEnvironment(.matrix_methods, bindings = TRUE)
 
 
 # Check whether all full-domain Matrix construction parameters are present.
+#' Were all ten grid parameters (x and y limits, counts, steps and first centres) supplied?
+#' @noRd
 .matrix_has_full_params <- function(xmin, xmax, nx, dx, x1, ymin, ymax, ny,
   dy, y1) {
   !any(vapply(list(xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1),

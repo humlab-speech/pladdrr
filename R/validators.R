@@ -73,6 +73,9 @@
 # Praat has no missing-value representation for sample data: a NaN or Inf sample
 # silently propagates through every analysis (and Inf can overflow filters).
 # Reject non-finite input at the boundary and say how many samples are bad.
+#' Require sample values to be numeric and finite: NA, NaN and Inf are a
+#' `pladdrr_input_error` that reports how many samples are bad (Praat has no missing-sample type).
+#' @noRd
 .check_finite_samples <- function(values, routine) {
   if (!is.numeric(values)) {
     .stop_input(routine, "values",

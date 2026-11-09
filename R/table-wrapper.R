@@ -41,6 +41,8 @@ NULL
 # it does not return NA/NaN, it returns a categorical level index (cells are
 # enumerated alphabetically, e.g. "bird"/"cat"/"dog" -> 1/2/3), which would
 # silently corrupt string columns into bogus integers.
+#' Read a Praat Table through its pointer into a data frame.
+#' @noRd
 .table_to_data_frame <- function(xptr) {
   n_rows <- .table_get_number_of_rows(xptr)
   n_cols <- .table_get_number_of_columns(xptr)

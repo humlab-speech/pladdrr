@@ -14,6 +14,8 @@
 #' @srrstats {G1.1} README section 'Other similar packages' states that pladdrr is, to the authors' knowledge, the first R package to compile Praat's algorithms in-process, that it reproduces rather than improves Praat's methods, and lists Praat scripting, parselmouth, speakr, rPraat, PraatR and wrassp.
 #' @srrstats {G1.2} Life-cycle statement in `.github/CONTRIBUTING.md`, section 'Life cycle'.
 #' @srrstats {G1.3} `vignettes/terminology.Rmd` defines each measure the package returns (F0, HNR, intensity, formants, jitter, shimmer, CPP/CPPS, AVQI) and the missing/undefined-value conventions. pladdrr performs no statistical inference, so there are no hypothesis-test or interval terms to define.
+#' @srrstats {G1.4a} All 149 hand-written internal functions of the form `.name <- function` carry roxygen blocks with `@noRd` (listed by `Rscript dev/internal-docs.R`); generated `R/RcppExports.R` is exempt, and the R6 method tables are documented through their class pages.
+#' @srrstats {G3.0} Exact floating-point comparisons are limited to (a) sentinel and boundary values typed by the caller (`0` = default / whole range, `-1` balance, `1` multiplier) and (b) division-by-zero guards, where a tolerance would change the result. Each site in the package's own C++ is annotated `// G3.0: exact - ...` (`rg "G3.0: exact" src`), R-level sentinels use `identical(x, 0)`, and the vendored Praat sources, which compare exactly in many places, are left untouched on purpose (`inst/agents/PRAAT_MODIFICATIONS.md`).
 #' @srrstats {G1.4} All exported functions and classes are documented with roxygen2 (`Config/roxygen2/version: 8.1.0`, 328 Rd files).
 #' @srrstats {G2.3} Character parameters that select an option are matched with `match.arg()` or an explicit `switch()` (see `R/validators.R`, `.pitch_unit_code`, `.window_shape_code`, `.ltas_unit_code`).
 #' @srrstats {G2.3a} `match.arg()` is used 87 times in `R/`; option lookups that map to Praat integer codes use `switch()` with an explicit error or documented default.
@@ -60,7 +62,6 @@
 #' @srrstats {TS4.0} Return values are unique, class-defined objects (`Pitch`, `Formant`, `Intensity`, `Harmonicity`, ...), each with `as.data.frame()` methods.
 #' @srrstats {TS4.0b} As TS4.0: results are in dedicated classes, not in the input's class.
 #' @srrstats {TS5.0} `plot()` and `autoplot()` methods exist for the time-sampled classes (`R/plotting-methods.R`, `R/autoplot-methods.R`).
-#' @srrstatsTODO {G1.4a} PARTIAL. The 51 most-used hand-written internals (validators, unit codes, batch core) carry roxygen `@noRd` blocks; 94 of 149 plain internals and the R6 method tables still do not. `Rscript dev/internal-docs.R` lists the remainder; generated `R/RcppExports.R` is exempt.
 #' @srrstatsTODO {G1.5} PARTIAL. `inst/benchmarks/` holds scripts for the performance claims in the vignettes; no associated publication yet, so the scripts are not tied to one.
 #' @srrstatsTODO {G1.6} OPEN. `inst/benchmarks/04_parselmouth_comparison.R` compares with Python's parselmouth; no R-package comparison (speakr, rPraat) exists.
 #' @srrstatsTODO {G2.0} PARTIAL. Scalar parameters are checked by the validators in `R/validators.R` (`.is_numeric_scalar`, `.check_pitch_range`, `.check_positive_count`, ...) and raise `pladdrr_input_error`; coverage across all exported functions has not been audited (see `dev/autotest/`).
@@ -70,7 +71,6 @@
 #' @srrstatsTODO {G2.2} PARTIAL. Checked for the validated parameters; `autotest` results (`dev/autotest/`) show where multivariate input is still accepted.
 #' @srrstatsTODO {G2.3b} PARTIAL. Unit, window and format names are lower-cased before lookup (`tolower()` in `.pitch_unit_code`, `.window_shape_code`, `.ltas_unit_code`, `sound$save(format=)`), but this is not stated for every character parameter.
 #' @srrstatsTODO {G2.15} OPEN. Audit of `mean()`/`sd()`/`cor()` calls on possibly-NaN data in `R/` (outside the Praat-side aggregates) has not been done.
-#' @srrstatsTODO {G3.0} PARTIAL. R-level exact comparisons were replaced (`identical(x, 0)` for the 0-means-default sentinels in `R/formant.R`, `R/formant-wrapper.R`). About 26 comparisons against float literals remain in the package's own C++ wrappers (`src/*.cpp`) and have not been audited; the vendored Praat sources are left untouched on purpose (see `inst/agents/PRAAT_MODIFICATIONS.md`).
 #' @srrstatsTODO {G5.1} PARTIAL. Test audio and TextGrids are shipped in `inst/extdata/` and reachable with `system.file()`; the generator helpers (`generate_sine_wave()`, `generate_noise()`) are exported, but no dedicated test-data documentation exists.
 #' @srrstatsTODO {G5.2} PARTIAL. 610 `expect_error`/`expect_warning` calls; not every message is demonstrated (see G5.2b).
 #' @srrstatsTODO {G5.2b} PARTIAL. `dev/message-baseline.txt` lists the 230 literal messages with no matching fragment in the tests (heuristic, `dev/message-coverage.R`); a ratchet test stops the list growing.

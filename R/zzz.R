@@ -25,6 +25,9 @@ get_module <- function(name) {
 }
 
 # Preload all modules on package load
+#' Package load hook: initialise the Praat library (fatal on failure), then sync the SIMD
+#' switch from `options(pladdrr.use_simd)`. Modules are loaded lazily on first use.
+#' @noRd
 .onLoad <- function(libname, pkgname) {
   # Initialize Praat library (CRITICAL: must come first)
   # This initializes memory allocator, encoding, and class registry

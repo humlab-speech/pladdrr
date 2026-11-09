@@ -722,6 +722,9 @@ plot.PointProcess <- function(x, from_time = NULL, to_time = NULL,
 
 
 # Convert a Matrix to long-format plot data, filtered to the requested ranges.
+#' Long data frame (x, y, value) of a Matrix object's cell centres, cropped to the given
+#' x and y ranges.
+#' @noRd
 .matrix_plot_data <- function(x, from_x, to_x, from_y, to_y) {
   mat <- x$as_matrix()
   nx <- x$get_number_of_columns()
@@ -803,6 +806,8 @@ plot.Matrix <- function(x, from_x = NULL, to_x = NULL,
 # Resolve data-frame column names used by plot.Matrix, tolerating the
 # different conventions of Matrix subclasses (time/x, frequency/y,
 # value/amplitude).
+#' Choose the x, y and fill column names of a Matrix plot data frame, with fallbacks.
+#' @noRd
 .matrix_plot_cols <- function(df) {
   nm <- names(df)
   pick <- function(candidates, fallback) {
@@ -817,6 +822,8 @@ plot.Matrix <- function(x, from_x = NULL, to_x = NULL,
 }
 
 # Map the color_scale argument to a ggplot2 fill scale.
+#' Apply the named fill scale (viridis, magma, plasma, inferno, ...) to a Matrix plot.
+#' @noRd
 .matrix_plot_scale <- function(p, color_scale) {
   switch(color_scale,
     "viridis" = p + ggplot2::scale_fill_viridis_c(),
@@ -833,6 +840,8 @@ plot.Matrix <- function(x, from_x = NULL, to_x = NULL,
 
 
 # Mark the max-power quefrency peak on a cepstrum plot.
+#' Mark the highest `power_db` point on the plot when `mark_peak`.
+#' @noRd
 .mark_df_peak <- function(p, df, mark_peak) {
   if (!mark_peak || nrow(df) == 0) return(p)
   peak_idx <- which.max(df$power_db)
@@ -912,6 +921,9 @@ plot.PowerCepstrum <- function(x, from_quefrency = NULL,
 
 # Prepare PowerCepstrum plot data: convert to dB and apply quefrency range.
 # Returns NULL when the object has no data.
+#' PowerCepstrum as a data frame with a `power_db` column, cropped to the quefrency range;
+#' NULL when empty.
+#' @noRd
 .powercepstrum_plot_data <- function(x, from_quefrency, to_quefrency) {
   df <- x$as_data_frame()
   if (nrow(df) == 0) return(NULL)
@@ -927,6 +939,9 @@ plot.PowerCepstrum <- function(x, from_quefrency = NULL,
 # ============================================================================
 
 # Resolve which tier indices to plot (character names or numeric).
+#' Tier indices to plot: all when `tier` is NULL, names matched against `tier_names`
+#' (unmatched names are dropped), otherwise the numbers coerced to integer.
+#' @noRd
 .resolve_textgrid_tiers <- function(x, tier, tier_names) {
   if (is.null(tier)) return(seq_len(x$get_number_of_tiers()))
   if (is.character(tier)) {
@@ -938,6 +953,9 @@ plot.PowerCepstrum <- function(x, from_quefrency = NULL,
 }
 
 # Collect interval data across tiers into a list of data frames.
+#' Interval data frames for each requested tier, tagged with the tier name and its row
+#' position `tier_y`; tiers that cannot be read or are empty are skipped.
+#' @noRd
 .collect_tier_intervals <- function(x, tier_indices, tier_names) {
   all_data <- list()
   for (ti in tier_indices) {
@@ -1022,6 +1040,8 @@ plot.TextGrid <- function(x, tier = NULL, from_time = NULL, to_time = NULL,
 
 
 # Build the TextGrid tier plot from long-format interval data.
+#' Plot of interval tiers as labelled rectangles, one row per tier.
+#' @noRd
 .build_textgrid_plot <- function(df, tier_indices, tier_names) {
   ggplot2::ggplot(df) +
     ggplot2::geom_rect(
@@ -1039,6 +1059,8 @@ plot.TextGrid <- function(x, tier = NULL, from_time = NULL, to_time = NULL,
 
 
 # Spectrogram long-format dB data filtered to time/freq ranges.
+#' Spectrogram long-format data with a `power_db` column, cropped to the time and frequency ranges.
+#' @noRd
 .spectrogram_plot_data <- function(x, from_time, to_time, from_freq, to_freq) {
   df <- x$as_data_frame()
   df$power_db <- 10 * log10(pmax(df$power, 1e-20))
@@ -1051,6 +1073,8 @@ plot.TextGrid <- function(x, tier = NULL, from_time = NULL, to_time = NULL,
 
 
 # Point times from a PointProcess object.
+#' Times of all points of a PointProcess as a numeric vector.
+#' @noRd
 .point_process_times <- function(x) {
   n_points <- x$get_number_of_points()
   vapply(seq_len(n_points), x$get_time_from_index, numeric(1))
@@ -1058,6 +1082,8 @@ plot.TextGrid <- function(x, tier = NULL, from_time = NULL, to_time = NULL,
 
 
 # Build a Formant track plot with color scale + optional garnish.
+#' Formant track line plot coloured by formant label; title, labels and theme only when `garnish`.
+#' @noRd
 .build_formant_plot <- function(df, colors, title, garnish) {
   p <- ggplot2::ggplot(df,
             ggplot2::aes(x = .data$time, y = .data$frequency,

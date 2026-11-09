@@ -17,6 +17,10 @@ NULL
 # Per-segment zero-crossing-rate keep test (shared by extract_voiced_segments
 # and sound_get_zcr). Long segments (>= zcr_window) use the AVQI 0.0025-0.0275s
 # analysis window; short segments use the whole segment.
+#' Zero-crossing-rate test for one candidate segment: TRUE (keep) when the rate of
+#' zero crossings, measured from 2.5 ms into the segment (up to 27.5 ms for segments
+#' of at least `zcr_window`), is below `zcr_threshold`; fewer than two crossings keep it.
+#' @noRd
 .segment_zcr_keep <- function(all_zeros, seg_start, seg_end, zcr_threshold,
   zcr_window) {
   segment_zeros <- all_zeros[all_zeros >= seg_start & all_zeros < seg_end]
@@ -34,6 +38,8 @@ NULL
   (length(zc) / afstand) < zcr_threshold
 }
 
+#' Voiced/sounding intervals of a Sound from Praat's silence detection TextGrid.
+#' @noRd
 .detect_voiced_intervals <- function(sound, minimum_pitch, time_step,
   silence_threshold,
                                      min_silent_interval, min_sounding_interval)
@@ -51,6 +57,8 @@ NULL
 }
 
 # Filter voiced segments by zero-crossing rate (all-rejected handled by caller).
+#' Keep only the intervals that pass `.segment_zcr_keep()`; returns `list(xmin, xmax)`.
+#' @noRd
 .apply_zcr_filter <- function(xmin, xmax, sound, zcr_threshold, zcr_window) {
   pp_zeros <- sound$to_point_process_zeros(
     channel = 1L, include_raisers = TRUE, include_fallers = TRUE)
@@ -63,6 +71,9 @@ NULL
 
 # Extract and concatenate voiced segments into a single Sound, optionally
 # returning the source TextGrid.
+#' Extract the voiced intervals from a Sound (rectangular windows, original times not kept);
+#' optionally also return the VAD TextGrid.
+#' @noRd
 .extract_voiced_sound <- function(sound, xmin, xmax, vad_grid,
   return_textgrid) {
   voiced_sounds <- sound_extract_parts(
@@ -580,6 +591,9 @@ sound_get_zcr <- function(sound,
 
 
 # ZCR for one frame (AVQI 0.0025-0.0275s window or full frame).
+#' Zero-crossing rate of one frame; in AVQI-compatible mode with windows of 0.03 s or longer only
+#' crossings between `avqi_start_offset` and `avqi_end_offset` into the frame are used.
+#' @noRd
 .frame_zcr <- function(frame_zeros, frame_start, window_duration,
                        avqi_compatible, avqi_start_offset, avqi_end_offset) {
   if (avqi_compatible && window_duration >= 0.03) {
@@ -602,6 +616,9 @@ sound_get_zcr <- function(sound,
 
 
 # Test whether an interval label matches the requested condition.
+#' Does an interval's text meet the condition (equals, contains, does not contain,
+#' starts with, ends with) for `text`? Unknown conditions never match.
+#' @noRd
 .interval_condition_matches <- function(condition, interval_text, text) {
   switch(condition,
     "equals" = interval_text == text,
@@ -615,6 +632,10 @@ sound_get_zcr <- function(sound,
 
 
 # Compute per-frame ZCR time series from zero-crossing times.
+#' Zero-crossing rate for each of `n_frames` frames of `window_duration` seconds every
+#' `hop_duration` seconds from `start_time`, counting crossings with `findInterval()` on the sorted
+#' crossing times.
+#' @noRd
 .compute_zcr_frames <- function(zero_times, start_time, n_frames,
   window_duration,
                                 hop_duration, avqi_compatible,

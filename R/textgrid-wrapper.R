@@ -134,6 +134,8 @@ NULL
 }
 
 # Build an interval-tier data frame (start/end/label) filtered to time range.
+#' Interval-tier data frame (start, end, label) of a TextGrid tier, cropped to the time range.
+#' @noRd
 .textgrid_interval_data <- function(object, tier, from_time = NULL,
   to_time = NULL) {
   n <- object$get_number_of_intervals(tier)
@@ -152,6 +154,8 @@ NULL
 }
 
 # Build a point-tier data frame (time/label) filtered to time range.
+#' Point-tier data frame (time, label) of a TextGrid tier, cropped to the time range.
+#' @noRd
 .textgrid_point_data <- function(object, tier, from_time = NULL,
   to_time = NULL) {
   n <- object$get_number_of_points(tier)
