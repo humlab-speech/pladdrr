@@ -170,7 +170,7 @@ to_pitch_direct <- function(sound, time_step = 0, pitch_floor = 75,
   } else if (inherits(sound, "externalptr")) {
     sound
   } else {
-    stop("sound must be a Sound object or external pointer")
+    stop("to_pitch_direct(): sound must be a Sound object or external pointer")
   }
 
   sound_to_pitch_direct(sound_ptr, time_step, pitch_floor, pitch_ceiling)
@@ -231,7 +231,7 @@ to_pitch_ac_direct <- function(sound,
   } else if (inherits(sound, "externalptr")) {
     sound
   } else {
-    stop("sound must be a Sound object or external pointer")
+    stop("to_pitch_ac_direct(): sound must be a Sound object or external pointer")
   }
 
   # Apply aliases (Praat-compatible names take precedence if provided)
@@ -298,7 +298,7 @@ to_pitch_cc_direct <- function(sound,
   } else if (inherits(sound, "externalptr")) {
     sound
   } else {
-    stop("sound must be a Sound object or external pointer")
+    stop("to_pitch_cc_direct(): sound must be a Sound object or external pointer")
   }
 
   # Apply aliases (Praat-compatible names take precedence if provided)
@@ -348,7 +348,7 @@ to_pitch_shs_direct <- function(sound,
   } else if (inherits(sound, "externalptr")) {
     sound
   } else {
-    stop("sound must be a Sound object or external pointer")
+    stop("to_pitch_shs_direct(): sound must be a Sound object or external pointer")
   }
 
   .sound_to_pitch_shs(sound_ptr, time_step, pitch_floor, max_frequency,
@@ -397,7 +397,7 @@ to_pitch_spinet_direct <- function(sound,
   } else if (inherits(sound, "externalptr")) {
     sound
   } else {
-    stop("sound must be a Sound object or external pointer")
+    stop("to_pitch_spinet_direct(): sound must be a Sound object or external pointer")
   }
 
   .sound_to_pitch_spinet(sound_ptr, time_step, window_duration,
@@ -442,7 +442,7 @@ to_formant_direct <- function(sound, time_step = 0, max_formants = 5,
   } else if (inherits(sound, "externalptr")) {
     sound
   } else {
-    stop("sound must be a Sound object or external pointer")
+    stop("to_formant_direct(): sound must be a Sound object or external pointer")
   }
 
   # Apply aliases (Praat-compatible names take precedence if provided)
@@ -477,7 +477,7 @@ to_intensity_direct <- function(sound, minimum_pitch = 100, time_step = 0,
   } else if (inherits(sound, "externalptr")) {
     sound
   } else {
-    stop("sound must be a Sound object or external pointer")
+    stop("to_intensity_direct(): sound must be a Sound object or external pointer")
   }
 
   sound_to_intensity_direct(sound_ptr, minimum_pitch, time_step, subtract_mean)
@@ -509,7 +509,7 @@ to_harmonicity_direct <- function(sound, time_step = 0.01, minimum_pitch = 75,
   } else if (inherits(sound, "externalptr")) {
     sound
   } else {
-    stop("sound must be a Sound object or external pointer")
+    stop("to_harmonicity_direct(): sound must be a Sound object or external pointer")
   }
 
   sound_to_harmonicity_direct(sound_ptr, time_step, minimum_pitch,

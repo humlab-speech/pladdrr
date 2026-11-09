@@ -205,7 +205,7 @@ process_sounds_parallel <- function(sounds, analysis_func, n_cores = NULL,
   force(analysis_func)
 
   if (!requireNamespace("parallel", quietly = TRUE)) {
-    stop("parallel package required")
+    stop("process_sounds_parallel(): parallel package required")
   }
 
   if (is.null(n_cores)) {
@@ -393,7 +393,7 @@ extract_intensity_parallel <- function(files, n_cores = NULL,
 benchmark_parallel <- function(files, analysis_func,
                                 core_counts = c(1, 2, 4)) {
   if (!requireNamespace("parallel", quietly = TRUE)) {
-    stop("parallel package required")
+    stop("benchmark_parallel(): parallel package required")
   }
   
   results <- data.frame(

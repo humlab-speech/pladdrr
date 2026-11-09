@@ -249,7 +249,7 @@ NULL
                                                       extract_sounds = FALSE) {
   tier_num <- .textgrid_resolve_tier(.self$.cpp, tier)
   if (extract_sounds && is.null(sound)) {
-    stop("sound argument required when extract_sounds = TRUE")
+    stop("textgrid$extract_intervals_batch(): sound argument required when extract_sounds = TRUE")
   }
   result <- textgrid_extract_intervals_batch(
     textgrid_xptr = .self$.xptr,
@@ -270,7 +270,7 @@ NULL
                                                        text = "",
                                                            preserve_times =
                                                            FALSE) {
-  if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
+  if (!inherits(sound, "Sound")) stop("textgrid$extract_intervals_where(): sound must be a Sound object")
 
   criterion_map <- c(
     "is equal to" = 1L, "is not equal to" = 2L, "contains" = 3L,
@@ -473,7 +473,7 @@ TextGrid <- function(path = NULL, .xptr = NULL) {
     }
     ptr <- .textgrid_read_from_file(path)
   } else {
-    stop("Must provide either path or .xptr")
+    stop("TextGrid(): Must provide either path or .xptr")
   }
   tg_mod <- get_module("textgrid_module")
   cpp_tg <- with_pladdrr_errors(tg_mod$RTextGrid$new(ptr))

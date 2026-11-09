@@ -124,7 +124,7 @@ DurationTier <- function(tmin = NULL, tmax = NULL, .xptr = NULL) {
   } else if (!is.null(tmin) && !is.null(tmax)) {
     ptr <- .durationtier_create(as.numeric(tmin), as.numeric(tmax))
   } else {
-    stop("Must provide either (tmin, tmax) or .xptr")
+    stop("DurationTier(): Must provide either (tmin, tmax) or .xptr")
   }
 
   tier_mod <- get_module("durationtier_module")

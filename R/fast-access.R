@@ -62,7 +62,7 @@ get_sound_values_fast <- function(sound, channel = 1) {
 #' @export
 get_sound_times_fast <- function(sound) {
   if (!inherits(sound, "Sound")) {
-    stop("Input must be a Sound object")
+    stop("get_sound_times_fast(): Input must be a Sound object")
   }
 
   sound_times_fast(sound$get_xptr())
@@ -87,7 +87,7 @@ get_sound_times_fast <- function(sound) {
 #' @export
 sound_as_matrix_fast <- function(sound, zerocopy = FALSE) {
   if (!inherits(sound, "Sound")) {
-    stop("Input must be a Sound object")
+    stop("sound_as_matrix_fast(): Input must be a Sound object")
   }
 
   sound_as_matrix_fast_impl(sound$get_xptr(), zerocopy = zerocopy)

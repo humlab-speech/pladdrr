@@ -73,7 +73,7 @@
   warp_textgrid = function(cpp_obj, .xptr) {
     function(textgrid, precision = 0.0) {
       if (!inherits(textgrid, "TextGrid")) {
-        stop("textgrid must be a TextGrid object")
+        stop("dtw-wrapper(): textgrid must be a TextGrid object")
       }
       warped_ptr <- cpp_obj$warp_textgrid_ptr(textgrid$.xptr,
         as.numeric(precision))
@@ -254,7 +254,7 @@ sounds_to_dtw <- function(reference, candidate,
                           time_step = 0.005,
                           band = 0.0,
                           slope = 3) {
-  if (!inherits(reference, "Sound")) stop("reference must be a Sound object")
+  if (!inherits(reference, "Sound")) stop("sounds_to_dtw(): reference must be a Sound object")
   if (!inherits(candidate, "Sound")) stop("candidate must be a Sound object")
 
   dtw_mod <- get_module("dtw_module")

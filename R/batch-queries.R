@@ -39,11 +39,11 @@
 get_formants_at_times <- function(formant, times, formant_numbers = 1:4,
   unit = "hertz") {
   if (!inherits(formant, "Formant")) {
-    stop("formant must be a Formant object")
+    stop("get_formants_at_times(): formant must be a Formant object")
   }
   
   if (!is.numeric(times) || length(times) == 0) {
-    stop("times must be a non-empty numeric vector")
+    stop("get_formants_at_times(): times must be a non-empty numeric vector")
   }
   
   if (!is.numeric(formant_numbers) || length(formant_numbers) == 0) {
@@ -93,11 +93,11 @@ get_formants_at_times <- function(formant, times, formant_numbers = 1:4,
 get_formant_bandwidths_at_times <- function(formant, times,
   formant_numbers = 1:4, unit = "hertz") {
   if (!inherits(formant, "Formant")) {
-    stop("formant must be a Formant object")
+    stop("get_formant_bandwidths_at_times(): formant must be a Formant object")
   }
   
   if (!is.numeric(times) || length(times) == 0) {
-    stop("times must be a non-empty numeric vector")
+    stop("get_formant_bandwidths_at_times(): times must be a non-empty numeric vector")
   }
   
   unit_code <- switch(tolower(unit),
@@ -145,11 +145,11 @@ get_formant_bandwidths_at_times <- function(formant, times,
 get_pitch_at_times <- function(pitch, times, unit = "hertz",
   interpolate = TRUE) {
   if (!inherits(pitch, "Pitch")) {
-    stop("pitch must be a Pitch object")
+    stop("get_pitch_at_times(): pitch must be a Pitch object")
   }
   
   if (!is.numeric(times) || length(times) == 0) {
-    stop("times must be a non-empty numeric vector")
+    stop("get_pitch_at_times(): times must be a non-empty numeric vector")
   }
   
   
@@ -185,7 +185,7 @@ get_pitch_at_times <- function(pitch, times, unit = "hertz",
 get_pitch_strengths_at_times <- function(pitch, times, unit = "hertz",
   interpolate = TRUE) {
   if (!inherits(pitch, "Pitch")) {
-    stop("pitch must be a Pitch object")
+    stop("get_pitch_strengths_at_times(): pitch must be a Pitch object")
   }
 
   unit_code <- unit_to_code(unit, "pitch")
@@ -249,7 +249,7 @@ get_pitch_quantiles_batch <- function(pitch, quantiles,
                                        from_time = 0, to_time = 0,
                                        unit = "hertz") {
   if (!inherits(pitch, "Pitch")) {
-    stop("pitch must be a Pitch object")
+    stop("get_pitch_quantiles_batch(): pitch must be a Pitch object")
   }
   
   if (!is.numeric(quantiles) || length(quantiles) == 0) {
@@ -299,11 +299,11 @@ get_pitch_quantiles_batch <- function(pitch, quantiles,
 get_intensity_at_times <- function(intensity, times, interpolate = "cubic",
                                    interpolation = NULL) {
   if (!inherits(intensity, "Intensity")) {
-    stop("intensity must be an Intensity object")
+    stop("get_intensity_at_times(): intensity must be an Intensity object")
   }
 
   if (!is.numeric(times) || length(times) == 0) {
-    stop("times must be a non-empty numeric vector")
+    stop("get_intensity_at_times(): times must be a non-empty numeric vector")
   }
 
   # interpolation alias supersedes interpolate when provided
@@ -351,7 +351,7 @@ get_intensity_at_times <- function(intensity, times, interpolate = "cubic",
 #' @export
 get_pointprocess_times <- function(pointprocess) {
   if (!inherits(pointprocess, "PointProcess")) {
-    stop("pointprocess must be a PointProcess object")
+    stop("get_pointprocess_times(): pointprocess must be a PointProcess object")
   }
   
   pointprocess_get_all_times(pointprocess$.xptr)
@@ -379,7 +379,7 @@ get_pointprocess_times <- function(pointprocess) {
 #' @export
 get_pointprocess_intervals <- function(pointprocess) {
   if (!inherits(pointprocess, "PointProcess")) {
-    stop("pointprocess must be a PointProcess object")
+    stop("get_pointprocess_intervals(): pointprocess must be a PointProcess object")
   }
   
   pointprocess_get_intervals(pointprocess$.xptr)
@@ -404,11 +404,11 @@ get_pointprocess_intervals <- function(pointprocess) {
 #' @export
 get_pointprocess_nearest_indices <- function(pointprocess, times) {
   if (!inherits(pointprocess, "PointProcess")) {
-    stop("pointprocess must be a PointProcess object")
+    stop("get_pointprocess_nearest_indices(): pointprocess must be a PointProcess object")
   }
 
   if (!is.numeric(times) || length(times) == 0) {
-    stop("times must be a non-empty numeric vector")
+    stop("get_pointprocess_nearest_indices(): times must be a non-empty numeric vector")
   }
 
   pointprocess_get_nearest_indices(pointprocess$.xptr, times)
@@ -504,7 +504,7 @@ get_jitter_shimmer_batch <- function(pointprocess, sound,
   } else if (inherits(sound, "externalptr")) {
     sound
   } else {
-    stop("sound must be a Sound object or external pointer")
+    stop("get_jitter_shimmer_batch(): sound must be a Sound object or external pointer")
   }
 
   get_jitter_shimmer_batch_cpp(
@@ -626,7 +626,7 @@ calculate_f0_stats_ultra <- function(sound, stat,
                                       time_step = 0,
                                       voicing_threshold = 0.45) {
   if (!inherits(sound, "Sound")) {
-    stop("sound must be a Sound object")
+    stop("calculate_f0_stats_ultra(): sound must be a Sound object")
   }
 
   valid_stats <- c("max", "min", "mean", "median", "sd")
@@ -698,7 +698,7 @@ calculate_minimum_intensity_ultra <- function(sound,
                                                time_step = 0,
                                                subtract_mean = TRUE) {
   if (!inherits(sound, "Sound")) {
-    stop("sound must be a Sound object")
+    stop("calculate_minimum_intensity_ultra(): sound must be a Sound object")
   }
 
   calculate_minimum_intensity_ultra_cpp(
@@ -824,7 +824,7 @@ get_voice_quality_ultra <- function(sound,
                                        "periodic_cc"),
                                      very_accurate = TRUE) {
   if (!inherits(sound, "Sound")) {
-    stop("sound must be a Sound object")
+    stop("get_voice_quality_ultra(): sound must be a Sound object")
   }
 
   valid_metrics <- c("jitter", "shimmer", "hnr", "all")
@@ -877,7 +877,7 @@ get_voice_quality_ultra <- function(sound,
 #' @export
 get_spectral_moments_batch <- function(spectrogram, power = 2.0) {
   if (!inherits(spectrogram, "Spectrogram"))
-    stop("spectrogram must be a Spectrogram object")
+    stop("get_spectral_moments_batch(): spectrogram must be a Spectrogram object")
   result <- .get_spectral_moments_batch(spectrogram$.xptr, as.numeric(power))
   as.data.frame(result)
 }

@@ -189,7 +189,7 @@ Discriminant <- function(.xptr = NULL) {
 #' @export
 discriminant_from_matrix <- function(data, labels) {
   if (!is.matrix(data)) data <- as.matrix(data)
-  if (!is.numeric(data)) stop("data must be numeric")
+  if (!is.numeric(data)) stop("discriminant_from_matrix(): data must be numeric")
   if (nrow(data) != length(labels)) {
     stop("Number of rows in data must match length of labels")
   }

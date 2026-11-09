@@ -146,7 +146,7 @@ plot_powercepstrum <- function(cepstrum,
   
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
+    stop("plot_powercepstrum(): Package 'ggplot2' is required for plotting. Please install it.")
   }
 # nocov end
   
@@ -236,12 +236,12 @@ plot_powercepstrogram <- function(cepstrogram,
   
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
+    stop("plot_powercepstrogram(): Package 'ggplot2' is required for plotting. Please install it.")
   }
 # nocov end
   
   if (!inherits(cepstrogram, "PowerCepstrogram")) {
-    stop("cepstrogram must be a PowerCepstrogram object")
+    stop("plot_powercepstrogram(): cepstrogram must be a PowerCepstrogram object")
   }
   
   color_scale <- match.arg(color_scale)
@@ -322,11 +322,11 @@ plot_cpp_timeseries <- function(cepstrogram,
                                theme = c("minimal", "bw", "classic")) {
   
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
+    stop("plot_cpp_timeseries(): Package 'ggplot2' is required for plotting. Please install it.")
   }
   
   if (!inherits(cepstrogram, "PowerCepstrogram")) {
-    stop("cepstrogram must be a PowerCepstrogram object")
+    stop("plot_cpp_timeseries(): cepstrogram must be a PowerCepstrogram object")
   }
   
   theme <- match.arg(theme)
@@ -405,7 +405,7 @@ create_cepstrum_report <- function(cepstrogram,
   
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("create_cepstrum_report(): Package 'ggplot2' is required. Please install it.")
   }
 # nocov end
   

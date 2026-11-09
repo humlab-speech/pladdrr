@@ -1,0 +1,230 @@
+.to_amplitude_db(): ComplexSpectrogram data frame missing amplitude column
+.validate_textgrid_intervals_args(): sound argument required when extract_sounds = TRUE
+'expression' must be a single non-empty character string
+'name' must be a single non-empty character string
+'script' must be a single non-empty character string
+'seed' must be a single numeric value or NULL
+All elements must be Sound objects
+AmplitudeTier has no data in the specified time range
+AmplitudeTier objects must be created using amplitude_tier_create() or related functions
+autolayer.ComplexSpectrogram(): ComplexSpectrogram data frame missing amplitude column
+autoplot.AmplitudeTier(): Package 'ggplot2' is required. Please install it.
+autoplot.BarkSpectrogram(): Package 'ggplot2' is required. Please install it.
+autoplot.Cepstrum(): Package 'ggplot2' is required. Please install it.
+autoplot.Cochleagram(): Package 'ggplot2' is required. Please install it.
+autoplot.ComplexSpectrogram(): Package 'ggplot2' is required. Please install it.
+autoplot.Discriminant(): Package 'ggplot2' is required. Please install it.
+autoplot.Discriminant(): patchwork not installed; returning scree plot only
+autoplot.DTW(): Package 'ggplot2' is required. Please install it.
+autoplot.DurationTier(): Package 'ggplot2' is required. Please install it.
+autoplot.Electroglottogram(): Package 'ggplot2' is required. Please install it.
+autoplot.Excitation(): Package 'ggplot2' is required. Please install it.
+autoplot.Formant(): Package 'ggplot2' is required. Please install it.
+autoplot.FormantGrid(): Package 'ggplot2' is required. Please install it.
+autoplot.FormantModeler(): Package 'ggplot2' is required. Please install it.
+autoplot.FormantPath(): Package 'ggplot2' is required. Please install it.
+autoplot.FormantTier(): Package 'ggplot2' is required. Please install it.
+autoplot.Harmonicity(): Package 'ggplot2' is required. Please install it.
+autoplot.Intensity(): Package 'ggplot2' is required. Please install it.
+autoplot.IntensityTier(): Package 'ggplot2' is required. Please install it.
+autoplot.KlattGrid(): Package 'ggplot2' is required. Please install it.
+autoplot.LFCC(): Package 'ggplot2' is required. Please install it.
+autoplot.LongSound(): Package 'ggplot2' is required. Please install it.
+autoplot.LPC(): Package 'ggplot2' is required. Please install it.
+autoplot.Ltas(): Package 'ggplot2' is required. Please install it.
+autoplot.Matrix(): Package 'ggplot2' is required. Please install it.
+autoplot.MelSpectrogram(): Package 'ggplot2' is required. Please install it.
+autoplot.MFCC(): Package 'ggplot2' is required. Please install it.
+autoplot.PCA(): Package 'ggplot2' is required. Please install it.
+autoplot.PCA(): patchwork not installed; returning scree plot only
+autoplot.Pitch(): Package 'ggplot2' is required. Please install it.
+autoplot.PitchTier(): Package 'ggplot2' is required. Please install it.
+autoplot.PointProcess(): Package 'ggplot2' is required. Please install it.
+autoplot.Polygon(): Package 'ggplot2' is required. Please install it.
+autoplot.PowerCepstrogram(): Package 'ggplot2' is required. Please install it.
+autoplot.PowerCepstrum(): Package 'ggplot2' is required. Please install it.
+autoplot.Sound(): Package 'ggplot2' is required. Please install it.
+autoplot.Spectrogram(): Package 'ggplot2' is required. Please install it.
+autoplot.Spectrum(): Package 'ggplot2' is required. Please install it.
+autoplot.VocalTract(): Package 'ggplot2' is required. Please install it.
+BarkSpectrogram has no data
+BarkSpectrogram objects must be created from Sound$to_bark_spectrogram()
+benchmark_parallel(): parallel package required
+Both x and y coordinates required
+candidate must be a Sound object
+Cannot extract XPtr from Sound object
+cepstrum must be a PowerCepstrum object
+Cepstrum(): .xptr must be an external pointer
+channel must be a positive integer
+Cochleagram objects should be created via Sound$to_cochleagram() or Sound$to_cochleagram_edb()
+Could not extract Praat external pointer from object
+create_cepstrum_report(): Package 'ggplot2' is required. Please install it.
+Discriminant objects must be created using discriminant_from_matrix()
+DTW has no path data
+DTW objects must be created via sounds_to_dtw(), mfccs_to_dtw(), etc.
+duration_tier must be a DurationTier object
+DurationTier has no data in the specified time range
+DurationTier(): Must provide either (tmin, tmax) or .xptr
+Either 'patchwork' or 'gridExtra' is required for combined plots
+Either 'patchwork' or 'gridExtra' package is required for combined plots. Please install one.
+Either provide (numberOfRows, numberOfColumns) or all full parameters
+enabled must be TRUE, FALSE, or NULL
+equalize_domains must be TRUE or FALSE
+Excitation has no data
+Excitation objects should be created via Spectrum$to_excitation() or Cochleagram$to_excitation()
+Failed to create Formant from Sound
+file_paths must be a character vector
+First argument must be a Sound object
+fit_method = "robust slow" (Praat's Theil-Sen trend fit) is not reproducible: it draws random samples internally, so repeated runs on the same input differ (~0.8 dB observed) and can return wildly wrong values. This is an upstream Praat defect, reproduced faithfully here. Use fit_method = "robust" (Siegel) or "least_squares" for a deterministic result.
+Formant objects must be created from a Sound object using to_formant_burg() or to_formant_keepall()
+formant_numbers must be a non-empty integer vector
+FormantGrid has no data
+FormantModeler objects must be created from a Formant object using formant$to_formant_modeler()
+FormantTier has no data after filtering
+from_time and to_time must be single numeric values
+get_formant_bandwidths_at_times(): times must be a non-empty numeric vector
+get_formants_at_times(): times must be a non-empty numeric vector
+get_intensity_at_times(): times must be a non-empty numeric vector
+get_pitch_at_times(): times must be a non-empty numeric vector
+get_pointprocess_intervals(): pointprocess must be a PointProcess object
+get_pointprocess_nearest_indices(): pointprocess must be a PointProcess object
+get_pointprocess_nearest_indices(): times must be a non-empty numeric vector
+get_pointprocess_times(): pointprocess must be a PointProcess object
+get_sound_times_fast(): Input must be a Sound object
+Harmonicity objects should be created from Sound objects using to_harmonicity_ac() or to_harmonicity_cc()
+Input must be a Sound object created with Sound()
+Intensity objects should be created from Sound objects using to_intensity()
+IntensityTier has no data in the specified time range
+IntensityTier(): Must provide either (tmin, tmax) or .xptr
+Invalid Pitch object
+LFCC has no coefficient columns
+LFCC objects must be created from an LPC object using lpc$to_lfcc()
+LongSound streams from disk. Use x$extract_part(from, to) to get a Sound, then as.data.frame().
+LPC objects must be created from a Sound object using sound$to_lpc_burg() or similar methods
+LPC$to_formant() is not available in this build (requires CLAPACK).\nUse Sound$to_formant_burg() for formant extraction instead.
+Ltas objects must be created from a Sound or Spectrum object
+Manipulation objects must be created from a Sound object using sound$to_manipulation()
+Matrix has no data
+MelSpectrogram has no data
+MelSpectrogram objects must be created from Sound$to_mel_spectrogram()
+MFCC has no coefficient columns
+MFCC objects must be created from a Sound object using sound$to_mfcc()
+mfcc1 must be an MFCC object
+mfcc2 must be an MFCC object
+multiband entries must be Harmonicity objects or external pointers
+Must specify one comparison criterion: text_equals, text_contains, or text_starts_with
+n must be a single non-negative integer (0 = automatic)
+Need at least 1 variable
+Need at least 2 observations
+Need at least 2 variables
+new_frequency must be positive
+No matching pairs found
+NOTE: pladdrr was compiled as a debug build (no NDEBUG, -O0). It is several times slower than an optimised build and must not be used for benchmarking. Reinstall with: R CMD INSTALL --preclean .
+Object has no praat_class attribute, returning raw pointer
+object must be a PraatObject (Sound, Pitch, etc.)
+Only 'basename' matching is currently supported
+other must be a Cochleagram object
+other must be an Excitation object
+Package 'gridExtra' is required for multi-panel layout. Please install it.
+Package 'parallel' is required for parallel processing
+Package 'patchwork' recommended for better layout. Installing it is recommended.
+parallel package required. Install with: install.packages('parallel')
+PCA objects must be created using pca_from_matrix() or matrix$to_pca()
+PCA scores data frame has fewer than 2 columns
+pitch argument must be a Pitch object
+Pitch objects must be created from a Sound object using sound$to_pitch()
+Pitch objects must be created from Sound$to_pitch()
+pitch_module not available - package installation may be incomplete
+pitch_tier must be a PitchTier object
+pitch1 must be a Pitch object
+pitch2 must be a Pitch object
+PitchTier has no data in the specified time range
+PitchTier(): Must provide either (tmin, tmax) or .xptr
+pladdrr: direct access to Praat's core algorithms from R.\nSee ?pladdrr for an overview, or citation("pladdrr") for citation details.
+plot_cpp_timeseries(): cepstrogram must be a PowerCepstrogram object
+plot_cpp_timeseries(): Package 'ggplot2' is required for plotting. Please install it.
+plot_pitch_intensity(): Package 'ggplot2' is required for plotting. Please install it.
+plot_powercepstrogram(): cepstrogram must be a PowerCepstrogram object
+plot_powercepstrogram(): Package 'ggplot2' is required for plotting. Please install it.
+plot_powercepstrum(): Package 'ggplot2' is required for plotting. Please install it.
+plot_sound_pitch(): Package 'ggplot2' is required for plotting. Please install it.
+plot_spectrogram_formants(): Package 'ggplot2' is required for plotting. Please install it.
+plot_spectrogram_pitch(): Package 'ggplot2' is required for plotting. Please install it.
+plot_textgrid_pitch(): Package 'ggplot2' is required for plotting. Please install it.
+plot_textgrid_sound(): Package 'ggplot2' is required for plotting. Please install it.
+plot.Formant(): Package 'ggplot2' is required for plotting. Please install it.
+plot.Harmonicity(): Package 'ggplot2' is required for plotting. Please install it.
+plot.Intensity(): Package 'ggplot2' is required for plotting. Please install it.
+plot.Ltas(): Package 'ggplot2' is required for plotting. Please install it.
+plot.Matrix(): Package 'ggplot2' is required for plotting. Please install it.
+plot.Pitch(): Package 'ggplot2' is required for plotting. Please install it.
+plot.PointProcess(): Package 'ggplot2' is required for plotting. Please install it.
+plot.PowerCepstrum(): Package 'ggplot2' is required for plotting. Please install it.
+plot.Sound(): Package 'ggplot2' is required for plotting. Please install it.
+plot.Spectrogram(): Package 'ggplot2' is required for plotting. Please install it.
+plot.Spectrum(): Package 'ggplot2' is required for plotting. Please install it.
+plot.TextGrid(): Package 'ggplot2' is required for plotting. Please install it.
+pointprocess must be a PointProcess object or external pointer
+PointProcess objects must be created from a Sound or Pitch object using to_point_process_*()methods, or with PointProcess(tmin, tmax) for an empty object
+polygon_module not available - package installation may be incomplete
+PowerCepstrogram(): .xptr must be an external pointer
+PowerCepstrum(): .xptr must be an external pointer
+process_sounds_parallel(): parallel package required
+quantiles must be a non-empty numeric vector
+quantiles must be between 0 and 1
+RcppXPtrUtils package required for apply_transform_xptr(). Install with: install.packages('RcppXPtrUtils')
+RcppXPtrUtils package required for apply_window_xptr(). Install with: install.packages('RcppXPtrUtils')
+RcppXPtrUtils package required for create_window_xptr(). Install with: install.packages('RcppXPtrUtils')
+reference must be a Pitch object
+reference must be a Spectrogram object
+reference must be an MFCC object
+sound argument must be a Sound object
+Sound is already mono, returning copy
+Sound is already multi-channel, returning as-is
+sound_as_matrix_fast(): Input must be a Sound object
+sound_extract_and_formant(): Could not extract pointer from Sound object
+sound_extract_and_formant(): Invalid input type: expected Sound or externalptr
+sound_extract_and_pitch(): Could not extract pointer from Sound object
+sound_extract_and_pitch(): Invalid input type: expected Sound or externalptr
+sound_to_formant_batch(): Could not extract pointer from Sound object
+sound_to_formant_batch(): Invalid input type: expected Sound or externalptr
+sound_to_intensity_batch(): Could not extract pointer from Sound object
+sound_to_intensity_batch(): Invalid input type: expected Sound or externalptr
+sound_to_pitch_ac_batch(): Could not extract pointer from Sound object
+sound_to_pitch_ac_batch(): Invalid input type: expected Sound or externalptr
+sound_to_pitch_batch(): Could not extract pointer from Sound object
+sound_to_pitch_batch(): Invalid input type: expected Sound or externalptr
+sound_to_pitch_cc_batch(): Could not extract pointer from Sound object
+sound_to_pitch_cc_batch(): Invalid input type: expected Sound or externalptr
+sound_to_pitch_shs_batch(): Could not extract pointer from Sound object
+sound_to_pitch_shs_batch(): Invalid input type: expected Sound or externalptr
+sound_to_pitch_spinet_batch(): Could not extract pointer from Sound object
+sound_to_pitch_spinet_batch(): Invalid input type: expected Sound or externalptr
+Sound(): Must provide either path or .xptr
+sound$concatenate(): other_sound is not a valid Sound object
+sound$concatenate(): other_sound must be a Sound object
+sound$convolve(): other_sound must be a Sound object
+sound$cross_correlate(): other_sound must be a Sound object
+sound$filter_pass_hann_band(): Invalid frequency range: fmin must be >= 0 and fmax must be > fmin
+sound$filter_stop_hann_band(): Invalid frequency range: fmin must be >= 0 and fmax must be > fmin
+sound$mix(): other_sound is not a valid Sound object
+sound$mix(): other_sound must be a Sound object
+sound$to_dtw(): reference must be a Sound object
+sounds_to_dtw(): reference must be a Sound object
+Specify only ONE comparison criterion
+Spectrogram objects must be created from Sound$to_spectrogram()
+spectrogram1 must be a Spectrogram
+spectrogram2 must be a Spectrogram
+Spectrum objects must be created from Sound using to_spectrum()
+SpectrumTier objects must be created from an Ltas object, e.g. ltas$to_spectrum_tier_peaks()
+TextGrid has no tiers to plot
+TextGrid(): Must provide either path or .xptr
+textgrid$extract_intervals_batch(): sound argument required when extract_sounds = TRUE
+textgrids must be a non-empty list
+tier must be a positive integer or valid tier name
+Tier must be numeric index or character name
+time must be a single numeric value
+time_step, max_period_factor, and max_amplitude_factor are not used by Sound_to_PointProcess_periodic_cc(). Only pitch_floor and pitch_ceiling are used.
+Using single core (set n_cores > 1 for parallel processing)
+values must be a numeric vector or matrix
+x and y must have same length

@@ -829,7 +829,7 @@ NULL
 .sound_methods$to_dtw <- function(.self, reference, analysis_width = 0.015,
   time_step = 0.005,
                                    band = 0.0, slope = 3) {
-  if (!inherits(reference, "Sound")) stop("reference must be a Sound object")
+  if (!inherits(reference, "Sound")) stop("sound$to_dtw(): reference must be a Sound object")
   sounds_to_dtw(reference, .self, analysis_width, time_step, band, slope)
 }
 
@@ -916,7 +916,7 @@ NULL
   smooth = 100.0) {
   if (fmin < 0 || fmax <= fmin) {
     stop(
-      "Invalid frequency range: fmin must be >= 0 and fmax must be > fmin")
+      "sound$filter_pass_hann_band(): Invalid frequency range: fmin must be >= 0 and fmax must be > fmin")
   }
   sound_ptr <- .sound_filter_pass_hann_band(.self$.xptr, fmin, fmax, smooth)
   Sound(.xptr = sound_ptr)
@@ -926,7 +926,7 @@ NULL
   smooth = 100.0) {
   if (fmin < 0 || fmax <= fmin) {
     stop(
-      "Invalid frequency range: fmin must be >= 0 and fmax must be > fmin")
+      "sound$filter_stop_hann_band(): Invalid frequency range: fmin must be >= 0 and fmax must be > fmin")
   }
   sound_ptr <- .sound_filter_stop_hann_band(.self$.xptr, fmin, fmax, smooth)
   Sound(.xptr = sound_ptr)
@@ -959,16 +959,16 @@ NULL
 
 .sound_methods$concatenate <- function(.self, other_sound, overlap = 0) {
   if (
-    !inherits(other_sound, "Sound")) stop("other_sound must be a Sound object")
-  if (!other_sound$is_valid()) stop("other_sound is not a valid Sound object")
+    !inherits(other_sound, "Sound")) stop("sound$concatenate(): other_sound must be a Sound object")
+  if (!other_sound$is_valid()) stop("sound$concatenate(): other_sound is not a valid Sound object")
   sound_ptr <- .sound_concatenate(.self$.xptr, other_sound$.xptr, overlap)
   Sound(.xptr = sound_ptr)
 }
 
 .sound_methods$mix <- function(.self, other_sound, balance = 1.0) {
   if (
-    !inherits(other_sound, "Sound")) stop("other_sound must be a Sound object")
-  if (!other_sound$is_valid()) stop("other_sound is not a valid Sound object")
+    !inherits(other_sound, "Sound")) stop("sound$mix(): other_sound must be a Sound object")
+  if (!other_sound$is_valid()) stop("sound$mix(): other_sound is not a valid Sound object")
   sound_ptr <- .sound_mix(.self$.xptr, other_sound$.xptr, balance)
   Sound(.xptr = sound_ptr)
 }
@@ -978,7 +978,7 @@ NULL
                                                     text = "", preserve_times =
                                                         FALSE) {
   if (
-    !inherits(textgrid, "TextGrid")) stop("textgrid must be a TextGrid object")
+    !inherits(textgrid, "TextGrid")) stop("sound$extract_intervals_where(): textgrid must be a TextGrid object")
   textgrid$extract_intervals_where(.self, tier_number, criterion, text,
     preserve_times)
 }
@@ -1019,13 +1019,13 @@ NULL
 }
 
 .sound_methods$filter_by_formant <- function(.self, formant) {
-  if (!inherits(formant, "Formant")) stop("formant must be a Formant object")
+  if (!inherits(formant, "Formant")) stop("sound$filter_by_formant(): formant must be a Formant object")
   sound_ptr <- .sound_formant_filter(.self$.xptr, formant$.xptr)
   Sound(.xptr = sound_ptr)
 }
 
 .sound_methods$filter_by_formant_noscale <- function(.self, formant) {
-  if (!inherits(formant, "Formant")) stop("formant must be a Formant object")
+  if (!inherits(formant, "Formant")) stop("sound$filter_by_formant_noscale(): formant must be a Formant object")
   sound_ptr <- .sound_formant_filter_noscale(.self$.xptr, formant$.xptr)
   Sound(.xptr = sound_ptr)
 }
@@ -1072,7 +1072,7 @@ NULL
                                                           1.0,
                                                       duration_multiplier =
                                                           1.0) {
-  if (!inherits(pitch, "Pitch")) stop("pitch must be a Pitch object")
+  if (!inherits(pitch, "Pitch")) stop("sound$change_speaker_with_pitch(): pitch must be a Pitch object")
   sound_ptr <- .sound_pitch_change_speaker(.self$.xptr, pitch$.xptr,
     formant_multiplier, pitch_multiplier, pitch_range_multiplier,
         duration_multiplier)
@@ -1093,7 +1093,7 @@ NULL
 .sound_methods$convolve <- function(.self, other_sound, scaling = "peak_0.99",
   signal_outside = "zero") {
   if (
-    !inherits(other_sound, "Sound")) stop("other_sound must be a Sound object")
+    !inherits(other_sound, "Sound")) stop("sound$convolve(): other_sound must be a Sound object")
   sc <- match.arg(scaling, c("integral", "sum", "normalize", "peak_0.99"))
   so <- match.arg(signal_outside, c("zero", "similar"))
   sc_code <- match(sc, c("integral", "sum", "normalize", "peak_0.99"))
@@ -1106,7 +1106,7 @@ NULL
 .sound_methods$cross_correlate <- function(.self, other_sound,
   scaling = "peak_0.99", signal_outside = "zero") {
   if (
-    !inherits(other_sound, "Sound")) stop("other_sound must be a Sound object")
+    !inherits(other_sound, "Sound")) stop("sound$cross_correlate(): other_sound must be a Sound object")
   sc <- match.arg(scaling, c("integral", "sum", "normalize", "peak_0.99"))
   so <- match.arg(signal_outside, c("zero", "similar"))
   sc_code <- match(sc, c("integral", "sum", "normalize", "peak_0.99"))
@@ -1246,7 +1246,7 @@ Sound <- function(path = NULL, .xptr = NULL) {
   } else if (!is.null(path)) {
     ptr <- .sound_ptr_from_path(path)
   } else {
-    stop("Must provide either path or .xptr")
+    stop("Sound(): Must provide either path or .xptr")
   }
 
   # Load Rcpp Module and create C++ wrapper

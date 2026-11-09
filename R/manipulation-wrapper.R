@@ -75,7 +75,7 @@ NULL
 .manipulation_methods$replace_pulses <- function(.self, point_process) {
   if (
     !inherits(point_process,
-      "PointProcess")) stop("point_process must be a PointProcess object")
+      "PointProcess")) stop("manipulation$replace_pulses(): point_process must be a PointProcess object")
   .self$.cpp$replace_pulses(point_process$get_xptr())
   invisible(.self)
 }

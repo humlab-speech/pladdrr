@@ -47,7 +47,7 @@ autoplot.Sound <- function(object, from_time = NULL, to_time = NULL,
                            color = "steelblue", ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.Sound(): Package 'ggplot2' is required. Please install it.")
   }
 # nocov end
 
@@ -91,7 +91,7 @@ autoplot.Pitch <- function(object, from_time = NULL, to_time = NULL,
                            color = "darkgreen", show_voicing = FALSE, ...) {
 # nocov start
  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.Pitch(): Package 'ggplot2' is required. Please install it.")
   }
 # nocov end
 
@@ -169,7 +169,7 @@ autoplot.Formant <- function(object, from_time = NULL, to_time = NULL,
                              max_formant = 3, colors = NULL, ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.Formant(): Package 'ggplot2' is required. Please install it.")
   }
 # nocov end
 
@@ -251,7 +251,7 @@ autoplot.Intensity <- function(object, from_time = NULL, to_time = NULL,
                                color = "darkorange", ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.Intensity(): Package 'ggplot2' is required. Please install it.")
   }
 # nocov end
 
@@ -297,7 +297,7 @@ autoplot.Spectrogram <- function(object, from_time = NULL, to_time = NULL,
                                  dynamic_range = 70, ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.Spectrogram(): Package 'ggplot2' is required. Please install it.")
   }
 # nocov end
 
@@ -362,7 +362,7 @@ autoplot.Spectrum <- function(object, from_freq = NULL, to_freq = NULL,
                               log_freq = FALSE, color = "navy", ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.Spectrum(): Package 'ggplot2' is required. Please install it.")
   }
 # nocov end
 
@@ -419,7 +419,7 @@ autoplot.Ltas <- function(object, from_freq = NULL, to_freq = NULL,
                           log_freq = FALSE, color = "darkred", ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.Ltas(): Package 'ggplot2' is required. Please install it.")
   }
 # nocov end
 
@@ -468,7 +468,7 @@ autoplot.Harmonicity <- function(object, from_time = NULL, to_time = NULL,
                                  color = "darkviolet", ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.Harmonicity(): Package 'ggplot2' is required. Please install it.")
   }
 # nocov end
 
@@ -511,7 +511,7 @@ autoplot.PointProcess <- function(object, from_time = NULL, to_time = NULL,
                                   color = "black", ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.PointProcess(): Package 'ggplot2' is required. Please install it.")
   }
 # nocov end
 
@@ -573,7 +573,7 @@ autoplot.PowerCepstrum <- function(object, from_quefrency = NULL,
                                    color = "darkblue", mark_peak = TRUE, ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.PowerCepstrum(): Package 'ggplot2' is required. Please install it.")
   }
 # nocov end
 

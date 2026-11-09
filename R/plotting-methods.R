@@ -61,7 +61,7 @@ plot.Sound <- function(x, from_time = NULL, to_time = NULL,
   
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
+    stop("plot.Sound(): Package 'ggplot2' is required for plotting. Please install it.")
   }
 # nocov end
   
@@ -134,7 +134,7 @@ plot.Pitch <- function(x, from_time = NULL, to_time = NULL,
                       color = "darkgreen", show_voicing = TRUE, ...) {
   
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
+    stop("plot.Pitch(): Package 'ggplot2' is required for plotting. Please install it.")
   }
   
   if (!inherits(x, "Pitch")) {
@@ -228,7 +228,7 @@ plot.Formant <- function(x, from_time = NULL, to_time = NULL,
   
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
+    stop("plot.Formant(): Package 'ggplot2' is required for plotting. Please install it.")
   }
 # nocov end
   
@@ -242,7 +242,7 @@ plot.Formant <- function(x, from_time = NULL, to_time = NULL,
 
   # Check if data frame is empty
   if (nrow(df) == 0) {
-    warning("Formant object has no data to plot")
+    warning("plot.Formant(): Formant object has no data to plot")
     return(ggplot2::ggplot() + ggplot2::theme_void() +
              ggplot2::labs(title = "No formant data available"))
   }
@@ -252,7 +252,7 @@ plot.Formant <- function(x, from_time = NULL, to_time = NULL,
 
   # Check if we have formant data
   if (nrow(df) == 0) {
-    warning("Formant object has no data to plot")
+    warning("plot.Formant(): Formant object has no data in the selected time range")
     return(ggplot2::ggplot() + ggplot2::theme_void() +
              ggplot2::labs(title = "No formant data available"))
   }
@@ -303,7 +303,7 @@ plot.Intensity <- function(x, from_time = NULL, to_time = NULL,
   
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
+    stop("plot.Intensity(): Package 'ggplot2' is required for plotting. Please install it.")
   }
 # nocov end
   
@@ -376,7 +376,7 @@ plot.Spectrogram <- function(x, from_time = NULL, to_time = NULL,
   
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
+    stop("plot.Spectrogram(): Package 'ggplot2' is required for plotting. Please install it.")
   }
 # nocov end
   
@@ -444,7 +444,7 @@ plot.Spectrum <- function(x, from_freq = NULL, to_freq = NULL,
                          title = "Spectrum", color = "navy", ...) {
   
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
+    stop("plot.Spectrum(): Package 'ggplot2' is required for plotting. Please install it.")
   }
   
   if (!inherits(x, "Spectrum")) {
@@ -524,7 +524,7 @@ plot.Ltas <- function(x, from_freq = NULL, to_freq = NULL,
   
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
+    stop("plot.Ltas(): Package 'ggplot2' is required for plotting. Please install it.")
   }
 # nocov end
   
@@ -599,7 +599,7 @@ plot.Harmonicity <- function(x, from_time = NULL, to_time = NULL,
   
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
+    stop("plot.Harmonicity(): Package 'ggplot2' is required for plotting. Please install it.")
   }
 # nocov end
   
@@ -668,7 +668,7 @@ plot.PointProcess <- function(x, from_time = NULL, to_time = NULL,
                              color = "black", ...) {
   
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
+    stop("plot.PointProcess(): Package 'ggplot2' is required for plotting. Please install it.")
   }
   
   if (!inherits(x, "PointProcess")) {
@@ -774,7 +774,7 @@ plot.Matrix <- function(x, from_x = NULL, to_x = NULL,
                         color_scale = "viridis", ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
+    stop("plot.Matrix(): Package 'ggplot2' is required for plotting. Please install it.")
   }
 # nocov end
   if (!inherits(x, "Matrix")) {
@@ -884,7 +884,7 @@ plot.PowerCepstrum <- function(x, from_quefrency = NULL,
                                mark_peak = TRUE, ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
+    stop("plot.PowerCepstrum(): Package 'ggplot2' is required for plotting. Please install it.")
   }
 # nocov end
   if (!inherits(x, "PowerCepstrum")) {
@@ -976,7 +976,7 @@ plot.TextGrid <- function(x, tier = NULL, from_time = NULL, to_time = NULL,
 
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
+    stop("plot.TextGrid(): Package 'ggplot2' is required for plotting. Please install it.")
   }
 # nocov end
 

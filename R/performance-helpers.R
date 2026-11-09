@@ -130,7 +130,7 @@ calculate_cpps_fast <- function(
   } else if (inherits(sound, "externalptr")) {
     sound
   } else {
-    stop("sound must be a Sound object or external pointer")
+    stop("calculate_cpps_fast(): sound must be a Sound object or external pointer")
   }
 
   # Map string arguments to integer codes (Praat convention)
@@ -211,7 +211,7 @@ to_powercepstrogram_fast <- function(sound,
   } else if (inherits(sound, "externalptr")) {
     sound
   } else {
-    stop("sound must be a Sound object or external pointer")
+    stop("to_powercepstrogram_fast(): sound must be a Sound object or external pointer")
   }
 
   .sound_to_powercepstrogram(
@@ -387,7 +387,7 @@ apply_window_xptr <- function(sound, window_func) {
   } else if (inherits(sound, "externalptr")) {
     sound
   } else {
-    stop("sound must be a Sound object or external pointer")
+    stop("apply_window_xptr(): sound must be a Sound object or external pointer")
   }
 
   # Get internal RSound module
@@ -456,7 +456,7 @@ apply_transform_xptr <- function(sound, transform_func) {
   } else if (inherits(sound, "externalptr")) {
     sound
   } else {
-    stop("sound must be a Sound object or external pointer")
+    stop("apply_transform_xptr(): sound must be a Sound object or external pointer")
   }
 
   # Get internal RSound module
@@ -662,7 +662,7 @@ calculate_cpps_ultra <- function(
   } else if (inherits(sound, "externalptr")) {
     sound
   } else {
-    stop("sound must be a Sound object or external pointer")
+    stop("calculate_cpps_ultra(): sound must be a Sound object or external pointer")
   }
 
   # Map string arguments to integer codes (Praat convention)
@@ -795,7 +795,7 @@ extract_voiced_segments_ultra <- function(
   } else if (inherits(sound, "externalptr")) {
     sound
   } else {
-    stop("sound must be a Sound object or external pointer")
+    stop("extract_voiced_segments_ultra(): sound must be a Sound object or external pointer")
   }
 
   # Single C++ call for entire voiced extraction pipeline
@@ -861,7 +861,7 @@ build_multiband_harmonicity <- function(
 ) {
   if (length(bands) != 5) {
     stop(
-      "bands parameter must have exactly 5 elements ",
+      "build_multiband_harmonicity(): bands parameter must have exactly 5 elements ",
       "(e.g., c(0, 500, 1500, 2500, 3500))")
   }
 
@@ -1021,7 +1021,7 @@ calculate_multiband_hnr_ultra <- function(
   # Validate bands parameter
   if (length(bands) != 5) {
     stop(
-      "bands parameter must have exactly 5 elements ",
+      "calculate_multiband_hnr_ultra(): bands parameter must have exactly 5 elements ",
       "(e.g., c(0, 500, 1500, 2500, 3500))")
   }
 

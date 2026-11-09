@@ -156,7 +156,7 @@ extract_textgrid_intervals <- function(textgrid, sound = NULL, tier,
 #' @export
 get_textgrid_labels_all <- function(textgrid, tier) {
   if (!inherits(textgrid, "TextGrid")) {
-    stop("textgrid must be a TextGrid object")
+    stop("get_textgrid_labels_all(): textgrid must be a TextGrid object")
   }
   
   if (is.character(tier)) {
@@ -196,7 +196,7 @@ get_textgrid_labels_all <- function(textgrid, tier) {
 #' @export
 get_textgrid_interval_stats <- function(textgrid, tier) {
   if (!inherits(textgrid, "TextGrid")) {
-    stop("textgrid must be a TextGrid object")
+    stop("get_textgrid_interval_stats(): textgrid must be a TextGrid object")
   }
   
   if (is.character(tier)) {
@@ -211,7 +211,7 @@ get_textgrid_interval_stats <- function(textgrid, tier) {
 .validate_textgrid_intervals_args <- function(textgrid, sound, tier,
   extract_sounds) {
   if (
-    !inherits(textgrid, "TextGrid")) stop("textgrid must be a TextGrid object")
+    !inherits(textgrid, "TextGrid")) stop(".validate_textgrid_intervals_args(): textgrid must be a TextGrid object")
   if (is.character(tier)) tier <- textgrid$get_tier_number(tier)
   if (
     !is.numeric(
@@ -219,8 +219,8 @@ get_textgrid_interval_stats <- function(textgrid, tier) {
         "name")
   if (extract_sounds) {
     if (
-      is.null(sound)) stop("sound argument required when extract_sounds = TRUE")
-    if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
+      is.null(sound)) stop(".validate_textgrid_intervals_args(): sound argument required when extract_sounds = TRUE")
+    if (!inherits(sound, "Sound")) stop(".validate_textgrid_intervals_args(): sound must be a Sound object")
   }
   tier
 }

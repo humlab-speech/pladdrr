@@ -178,7 +178,7 @@ plot_textgrid_sound <- function(textgrid, sound, tier = NULL,
   
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
+    stop("plot_textgrid_sound(): Package 'ggplot2' is required for plotting. Please install it.")
   }
 # nocov end
   
@@ -189,10 +189,10 @@ plot_textgrid_sound <- function(textgrid, sound, tier = NULL,
   }
   
   if (!inherits(textgrid, "TextGrid")) {
-    stop("textgrid must be a TextGrid object")
+    stop("plot_textgrid_sound(): textgrid must be a TextGrid object")
   }
   if (!inherits(sound, "Sound")) {
-    stop("sound must be a Sound object")
+    stop("plot_textgrid_sound(): sound must be a Sound object")
   }
   
   # Resolve time range (shared helper)
@@ -266,15 +266,15 @@ plot_textgrid_pitch <- function(textgrid, pitch, tier = NULL,
   
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
+    stop("plot_textgrid_pitch(): Package 'ggplot2' is required for plotting. Please install it.")
   }
 # nocov end
   
   if (!inherits(textgrid, "TextGrid")) {
-    stop("textgrid must be a TextGrid object")
+    stop("plot_textgrid_pitch(): textgrid must be a TextGrid object")
   }
   if (!inherits(pitch, "Pitch")) {
-    stop("pitch must be a Pitch object")
+    stop("plot_textgrid_pitch(): pitch must be a Pitch object")
   }
   
   # Determine time range
@@ -342,15 +342,15 @@ plot_pitch_intensity <- function(pitch, intensity,
   
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
+    stop("plot_pitch_intensity(): Package 'ggplot2' is required for plotting. Please install it.")
   }
 # nocov end
   
   if (!inherits(pitch, "Pitch")) {
-    stop("pitch must be a Pitch object")
+    stop("plot_pitch_intensity(): pitch must be a Pitch object")
   }
   if (!inherits(intensity, "Intensity")) {
-    stop("intensity must be an Intensity object")
+    stop("plot_pitch_intensity(): intensity must be an Intensity object")
   }
   
   tr <- .resolve_single_time_range(pitch, from_time, to_time)
@@ -415,15 +415,15 @@ plot_spectrogram_formants <- function(spectrogram, formant,
   
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
+    stop("plot_spectrogram_formants(): Package 'ggplot2' is required for plotting. Please install it.")
   }
 # nocov end
   
   if (!inherits(spectrogram, "Spectrogram")) {
-    stop("spectrogram must be a Spectrogram object")
+    stop("plot_spectrogram_formants(): spectrogram must be a Spectrogram object")
   }
   if (!inherits(formant, "Formant")) {
-    stop("formant must be a Formant object")
+    stop("plot_spectrogram_formants(): formant must be a Formant object")
   }
   
   tr <- .resolve_single_time_range(formant, from_time, to_time)
@@ -504,15 +504,15 @@ plot_spectrogram_pitch <- function(spectrogram, pitch,
   
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
+    stop("plot_spectrogram_pitch(): Package 'ggplot2' is required for plotting. Please install it.")
   }
 # nocov end
   
   if (!inherits(spectrogram, "Spectrogram")) {
-    stop("spectrogram must be a Spectrogram object")
+    stop("plot_spectrogram_pitch(): spectrogram must be a Spectrogram object")
   }
   if (!inherits(pitch, "Pitch")) {
-    stop("pitch must be a Pitch object")
+    stop("plot_spectrogram_pitch(): pitch must be a Pitch object")
   }
   
   # Create base spectrogram plot
@@ -588,14 +588,14 @@ plot_sound_pitch <- function(sound, pitch,
                             title = NULL, ...) {
   
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
+    stop("plot_sound_pitch(): Package 'ggplot2' is required for plotting. Please install it.")
   }
   
   if (!inherits(sound, "Sound")) {
-    stop("sound must be a Sound object")
+    stop("plot_sound_pitch(): sound must be a Sound object")
   }
   if (!inherits(pitch, "Pitch")) {
-    stop("pitch must be a Pitch object")
+    stop("plot_sound_pitch(): pitch must be a Pitch object")
   }
   
   # Create individual plots

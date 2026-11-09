@@ -97,12 +97,12 @@ sound_to_pitch_batch <- function(sounds,
     if (inherits(s, "Sound")) {
       ptr <- s$.xptr
       if (is.null(ptr)) ptr <- s$get_xptr()
-      if (is.null(ptr)) stop("Could not extract pointer from Sound object")
+      if (is.null(ptr)) stop("sound_to_pitch_batch(): Could not extract pointer from Sound object")
       ptr
     } else if (inherits(s, "externalptr")) {
       s
     } else {
-      stop("Invalid input type: expected Sound or externalptr")
+      stop("sound_to_pitch_batch(): Invalid input type: expected Sound or externalptr")
     }
   })
 
@@ -161,12 +161,12 @@ sound_to_pitch_ac_batch <- function(sounds,
     if (inherits(s, "Sound")) {
       ptr <- s$.xptr
       if (is.null(ptr)) ptr <- s$get_xptr()
-      if (is.null(ptr)) stop("Could not extract pointer from Sound object")
+      if (is.null(ptr)) stop("sound_to_pitch_ac_batch(): Could not extract pointer from Sound object")
       ptr
     } else if (inherits(s, "externalptr")) {
       s
     } else {
-      stop("Invalid input type: expected Sound or externalptr")
+      stop("sound_to_pitch_ac_batch(): Invalid input type: expected Sound or externalptr")
     }
   })
 
@@ -231,12 +231,12 @@ sound_to_pitch_cc_batch <- function(sounds,
     if (inherits(s, "Sound")) {
       ptr <- s$.xptr
       if (is.null(ptr)) ptr <- s$get_xptr()
-      if (is.null(ptr)) stop("Could not extract pointer from Sound object")
+      if (is.null(ptr)) stop("sound_to_pitch_cc_batch(): Could not extract pointer from Sound object")
       ptr
     } else if (inherits(s, "externalptr")) {
       s
     } else {
-      stop("Invalid input type: expected Sound or externalptr")
+      stop("sound_to_pitch_cc_batch(): Invalid input type: expected Sound or externalptr")
     }
   })
 
@@ -294,12 +294,12 @@ sound_to_pitch_shs_batch <- function(sounds,
     if (inherits(s, "Sound")) {
       ptr <- s$.xptr
       if (is.null(ptr)) ptr <- s$get_xptr()
-      if (is.null(ptr)) stop("Could not extract pointer from Sound object")
+      if (is.null(ptr)) stop("sound_to_pitch_shs_batch(): Could not extract pointer from Sound object")
       ptr
     } else if (inherits(s, "externalptr")) {
       s
     } else {
-      stop("Invalid input type: expected Sound or externalptr")
+      stop("sound_to_pitch_shs_batch(): Invalid input type: expected Sound or externalptr")
     }
   })
 
@@ -359,12 +359,12 @@ sound_to_pitch_spinet_batch <- function(sounds,
     if (inherits(s, "Sound")) {
       ptr <- s$.xptr
       if (is.null(ptr)) ptr <- s$get_xptr()
-      if (is.null(ptr)) stop("Could not extract pointer from Sound object")
+      if (is.null(ptr)) stop("sound_to_pitch_spinet_batch(): Could not extract pointer from Sound object")
       ptr
     } else if (inherits(s, "externalptr")) {
       s
     } else {
-      stop("Invalid input type: expected Sound or externalptr")
+      stop("sound_to_pitch_spinet_batch(): Invalid input type: expected Sound or externalptr")
     }
   })
 
@@ -415,12 +415,12 @@ sound_to_formant_batch <- function(sounds,
     if (inherits(s, "Sound")) {
       ptr <- s$.xptr
       if (is.null(ptr)) ptr <- s$get_xptr()
-      if (is.null(ptr)) stop("Could not extract pointer from Sound object")
+      if (is.null(ptr)) stop("sound_to_formant_batch(): Could not extract pointer from Sound object")
       ptr
     } else if (inherits(s, "externalptr")) {
       s
     } else {
-      stop("Invalid input type: expected Sound or externalptr")
+      stop("sound_to_formant_batch(): Invalid input type: expected Sound or externalptr")
     }
   })
 
@@ -465,12 +465,12 @@ sound_to_intensity_batch <- function(sounds,
     if (inherits(s, "Sound")) {
       ptr <- s$.xptr
       if (is.null(ptr)) ptr <- s$get_xptr()
-      if (is.null(ptr)) stop("Could not extract pointer from Sound object")
+      if (is.null(ptr)) stop("sound_to_intensity_batch(): Could not extract pointer from Sound object")
       ptr
     } else if (inherits(s, "externalptr")) {
       s
     } else {
-      stop("Invalid input type: expected Sound or externalptr")
+      stop("sound_to_intensity_batch(): Invalid input type: expected Sound or externalptr")
     }
   })
 
@@ -516,12 +516,12 @@ sound_extract_and_pitch <- function(sound, from_times, to_times,
   xptr <- if (inherits(sound, "Sound")) {
     ptr <- sound$.xptr
     if (is.null(ptr)) ptr <- sound$get_xptr()
-    if (is.null(ptr)) stop("Could not extract pointer from Sound object")
+    if (is.null(ptr)) stop("sound_extract_and_pitch(): Could not extract pointer from Sound object")
     ptr
   } else if (inherits(sound, "externalptr")) {
     sound
   } else {
-    stop("Invalid input type: expected Sound or externalptr")
+    stop("sound_extract_and_pitch(): Invalid input type: expected Sound or externalptr")
   }
 
   result_ptrs <- .sound_extract_and_pitch_batch(
@@ -569,12 +569,12 @@ sound_extract_and_formant <- function(sound, from_times, to_times,
   xptr <- if (inherits(sound, "Sound")) {
     ptr <- sound$.xptr
     if (is.null(ptr)) ptr <- sound$get_xptr()
-    if (is.null(ptr)) stop("Could not extract pointer from Sound object")
+    if (is.null(ptr)) stop("sound_extract_and_formant(): Could not extract pointer from Sound object")
     ptr
   } else if (inherits(sound, "externalptr")) {
     sound
   } else {
-    stop("Invalid input type: expected Sound or externalptr")
+    stop("sound_extract_and_formant(): Invalid input type: expected Sound or externalptr")
   }
 
   result_ptrs <- .sound_extract_and_formant_batch(

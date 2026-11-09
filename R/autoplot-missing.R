@@ -48,7 +48,7 @@ autoplot.AmplitudeTier <- function(object, from_time = NULL, to_time = NULL,
                                     color = "darkred", garnish = TRUE, ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.AmplitudeTier(): Package 'ggplot2' is required. Please install it.")
 # nocov end
   df <- as.data.frame(object)
   if (!is.null(from_time)) df <- df[df$time >= from_time, ]
@@ -91,7 +91,7 @@ autoplot.DurationTier <- function(object, from_time = NULL, to_time = NULL,
                                     color = "steelblue", garnish = TRUE, ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.DurationTier(): Package 'ggplot2' is required. Please install it.")
 # nocov end
   df <- as.data.frame(object)
   if (!is.null(from_time)) df <- df[df$time >= from_time, ]
@@ -136,7 +136,7 @@ autoplot.IntensityTier <- function(object, from_time = NULL, to_time = NULL,
                                     color = "darkgreen", garnish = TRUE, ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.IntensityTier(): Package 'ggplot2' is required. Please install it.")
 # nocov end
   df <- as.data.frame(object)
   if (!is.null(from_time)) df <- df[df$time >= from_time, ]
@@ -180,7 +180,7 @@ autoplot.PitchTier <- function(object, from_time = NULL, to_time = NULL,
                                     color = "blue", garnish = TRUE, ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.PitchTier(): Package 'ggplot2' is required. Please install it.")
 # nocov end
   df <- as.data.frame(object)
   if (!is.null(from_time)) df <- df[df$time >= from_time, ]
@@ -234,7 +234,7 @@ autoplot.FormantTier <- function(object, from_time = NULL, to_time = NULL,
                                   garnish = TRUE, ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.FormantTier(): Package 'ggplot2' is required. Please install it.")
 # nocov end
   style <- match.arg(style)
   tmin <- if (is.null(from_time)) object$get_start_time() else from_time
@@ -315,7 +315,7 @@ autoplot.FormantGrid <- function(object, from_time = NULL, to_time = NULL,
                                   garnish = TRUE, ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.FormantGrid(): Package 'ggplot2' is required. Please install it.")
 # nocov end
   df <- .prep_formant_df(object$as_data_frame(), from_time, to_time,
     max_formant)
@@ -366,7 +366,7 @@ autoplot.FormantPath <- function(object, from_time = NULL, to_time = NULL,
                                   show_candidates = TRUE, garnish = TRUE, ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.FormantPath(): Package 'ggplot2' is required. Please install it.")
 # nocov end
   df <- .prep_formant_df(object$as_data_frame(max_formants = max_formant),
                           from_time, to_time, max_formant)
@@ -448,7 +448,7 @@ autoplot.Excitation <- function(object, garnish = TRUE,
                                  color = "darkred", ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.Excitation(): Package 'ggplot2' is required. Please install it.")
 # nocov end
   df <- as.data.frame(object)
   if (nrow(df) == 0) {
@@ -491,7 +491,7 @@ autolayer.Excitation <- function(object, color = "darkred", ...) {
   if ("amplitude_dB" %in% names(df)) return(df)
   if (
     !"amplitude" %in% names(
-      df)) stop("ComplexSpectrogram data frame missing amplitude column")
+      df)) stop(".to_amplitude_db(): ComplexSpectrogram data frame missing amplitude column")
   ref <- max(df$amplitude, 1e-300)
   df$amplitude_dB <- 20 * log10(pmax(df$amplitude, 1e-300) / ref)
   floor_dB <- -dynamic_range
@@ -508,7 +508,7 @@ autoplot.ComplexSpectrogram <- function(object, from_time = NULL,
     garnish = TRUE, show_phase = FALSE, ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.ComplexSpectrogram(): Package 'ggplot2' is required. Please install it.")
 # nocov end
   df <- as.data.frame(object)
   df <- .filter_complex_spectrogram_df(df, from_time, to_time, from_freq,
@@ -562,7 +562,7 @@ autolayer.ComplexSpectrogram <- function(object, from_time = NULL,
   if (!"amplitude_dB" %in% names(df)) {
     if (
       !"amplitude" %in% names(
-        df)) stop("ComplexSpectrogram data frame missing amplitude column")
+        df)) stop("autolayer.ComplexSpectrogram(): ComplexSpectrogram data frame missing amplitude column")
     ref <- max(df$amplitude, 1e-300)
     # equivalent to 10*log10(power/ref^2) since power = amplitude^2
     df$amplitude_dB <- 20 * log10(pmax(df$amplitude, 1e-300) / ref)
@@ -588,7 +588,7 @@ autoplot.Cepstrum <- function(object, power = FALSE, garnish = TRUE,
   color = "darkblue", ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.Cepstrum(): Package 'ggplot2' is required. Please install it.")
 # nocov end
   df <- as.data.frame(object, power = power)
   if (nrow(df) == 0) {
@@ -625,7 +625,7 @@ autoplot.Cochleagram <- function(object, from_time = NULL, to_time = NULL,
     garnish = TRUE, ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.Cochleagram(): Package 'ggplot2' is required. Please install it.")
 # nocov end
   df <- as.data.frame(object)
   if (!is.null(from_time)) df <- df[df$time >= from_time, ]
@@ -671,7 +671,7 @@ autoplot.PowerCepstrogram <- function(object, from_time = NULL, to_time = NULL,
     quefrency_range = NULL, garnish = TRUE, ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.PowerCepstrogram(): Package 'ggplot2' is required. Please install it.")
 # nocov end
   df <- as.data.frame(object)
   if (!is.null(from_time)) df <- df[df$time >= from_time, ]
@@ -728,7 +728,7 @@ autoplot.MFCC <- function(object, coefficient_range = NULL, garnish = TRUE,
   ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.MFCC(): Package 'ggplot2' is required. Please install it.")
 # nocov end
   df <- as.data.frame(object)
   val_cols <- grep("^c[0-9]+$", names(df), value = TRUE)
@@ -795,7 +795,7 @@ autoplot.LFCC <- function(object, coefficient_range = NULL, garnish = TRUE,
   ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.LFCC(): Package 'ggplot2' is required. Please install it.")
 # nocov end
   df <- as.data.frame(object)
   val_cols <- grep("^c[0-9]+$", names(df), value = TRUE)
@@ -860,7 +860,7 @@ autolayer.LFCC <- function(object, coefficient_range = NULL, ...) {
 autoplot.BarkSpectrogram <- function(object, garnish = TRUE, ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.BarkSpectrogram(): Package 'ggplot2' is required. Please install it.")
 # nocov end
   df <- as.data.frame(object)
   if (nrow(df) == 0) {
@@ -920,7 +920,7 @@ autolayer.BarkSpectrogram <- function(object, ...) {
 autoplot.MelSpectrogram <- function(object, garnish = TRUE, ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.MelSpectrogram(): Package 'ggplot2' is required. Please install it.")
 # nocov end
   df <- as.data.frame(object)
   if (nrow(df) == 0) {
@@ -1007,7 +1007,7 @@ autoplot.Matrix <- function(object, x_col = NULL, y_col = NULL,
     fill_col = NULL, garnish = TRUE, ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.Matrix(): Package 'ggplot2' is required. Please install it.")
 # nocov end
   df <- as.data.frame(object)
   if (nrow(df) == 0) {
@@ -1071,7 +1071,7 @@ autoplot.PCA <- function(object, type = c("scree", "scores", "both"),
     garnish = TRUE, ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.PCA(): Package 'ggplot2' is required. Please install it.")
 # nocov end
   type <- match.arg(type)
   p_scree <- if (type == "scree" || type == "both") .scree_plot(object, "PC",
@@ -1081,7 +1081,7 @@ autoplot.PCA <- function(object, type = c("scree", "scores", "both"),
   if (type == "both") {
     if (
       requireNamespace("patchwork", quietly = TRUE)) return(p_scree | p_scores)
-    warning("patchwork not installed; returning scree plot only")
+    warning("autoplot.PCA(): patchwork not installed; returning scree plot only")
     return(p_scree)
   }
   if (type == "scree") return(p_scree)
@@ -1105,7 +1105,7 @@ autoplot.Discriminant <- function(object, type = c("scree", "scores", "both"),
     garnish = TRUE, ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.Discriminant(): Package 'ggplot2' is required. Please install it.")
 # nocov end
   type <- match.arg(type)
   p_scree <- if (type == "scree" || type == "both") {
@@ -1117,7 +1117,7 @@ autoplot.Discriminant <- function(object, type = c("scree", "scores", "both"),
   if (type == "both") {
     if (
       requireNamespace("patchwork", quietly = TRUE)) return(p_scree | p_scores)
-    warning("patchwork not installed; returning scree plot only")
+    warning("autoplot.Discriminant(): patchwork not installed; returning scree plot only")
     return(p_scree)
   }
   if (type == "scree") return(p_scree)
@@ -1163,7 +1163,7 @@ autoplot.FormantModeler <- function(object, from_track = 1L, to_track = 0L,
     garnish = TRUE, ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.FormantModeler(): Package 'ggplot2' is required. Please install it.")
 # nocov end
   df <- .formant_modeler_long_df(as.data.frame(object), from_track, to_track,
                                   object$get_number_of_tracks())
@@ -1207,7 +1207,7 @@ autoplot.Electroglottogram <- function(object, from_time = NULL, to_time = NULL,
     color = "black", garnish = TRUE, ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.Electroglottogram(): Package 'ggplot2' is required. Please install it.")
 # nocov end
   df <- as.data.frame(object)
   if (!is.null(from_time)) df <- df[df$time >= from_time, ]
@@ -1247,11 +1247,11 @@ autoplot.LongSound <- function(object, from_time = 0, to_time = 2,
     color = "black", garnish = TRUE, ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.LongSound(): Package 'ggplot2' is required. Please install it.")
 # nocov end
   if (is.null(from_time) || is.null(to_time))
     stop(
-      "from_time and to_time are required for LongSound (streaming from disk)")
+      "autoplot.LongSound(): from_time and to_time are required for LongSound (streaming from disk)")
   message("Extracting ", from_time, "-", to_time, " s from LongSound...")
   sound <- object$extract_part(from_time, to_time)
   df <- sound$as_data_frame()
@@ -1269,7 +1269,7 @@ autolayer.LongSound <- function(object, from_time = 0, to_time = 2,
     color = "black", ...) {
   if (is.null(from_time) || is.null(to_time))
     stop(
-      "from_time and to_time are required for LongSound (streaming from disk)")
+      "autolayer.LongSound(): from_time and to_time are required for LongSound (streaming from disk)")
   sound <- object$extract_part(from_time, to_time)
   df <- sound$as_data_frame()
   yc <- if ("amplitude" %in% names(df)) "amplitude" else "value"
@@ -1284,7 +1284,7 @@ autolayer.LongSound <- function(object, from_time = 0, to_time = 2,
 autoplot.DTW <- function(object, garnish = TRUE, alpha_path = 0.8, ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.DTW(): Package 'ggplot2' is required. Please install it.")
 # nocov end
   path <- object$get_path()
   if (is.null(path) || nrow(path) == 0) {
@@ -1337,7 +1337,7 @@ autoplot.Polygon <- function(object, garnish = TRUE,
     fill_polygon = FALSE, color = "black", fill_color = "grey80", ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.Polygon(): Package 'ggplot2' is required. Please install it.")
 # nocov end
   df <- as.data.frame(object)
   if (nrow(df) == 0) {
@@ -1376,7 +1376,7 @@ autoplot.VocalTract <- function(object, garnish = TRUE,
     plot_type = c("area", "line"), ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.VocalTract(): Package 'ggplot2' is required. Please install it.")
 # nocov end
   plot_type <- match.arg(plot_type)
   areas <- object$get_areas()
@@ -1421,7 +1421,7 @@ autoplot.LPC <- function(object, frame = 1L, garnish = TRUE,
     color = "darkred", ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.LPC(): Package 'ggplot2' is required. Please install it.")
 # nocov end
   spectrum <- object$to_spectrum(frame)
   df <- spectrum$as_data_frame()
@@ -1476,7 +1476,7 @@ autoplot.KlattGrid <- function(object, from_time = NULL, to_time = NULL,
     max_formant = 6L, garnish = TRUE, ...) {
 # nocov start
   if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
+    stop("autoplot.KlattGrid(): Package 'ggplot2' is required. Please install it.")
 # nocov end
   formant_type <- match.arg(formant_type)
   tmin <- if (is.null(from_time)) object$get_xmin() else from_time

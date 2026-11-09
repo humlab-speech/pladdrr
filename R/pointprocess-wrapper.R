@@ -198,17 +198,17 @@ NULL
 # PointProcess (the old XPtr finalizer) while the caller's .xptr still
 # references it -> use-after-free.
 .pp_methods$union_with <- function(.self, other_pp) {
-  if (!inherits(other_pp, "PointProcess")) stop("Argument must be PointProcess")
+  if (!inherits(other_pp, "PointProcess")) stop("pp$union_with(): Argument must be PointProcess")
   new_xptr <- .self$.cpp$union_with(other_pp$.xptr)
   PointProcess(.xptr = new_xptr)
 }
 .pp_methods$intersection_with <- function(.self, other_pp) {
-  if (!inherits(other_pp, "PointProcess")) stop("Argument must be PointProcess")
+  if (!inherits(other_pp, "PointProcess")) stop("pp$intersection_with(): Argument must be PointProcess")
   new_xptr <- .self$.cpp$intersection_with(other_pp$.xptr)
   PointProcess(.xptr = new_xptr)
 }
 .pp_methods$difference_with <- function(.self, other_pp) {
-  if (!inherits(other_pp, "PointProcess")) stop("Argument must be PointProcess")
+  if (!inherits(other_pp, "PointProcess")) stop("pp$difference_with(): Argument must be PointProcess")
   new_xptr <- .self$.cpp$difference_with(other_pp$.xptr)
   PointProcess(.xptr = new_xptr)
 }
@@ -226,7 +226,7 @@ NULL
 # --- Batch operations ---
 .pp_methods$get_values_from_sound <- function(.self, sound, channel = 1,
   interpolation = "cubic") {
-  if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
+  if (!inherits(sound, "Sound")) stop("pp$get_values_from_sound(): sound must be a Sound object")
   interp_code <- switch(tolower(interpolation),
     "nearest" = 0L, "linear" = 1L, "cubic" = 2L, "sinc70" = 3L, "sinc700" = 4L,
         2L)
@@ -337,7 +337,7 @@ NULL
   to_time = 0,
     period_floor = 0.0001, period_ceiling = 0.02,
     max_period_factor = 1.3, max_amplitude_factor = 1.6) {
-  if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
+  if (!inherits(sound, "Sound")) stop("pp$get_shimmer_local(): sound must be a Sound object")
   .self$.my_scache <- list(sound = sound)
   .pp_methods$._get_js_batch(.self, sound, from_time, to_time,
     period_floor, period_ceiling, max_period_factor,
@@ -347,7 +347,7 @@ NULL
   to_time = 0,
     period_floor = 0.0001, period_ceiling = 0.02,
     max_period_factor = 1.3, max_amplitude_factor = 1.6) {
-  if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
+  if (!inherits(sound, "Sound")) stop("pp$get_shimmer_local_db(): sound must be a Sound object")
   .pp_methods$._get_js_batch(.self, sound, from_time, to_time,
     period_floor, period_ceiling, max_period_factor,
         max_amplitude_factor)$shimmer_local_db
@@ -356,7 +356,7 @@ NULL
   to_time = 0,
     period_floor = 0.0001, period_ceiling = 0.02,
     max_period_factor = 1.3, max_amplitude_factor = 1.6) {
-  if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
+  if (!inherits(sound, "Sound")) stop("pp$get_shimmer_apq3(): sound must be a Sound object")
   .pp_methods$._get_js_batch(.self, sound, from_time, to_time,
     period_floor, period_ceiling, max_period_factor,
         max_amplitude_factor)$shimmer_apq3
@@ -365,7 +365,7 @@ NULL
   to_time = 0,
     period_floor = 0.0001, period_ceiling = 0.02,
     max_period_factor = 1.3, max_amplitude_factor = 1.6) {
-  if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
+  if (!inherits(sound, "Sound")) stop("pp$get_shimmer_apq5(): sound must be a Sound object")
   .pp_methods$._get_js_batch(.self, sound, from_time, to_time,
     period_floor, period_ceiling, max_period_factor,
         max_amplitude_factor)$shimmer_apq5
@@ -374,7 +374,7 @@ NULL
   to_time = 0,
     period_floor = 0.0001, period_ceiling = 0.02,
     max_period_factor = 1.3, max_amplitude_factor = 1.6) {
-  if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
+  if (!inherits(sound, "Sound")) stop("pp$get_shimmer_apq11(): sound must be a Sound object")
   .pp_methods$._get_js_batch(.self, sound, from_time, to_time,
     period_floor, period_ceiling, max_period_factor,
         max_amplitude_factor)$shimmer_apq11
@@ -383,7 +383,7 @@ NULL
   to_time = 0,
     period_floor = 0.0001, period_ceiling = 0.02,
     max_period_factor = 1.3, max_amplitude_factor = 1.6) {
-  if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
+  if (!inherits(sound, "Sound")) stop("pp$get_shimmer_dda(): sound must be a Sound object")
   .pp_methods$._get_js_batch(.self, sound, from_time, to_time,
     period_floor, period_ceiling, max_period_factor,
         max_amplitude_factor)$shimmer_dda

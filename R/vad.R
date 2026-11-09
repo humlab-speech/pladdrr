@@ -165,7 +165,7 @@ sound_to_textgrid_silences <- function(sound,
                                        sounding_label = "sounding") {
   
   if (!inherits(sound, "Sound")) {
-    stop("sound must be a Sound object")
+    stop("sound_to_textgrid_silences(): sound must be a Sound object")
   }
   
   xptr <- .sound_to_textgrid_silences(
@@ -232,7 +232,7 @@ textgrid_get_intervals_where <- function(textgrid,
                                         text) {
 
   if (!inherits(textgrid, "TextGrid")) {
-    stop("textgrid must be a TextGrid object")
+    stop("textgrid_get_intervals_where(): textgrid must be a TextGrid object")
   }
 
   condition <- match.arg(condition)
@@ -354,7 +354,7 @@ sound_extract_parts <- function(sound,
   } else if (inherits(sound, "externalptr")) {
     xptr <- sound
   } else {
-    stop("sound must be a Sound object or external pointer")
+    stop("sound_extract_parts(): sound must be a Sound object or external pointer")
   }
 
   if (length(start_times) != length(end_times)) {
@@ -455,7 +455,7 @@ extract_voiced_segments <- function(sound,
                                     return_textgrid = FALSE) {
 
   if (!inherits(sound, "Sound")) {
-    stop("sound must be a Sound object")
+    stop("extract_voiced_segments(): sound must be a Sound object")
   }
 
   # Steps 1-2: Intensity-based detection of voiced intervals
@@ -543,7 +543,7 @@ sound_get_zcr <- function(sound,
                           avqi_compatible = TRUE) {
 
   if (!inherits(sound, "Sound")) {
-    stop("sound must be a Sound object")
+    stop("sound_get_zcr(): sound must be a Sound object")
   }
 
   # Get all zero crossings using Praat's built-in detection (with interpolation)

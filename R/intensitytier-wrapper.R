@@ -113,7 +113,7 @@ IntensityTier <- function(tmin = NULL, tmax = NULL, .xptr = NULL) {
   } else if (!is.null(tmin) && !is.null(tmax)) {
     ptr <- .intensitytier_create(as.numeric(tmin), as.numeric(tmax))
   } else {
-    stop("Must provide either (tmin, tmax) or .xptr")
+    stop("IntensityTier(): Must provide either (tmin, tmax) or .xptr")
   }
 
   tier_mod <- get_module("intensitytier_module")
