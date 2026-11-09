@@ -81,19 +81,28 @@ autolayer.Sound <- function(object, from_time = NULL, to_time = NULL,
 #' @rdname autoplot-methods
 #' @inheritParams pladdrr_shared_autoplot_object object
 #' @param show_voicing Color by voicing strength (default: FALSE)
+#' @param connect_gaps For \code{autoplot.Pitch}: if \code{TRUE} (the default)
+#'   unvoiced frames are dropped and the line runs on across them; if
+#'   \code{FALSE} they are kept as missing values and the line is broken
+#'   wherever the pitch is undefined.
 #' @export
 autoplot.Pitch <- function(object, from_time = NULL, to_time = NULL,
-                           color = "darkgreen", show_voicing = FALSE, ...) {
+                           color = "darkgreen", show_voicing = FALSE,
+                           connect_gaps = TRUE, ...) {
 
   df <- object$as_data_frame(include_strength = show_voicing)
 
-  # Remove unvoiced frames
-  df <- df[!is.na(df$frequency) & df$frequency > 0, ]
+  voiced <- !is.na(df$frequency) & df$frequency > 0
+  if (connect_gaps) {
+    df <- df[voiced, ]
+  } else {
+    df$frequency[!voiced] <- NA_real_
+  }
 
   if (!is.null(from_time)) df <- df[df$time >= from_time, ]
   if (!is.null(to_time)) df <- df[df$time <= to_time, ]
 
-  if (nrow(df) == 0) {
+  if (nrow(df) == 0 || all(is.na(df$frequency))) {
     warning("No voiced frames in Pitch object")
     return(ggplot2::ggplot() + ggplot2::theme_void())
   }
@@ -101,13 +110,13 @@ autoplot.Pitch <- function(object, from_time = NULL, to_time = NULL,
   if (show_voicing && "strength" %in% names(df)) {
     p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$time, y = .data$frequency,
                                           color = .data$strength)) +
-      ggplot2::geom_line(linewidth = 0.8, ...) +
+      ggplot2::geom_line(linewidth = 0.8, na.rm = TRUE, ...) +
       ggplot2::scale_color_gradient(low = "gray70", high = color,
         name = "Voicing")
   } else {
     p <- ggplot2::ggplot(df,
       ggplot2::aes(x = .data$time, y = .data$frequency)) +
-      ggplot2::geom_line(color = color, linewidth = 0.8, ...)
+      ggplot2::geom_line(color = color, linewidth = 0.8, na.rm = TRUE, ...)
   }
 
   p + ggplot2::labs(title = "Pitch", x = "Time (s)", y = "Frequency (Hz)") +

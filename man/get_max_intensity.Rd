@@ -12,7 +12,7 @@ get_max_intensity(intensity, time_range = NULL)
 \item{time_range}{Optional time range c(start, end)}
 }
 \value{
-Maximum intensity in dB
+Numeric: maximum intensity in dB
 }
 \description{
 **DEPRECATED:** Use \code{intensity$get_maximum()} instead.

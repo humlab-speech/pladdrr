@@ -18,7 +18,7 @@ Controls the standard deviation of the noise.}
 (default), noise will be different each time.}
 }
 \value{
-A praat_sound object containing white noise
+A Sound object containing white noise
 }
 \description{
 Creates a praat_sound object containing white noise (random values from

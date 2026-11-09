@@ -7,6 +7,14 @@
 # `with_pladdrr_errors()`. C++-side failures still surface untagged unless the
 # wrapper uses the PLADDRR_* macros in src/pladdrr_errors.h.
 
+# One-line, length-capped deparse for error messages: deparse() of a long
+# vector returns several strings, which would make the condition message a
+# vector.
+.short_deparse <- function(x, width = 60L) {
+  txt <- paste(base::deparse(x), collapse = " ")
+  if (nchar(txt) > width) paste0(substr(txt, 1L, width - 3L), "...") else txt
+}
+
 # Raise a classed input error. `routine` and `param` are carried on the
 # condition so programmatic callers can branch on them.
 #' Raise a classed `pladdrr_input_error`.
@@ -70,6 +78,28 @@
   if (nzchar(tools::file_ext(path))) path else paste0(path, ".", suffix)
 }
 
+# Require a single non-NA string (G2.0-G2.2). `null_ok` admits NULL, e.g. an
+# optional file pattern. The message names the routine so each is unique.
+.check_string <- function(value, name, routine, null_ok = FALSE) {
+  if (null_ok && is.null(value)) return(invisible(TRUE))
+  if (!is.character(value) || length(value) != 1L || is.na(value)) {
+    .stop_input(routine, name,
+                paste0(routine, "(): ", name, " must be a single string, got: ",
+                       .short_deparse(value)))
+  }
+  invisible(TRUE)
+}
+
+# Require a single TRUE/FALSE (not NA, not 0/1).
+.check_flag <- function(value, name, routine) {
+  if (!is.logical(value) || length(value) != 1L || is.na(value)) {
+    .stop_input(routine, name,
+                paste0(routine, "(): ", name, " must be TRUE or FALSE, got: ",
+                       .short_deparse(value)))
+  }
+  invisible(TRUE)
+}
+
 # Praat has no missing-value representation for sample data: a NaN or Inf sample
 # silently propagates through every analysis (and Inf can overflow filters).
 # Reject non-finite input at the boundary and say how many samples are bad.
@@ -101,11 +131,11 @@
     .stop_input("check_pitch_range", "pitch_floor",
                 paste0(
                   "pitch_floor must be a single positive number (Hz), got: ",
-                       deparse(pitch_floor)))
+                       .short_deparse(pitch_floor)))
   }
   if (!.is_numeric_scalar(pitch_ceiling) || pitch_ceiling <= pitch_floor) {
     .stop_input("check_pitch_range", "pitch_ceiling",
-                paste0("pitch_ceiling (", deparse(pitch_ceiling),
+                paste0("pitch_ceiling (", .short_deparse(pitch_ceiling),
                        ") must be a single number greater than pitch_floor (",
                        pitch_floor, ")"))
   }
@@ -121,7 +151,7 @@
   if (!is.numeric(value) || length(value) != 1L || is.na(value) || value < 1) {
     .stop_input("check_positive_count", name,
                 paste0(name, " must be a single number >= 1, got: ",
-                  deparse(value)))
+                  .short_deparse(value)))
   }
   invisible(TRUE)
 }
@@ -132,7 +162,7 @@
   if (!is.numeric(value) || length(value) != 1L || is.na(value) || value <= 0) {
     .stop_input("check_positive_number", name,
                 paste0(name, " must be a single positive number, got: ",
-                       deparse(value)))
+                       .short_deparse(value)))
   }
   invisible(TRUE)
 }
@@ -151,7 +181,7 @@
     value <= 0) {
     .stop_input(routine, name,
       paste0(name, " must be a single positive, finite number, got: ",
-        deparse(value)))
+        .short_deparse(value)))
   }
   invisible(TRUE)
 }
@@ -215,13 +245,13 @@
     .stop_input("check_quefrency_range", qstart_name,
                 paste0(qstart_name,
                   " must be a single non-negative number (s), got: ",
-                       deparse(qstart)))
+                       .short_deparse(qstart)))
   }
   if (!.is_numeric_scalar(qend) || qend < 0) {
     .stop_input("check_quefrency_range", qend_name,
                 paste0(qend_name,
                   " must be a single non-negative number (s), got: ",
-                       deparse(qend)))
+                       .short_deparse(qend)))
   }
   # qend == 0 means "autowindow to the full quefrency range" (Praat convention).
   if (qend != 0 && qend <= qstart) {
@@ -247,7 +277,7 @@
       time_step < 0) {
     .stop_input("check_time_step", "time_step",
                 paste0("time_step must be a single non-negative number ",
-                       "(0 = auto), got: ", deparse(time_step)))
+                       "(0 = auto), got: ", .short_deparse(time_step)))
   }
   invisible(TRUE)
 }

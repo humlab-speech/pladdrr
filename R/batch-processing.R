@@ -230,6 +230,11 @@ NULL
 batch_process <- function(directory, pattern = "\\.wav$", func,
                          recursive = FALSE, parallel = FALSE, 
                          ncores = NULL, progress = TRUE, ...) {
+  .check_string(directory, "directory", "batch_process")
+  .check_string(pattern, "pattern", "batch_process")
+  .check_flag(recursive, "recursive", "batch_process")
+  .check_flag(parallel, "parallel", "batch_process")
+  .check_flag(progress, "progress", "batch_process")
   
   # Get file list
   files <- list.files(directory, pattern = pattern, 
@@ -287,7 +292,7 @@ batch_process <- function(directory, pattern = "\\.wav$", func,
 #' @param require_both Logical, only return pairs where both files exist
 #'  (default: TRUE)
 #'
-#' @return Data frame with columns: sound_file, textgrid_file, basename
+#' @return A data.frame with columns: sound_file, textgrid_file, basename
 #'
 #' @examples
 #' audio_dir <- tempfile("audio_")
@@ -315,6 +320,11 @@ pair_sound_textgrid <- function(sound_dir, textgrid_dir = sound_dir,
                                textgrid_pattern = "\\.TextGrid$",
                                by = "basename",
                                require_both = TRUE) {
+  .check_string(sound_dir, "sound_dir", "pair_sound_textgrid")
+  .check_string(textgrid_dir, "textgrid_dir", "pair_sound_textgrid")
+  .check_string(sound_pattern, "sound_pattern", "pair_sound_textgrid")
+  .check_string(textgrid_pattern, "textgrid_pattern", "pair_sound_textgrid")
+  .check_flag(require_both, "require_both", "pair_sound_textgrid")
   
   # Get file lists
   sound_files <- list.files(sound_dir, pattern = sound_pattern, 
@@ -376,7 +386,7 @@ pair_sound_textgrid <- function(sound_dir, textgrid_dir = sound_dir,
 #' @param aggregate_by Character, how to aggregate: "interval" (default), 
 #'   "label", or "tier"
 #'
-#' @return Data frame with measurements for each interval/point
+#' @return A data.frame with measurements for each interval/point
 #'
 #' @examples
 #' \donttest{
@@ -464,6 +474,10 @@ extract_measurements_custom <- function(sound, textgrid, tier, measures,
 #' @export
 create_file_list <- function(directory, pattern = NULL,
                             full_names = TRUE, recursive = FALSE) {
+  .check_string(directory, "directory", "create_file_list")
+  .check_string(pattern, "pattern", "create_file_list", null_ok = TRUE)
+  .check_flag(full_names, "full_names", "create_file_list")
+  .check_flag(recursive, "recursive", "create_file_list")
   list.files(directory, pattern = pattern, 
             full.names = full_names, recursive = recursive)
 }
@@ -486,7 +500,7 @@ create_file_list <- function(directory, pattern = NULL,
 #'  custom function.
 #' @param require_both Logical. Require both files to exist (default: TRUE).
 #'
-#' @return Data frame with columns: sound_file, textgrid_file, basename.
+#' @return A data.frame with columns: sound_file, textgrid_file, basename.
 #'
 #' @examples
 #' audio_dir <- tempfile("audio_")
@@ -515,6 +529,11 @@ pair_files <- function(sound_dir,
                       textgrid_pattern = "\\.TextGrid$",
                       by = "basename",
                       require_both = TRUE) {
+  .check_string(sound_dir, "sound_dir", "pair_files")
+  .check_string(textgrid_dir, "textgrid_dir", "pair_files")
+  .check_string(sound_pattern, "sound_pattern", "pair_files")
+  .check_string(textgrid_pattern, "textgrid_pattern", "pair_files")
+  .check_flag(require_both, "require_both", "pair_files")
   
   # Get file lists
   sound_files <- list.files(sound_dir, pattern = sound_pattern,
@@ -676,7 +695,7 @@ extract_measurements <- function(sound,
 #' @param stats Character vector. Statistics to compute: "mean", "sd", "median",
 #'  "min", "max", "n".
 #'
-#' @return Data frame with aggregated statistics.
+#' @return A data.frame with aggregated statistics.
 #'
 #' @examples
 #' results <- data.frame(

@@ -226,6 +226,9 @@ to_pitch_ac_direct <- function(sound,
                                 voiced_unvoiced_cost = 0.14,
                                 # Praat-compatible aliases
                                 max_number_of_candidates = NULL) {
+  .check_time_step(time_step)
+  .check_pitch_range(pitch_floor, pitch_ceiling)
+  .check_positive_count(max_candidates, "max_candidates")
   sound_ptr <- if (inherits(sound, "Sound")) {
     sound$.xptr
   } else if (inherits(sound, "externalptr")) {
@@ -293,6 +296,9 @@ to_pitch_cc_direct <- function(sound,
                                 voiced_unvoiced_cost = 0.14,
                                 # Praat-compatible aliases
                                 max_number_of_candidates = NULL) {
+  .check_time_step(time_step)
+  .check_pitch_range(pitch_floor, pitch_ceiling)
+  .check_positive_count(max_candidates, "max_candidates")
   sound_ptr <- if (inherits(sound, "Sound")) {
     sound$.xptr
   } else if (inherits(sound, "externalptr")) {
@@ -343,6 +349,11 @@ to_pitch_shs_direct <- function(sound,
                                  max_candidates = 15L,
                                  compression_factor = 0.84,
                                  n_points_per_octave = 48L) {
+  .check_time_step(time_step)
+  .check_pitch_range(pitch_floor, pitch_ceiling)
+  .check_positive_count(max_candidates, "max_candidates")
+  .check_positive_count(max_subharmonics, "max_subharmonics")
+  .check_positive_count(n_points_per_octave, "n_points_per_octave")
   sound_ptr <- if (inherits(sound, "Sound")) {
     sound$.xptr
   } else if (inherits(sound, "externalptr")) {
@@ -392,6 +403,10 @@ to_pitch_spinet_direct <- function(sound,
                                     n_filters = 250L,
                                     pitch_ceiling = 500,
                                     max_candidates = 15L) {
+  .check_time_step(time_step)
+  .check_positive_number(pitch_ceiling, "pitch_ceiling")
+  .check_positive_count(n_filters, "n_filters")
+  .check_positive_count(max_candidates, "max_candidates")
   sound_ptr <- if (inherits(sound, "Sound")) {
     sound$.xptr
   } else if (inherits(sound, "externalptr")) {

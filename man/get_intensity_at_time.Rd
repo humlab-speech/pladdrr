@@ -14,7 +14,7 @@ get_intensity_at_time(intensity, time, interpolate = FALSE)
 \item{interpolate}{Whether to interpolate}
 }
 \value{
-Intensity in dB
+Numeric: intensity in dB
 }
 \description{
 **DEPRECATED:** Use \code{intensity$get_value_at_time(time)} instead.

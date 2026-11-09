@@ -86,7 +86,7 @@
 #'   workers.
 #' @param ... Additional arguments passed to analysis_func
 #'
-#' @return List of results from analysis_func, one per file
+#' @return A list of results from analysis_func, one per file
 #'
 #' @details
 #' This function distributes batch analysis across worker processes.
@@ -196,7 +196,7 @@ analyze_files_parallel <- function(files, analysis_func, n_cores = NULL,
 #'   avoid oversubscription; set \code{1} to force single-threaded workers.
 #' @param ... Additional arguments passed to analysis_func
 #'
-#' @return List of results
+#' @return A list of results, one per sound
 #'
 #' @examples
 #' \donttest{
@@ -384,7 +384,7 @@ extract_intensity_parallel <- function(files, n_cores = NULL,
 #' @param analysis_func Function to benchmark
 #' @param core_counts Integer vector. Core counts to test (default: c(1, 2, 4))
 #'
-#' @return Data frame with timing results
+#' @return A data.frame with timing results
 #'
 #' @examples
 #' \donttest{

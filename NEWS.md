@@ -26,6 +26,18 @@
   longer crash R when given an object whose external pointer is NULL (what
   `readRDS()` returns for a saved object); they raise an R error.
 
+* `create_file_list()`, `pair_files()`, `pair_sound_textgrid()` and
+  `batch_process()` now check that directories and patterns are single strings
+  and flags are `TRUE`/`FALSE`, and the pitch batch and `*_direct` functions check
+  `time_step`, the pitch floor and ceiling and the candidate/filter counts, with a
+  `pladdrr_input_error` instead of a downstream failure.
+* `autoplot.Pitch()` gains `connect_gaps`; `FALSE` breaks the line at unvoiced
+  frames (default `TRUE` keeps the old behaviour).
+* The never-triggered `requireNamespace("ggplot2")` guards were removed (ggplot2
+  is in Imports). `@return` now states the class for the scalar getters and
+  data-frame helpers; `generate_noise()` and `generate_sine_wave()` return a
+  `Sound`, not a `praat_sound`.
+
 ## Testing
 
 * New tests for parameter recovery, machine-precision noise susceptibility and a

@@ -10,7 +10,7 @@ get_duration(sound)
 \item{sound}{A Sound R6 object}
 }
 \value{
-Duration in seconds
+Duration in seconds, a single numeric value
 }
 \description{
 **DEPRECATED:** Use \code{sound$get_duration()} instead.

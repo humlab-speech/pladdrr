@@ -92,6 +92,8 @@ sound_to_pitch_batch <- function(sounds,
                                  pitch_floor = 75,
                                  pitch_ceiling = 600,
                                  return_r6 = TRUE) {
+  .check_time_step(time_step)
+  .check_pitch_range(pitch_floor, pitch_ceiling)
   # Extract xptrs
   xptrs <- lapply(sounds, function(s) {
     if (inherits(s, "Sound")) {
@@ -157,6 +159,9 @@ sound_to_pitch_ac_batch <- function(sounds,
                                     octave_jump_cost = 0.35,
                                     voiced_unvoiced_cost = 0.14,
                                     return_r6 = TRUE) {
+  .check_time_step(time_step)
+  .check_pitch_range(pitch_floor, pitch_ceiling)
+  .check_positive_count(max_candidates, "max_candidates")
   xptrs <- lapply(sounds, function(s) {
     if (inherits(s, "Sound")) {
       ptr <- s$.xptr
@@ -227,6 +232,9 @@ sound_to_pitch_cc_batch <- function(sounds,
                                     octave_jump_cost = 0.35,
                                     voiced_unvoiced_cost = 0.14,
                                     return_r6 = TRUE) {
+  .check_time_step(time_step)
+  .check_pitch_range(pitch_floor, pitch_ceiling)
+  .check_positive_count(max_candidates, "max_candidates")
   xptrs <- lapply(sounds, function(s) {
     if (inherits(s, "Sound")) {
       ptr <- s$.xptr
@@ -290,6 +298,11 @@ sound_to_pitch_shs_batch <- function(sounds,
                                      compression_factor = 0.84,
                                      n_points_per_octave = 48L,
                                      return_r6 = TRUE) {
+  .check_time_step(time_step)
+  .check_pitch_range(pitch_floor, pitch_ceiling)
+  .check_positive_count(max_candidates, "max_candidates")
+  .check_positive_count(max_subharmonics, "max_subharmonics")
+  .check_positive_count(n_points_per_octave, "n_points_per_octave")
   xptrs <- lapply(sounds, function(s) {
     if (inherits(s, "Sound")) {
       ptr <- s$.xptr
@@ -355,6 +368,10 @@ sound_to_pitch_spinet_batch <- function(sounds,
                                         pitch_ceiling = 500,
                                         max_candidates = 15L,
                                         return_r6 = TRUE) {
+  .check_time_step(time_step)
+  .check_positive_number(pitch_ceiling, "pitch_ceiling")
+  .check_positive_count(n_filters, "n_filters")
+  .check_positive_count(max_candidates, "max_candidates")
   xptrs <- lapply(sounds, function(s) {
     if (inherits(s, "Sound")) {
       ptr <- s$.xptr

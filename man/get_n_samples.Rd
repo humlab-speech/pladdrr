@@ -10,7 +10,7 @@ get_n_samples(sound)
 \item{sound}{A Sound R6 object}
 }
 \value{
-Number of samples
+Integer: number of samples
 }
 \description{
 **DEPRECATED:** Use \code{sound$get_number_of_samples()} instead.

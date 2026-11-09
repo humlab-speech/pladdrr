@@ -16,7 +16,7 @@ generate_sine_wave(frequency, duration, sampling_rate = 44100, amplitude = 1)
 \item{amplitude}{Peak amplitude (default: 1.0, must be positive)}
 }
 \value{
-A praat_sound object containing the sine wave
+A Sound object containing the sine wave
 }
 \description{
 Creates a praat_sound object containing a pure sine wave at a specified

@@ -30,7 +30,7 @@ interval label and should return TRUE/FALSE}
 "label", or "tier"}
 }
 \value{
-Data frame with measurements for each interval/point
+A data.frame with measurements for each interval/point
 }
 \description{
 Extract acoustic measurements from intervals or points in TextGrid

@@ -14,7 +14,7 @@
 #' @inheritParams pladdrr_shared_params sampling_rate
 #' @param amplitude Peak amplitude (default: 1.0, must be positive)
 #'
-#' @return A praat_sound object containing the sine wave
+#' @return A Sound object containing the sine wave
 #'
 #' @details
 #' The generated sine wave follows the formula: \code{amplitude * sin(2 * pi *
@@ -63,7 +63,7 @@ generate_sine_wave <- function(frequency, duration,
 #' @param seed Optional random seed for reproducible noise generation. If NULL
 #'   (default), noise will be different each time.
 #'
-#' @return A praat_sound object containing white noise
+#' @return A Sound object containing white noise
 #'
 #' @details
 #' White noise is generated using \code{rnorm()} with mean 0 and standard

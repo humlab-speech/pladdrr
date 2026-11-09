@@ -14,6 +14,13 @@
 #' @srrstats {G1.1} README section 'Other similar packages' states that pladdrr is, to the authors' knowledge, the first R package to compile Praat's algorithms in-process, that it reproduces rather than improves Praat's methods, and lists Praat scripting, parselmouth, speakr, rPraat, PraatR and wrassp.
 #' @srrstats {G1.2} Life-cycle statement in `.github/CONTRIBUTING.md`, section 'Life cycle'.
 #' @srrstats {G1.3} `vignettes/terminology.Rmd` defines each measure the package returns (F0, HNR, intensity, formants, jitter, shimmer, CPP/CPPS, AVQI) and the missing/undefined-value conventions. pladdrr performs no statistical inference, so there are no hypothesis-test or interval terms to define.
+#' @srrstats {G2.15} The base statistics calls in `R/` (`mean`, `sd`, `median`, `quantile` in `R/s3-methods.R`, `R/sound-stats.R`) run on vectors that are either filtered for undefined values first (`voiced_freqs`, `valid_freqs`, `valid_intensities`) or are sample values that `Sound$from_values()` has already checked to be finite. Praat-side aggregates (`get_mean()` and friends) skip undefined frames themselves (`vignettes/terminology.Rmd`).
+#' @srrstats {TS1.6} Irregularly spaced objects (PitchTier and the other tiers, PointProcess) keep their points in time order on insertion, because Praat inserts in sorted order. Tested in `tests/testthat/test-edge-conditions.R` (`PitchTier` filled out of order).
+#' @srrstats {TS5.1} Time-domain `autoplot()` methods label the horizontal axis "Time (s)" (37 plot constructors; tested for Sound, Pitch, Formant, Intensity, Spectrogram, Harmonicity and PointProcess in `tests/testthat/test-plot-axes.R`).
+#' @srrstats {TS5.2} Time is on the horizontal axis by default in those methods (`test-plot-axes.R`).
+#' @srrstats {TS5.3} The unit (seconds, hertz, dB) is part of every axis label (`test-plot-axes.R`).
+#' @srrstats {TS5.4} Frequency axes show non-negative hertz ("Frequency (Hz)"); no axis spans [-pi, pi] (`test-plot-axes.R`).
+#' @srrstats {TS5.5} `autoplot.Pitch(connect_gaps = FALSE)` breaks the line at unvoiced frames; the default (`TRUE`) joins across them. Tested in `test-plot-axes.R`.
 #' @srrstats {G1.4a} All 149 hand-written internal functions of the form `.name <- function` carry roxygen blocks with `@noRd` (listed by `Rscript dev/internal-docs.R`); generated `R/RcppExports.R` is exempt, and the R6 method tables are documented through their class pages.
 #' @srrstats {G3.0} Exact floating-point comparisons are limited to (a) sentinel and boundary values typed by the caller (`0` = default / whole range, `-1` balance, `1` multiplier) and (b) division-by-zero guards, where a tolerance would change the result. Each site in the package's own C++ is annotated `// G3.0: exact - ...` (`rg "G3.0: exact" src`), R-level sentinels use `identical(x, 0)`, and the vendored Praat sources, which compare exactly in many places, are left untouched on purpose (`inst/agents/PRAAT_MODIFICATIONS.md`).
 #' @srrstats {G1.4} All exported functions and classes are documented with roxygen2 (`Config/roxygen2/version: 8.1.0`, 328 Rd files).
@@ -64,31 +71,24 @@
 #' @srrstats {TS5.0} `plot()` and `autoplot()` methods exist for the time-sampled classes (`R/plotting-methods.R`, `R/autoplot-methods.R`).
 #' @srrstatsTODO {G1.5} PARTIAL. `inst/benchmarks/` holds scripts for the performance claims in the vignettes; no associated publication yet, so the scripts are not tied to one.
 #' @srrstatsTODO {G1.6} OPEN. `inst/benchmarks/04_parselmouth_comparison.R` compares with Python's parselmouth; no R-package comparison (speakr, rPraat) exists.
-#' @srrstatsTODO {G2.0} PARTIAL. Scalar parameters are checked by the validators in `R/validators.R` (`.is_numeric_scalar`, `.check_pitch_range`, `.check_positive_count`, ...) and raise `pladdrr_input_error`; coverage across all exported functions has not been audited (see `dev/autotest/`).
+#' @srrstatsTODO {G2.0} PARTIAL. Scalar parameters are checked by the validators in `R/validators.R` (`.check_string`, `.check_flag`, `.check_pitch_range`, `.check_positive_count`, ...) and raise `pladdrr_input_error`; the file-listing, pair/batch and pitch batch/direct functions that `autotest` showed accepting length-2 or wrongly typed arguments now validate (`tests/testthat/test-argument-validation.R`). The rest of the exported functions have not been audited one by one (`dev/ropensci-autotest-findings.md` lists the remaining mutation diagnostics).
 #' @srrstatsTODO {G2.0a} PARTIAL. Length expectations are documented in `@param` for validated parameters; not yet uniform.
 #' @srrstatsTODO {G2.1} PARTIAL. As G2.0.
 #' @srrstatsTODO {G2.1a} PARTIAL. As G2.0a.
 #' @srrstatsTODO {G2.2} PARTIAL. Checked for the validated parameters; `autotest` results (`dev/autotest/`) show where multivariate input is still accepted.
 #' @srrstatsTODO {G2.3b} PARTIAL. Unit, window and format names are lower-cased before lookup (`tolower()` in `.pitch_unit_code`, `.window_shape_code`, `.ltas_unit_code`, `sound$save(format=)`), but this is not stated for every character parameter.
-#' @srrstatsTODO {G2.15} OPEN. Audit of `mean()`/`sd()`/`cor()` calls on possibly-NaN data in `R/` (outside the Praat-side aggregates) has not been done.
 #' @srrstatsTODO {G5.1} PARTIAL. Test audio and TextGrids are shipped in `inst/extdata/` and reachable with `system.file()`; the generator helpers (`generate_sine_wave()`, `generate_noise()`) are exported, but no dedicated test-data documentation exists.
 #' @srrstatsTODO {G5.2} PARTIAL. About 700 `expect_error`/`expect_warning` calls, and every message reachable without removing a dependency or breaking the installation is triggered by a test (see G5.2b).
 #' @srrstatsTODO {G5.2b} PARTIAL. 193 of the 230 literal messages that had no matching test fragment are now covered: 134 by tests (`tests/testthat/test-error-messages-*.R`) and 59 by removing dead `requireNamespace("ggplot2")` guards for a package that is in Imports. `dev/message-baseline.txt` lists the remaining 37, all of which need a precondition that is awkward to build in-process: a package from Suggests being absent (patchwork, gridExtra, RcppXPtrUtils, parallel), an install that is broken (`pitch_module not available`), a build without CLAPACK, empty Excitation/FormantGrid/MFCC/DTW/Matrix/BarkSpectrogram objects, or the attach banner. A ratchet test stops the list growing.
 #' @srrstatsTODO {G5.3} PARTIAL. `tests/testthat/test-nan-guards.R` covers several analyses; undefined (NaN) output is intended for unvoiced frames and is documented.
 #' @srrstatsTODO {G5.7} OPEN. Timing/scaling behaviour is tested only in the extended tier (`PLADDRR_EXTENDED_TESTS`); accuracy as a function of data size is not.
 #' @srrstatsTODO {TS1.2} PARTIAL. See G2.0; class validation of object arguments exists in most wrappers (`inherits(x, "Sound")`) but is not uniform.
-#' @srrstatsTODO {TS1.6} OPEN. Ordering of irregular objects (PointProcess, tiers) is maintained by Praat on insertion; no pladdrr-level test of unsorted input exists.
 #' @srrstatsTODO {TS2.4} OPEN. No run-time stationarity diagnostics; the vignette advises on window and pitch-floor choice.
 #' @srrstatsTODO {TS2.4a} OPEN. No diagnostic messages or warnings for non-stationary input.
 #' @srrstatsTODO {TS2.4b} PARTIAL. `vignettes/terminology.Rmd` advises on choosing windows; no transformation routines are provided.
 #' @srrstatsTODO {TS4.1} OPEN. `units` attributes of vector input are dropped (TS1.7), so they are not carried into return values.
 #' @srrstatsTODO {TS4.2} PARTIAL. `@return` is documented for exported functions; the class of every return value is not stated uniformly.
 #' @srrstatsTODO {TS4.3} PARTIAL. Time is in seconds and frequency in hertz throughout (`vignettes/terminology.Rmd`); individual return values do not always repeat the unit.
-#' @srrstatsTODO {TS5.1} PARTIAL. Time axes are labelled in the autoplot methods; not audited for every class.
-#' @srrstatsTODO {TS5.2} PARTIAL. As TS5.1; time defaults to the horizontal axis.
-#' @srrstatsTODO {TS5.3} PARTIAL. As TS5.1.
-#' @srrstatsTODO {TS5.4} PARTIAL. Frequency axes are in hertz from 0; no [-pi, pi] axes are produced. Not audited for every class.
-#' @srrstatsTODO {TS5.5} OPEN. No option for broken versus continuous lines across undefined (unvoiced) frames.
 #'
 #' @noRd
 NULL

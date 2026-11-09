@@ -31,7 +31,7 @@ function}
 (default: TRUE)}
 }
 \value{
-Data frame with columns: sound_file, textgrid_file, basename
+A data.frame with columns: sound_file, textgrid_file, basename
 }
 \description{
 Find matching Sound and TextGrid files in directories. This replaces Praat's

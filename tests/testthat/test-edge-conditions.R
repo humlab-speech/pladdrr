@@ -92,3 +92,10 @@ test_that("integer, ts and units vectors are accepted as sample input (G2.6)", {
   expect_equal(Sound$from_values(with_units, sr)$get_values(), tone(1600),
                tolerance = 1e-12)
 })
+
+test_that("tiers keep their points in time order however they are inserted (TS1.6)", {
+  pt <- PitchTier(0, 1)
+  pt$add_point(0.8, 200); pt$add_point(0.2, 100); pt$add_point(0.5, 150)
+  expect_equal(as.data.frame(pt)$time, c(0.2, 0.5, 0.8))
+  expect_equal(as.data.frame(pt)$frequency, c(100, 150, 200))
+})

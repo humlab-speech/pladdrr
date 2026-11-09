@@ -12,7 +12,7 @@ get_mean_intensity(intensity, time_range = NULL)
 \item{time_range}{Optional time range c(start, end)}
 }
 \value{
-Mean intensity in dB
+Numeric: mean intensity in dB
 }
 \description{
 **DEPRECATED:** Use \code{intensity$get_mean()} instead.

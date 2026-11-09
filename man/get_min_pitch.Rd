@@ -14,7 +14,7 @@ get_min_pitch(pitch, unit = "Hz", time_range = NULL)
 \item{time_range}{Optional time range c(start, end)}
 }
 \value{
-Minimum pitch value
+Numeric: minimum pitch in Hz
 }
 \description{
 **DEPRECATED:** Use \code{pitch$get_minimum(unit)} instead.

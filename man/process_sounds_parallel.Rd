@@ -27,7 +27,7 @@ avoid oversubscription; set \code{1} to force single-threaded workers.}
 \item{...}{Additional arguments passed to analysis_func}
 }
 \value{
-List of results
+A list of results, one per sound
 }
 \description{
 Apply analysis to pre-loaded Sound objects in parallel.

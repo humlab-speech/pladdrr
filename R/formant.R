@@ -356,7 +356,7 @@ extract_formants <- function(sound,
 #' @inheritParams pladdrr_shared_params time
 #' @param interpolate Logical; if TRUE, interpolate between frames
 #'
-#' @return Formant frequency in Hz, or NA if undefined
+#' @return Numeric: formant frequency in Hz, or NA if undefined
 #' @examples
 #' # A praat_formant-shaped list (see the @param formant description
 #' # above); built directly here for a self-contained example.
@@ -440,7 +440,7 @@ get_formant_at_time <- function(formant, formant_number, time,
 #' @param formant_number Which formant (1 = F1, 2 = F2, etc.)
 #' @param time_range Optional numeric vector c(start, end) in seconds
 #'
-#' @return Mean formant frequency in Hz, or NA if undefined
+#' @return Numeric: mean formant frequency in Hz, or NA if undefined
 #' @examples
 #' # A praat_formant-shaped list (see the @param formant description
 #' # above); built directly here for a self-contained example.
