@@ -8,10 +8,15 @@ processors_with <- function(value) {
   # "Unset" must be set to empty: an empty env vector makes system2 inherit the
   # parent's variable, and R CMD check --as-cran exports it as TRUE. Empty is
   # treated as uncapped, the same as unset.
-  env <- paste0("_R_CHECK_LIMIT_CORES_=", if (is.na(value)) "" else value)
+  # The variable goes through Sys.setenv, not system2(env=): on Windows system2
+  # pastes env into the command line instead of the child's environment.
+  old <- Sys.getenv("_R_CHECK_LIMIT_CORES_", NA)
+  on.exit(if (is.na(old)) Sys.unsetenv("_R_CHECK_LIMIT_CORES_") else
+    Sys.setenv("_R_CHECK_LIMIT_CORES_" = old), add = TRUE)
+  Sys.setenv("_R_CHECK_LIMIT_CORES_" = if (is.na(value)) "" else value)
   out <- system2(file.path(R.home("bin"), "Rscript"),
     c("-e", shQuote("suppressMessages(library(pladdrr)); cat('P=', pladdrr_threads()$max_threads, '\\n')")),
-    stdout = TRUE, stderr = FALSE, env = env)
+    stdout = TRUE, stderr = FALSE)
   as.integer(sub(".*P= *", "", grep("P=", out, value = TRUE)))
 }
 
@@ -35,8 +40,12 @@ test_that("the cap does not apply when the variable is unset, empty or false", {
 test_that("an explicit pladdrr_threads(n) still beats the check limit", {
   skip_on_cran()
   skip_if(parallel::detectCores() < 4, "needs four or more CPUs")
+  old <- Sys.getenv("_R_CHECK_LIMIT_CORES_", NA)
+  on.exit(if (is.na(old)) Sys.unsetenv("_R_CHECK_LIMIT_CORES_") else
+    Sys.setenv("_R_CHECK_LIMIT_CORES_" = old), add = TRUE)
+  Sys.setenv("_R_CHECK_LIMIT_CORES_" = "TRUE")
   out <- system2(file.path(R.home("bin"), "Rscript"),
     c("-e", shQuote("suppressMessages(library(pladdrr)); pladdrr_threads(4); cat('P=', pladdrr_threads()$max_threads, '\\n')")),
-    stdout = TRUE, stderr = FALSE, env = "_R_CHECK_LIMIT_CORES_=TRUE")
+    stdout = TRUE, stderr = FALSE)
   expect_identical(as.integer(sub(".*P= *", "", grep("P=", out, value = TRUE))), 4L)
 })

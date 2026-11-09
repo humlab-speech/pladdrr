@@ -92,7 +92,7 @@ test_that("a lying data chunk does not allocate from the claim (subprocess)", {
     "library(pladdrr)",
     "seen <- 0L",
     "s <- withCallingHandlers(",
-    sprintf('  pladdrr::Sound(path = "%s"),', path),
+    sprintf('  pladdrr::Sound(path = "%s"),', normalizePath(path, winslash = "/")),
     '  pladdrr_data_loss = function(w) { seen <<- 1L; invokeRestart("muffleWarning") })',
     'st <- if (file.exists("/proc/self/status"))',
     '  readLines("/proc/self/status") else character()',

@@ -744,6 +744,11 @@ aggregate_measurements <- function(measurements,
 
 
 # Run batch processing (parallel mclapply or sequential with progress).
+.batch_file_worker <- function(f, tpw, func, ...) {
+  pladdrr_threads(tpw)
+  .process_batch_file(f, func, ...)
+}
+
 .run_batch_process <- function(files, func, parallel, ncores, progress, ...) {
   if (parallel) {
     if (
@@ -752,10 +757,15 @@ aggregate_measurements <- function(measurements,
             "Package 'parallel' is required for parallel processing")
     if (is.null(ncores)) ncores <- .default_n_cores()
     tpw <- .pladdrr_worker_thread_budget(ncores)
-    parallel::mclapply(files, function(f) {
-      pladdrr_threads(tpw)
-      .process_batch_file(f, func, ...)
-    }, mc.cores = ncores)
+    if (.Platform$OS.type == "windows") {
+      # mclapply forks; mc.cores > 1 is an error on Windows.
+      cl <- .make_worker_cluster(ncores, character())
+      on.exit(parallel::stopCluster(cl), add = TRUE)
+      parallel::parLapply(cl, files, .batch_file_worker, tpw, func, ...)
+    } else {
+      parallel::mclapply(files, .batch_file_worker, tpw, func, ...,
+        mc.cores = ncores)
+    }
   } else if (progress && requireNamespace("utils", quietly = TRUE)) {
     pb <- utils::txtProgressBar(min = 0, max = length(files), style = 3)
     results <- lapply(seq_along(files), function(i) {
