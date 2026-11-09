@@ -533,7 +533,10 @@ NULL
     "AIFF" = 1L, "AIFC" = 2L, "WAV" = 3L,
     "NEXT" = 4L, "SUN" = 4L, "NIST" = 5L,
     "FLAC" = 6L, "MP3" = 7L, 3L)
-  .self$.cpp$save(as.character(path), as.integer(format_code))
+  suffix <- switch(toupper(format), AIFF = "aiff", AIFC = "aifc", WAV = "wav",
+                   NEXT = "au", SUN = "au", NIST = "nist", FLAC = "flac",
+                   MP3 = "mp3", "wav")
+  .self$.cpp$save(.ensure_suffix(path, suffix), as.integer(format_code))
   invisible(NULL)
 }
 

@@ -317,7 +317,7 @@ NULL
   Matrix(.xptr = ptr)
 }
 .ltas_methods$save <- function(.self, path) {
-  .self$.cpp$save(path.expand(path))
+  .self$.cpp$save(.ensure_suffix(path.expand(path), "Ltas"))
   invisible(.self)
 }
 

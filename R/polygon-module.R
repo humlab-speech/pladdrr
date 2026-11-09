@@ -72,7 +72,7 @@ NULL
 .polygon_methods$as_data_frame <- function(.self) .self$.cpp$as_data_frame()
 .polygon_methods$as_matrix <- function(.self) .self$.cpp$as_matrix()
 .polygon_methods$save <- function(.self, path) {
-  .self$.cpp$save(as.character(path))
+  .self$.cpp$save(.ensure_suffix(path, "Polygon"))
   invisible(.self)
 }
 

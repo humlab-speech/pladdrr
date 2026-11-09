@@ -166,7 +166,8 @@ NULL
     stop("Unknown format: ", format, ". Use wav, aiff, aifc, flac, or wav24")
   }
   .self$.cpp$save_part(type_map[[format]], as.numeric(tmin), as.numeric(tmax),
-                       path, bits_map[[format]])
+                       .ensure_suffix(path, sub("24$", "", format)),
+                       bits_map[[format]])
   invisible(.self)
 }
 
@@ -176,7 +177,8 @@ NULL
   if (!format %in% names(type_map)) {
     stop("Unknown format: ", format, ". Use wav, aiff, aifc, or flac")
   }
-  .self$.cpp$save_channel(type_map[[format]], as.integer(channel), path)
+  .self$.cpp$save_channel(type_map[[format]], as.integer(channel),
+                         .ensure_suffix(path, format))
   invisible(.self)
 }
 

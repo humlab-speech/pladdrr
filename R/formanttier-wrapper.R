@@ -94,7 +94,7 @@ NULL
 .formanttier_methods$as_data_frame <- function(.self) .self$.cpp$as_data_frame()
 
 .formanttier_methods$save <- function(.self, path) {
-  .self$.cpp$save(as.character(path))
+  .self$.cpp$save(.ensure_suffix(path, "FormantTier"))
   invisible(.self)
 }
 

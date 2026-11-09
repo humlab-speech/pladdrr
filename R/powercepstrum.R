@@ -253,7 +253,7 @@ NULL
 .powercepstrum_methods$as_data_frame <- function(
   .self) .self$.cpp$as_data_frame()
 .powercepstrum_methods$save <- function(.self,
-  path) .self$.cpp$save(as.character(path))
+  path) .self$.cpp$save(.ensure_suffix(path, "PowerCepstrum"))
 .powercepstrum_methods$get_xptr <- function(.self) .self$.xptr
 
 # --- Print ---

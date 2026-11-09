@@ -121,7 +121,7 @@ NULL
 # Utility
 .formantmodeler_methods$get_xptr <- function(.self) .self$.xptr
 .formantmodeler_methods$save <- function(.self, path) {
-  .self$.cpp$save(path)
+  .self$.cpp$save(.ensure_suffix(path, "FormantModeler"))
   invisible(.self)
 }
 

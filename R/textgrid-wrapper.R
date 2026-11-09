@@ -418,7 +418,7 @@ NULL
 }
 .textgrid_methods$get_info <- function(.self) .self$.cpp$get_info()
 .textgrid_methods$save <- function(.self,
-  path) .self$.cpp$save(as.character(path))
+  path) .self$.cpp$save(.ensure_suffix(path, "TextGrid"))
 .textgrid_methods$get_xptr <- function(.self) .self$.xptr
 
 # --- Convenience ---

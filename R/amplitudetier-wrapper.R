@@ -109,7 +109,7 @@ NULL
   data.frame(time = times, amplitude_pa = values)
 }
 .amplitudetier_methods$save <- function(.self, path) {
-  .self$.cpp$save(as.character(path))
+  .self$.cpp$save(.ensure_suffix(path, "AmplitudeTier"))
   invisible(.self)
 }
 

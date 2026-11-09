@@ -72,7 +72,7 @@ NULL
 
 # I/O
 .matrix_methods$save <- function(.self, path) {
-  .self$.cpp$save(as.character(path))
+  .self$.cpp$save(.ensure_suffix(path, "Matrix"))
   invisible(.self)
 }
 

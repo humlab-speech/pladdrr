@@ -119,7 +119,7 @@ NULL
   df
 }
 .formantgrid_methods$save <- function(.self, path) {
-  .self$.cpp$save(as.character(path))
+  .self$.cpp$save(.ensure_suffix(path, "FormantGrid"))
   invisible(.self)
 }
 

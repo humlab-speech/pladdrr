@@ -13,6 +13,14 @@
   matches on the full old text needs the new prefix; matching on the
   condition class is unaffected.
 
+* The `save()` methods of the Praat-object classes (and `Sound$save()`,
+  `LongSound$save_part()`/`save_channel()`) append the format's conventional
+  suffix when the path has no extension: `pitch$save("out/p")` writes
+  `out/p.Pitch`, `sound$save("a", format = "AIFF")` writes `a.aiff`. A path that
+  already has an extension is used as given, and `~` is expanded.
+* `Sound$from_values()` also accepts integer, `units` and `ts` vectors; a `ts`
+  supplies `sampling_rate` and `start_time` when you leave them out.
+
 ## Testing
 
 * New tests for parameter recovery, machine-precision noise susceptibility and a

@@ -252,7 +252,7 @@ NULL
 # --- Export ---
 .pp_methods$as_vector <- function(.self) .self$.cpp$as_vector()
 .pp_methods$as_data_frame <- function(.self) .self$.cpp$as_data_frame()
-.pp_methods$save <- function(.self, path) .self$.cpp$save(as.character(path))
+.pp_methods$save <- function(.self, path) .self$.cpp$save(.ensure_suffix(path, "PointProcess"))
 .pp_methods$get_xptr <- function(.self) .self$.xptr
 
 # --- Voice quality (jitter) ---

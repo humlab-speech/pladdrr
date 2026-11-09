@@ -41,6 +41,19 @@
   invisible(TRUE)
 }
 
+# G4.0: file-writing methods append the format's conventional suffix when the
+# caller gave a path without one ("out/pitch" -> "out/pitch.Pitch"). A path that
+# already has an extension is used as given, so an explicit choice such as
+# "pitch.txt" is respected. Tilde paths are expanded.
+.ensure_suffix <- function(path, suffix) {
+  if (!is.character(path) || length(path) != 1L || is.na(path) || !nzchar(path)) {
+    .stop_input("ensure_suffix", "path",
+                "ensure_suffix(): path must be a single non-empty string")
+  }
+  path <- path.expand(path)
+  if (nzchar(tools::file_ext(path))) path else paste0(path, ".", suffix)
+}
+
 # Praat has no missing-value representation for sample data: a NaN or Inf sample
 # silently propagates through every analysis (and Inf can overflow filters).
 # Reject non-finite input at the boundary and say how many samples are bad.

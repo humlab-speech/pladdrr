@@ -151,7 +151,7 @@ NULL
 .table_methods$as_data_frame <- function(
   .self) .table_to_data_frame(.self$.xptr)
 .table_methods$save <- function(.self, path) {
-  .self$.cpp$save(as.character(path))
+  .self$.cpp$save(.ensure_suffix(path, "Table"))
   invisible(.self)
 }
 

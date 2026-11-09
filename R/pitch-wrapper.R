@@ -296,7 +296,7 @@ NULL
     as.logical(include_intensity))
 }
 .pitch_methods$save <- function(.self, path) {
-  .self$.cpp$save(as.character(path))
+  .self$.cpp$save(.ensure_suffix(path, "Pitch"))
   invisible(.self)
 }
 

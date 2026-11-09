@@ -252,7 +252,7 @@ NULL
   .formant_as_data_frame(.self$.xptr, as.integer(max_formants))
 }
 .formant_methods$save <- function(.self, filepath) {
-  .formant_save(.self$.xptr, filepath)
+  .formant_save(.self$.xptr, .ensure_suffix(filepath, "Formant"))
   invisible(.self)
 }
 

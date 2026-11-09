@@ -62,7 +62,7 @@ NULL
   df
 }
 .intensitytier_methods$save <- function(.self, path) {
-  .self$.cpp$save(as.character(path))
+  .self$.cpp$save(.ensure_suffix(path, "IntensityTier"))
   invisible(.self)
 }
 
