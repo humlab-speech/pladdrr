@@ -290,7 +290,7 @@ jobs:
 
           # PERMANENT: genuinely justified skips. Keep this list as small as
           # possible; each entry needs a reason in cran-comments.md.
-          permanent='^(On CRAN|On CI)$|^Praat not available|^NOT_CRAN not set|^Benchmark TextGrid not found|^Large benchmark files removed|^Test audio files not available|^ffmpeg cannot encode the OGG fixture|^needs (three|four) or more CPUs|^no (/proc or cgroup v2|sched_getaffinity/taskset|cgroup v2 cpu.max)'
+          permanent='^(On CRAN|On CI)$|^Praat not available|^NOT_CRAN not set|^Benchmark TextGrid not found|^Large benchmark files removed|^Test audio files not available|^ffmpeg cannot encode the OGG fixture|^needs (three|four) or more CPUs|^no (/proc or cgroup v2|sched_getaffinity/taskset|cgroup v2 cpu.max|cgroup CPU quota)'
 
           # 'SIMD not available' is DEBT, not permanent: src/Makevars.win
           # disables -DHAVE_XSIMD as a workaround for a heap-corruption bug
