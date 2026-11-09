@@ -32,4 +32,9 @@ sound <- sound_from_values(values, 4410)
 
 # Or using Sound$from_values() (same thing)
 sound <- Sound$from_values(values, 4410)
+
+# A ts supplies the sampling rate and start time
+series <- ts(values, start = 0.5, frequency = 4410)
+sound <- Sound$from_values(series)
+sound$get_start_time()
 }

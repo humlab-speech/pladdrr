@@ -1295,6 +1295,11 @@ Sound <- function(path = NULL, .xptr = NULL) {
 #'
 #' # Or using Sound$from_values() (same thing)
 #' sound <- Sound$from_values(values, 4410)
+#'
+#' # A ts supplies the sampling rate and start time
+#' series <- ts(values, start = 0.5, frequency = 4410)
+#' sound <- Sound$from_values(series)
+#' sound$get_start_time()
 sound_from_values <- function(values, sampling_rate = 44100, start_time = 0.0) {
   if (stats::is.ts(values)) {
     if (missing(sampling_rate)) sampling_rate <- stats::frequency(values)
