@@ -76,7 +76,7 @@ test_that("Time-based queries work", {
 })
 
 test_that("Large files load successfully", {
-  skip_on_cran()
+  skip_if_not_extended()
   skip("Large benchmark files removed to reduce package size")
   
   # These tests used 10min and 30min TextGrid files (49MB total)

@@ -105,6 +105,34 @@ Subsequent builds only recompile what changed.
 6. Open the pull request against `main`. CI runs `R CMD check` on Linux, macOS,
    and Windows, plus test coverage.
 
+## Extended tests
+
+Timing assertions, the hour-long TextGrid fixtures and tests that compile C++
+at test time are slow or machine-dependent, so they are switched off by
+default and run under the same testthat framework when
+`PLADDRR_EXTENDED_TESTS=true`. Mark such a test with `skip_if_not_extended()`
+(`tests/testthat/helper-extended.R`); anything that is an ordinary correctness
+check must run unconditionally.
+
+```bash
+PLADDRR_EXTENDED_TESTS=true Rscript -e 'devtools::test()'
+```
+
+* **CI:** extended tests run in the weekly scheduled `R-CMD-check` job, for any
+  commit whose message contains `run-extended`, and in the coverage and
+  pkgcheck workflows (so coverage is not undercounted).
+* **Needs:** a release build (`R CMD INSTALL`, not `load_all()`; timings are
+  2-7x off at `-O0`), roughly 4 GB free RAM and 10-15 minutes on a laptop
+  class machine. The 60- and 90-minute TextGrid fixtures
+  (`benchmarkdata60min.TextGrid`, `benchmarkdata90min.TextGrid`) are too large
+  for the repository; those tests skip with "Benchmark TextGrid not found"
+  unless the files are placed in `inst/extdata/`.
+* **Artefacts:** none are written outside `tempdir()`; nothing needs manual
+  inspection. Timing ratios can flake on a loaded machine; rerun before
+  treating a failure as a regression.
+* **Downloads:** no test downloads data (G5.11 does not apply). If one ever
+  does, a failed download must skip, not fail.
+
 ## Code style
 
 * Follow the [tidyverse style guide](https://style.tidyverse.org/): snake_case

@@ -24,6 +24,8 @@ jobs:
       # testthat::skip_on_cran() tests are silently skipped during the
       # action's internal covr coverage run, undercounting coverage.
       NOT_CRAN: "true"
+      # Count the extended tests in the coverage figure.
+      PLADDRR_EXTENDED_TESTS: "true"
     steps:
       - uses: actions/checkout@v4
         with:

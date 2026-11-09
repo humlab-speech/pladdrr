@@ -3,6 +3,9 @@ on:
   push:
     branches: [main, master]
   pull_request:
+  schedule:
+    # Weekly run with the extended tests switched on (see PLADDRR_EXTENDED_TESTS)
+    - cron: '17 3 * * 1'
 
 name: R-CMD-check
 
@@ -24,6 +27,9 @@ jobs:
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
+      # Extended tests (timing, large fixtures, compile-at-test-time): on for the
+      # weekly schedule and for commits whose message contains 'run-extended'.
+      PLADDRR_EXTENDED_TESTS: ${{ contains(github.event.head_commit.message, 'run-extended') || github.event_name == 'schedule' }}
       # ubuntu-latest runners default to a non-UTF-8 C locale, which breaks
       # vignette rebuilding on Rmd source containing IPA/Unicode characters
       # ("invalid multibyte string"). Force UTF-8 so knitr/rmarkdown can
@@ -290,7 +296,7 @@ jobs:
 
           # PERMANENT: genuinely justified skips. Keep this list as small as
           # possible; each entry needs a reason in cran-comments.md.
-          permanent='^(On CRAN|On CI)$|^Praat not available|^NOT_CRAN not set|^Benchmark TextGrid not found|^Large benchmark files removed|^Test audio files not available|^ffmpeg cannot encode the OGG fixture|^needs (three|four) or more CPUs|^no (/proc or cgroup v2|sched_getaffinity/taskset|cgroup v2 cpu.max)'
+          permanent='^(On CRAN|On CI)$|^Praat not available|^NOT_CRAN not set|^Extended tests off|^Benchmark TextGrid not found|^Large benchmark files removed|^Test audio files not available|^ffmpeg cannot encode the OGG fixture|^needs (three|four) or more CPUs|^no (/proc or cgroup v2|sched_getaffinity/taskset|cgroup v2 cpu.max)'
 
           # 'SIMD not available' is DEBT, not permanent: src/Makevars.win
           # disables -DHAVE_XSIMD as a workaround for a heap-corruption bug

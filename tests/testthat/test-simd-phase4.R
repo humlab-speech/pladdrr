@@ -276,7 +276,7 @@ test_that("SIMD complex operations work correctly", {
 
 test_that("SIMD performance is better than scalar", {
   skip_if_not(simd_info()$available, "SIMD not available")
-  skip_on_cran()  # Performance tests can be slow
+  skip_if_not_extended()  # timing test
   skip_on_covr()  # coverage instrumentation (-O0 --coverage) blows the timing budget
 
   sound <- generate_sine_wave(440, 0.5, sampling_rate = 22050)

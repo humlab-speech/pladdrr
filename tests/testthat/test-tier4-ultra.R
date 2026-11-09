@@ -158,7 +158,7 @@ test_that("get_durations_batch validates input", {
 })
 
 test_that("get_durations_batch is faster than LongSound loop", {
-  skip_on_cran()
+  skip_if_not_extended()
   skip_if_not_installed("bench")
 
   # Get all DSI input files
@@ -513,7 +513,7 @@ test_that(
 # =============================================================================
 
 test_that("Tier 4 Ultra provides significant DSI speedup", {
-  skip_on_cran()
+  skip_if_not_extended()
   skip_if_not_installed("bench")
 
   # Get DSI input files

@@ -67,7 +67,7 @@ test_that("Sound$get_values returns correct data", {
 })
 
 test_that("Sound$get_values is faster than as_data_frame", {
-  skip_on_cran()
+  skip_if_not_extended()
   skip_if_not_installed("pladdrr")
   skip_if_not_installed("microbenchmark")
   
@@ -400,7 +400,7 @@ test_that("Pitch$get_adaptive_range with custom factors works", {
 # =============================================================================
 
 test_that("apply_window_xptr works with RcppXPtrUtils", {
-  skip_on_cran()
+  skip_if_not_extended()
   skip_if_not_installed("pladdrr")
   skip_if_not_installed("RcppXPtrUtils")
 
@@ -441,7 +441,7 @@ test_that("apply_window_xptr works with RcppXPtrUtils", {
 })
 
 test_that("apply_transform_xptr works with RcppXPtrUtils", {
-  skip_on_cran()
+  skip_if_not_extended()
   skip_if_not_installed("pladdrr")
   skip_if_not_installed("RcppXPtrUtils")
 
@@ -476,7 +476,7 @@ test_that("apply_transform_xptr works with RcppXPtrUtils", {
 })
 
 test_that("create_window_xptr creates valid window functions", {
-  skip_on_cran()
+  skip_if_not_extended()
   skip_if_not_installed("pladdrr")
   skip_if_not_installed("RcppXPtrUtils")
 
@@ -594,7 +594,7 @@ test_that("intensity_get_statistics_batch returns correct matrix", {
 })
 
 test_that("batch statistics are faster than individual calls", {
-  skip_on_cran()
+  skip_if_not_extended()
   skip_if_not_installed("pladdrr")
   skip_if_not_installed("microbenchmark")
 
