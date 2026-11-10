@@ -408,6 +408,7 @@ NULL
 
 .sound_methods$to_intensity <- function(.self, minimum_pitch = 100.0,
   time_step = 0.0, subtract_mean = TRUE) {
+  .check_window_fits(.self, 6.4, minimum_pitch, "minimum_pitch", "sound$to_intensity")
   intensity_ptr <- .self$.cpp$to_intensity_ptr(as.numeric(minimum_pitch),
     as.numeric(time_step),
                                                  as.logical(subtract_mean))
@@ -418,6 +419,10 @@ NULL
   min_pitch = 75.0,
                                               silence_threshold = 0.1,
                                                   periods_per_window = 1.0) {
+  if (.is_numeric_scalar(periods_per_window)) {
+    .check_window_fits(.self, periods_per_window + 1, min_pitch, "min_pitch",
+                       "sound$to_harmonicity_cc")
+  }
   harm_ptr <- .self$.cpp$to_harmonicity_cc_ptr(
     as.numeric(time_step), as.numeric(min_pitch),
     as.numeric(silence_threshold), as.numeric(periods_per_window))
@@ -555,6 +560,7 @@ NULL
                                         voiced_unvoiced_cost = 0.14,
                                         max_number_of_candidates = NULL) {
   .check_pitch_range(pitch_floor, pitch_ceiling)
+  .check_window_fits(.self, 3, pitch_floor, "pitch_floor", "sound$to_pitch_ac")
   max_candidates <- max_number_of_candidates %||% max_candidates
   pitch_ptr <- .sound_to_pitch_ac(
     .self$.xptr, time_step, pitch_floor, pitch_ceiling,
@@ -575,6 +581,7 @@ NULL
                                         voiced_unvoiced_cost = 0.14,
                                         max_number_of_candidates = NULL) {
   .check_pitch_range(pitch_floor, pitch_ceiling)
+  .check_window_fits(.self, 2, pitch_floor, "pitch_floor", "sound$to_pitch_cc")
   max_candidates <- max_number_of_candidates %||% max_candidates
   pitch_ptr <- .sound_to_pitch_cc(
     .self$.xptr, time_step, pitch_floor, pitch_ceiling,

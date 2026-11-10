@@ -31,6 +31,10 @@
   and flags are `TRUE`/`FALSE`, and the pitch batch and `*_direct` functions check
   `time_step`, the pitch floor and ceiling and the candidate/filter counts, with a
   `pladdrr_input_error` instead of a downstream failure.
+* `to_pitch_ac()`, `to_pitch_cc()`, `to_harmonicity_cc()` and `to_intensity()` on a
+  signal shorter than their analysis window now raise a `pladdrr_input_error`
+  that states the duration the window needs (3, 2, `periods_per_window` + 1 and
+  6.4 periods of the pitch floor), instead of Praat's "Failed to create ...".
 * `autoplot.Pitch()` gains `connect_gaps`; `FALSE` breaks the line at unvoiced
   frames (default `TRUE` keeps the old behaviour).
 * The never-triggered `requireNamespace("ggplot2")` guards were removed (ggplot2

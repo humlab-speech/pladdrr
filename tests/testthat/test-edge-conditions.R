@@ -55,10 +55,10 @@ test_that("silence, constant and clipped signals are analysed without error (G5.
 test_that("signals shorter than the analysis window fail informatively or are tolerated (G5.8d)", {
   short <- Sound$from_values(tone(64), sr)
   for (an in c("pitch_cc", "pitch_ac", "intensity", "hnr")) {
-    expect_error(analyses[[an]]$fn(short), "Failed to", info = an)
+    expect_error(analyses[[an]]$fn(short), "needs at least", class = "pladdrr_input_error", info = an)
   }
   expect_s3_class(analyses$formant$fn(short), "Formant")
-  expect_error(Sound$from_values(0.5, sr)$to_pitch_cc(), "Failed to")
+  expect_error(Sound$from_values(0.5, sr)$to_pitch_cc(), "needs at least", class = "pladdrr_input_error")
 })
 
 test_that("invalid analysis parameters raise typed input errors (G5.8b, G2.0)", {
@@ -98,4 +98,19 @@ test_that("tiers keep their points in time order however they are inserted (TS1.
   pt$add_point(0.8, 200); pt$add_point(0.2, 100); pt$add_point(0.5, 150)
   expect_equal(as.data.frame(pt)$time, c(0.2, 0.5, 0.8))
   expect_equal(as.data.frame(pt)$frequency, c(100, 150, 200))
+})
+
+test_that("the too-short diagnostic states the required duration and matches Praat's limit (TS2.4a)", {
+  # limits measured against the Praat sources: AC 3/floor, CC 2/floor, intensity 6.4/floor
+  at <- function(seconds) Sound$from_values(0.5 * sin(2 * pi * 200 * (seq_len(round(seconds * sr)) - 1) / sr), sr)
+  expect_error(at(0.039)$to_pitch_ac(pitch_floor = 75),
+               "sound$to_pitch_ac(): the sound lasts 0.039 s but an analysis with pitch_floor = 75 Hz needs at least 0.04 s (3 periods",
+               fixed = TRUE)
+  expect_s3_class(at(0.040)$to_pitch_ac(pitch_floor = 75), "Pitch")
+  expect_error(at(0.026)$to_pitch_cc(pitch_floor = 75), "needs at least 0.0267 s", fixed = TRUE)
+  expect_s3_class(at(0.027)$to_pitch_cc(pitch_floor = 75), "Pitch")
+  expect_error(at(0.08)$to_intensity(minimum_pitch = 75), "needs at least 0.0853 s", fixed = TRUE)
+  expect_s3_class(at(0.09)$to_intensity(minimum_pitch = 75), "Intensity")
+  expect_error(at(0.05)$to_harmonicity_cc(min_pitch = 75, periods_per_window = 3),
+               "needs at least 0.0533 s", fixed = TRUE)
 })

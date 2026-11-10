@@ -100,6 +100,27 @@
   invisible(TRUE)
 }
 
+# TS2.4a: every short-time analysis assumes the signal is long enough for at
+# least one analysis window. Praat's own failure ("Failed to create ...") does
+# not say why, so report the duration the window needs. The `periods` factors
+# were measured against the Praat sources: AC pitch 3 / floor, CC pitch 2 /
+# floor, cross-correlation harmonicity (periods_per_window + 1) / floor,
+# intensity 6.4 / minimum_pitch.
+.check_window_fits <- function(sound, periods, floor, floor_name, routine) {
+  if (!.is_numeric_scalar(floor) || floor <= 0) return(invisible(TRUE))
+  need <- periods / floor
+  dur <- tryCatch(sound$get_total_duration(), error = function(e) NA_real_)
+  if (is.finite(dur) && is.finite(need) && dur < need * (1 - 1e-9)) {
+    .stop_input(routine, floor_name,
+                paste0(routine, "(): the sound lasts ", format(dur, digits = 3),
+                       " s but an analysis with ", floor_name, " = ", floor,
+                       " Hz needs at least ", format(need, digits = 3), " s (",
+                       periods, " periods of the floor); use a longer signal ",
+                       "or a higher ", floor_name))
+  }
+  invisible(TRUE)
+}
+
 # Praat has no missing-value representation for sample data: a NaN or Inf sample
 # silently propagates through every analysis (and Inf can overflow filters).
 # Reject non-finite input at the boundary and say how many samples are bad.
