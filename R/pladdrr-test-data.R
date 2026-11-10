@@ -27,6 +27,10 @@
 #' (\code{tests/testthat/test-praat-faithfulness.R}) compare pladdrr with the
 #' Praat application on such signals and on \code{test.wav}.
 #'
+#' @return No return value; this page only documents the shipped data files.
+#' @examples
+#' file.exists(system.file("extdata", "test.wav", package = "pladdrr"))
+#'
 #' @name pladdrr-test-data
 #' @seealso \code{\link{pladdrr-references}}
 #' @keywords documentation

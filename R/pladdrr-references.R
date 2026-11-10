@@ -87,6 +87,11 @@
 #' follow the definitions in Praat's manual rather than a single primary
 #' paper; \code{vignette("terminology")} states the definition each result uses.
 #'
+#' @return No return value; this page only documents the references.
+#' @examples
+#' # Open the reference list from within R
+#' help("pladdrr-references", package = "pladdrr")
+#'
 #' @name pladdrr-references
 #' @aliases pladdrr_references
 #' @seealso \code{\link{pladdrr-package}}

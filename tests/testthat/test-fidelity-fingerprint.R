@@ -24,10 +24,10 @@ read_tsv_kv <- function(lines) {
 tolerance <- list(
   sound.mean = c("abs", 1e-12),
   # Windows (MinGW) lands 4% off the recorded Linux/macOS value (0.3488 vs 0.3633).
-  # Elsewhere Linux x86-64 sits 1.45e-3 from the macOS recording, so 3e-3 keeps
-  # about 2x margin. The old 1e-2 was wide enough to hide a one-row change in
-  # the GNE envelope grid (the open 50x50 vs 51x51 question).
-  gne.mean = c("rel", if (.Platform$OS.type == "windows") 6e-2 else 3e-3),
+  # Linux x86-64 sits 1.45e-3 (local) to 3.96e-3 (GitHub runner, pkgcheck job)
+  # from the macOS recording, so 6e-3 keeps 1.5x margin over the worst seen.
+  # The old 1e-2 was wide enough to hide a one-row change in the GNE envelope grid (the open 50x50 vs 51x51 question).
+  gne.mean = c("rel", if (.Platform$OS.type == "windows") 6e-2 else 6e-3),
   # Linux sits 5.8e-5 from the macOS recording. 2e-4 (0.05 Hz at 245 Hz) stays
   # under the 0.138 Hz (5.6e-4) a changed candidate grid moves this row by; the
   # old 1e-3 (0.245 Hz) would have absorbed that.

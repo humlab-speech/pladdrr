@@ -28,7 +28,8 @@ test_that("an NA value really leaves the variable unset in the child", {
   skip_on_cran()
   code <- "cat('U=', is.na(Sys.getenv('_R_CHECK_LIMIT_CORES_', NA)), '\\n')"
   expect_match(child_with(NA, code), "U= TRUE")
-  expect_match(child_with("", code), "U= FALSE")
+  # Windows treats Sys.setenv(VAR = "") as unsetenv, so "empty" cannot be set there
+  if (.Platform$OS.type != "windows") expect_match(child_with("", code), "U= FALSE")
 })
 
 test_that("the automatic thread cap is two under R CMD check", {

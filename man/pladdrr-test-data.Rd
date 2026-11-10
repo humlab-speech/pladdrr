@@ -32,6 +32,12 @@ user can recreate every synthetic test signal; the faithfulness tests
 (\code{tests/testthat/test-praat-faithfulness.R}) compare pladdrr with the
 Praat application on such signals and on \code{test.wav}.
 }
+\value{
+No return value; this page only documents the shipped data files.
+}
+\examples{
+file.exists(system.file("extdata", "test.wav", package = "pladdrr"))
+}
 \seealso{
 \code{\link{pladdrr-references}}
 }

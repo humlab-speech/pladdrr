@@ -40,9 +40,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: r-lib/actions/setup-pandoc@v2.12.1
+      - uses: r-lib/actions/setup-pandoc@v2.14.0
 
-      - uses: r-lib/actions/setup-r@v2.12.1
+      - uses: r-lib/actions/setup-r@v2.14.0
         with:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
@@ -68,7 +68,7 @@ jobs:
           reg add "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps" /v DumpCount /t REG_DWORD /d 10 /f
           New-Item -ItemType Directory -Force -Path C:\crashdumps | Out-Null
 
-      - uses: r-lib/actions/setup-r-dependencies@v2.12.1
+      - uses: r-lib/actions/setup-r-dependencies@v2.14.0
         with:
           extra-packages: |
             any::rcmdcheck
@@ -81,7 +81,7 @@ jobs:
             any::testthat
           needs: check
 
-      - uses: r-lib/actions/check-r-package@v2.12.1
+      - uses: r-lib/actions/check-r-package@v2.14.0
         with:
           upload-snapshots: true
           build_args: 'c("--no-manual")'
@@ -296,7 +296,7 @@ jobs:
 
           # PERMANENT: genuinely justified skips. Keep this list as small as
           # possible; each entry needs a reason in cran-comments.md.
-          permanent='^(On CRAN|On CI)$|^Praat not available|^NOT_CRAN not set|^Extended tests off|^Benchmark TextGrid not found|^Large benchmark files removed|^Test audio files not available|^ffmpeg cannot encode the OGG fixture|^needs (three|four) or more CPUs|^no (/proc or cgroup v2|sched_getaffinity/taskset|cgroup v2 cpu.max|cgroup CPU quota)'
+          permanent='^(On CRAN|On CI)$|^Praat not available|^NOT_CRAN not set|^Extended tests off|^Benchmark TextGrid not found|^Large benchmark files removed|^Test audio files not available|^ffmpeg cannot encode the OGG fixture|^not a source checkout|^needs (three|four) or more CPUs|^no (/proc or cgroup v2|sched_getaffinity/taskset|cgroup v2 cpu.max|cgroup CPU quota)'
 
           # 'SIMD not available' is DEBT, not permanent: src/Makevars.win
           # compiles with -DHAVE_XSIMD again (the heap-corruption bug that made
