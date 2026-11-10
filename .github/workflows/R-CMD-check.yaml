@@ -293,10 +293,10 @@ jobs:
           permanent='^(On CRAN|On CI)$|^Praat not available|^NOT_CRAN not set|^Benchmark TextGrid not found|^Large benchmark files removed|^Test audio files not available|^ffmpeg cannot encode the OGG fixture|^needs (three|four) or more CPUs|^no (/proc or cgroup v2|sched_getaffinity/taskset|cgroup v2 cpu.max|cgroup CPU quota)'
 
           # 'SIMD not available' is DEBT, not permanent: src/Makevars.win
-          # disables -DHAVE_XSIMD as a workaround for a heap-corruption bug
-          # in the SIMD/batch region (deterministic on Windows, intermittent
-          # on macOS, suspected in the Linux covr crash); the comment there
-          # says "re-enable once fixed". Every run warns until re-enabled.
+          # compiles with -DHAVE_XSIMD again (the heap-corruption bug that made
+          # it drop the flag was fixed; see the comment there), so this skip
+          # should no longer fire. It stays on the debt list so a build without
+          # SIMD still warns instead of passing silently.
 
           # DEBT: known-current state we intend to eliminate (Windows SIMD
           # gap, catch-and-skip fixture guards, feature-gap skips, TODO skips,

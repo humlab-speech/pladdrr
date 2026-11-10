@@ -157,7 +157,7 @@ the caveats in it live in the test file, and the report names the Praat version 
 against). **Always name the Praat version with a reference number**: the vendored source
 tracks 6.4.47, and the CPPS pipeline differs from 6.4.27 by about 0.13 dB (Praat rewrote
 its CPP-to-CPPS post-processing); against 6.4.47 all 19 registry rows pass and CPPS is
-0.003 dB away. `tests/testthat/test-fidelity-fingerprint.R` is the second gate: 88
+0.003 dB away. `tests/testthat/test-fidelity-fingerprint.R` is the second gate: 89
 numbers from one signal, no oracle needed, refuses any ERR/NA row.
 
 When porting a new Praat routine into pladdrr, add a registry row. Default
@@ -503,7 +503,7 @@ to be read in isolation.
 
 **Shared Dispatch Table Architecture (v4.8.33, optimized v4.9.18)**
 
-1. User calls: `pitch <- sound$to_pitch_cc(75, 600)`
+1. User calls: `pitch <- sound$to_pitch_cc(pitch_floor = 75, pitch_ceiling = 600)`
 2. `$.Sound` S3 dispatch looks up `to_pitch_cc` in `.sound_methods` env
 3. Method calls **either** `.self$.cpp$method()` (module, for transforms/complex ops) **or** `.Call("_pladdrr_*", .self$.xptr, args)` (wrapper, for frequent queries). As of v4.9.18: Sound (7 methods), Formant (14), Spectrum (16), Spectrogram (12) use the faster wrapper path (~30-40% less overhead).
 4. C++ calls Praat function (`Sound_to_Pitch_cc()`, `Formant_getValueAtTime()`, etc.)
@@ -616,7 +616,7 @@ some modules like Electroglottogram/DTW/Polygon aren't broken out as separate ro
 | `PowerCepstrum` | `spectrum$to_power_cepstrum()` |
 | `PowerCepstrogram` | `sound$to_powercepstrogram()` |
 | `Cochleagram` | `sound$to_cochleagram()` |
-| `Excitation` | `cochleagram$to_excitation()` |
+| `Excitation` | `cochleagram$to_excitation(time)` (one frame; `time` has no default) or `spectrum$to_excitation(erb_density)` |
 | `LPC` | `sound$to_lpc_burg()` |
 | `FormantPath` | `sound$to_formant_path()` |
 | `FormantModeler` | `formant$to_formant_modeler()` |
@@ -793,7 +793,7 @@ ltas$get_slope(0, 1000, 1000, 4000, unit = "energy")    # -52.513078
 **String API (recommended):**
 ```r
 # Use string names - automatically converted to codes
-intensity$get_value_at_time(time = 1.0, interpolate = "cubic")
+intensity$get_value_at_time(time = 1.0, interpolation = "cubic")
 get_intensity_at_times(intensity, times, interpolate = "sinc70")
 ```
 
@@ -1174,8 +1174,8 @@ window <- sound_load_window("long_audio.wav", start = 10.5, end = 10.55, resampl
 # Use case: Extract 50ms window from 10-minute file + resample in one operation
 
 # Merge TextGrids efficiently (native Praat function)
-tg1 <- TextGrid(0, 1); tg1$add_interval_tier("words")
-tg2 <- TextGrid(0, 1); tg2$add_point_tier("events")
+tg1 <- TextGrid$create(0, 1, "words", "")           # one interval tier
+tg2 <- TextGrid$create(0, 1, "phones", "events")    # an interval tier and a point tier  (TextGrid(path) only reads a file)
 merged <- textgrid_merge(list(tg1, tg2))
 # Use case: Combine annotation layers from different sources
 
@@ -1658,10 +1658,10 @@ voice_quality <- c(
 two_pass_adaptive_pitch(
   sound,                      # Sound XPtr or wrapper object
   time_step = 0,              # 0 = auto (0.75 / initial_floor)
-  initial_floor = 50,         # Pass 1 pitch floor (Hz)
-  initial_ceiling = 800,      # Pass 1 pitch ceiling (Hz)
   voicing_threshold = 0.45,   # Voicing detection threshold
   silence_threshold = 0.03,   # Silence detection threshold
+  initial_floor = 50,         # Pass 1 pitch floor (Hz)
+  initial_ceiling = 800,      # Pass 1 pitch ceiling (Hz)
   octave_cost = 0.01,         # Cost of octave jumps
   octave_jump_cost = 0.35,    # Cost of octave jump transitions
   voiced_unvoiced_cost = 0.14,# Cost of V→U transitions
