@@ -25,7 +25,8 @@ test_that("each constructor refuses a TextGrid pointer with a classed error", {
     f <- get(ctor, envir = asNamespace("pladdrr"))
     cond <- tryCatch(f(.xptr = foreign), error = function(e) e)
     expect_s3_class(cond, "pladdrr_input_error")
-    expect_match(conditionMessage(cond), paste0("Not a ", ctor), info = ctor)
+    expect_match(conditionMessage(cond),
+      paste0("Not ", if (grepl("^[AEIOU]", ctor)) "an " else "a ", ctor), info = ctor)
     expect_match(conditionMessage(cond), "found TextGrid", info = ctor)
     expect_identical(cond$param, ".xptr", info = ctor)
   }

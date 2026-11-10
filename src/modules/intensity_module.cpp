@@ -35,7 +35,7 @@ private:
 public:
     RIntensity() : ptr(R_NilValue) {}
     RIntensity(XPtr<structIntensity> xptr) : ptr(xptr) {
-        require_praat_class(ptr.get(), classIntensity, "Not a Intensity", "Intensity", ".xptr");
+        require_praat_class(ptr.get(), classIntensity, "Not an Intensity", "Intensity", ".xptr");
     }
 
     bool is_valid() { return ptr.get() != nullptr; }
@@ -66,7 +66,7 @@ public:
     double get_value_at_time(double time, int interpolation) {
         VALIDATE_PTR(ptr, Intensity);
         GUARD_NAN_SCALAR(time);
-        return Sampled_getValueAtX(ptr.get(), time, 1, 0, interpolation);
+        return Vector_getValueAtX(ptr.get(), time, 1, (kVector_valueInterpolation)interpolation);
     }
 
     double get_mean(double from_time, double to_time, int averaging_method) {
@@ -122,7 +122,7 @@ public:
         NumericVector values(n);
         for (int i = 0; i < n; i++) {
             if (ISNAN(times[i])) { values[i] = NA_REAL; continue; }
-            values[i] = Sampled_getValueAtX(ptr.get(), times[i], 1, 0, interpolation);
+            values[i] = Vector_getValueAtX(ptr.get(), times[i], 1, (kVector_valueInterpolation)interpolation);
         }
         return values;
     }

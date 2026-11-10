@@ -273,8 +273,7 @@ NULL
 .sound_methods$get_values_at_times <- function(.self, times, channel = 1,
   interpolation = "linear") {
   .self$.cpp$get_values_at_times(as.numeric(times), as.integer(channel),
-                                   .praat_interpolation_code(interpolation,
-                                     default = 1L))
+                                   .praat_interpolation_code(interpolation))
 }
 
 .sound_methods$get_values_in_range <- function(.self, from_time = 0.0,
@@ -344,6 +343,7 @@ NULL
   max_formants <- max_number_of_formants %||% max_formants
   max_frequency <- maximum_formant %||% max_frequency
   pre_emphasis_from <- pre_emphasis %||% pre_emphasis_from
+  .check_positive_count(max_formants, "max_formants", max = 1000)
   formant_ptr <- .self$.cpp$to_formant_burg(
     as.numeric(time_step), as.numeric(max_formants),
     as.numeric(max_frequency), as.numeric(window_length),
@@ -1026,6 +1026,7 @@ NULL
                                               pre_emphasis_from = 50.0,
                                               num_std_dev = 1.5,
                                                   max_iterations = 5L) {
+  .check_positive_count(max_formants, "max_formants", max = 1000)
   formant_ptr <- .sound_to_formant_robust(
     .self$.xptr, time_step, max_formants, max_frequency, window_length,
         pre_emphasis_from,
@@ -1330,13 +1331,20 @@ sound_from_values <- function(values, sampling_rate = 44100, start_time = 0.0) {
 }
 
 # Shared by the create_* factories: duration and rate are positive and finite and
-# their product is a sample count the allocator can be asked for.
-#' Validate `duration` and `sampling_rate` and that their product is an allocatable cell count.
+# their product (times the channel count) is a cell count the allocator can be
+# asked for.
+#' Validate `duration`, `sampling_rate` and `channels` and that their product is an allocatable cell count.
 #' @noRd
-.check_sound_size <- function(routine, duration, sampling_rate) {
+.check_sound_size <- function(routine, duration, sampling_rate, channels = 1L) {
   .check_positive_finite(duration, "duration", routine)
   .check_positive_finite(sampling_rate, "sampling_rate", routine)
-  .check_cell_count(duration * sampling_rate, routine, duration = duration)
+  .check_positive_count(channels, "channels", max = 1000)
+  cells <- duration * sampling_rate * channels
+  if (channels > 1) {
+    .check_cell_count(cells, routine, channels = channels)
+  } else {
+    .check_cell_count(cells, routine, duration = duration)
+  }
 }
 
 #' Create a pure tone Sound
@@ -1384,7 +1392,7 @@ sound_create_pure_tone <- function(frequency = 440.0, duration = 1.0,
                                     fade_in_duration = 0.01, fade_out_duration =
                                         0.01,
                                     channels = 1L) {
-  .check_sound_size("sound_create_pure_tone", duration, sampling_rate)
+  .check_sound_size("sound_create_pure_tone", duration, sampling_rate, channels)
   ptr <- .sound_create_pure_tone(as.integer(channels), 0.0, duration,
     sampling_rate,
     frequency, amplitude, fade_in_duration, fade_out_duration)

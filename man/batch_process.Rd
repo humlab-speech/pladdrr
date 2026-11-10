@@ -37,12 +37,12 @@ as first argument and return a named list or data frame row}
 }
 \value{
 Data frame with results from all files: exactly one row per file, in
-the order the files were processed. A file that cannot be read, or where
-\code{func} fails, does not abort the batch: its row carries the message in
-an \code{error} column (and \code{error_class}, the first class of the
-condition, e.g. \code{"pladdrr_input_error"}) and \code{NA} where the
-other rows have a value. Conditions raised on a worker cannot be caught by
-class around \code{batch_process()}; filter on \code{error_class} instead.
+  the order the files were processed. A file that cannot be read, or where
+  \code{func} fails, does not abort the batch: its row carries the message in
+  an \code{error} column (and \code{error_class}, the first class of the
+  condition, e.g. \code{"pladdrr_input_error"}) and \code{NA} where the
+  other rows have a value. Conditions raised on a worker cannot be caught by
+  class around \code{batch_process()}; filter on \code{error_class} instead.
 }
 \description{
 Process multiple audio files with a custom function. This replaces Praat's

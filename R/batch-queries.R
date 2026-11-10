@@ -153,7 +153,7 @@ get_pitch_at_times <- function(pitch, times, unit = "hertz",
   }
   
   
-  unit_code <- unit_to_code(unit, "pitch")
+  unit_code <- .pitch_unit_code(unit)
   # Use existing optimized function from sound_wrappers.cpp
   .pitch_get_values_at_times(
     pitch$.xptr,
@@ -188,7 +188,7 @@ get_pitch_strengths_at_times <- function(pitch, times, unit = "hertz",
     stop("get_pitch_strengths_at_times(): pitch must be a Pitch object")
   }
 
-  unit_code <- unit_to_code(unit, "pitch")
+  unit_code <- .pitch_unit_code(unit)
 
   pitch_get_strengths_at_times(
     pitch$.xptr,
@@ -260,7 +260,7 @@ get_pitch_quantiles_batch <- function(pitch, quantiles,
     stop("quantiles must be between 0 and 1")
   }
   
-  unit_code <- unit_to_code(unit, "pitch")
+  unit_code <- .pitch_unit_code(unit)
 
   pitch_get_quantiles_batch(
     pitch$.xptr,

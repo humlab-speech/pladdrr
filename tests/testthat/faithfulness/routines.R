@@ -341,7 +341,10 @@ FAITHFULNESS_ROUTINES <- list(
     }
   ),
 
-  # MFCC frame count (structural: frame grid must line up exactly)
+  # MFCC frame count (structural: frame grid must line up exactly).
+  # Argument order differs between the two APIs and is easy to cross: Praat's
+  # form is (n, window, step, first filter, DISTANCE, max) and to_mfcc() is
+  # (n, window, step, f1_mel, FMAX, DISTANCE). The call below is the mapped one.
   list(
     name        = "MFCC -> number of frames",
     fixture     = "extdata/test.wav",
@@ -356,7 +359,38 @@ FAITHFULNESS_ROUTINES <- list(
     parse_praat = function(lines) as.numeric(tail(lines, 1)),
     pladdrr = function(path) {
       s <- pladdrr::Sound(path)
-      s$to_mfcc(12, 0.015, 0.005, 100, 100, 0)$get_number_of_frames()
+      s$to_mfcc(12, 0.015, 0.005, f1_mel = 100, fmax_mel = 0, df_mel = 100)$
+        get_number_of_frames()
+    }
+  ),
+
+  # MFCC coefficients. The frame-count row above cannot see a wrong mapping of
+  # the mel arguments (it passed while they were crossed); the coefficients can.
+  # Measured against Praat 6.4.47 on test.wav; see the tolerance for the margin.
+  list(
+    name        = "MFCC -> coefficients c1..c12, frames 1, 40, 100",
+    fixture     = "extdata/test.wav",
+    tolerance   = 1e-6,
+    rationale   = paste("Same FFT/mel/DCT chain on the same samples; coefficients",
+      "are O(100), so 1e-6 absolute is ~1e-8 relative, far below the 1e-3",
+      "relative error a crossed mel-argument mapping produces."),
+    praat_script = '
+      sound = Read from file: "{path}"
+      mfcc = To MFCC: 12, 0.015, 0.005, 100, 100, 0
+      frames# = {1, 40, 100}
+      for i to 3
+        for c to 12
+          v = Get value in frame: frames#[i], c
+          appendInfoLine: v
+        endfor
+      endfor
+    ',
+    parse_praat = function(lines) as.numeric(tail(lines, 36)),
+    pladdrr = function(path) {
+      m <- pladdrr::Sound(path)$to_mfcc(12, 0.015, 0.005, f1_mel = 100,
+        fmax_mel = 0, df_mel = 100)
+      unlist(lapply(c(1, 40, 100), function(f)
+        vapply(1:12, function(c) m$get_value_in_frame(f, c), numeric(1))))
     }
   ),
 

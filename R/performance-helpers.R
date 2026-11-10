@@ -394,7 +394,7 @@ apply_window_xptr <- function(sound, window_func) {
   sound_module <- get_module("sound_module")
 
   # Create RSound wrapper and call method
-  rsound <- sound_module$RSound$new(sound_ptr)
+  rsound <- with_pladdrr_errors(sound_module$RSound$new(sound_ptr))
   result_ptr <- rsound$apply_window_xptr(window_func)
 
   # Wrap result in R6 Sound object
@@ -463,7 +463,7 @@ apply_transform_xptr <- function(sound, transform_func) {
   sound_module <- get_module("sound_module")
 
   # Create RSound wrapper and call method
-  rsound <- sound_module$RSound$new(sound_ptr)
+  rsound <- with_pladdrr_errors(sound_module$RSound$new(sound_ptr))
   result_ptr <- rsound$apply_transform_xptr(transform_func)
 
   # Wrap result in R6 Sound object

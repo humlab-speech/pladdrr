@@ -55,53 +55,36 @@ extract_xptr <- function(obj, class_name) {
 }
 
 
-#' Convert Unit Name to Praat Unit Code
-#'
-#' Standardized mapping from unit names to Praat integer codes.
-#' Ensures consistency across all APIs (Tier 1, 2, and 3).
-#'
-#' @param unit Character. Unit name
-#' @param type Character. Type of unit: "pitch", "formant", or "intensity"
-#'
-#' @return Integer unit code for Praat C++ layer
-#' @keywords internal
-#' @examples
-#' pladdrr:::unit_to_code("semitones", type = "pitch")
-#' pladdrr:::unit_to_code("bark", type = "formant")
+# Pitch unit name -> kPitch_unit code (src/praat.github.io/fon/Pitch_enums.h):
+#   0 HERTZ, 1 HERTZ_LOGARITHMIC, 2 MEL, 3 LOG_HERTZ,
+#   4-7 SEMITONES re 1/100/200/440 Hz, 8 ERB.
+# The single table every pitch door uses. A bare "semitones" is Praat's own
+# default, semitones re 100 Hz. Unknown names raise pladdrr_input_error: they
+# used to fall through to hertz at some doors.
+.pitch_unit_codes <- c(
+  hertz = 0L, hz = 0L,
+  hertz_logarithmic = 1L,
+  mel = 2L,
+  loghertz = 3L,
+  semitones_re_1hz = 4L,
+  semitones_re_100hz = 5L, semitones = 5L, st = 5L,
+  semitones_re_200hz = 6L,
+  semitones_re_440hz = 7L,
+  erb = 8L
+)
+
+#' Map a pitch unit name to Praat's `kPitch_unit` integer code; unknown units are an input error.
 #' @noRd
-unit_to_code <- function(unit, type = "pitch") {
-  unit <- tolower(unit)
-  
-  code <- switch(type,
-    pitch = switch(unit,
-      hertz = 0L,
-      hz = 0L,
-      hertz_logarithmic = 1L,
-      semitones = 1L, st = 1L,
-      mel = 2L,
-      loghertz = 3L,
-      semitones_re_1hz = 4L,
-      semitones_re_100hz = 5L,
-      semitones_re_200hz = 6L,
-      semitones_re_440hz = 7L,
-      erb = 8L,
-      0L  # default to hertz
-    ),
-    
-    formant = switch(unit,
-      hertz = 0L,
-      hz = 0L,
-      bark = 1L,
-      0L  # default to hertz
-    ),
-    
-    intensity = switch(unit,
-      db = 0L,
-      0L
-    )
-  )
-  if (is.null(code)) {
-    stop(sprintf("Unknown unit type: %s", type))
+.pitch_unit_code <- function(unit) {
+  code <- if (is.character(unit) && length(unit) == 1L && !is.na(unit)) {
+    .pitch_unit_codes[tolower(unit)]
+  } else {
+    NA_integer_
   }
-  code
+  if (is.na(code)) {
+    .stop_input("pitch_unit", "unit",
+      paste0("Unknown unit: ", deparse(unit), ". Use one of: ",
+        paste(names(.pitch_unit_codes), collapse = ", ")))
+  }
+  unname(code)
 }

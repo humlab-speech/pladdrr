@@ -1,6 +1,7 @@
 sound.duration	1
 sound.nx	44100
-sound.dx	44100
+sound.sampling_frequency	44100
+sound.dx	2.2675736961451248e-05
 sound.mean	-3.3102142845895754e-18
 sound.rms	0.46943583161067537
 sound.energy	0.22037000000000637
@@ -14,7 +15,7 @@ pitch.nframes	97
 pitch.dt	0.01
 pitch.mean	120.0007962563289
 pitch.stdev	0.0048683345757684253
-pitch.quantile90	120.00274127386685
+pitch.quantile90	120.00736683331411
 pitch.voiced	97
 pitch.df_sum	11785.577236863903
 pitch_ac.mean	120.0007962563289
@@ -79,3 +80,10 @@ dtw.weighted_distance	19.84278397272961
 pca.eigenvalue_sum	2.59226291613902
 textgrid.total_duration	3
 textgrid.nrows_df	13
+pitch.q50_semitones	3.1568083477097502
+pitch.q50_erb	3.5257705558059627
+pitch.mean_loghertz	2.0791841274321046
+tier.shift_semitones	127.13847560160589
+intensity.mean_db	87.415716551687169
+ltas.full.mean_sones	6.3653292680284004
+intensity.value_cubic	87.411297282136431

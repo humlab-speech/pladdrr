@@ -11,7 +11,7 @@
 
 \item{...}{Passed on to the object's \code{$as_matrix()} method; used by
 \code{Spectrogram} (\code{include_dimnames}) and
- \code{MelSpectrogram}/\code{BarkSpectrogram} (\code{to_db}).}
+\code{MelSpectrogram}/\code{BarkSpectrogram} (\code{to_db}).}
 }
 \value{
 A numeric matrix. For classes with no \code{$as_matrix()}, an error
@@ -20,17 +20,13 @@ A numeric matrix. For classes with no \code{$as_matrix()}, an error
   (\code{Manipulation} offers neither and is pointed at its own accessors).
 }
 \description{
-Fallback \code{as.matrix()} method for every pladdrr object class: it returns the
-numbers of the object's own \code{$as_matrix()} method (\code{frame} x \code{2} for Pitch
-and the tiers, \code{frequency} x \code{time} for Spectrogram and the other 2-D
-objects, \code{channel} x \code{sample} for Sound). Classes without \code{$as_matrix()}
-(Formant, PointProcess, TextGrid, Table, ...) raise a \code{pladdrr_input_error}
+Fallback `as.matrix()` method for every pladdrr object class: it returns the
+numbers of the object's own `$as_matrix()` method (`frame` x `2` for Pitch
+and the tiers, `frequency` x `time` for Spectrogram and the other 2-D
+objects, `channel` x `sample` for Sound). Classes without `$as_matrix()`
+(Formant, PointProcess, TextGrid, Table, ...) raise a `pladdrr_input_error`
 naming the class and the accessor to use instead; they never silently return
-a matrix-shaped wrapper. \code{Matrix} and \code{Polygon} keep their own methods.
-}
-\seealso{
-\code{\link{Matrix}}, \code{\link{Pitch}},
- \code{\link{as.data.frame.Sound}}
+a matrix-shaped wrapper. `Matrix` and `Polygon` keep their own methods.
 }
 \examples{
 sound <- Sound$create_tone(frequency = 440, duration = 0.2,
@@ -39,4 +35,8 @@ m <- as.matrix(sound$to_pitch())
 dim(m)
 tryCatch(as.matrix(sound$to_point_process_periodic_cc()),
   pladdrr_input_error = function(e) conditionMessage(e))
+}
+\seealso{
+\code{\link{Matrix}}, \code{\link{Pitch}},
+  \code{\link{as.data.frame.Sound}}
 }

@@ -47,7 +47,7 @@ extract_intensity <- function(sound, time_step = 0.0, minimum_pitch = 100,
 get_intensity_at_time <- function(intensity, time, interpolate = FALSE) {
   .Deprecated("intensity$get_value_at_time()", package = "pladdrr")
   intensity$get_value_at_time(time,
-    interpolation = if (interpolate) "cubic" else "none")
+    interpolation = if (interpolate) "cubic" else "nearest")
 }
 
 #' Get mean intensity (DEPRECATED)

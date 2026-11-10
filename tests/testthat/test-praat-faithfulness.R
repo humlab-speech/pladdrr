@@ -117,6 +117,19 @@ report_caveats <- c(
     "changed), so a gap of that size against an older oracle is a version",
     "difference, not a pladdrr defect. Say which Praat produced a reference number.",
     "",
+    "**Oracle version (FormantPath rows):** the 2026-11 external review ran this",
+    "registry against Praat 6.4.27 and found the mean F1 / F2 rows off by 0.138 Hz /",
+    "0.0256 Hz, with identical frame count and step; it attributed that to the",
+    "candidate-grid origin (0 in 6.4.27, 0.0275 s in the 6.4.47 code vendored here).",
+    "Those figures were not reproduced against 6.4.27 here; against 6.4.47 the rows",
+    "pass. Treat a gap of that size against an older oracle as a version difference,",
+    "and do not widen the tolerance for it: the same tolerance guards real drift.",
+    "",
+    "**MFCC rows:** Praat's `To MFCC` takes (first filter, distance, max) where",
+    "`Sound$to_mfcc()` takes (`f1_mel`, `fmax_mel`, `df_mel`). The frame-count row",
+    "passed while the two were crossed, so the coefficient row exists to catch a",
+    "wrong mapping; against 6.4.47 the coefficients agree to about 2.5e-10.",
+    "",
     "**Platform caveat (Intensity row above):** on Apple Silicon the reference",
     "Praat application and pladdrr can differ by ~2e-6 dB in an energy-averaged",
     "Intensity mean at the default time step (measured against Praat 6.4.47 with",
@@ -140,7 +153,18 @@ praat_version_string <- function() {
 }
 
 write_reports <- function(rows) {
-  df <- do.call(rbind, lapply(rows, as.data.frame, stringsAsFactors = FALSE))
+  # One row per routine. A routine that returns several values (MFCC
+  # coefficients, formant tracks) reports its first value and `n_values`; |Δ| is
+  # the largest over all of them. Expanding to one row per value repeated that
+  # maximum on every row, so a single bad value looked like many and the failure
+  # message below printed it once per element.
+  one_row <- function(r) {
+    first <- function(x) if (length(x)) as.numeric(x)[1] else NA_real_
+    data.frame(name = r$name, status = r$status, n_values = length(r$pladdrr),
+      praat = first(r$praat), pladdrr = first(r$pladdrr), diff = r$diff,
+      tolerance = r$tolerance, stringsAsFactors = FALSE)
+  }
+  df <- do.call(rbind, lapply(rows, one_row))
   # Never write into the source tree from a test run: that makes `R CMD check`
   # mutate tracked files and shows up as spurious VCS churn. Default to
   # tempdir(); set PLADDRR_FAITHFULNESS_OUTDIR to regenerate the committed
@@ -173,12 +197,15 @@ write_reports <- function(rows) {
       "is checked against it at the documented tolerance. `pass` = within",
       "tolerance, `fail` = drift (open an issue or document the rationale).",
       "",
-      "| Routine | Status | Praat | pladdrr | |Δ| | Tolerance |",
-      "|---------|--------|-------|---------|------|-----------|"
+      "A routine with several values shows its first value; |Δ| is the largest",
+      "over all of them (`n` = number of values).",
+      "",
+      "| Routine | Status | n | Praat | pladdrr | |Δ| | Tolerance |",
+      "|---------|--------|---|-------|---------|------|-----------|"
     )
     for (i in seq_len(nrow(df))) {
-      lines <- c(lines, sprintf("| %s | %s | %s | %s | %s | %s |",
-                                df$name[i], df$status[i],
+      lines <- c(lines, sprintf("| %s | %s | %d | %s | %s | %s | %s |",
+                                df$name[i], df$status[i], df$n_values[i],
                                 format(df$praat[i]), format(df$pladdrr[i]),
                                 format(df$diff[i]), format(df$tolerance[i])))
     }

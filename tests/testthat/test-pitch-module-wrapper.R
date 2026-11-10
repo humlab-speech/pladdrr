@@ -8,20 +8,6 @@ pitch_module_ptr <- function() {
   pitch$.xptr
 }
 
-test_that("pitch_unit_code maps known units and rejects unknown ones", {
-  expect_equal(pladdrr:::pitch_unit_code("hertz"), 0L,
-    tolerance = sqrt(.Machine$double.eps))
-  expect_equal(pladdrr:::pitch_unit_code("Hz"), 0L,
-    tolerance = sqrt(.Machine$double.eps))
-  expect_equal(pladdrr:::pitch_unit_code("semitones"), 1L,
-    tolerance = sqrt(.Machine$double.eps))
-  expect_equal(pladdrr:::pitch_unit_code("mel"), 2L,
-    tolerance = sqrt(.Machine$double.eps))
-  expect_equal(pladdrr:::pitch_unit_code("erb"), 3L,
-    tolerance = sqrt(.Machine$double.eps))
-  expect_error(pladdrr:::pitch_unit_code("bogus"), "Unknown unit")
-})
-
 test_that("PitchModule() requires a pointer", {
   expect_error(PitchModule(), "Sound\\$to_pitch")
 })

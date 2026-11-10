@@ -46,7 +46,13 @@ test_that(
   expect_warning(intensity <- extract_intensity(sound), "deprecated")
   expect_s3_class(intensity, "Intensity")
 
+  # interpolate = FALSE is nearest; 5.1.x passed "none", an unknown method that
+  # silently became cubic.
   expect_warning(val <- get_intensity_at_time(intensity, 0.25), "deprecated")
+  expect_equal(val, intensity$get_value_at_time(0.25, interpolation = "nearest"),
+    tolerance = sqrt(.Machine$double.eps))
+  expect_warning(val <- get_intensity_at_time(intensity, 0.25, interpolate = TRUE),
+    "deprecated")
   expect_equal(val, intensity$get_value_at_time(0.25),
     tolerance = sqrt(.Machine$double.eps))
 

@@ -64,33 +64,6 @@
 #define GUARD_NAN_RANGE(a, b) if (ISNAN(a) || ISNAN(b)) return NA_REAL
 
 // ============================================================================
-// Unit Conversion Helpers
-// ============================================================================
-
-// Common unit codes used across Praat objects
-// These match Praat's internal enums
-namespace PlaadrrUnits {
-    // Pitch/frequency units
-    constexpr int HERTZ = 0;
-    constexpr int SEMITONES = 1;
-    constexpr int MEL = 2;
-    constexpr int ERB = 3;
-    constexpr int LOGHERTZ = 4;
-
-    // Intensity units
-    constexpr int DB = 0;
-    constexpr int ENERGY = 1;
-    constexpr int SONES = 2;
-
-    // Interpolation methods
-    constexpr int NEAREST = 0;
-    constexpr int LINEAR = 1;
-    constexpr int CUBIC = 2;
-    constexpr int SINC70 = 3;
-    constexpr int SINC700 = 4;
-}
-
-// ============================================================================
 // Module Registration Helper
 // ============================================================================
 

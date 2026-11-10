@@ -227,9 +227,7 @@ NULL
 .pp_methods$get_values_from_sound <- function(.self, sound, channel = 1,
   interpolation = "cubic") {
   if (!inherits(sound, "Sound")) stop("pp$get_values_from_sound(): sound must be a Sound object")
-  interp_code <- switch(tolower(interpolation),
-    "nearest" = 0L, "linear" = 1L, "cubic" = 2L, "sinc70" = 3L, "sinc700" = 4L,
-        2L)
+  interp_code <- .praat_interpolation_code(interpolation)
   .self$.cpp$get_values_from_sound(sound$.xptr, as.integer(channel),
     interp_code)
 }
