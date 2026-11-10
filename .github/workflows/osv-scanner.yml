@@ -24,6 +24,8 @@ on:
 permissions:
   # Require writing security events to upload SARIF file to security tab
   security-events: write
+  # Required by the v2 reusable workflows (SARIF upload)
+  actions: read
   # Read commit contents
   contents: read
 
