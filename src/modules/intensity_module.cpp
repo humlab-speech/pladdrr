@@ -35,7 +35,7 @@ private:
 public:
     RIntensity() : ptr(R_NilValue) {}
     RIntensity(XPtr<structIntensity> xptr) : ptr(xptr) {
-        require_praat_class(ptr.get(), classIntensity, "Not a Intensity", "Intensity", ".xptr");
+        require_praat_class(ptr.get(), classIntensity, "Not an Intensity", "Intensity", ".xptr");
     }
 
     bool is_valid() { return ptr.get() != nullptr; }

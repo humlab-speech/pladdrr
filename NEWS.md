@@ -44,6 +44,16 @@
   `pladdrr_input_error` at the direct getters and the batch queries. They used
   to answer in hertz.
 
+## Error messages
+
+* The `*_direct` getters and conversions (`get_pitch_mean_direct()`,
+  `to_pitch_direct()`, ...) and `apply_window_xptr()` / `apply_transform_xptr()`
+  raise a classed `pladdrr_input_error` for a wrong-class pointer. 5.1.1 made
+  them refuse it; the condition was an untagged `Rcpp::exception` carrying the
+  tag in its message.
+* "Not a AmplitudeTier", "Not a Excitation", "Not a Intensity" and the other
+  vowel-initial class names now read "Not an ...".
+
 # pladdrr 5.1.1
 
 5.1.1 closes input doors the 5.1.0 guards missed. No result a valid call returned

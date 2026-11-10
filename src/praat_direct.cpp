@@ -374,7 +374,7 @@ double intensity_get_value_direct(SEXP intensity_xptr, double time, int interpol
     if (!intensity || intensity.get() == nullptr) {
         stop("Invalid Intensity pointer");
     }
-    require_praat_class(intensity.get(), classIntensity, "Not a Intensity", "intensity_get_value_direct", "intensity_xptr");
+    require_praat_class(intensity.get(), classIntensity, "Not an Intensity", "intensity_get_value_direct", "intensity_xptr");
     kVector_valueInterpolation interp = static_cast<kVector_valueInterpolation>(interpolation);
     return Vector_getValueAtX(intensity.get(), time, 1, interp);
 }
@@ -399,7 +399,7 @@ double intensity_get_mean_direct(SEXP intensity_xptr, double from_time = 0, doub
     if (!intensity || intensity.get() == nullptr) {
         stop("Invalid Intensity pointer");
     }
-    require_praat_class(intensity.get(), classIntensity, "Not a Intensity", "intensity_get_mean_direct", "intensity_xptr");
+    require_praat_class(intensity.get(), classIntensity, "Not an Intensity", "intensity_get_mean_direct", "intensity_xptr");
     if (from_time == 0 && to_time == 0) {
         from_time = intensity->xmin;
         to_time = intensity->xmax;
@@ -424,7 +424,7 @@ double intensity_get_minimum_direct(SEXP intensity_xptr, double from_time = 0, d
     if (!intensity || intensity.get() == nullptr) {
         stop("Invalid Intensity pointer");
     }
-    require_praat_class(intensity.get(), classIntensity, "Not a Intensity", "intensity_get_minimum_direct", "intensity_xptr");
+    require_praat_class(intensity.get(), classIntensity, "Not an Intensity", "intensity_get_minimum_direct", "intensity_xptr");
     if (from_time == 0 && to_time == 0) {
         from_time = intensity->xmin;
         to_time = intensity->xmax;
@@ -449,7 +449,7 @@ double intensity_get_maximum_direct(SEXP intensity_xptr, double from_time = 0, d
     if (!intensity || intensity.get() == nullptr) {
         stop("Invalid Intensity pointer");
     }
-    require_praat_class(intensity.get(), classIntensity, "Not a Intensity", "intensity_get_maximum_direct", "intensity_xptr");
+    require_praat_class(intensity.get(), classIntensity, "Not an Intensity", "intensity_get_maximum_direct", "intensity_xptr");
     if (from_time == 0 && to_time == 0) {
         from_time = intensity->xmin;
         to_time = intensity->xmax;

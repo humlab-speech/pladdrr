@@ -82,7 +82,7 @@ get_pitch_stats_direct <- function(pitch, from_time = 0, to_time = 0,
   unit <- match.arg(unit)
   unit_code <- .pitch_unit_code(unit)
 
-  pitch_get_all_stats_direct(pitch_ptr, from_time, to_time, unit_code)
+  .direct_door(pitch_get_all_stats_direct(pitch_ptr, from_time, to_time, unit_code))
 }
 
 
@@ -122,7 +122,7 @@ get_formants_direct <- function(formant, time, unit = c("hertz", "bark")) {
   unit <- match.arg(unit)
   unit_code <- switch(unit, hertz = 0L, bark = 1L)
 
-  formant_get_f1_f4_direct(formant_ptr, time, unit_code)
+  .direct_door(formant_get_f1_f4_direct(formant_ptr, time, unit_code))
 }
 
 
@@ -171,7 +171,7 @@ to_pitch_direct <- function(sound, time_step = 0, pitch_floor = 75,
     stop("sound must be a Sound object or external pointer")
   }
 
-  sound_to_pitch_direct(sound_ptr, time_step, pitch_floor, pitch_ceiling)
+  .direct_door(sound_to_pitch_direct(sound_ptr, time_step, pitch_floor, pitch_ceiling))
 }
 
 
@@ -448,8 +448,8 @@ to_formant_direct <- function(sound, time_step = 0, max_formants = 5,
   max_formant <- maximum_formant %||% max_formant
   pre_emphasis <- pre_emphasis_from %||% pre_emphasis
 
-  sound_to_formant_direct(sound_ptr, time_step, max_formants, max_formant,
-                           window_length, pre_emphasis)
+  .direct_door(sound_to_formant_direct(sound_ptr, time_step, max_formants, max_formant,
+                           window_length, pre_emphasis))
 }
 
 
@@ -478,7 +478,7 @@ to_intensity_direct <- function(sound, minimum_pitch = 100, time_step = 0,
     stop("sound must be a Sound object or external pointer")
   }
 
-  sound_to_intensity_direct(sound_ptr, minimum_pitch, time_step, subtract_mean)
+  .direct_door(sound_to_intensity_direct(sound_ptr, minimum_pitch, time_step, subtract_mean))
 }
 
 
@@ -510,8 +510,8 @@ to_harmonicity_direct <- function(sound, time_step = 0.01, minimum_pitch = 75,
     stop("sound must be a Sound object or external pointer")
   }
 
-  sound_to_harmonicity_direct(sound_ptr, time_step, minimum_pitch,
-                               silence_threshold, periods_per_window)
+  .direct_door(sound_to_harmonicity_direct(sound_ptr, time_step, minimum_pitch,
+                               silence_threshold, periods_per_window))
 }
 
 
@@ -539,7 +539,7 @@ get_pitch_value_direct <- function(pitch, time, unit = "hertz",
   interpolate = TRUE) {
   pitch_ptr <- if (inherits(pitch, "Pitch")) pitch$.xptr else pitch
   unit_code <- .pitch_unit_code(unit)
-  pitch_get_value_direct(pitch_ptr, time, unit_code, interpolate)
+  .direct_door(pitch_get_value_direct(pitch_ptr, time, unit_code, interpolate))
 }
 
 #' Get Single Intensity Value Directly
@@ -562,7 +562,7 @@ get_intensity_value_direct <- function(intensity, time,
   intensity_ptr <- if (
     inherits(intensity, "Intensity")) intensity$.xptr else intensity
   interp_code <- .praat_interpolation_code(interpolation)
-  intensity_get_value_direct(intensity_ptr, time, interp_code)
+  .direct_door(intensity_get_value_direct(intensity_ptr, time, interp_code))
 }
 
 #' Get Single Formant Value Directly
@@ -585,7 +585,7 @@ get_formant_value_direct <- function(formant, formant_number, time,
   unit = "hertz") {
   formant_ptr <- if (inherits(formant, "Formant")) formant$.xptr else formant
   unit_code <- switch(unit, hertz = 0L, bark = 1L, 0L)
-  formant_get_value_direct(formant_ptr, formant_number, time, unit_code)
+  .direct_door(formant_get_value_direct(formant_ptr, formant_number, time, unit_code))
 }
 
 
@@ -621,7 +621,7 @@ get_pitch_quantile_direct <- function(pitch, quantile, from_time = 0,
   pitch_ptr <- if (inherits(pitch, "Pitch")) pitch$.xptr else pitch
   unit <- match.arg(unit)
   unit_code <- .pitch_unit_code(unit)
-  pitch_get_quantile_direct(pitch_ptr, quantile, from_time, to_time, unit_code)
+  .direct_door(pitch_get_quantile_direct(pitch_ptr, quantile, from_time, to_time, unit_code))
 }
 
 #' Get Pitch Mean Directly (Bypass R6)
@@ -649,7 +649,7 @@ get_pitch_mean_direct <- function(pitch, from_time = 0, to_time = 0,
   pitch_ptr <- if (inherits(pitch, "Pitch")) pitch$.xptr else pitch
   unit <- match.arg(unit)
   unit_code <- .pitch_unit_code(unit)
-  pitch_get_mean_direct(pitch_ptr, from_time, to_time, unit_code)
+  .direct_door(pitch_get_mean_direct(pitch_ptr, from_time, to_time, unit_code))
 }
 
 #' Get Pitch Standard Deviation Directly (Bypass R6)
@@ -677,7 +677,7 @@ get_pitch_stdev_direct <- function(pitch, from_time = 0, to_time = 0,
   pitch_ptr <- if (inherits(pitch, "Pitch")) pitch$.xptr else pitch
   unit <- match.arg(unit)
   unit_code <- .pitch_unit_code(unit)
-  pitch_get_stdev_direct(pitch_ptr, from_time, to_time, unit_code)
+  .direct_door(pitch_get_stdev_direct(pitch_ptr, from_time, to_time, unit_code))
 }
 
 
