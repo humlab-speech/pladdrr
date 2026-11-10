@@ -20,7 +20,7 @@ get_max_intensity(intensity, time_range = NULL)
 
 ## Value
 
-Maximum intensity in dB
+Numeric: maximum intensity in dB
 
 ## Examples
 

@@ -89,6 +89,14 @@ functionality of R for visualization.
 
 ## Other similar packages
 
+To our knowledge `pladdrr` is the first R package that compiles Praat’s
+own C/C++ algorithms into R and calls them in-process, with no Praat
+executable, Python bridge or intermediate files. It is therefore not an
+improvement on, or a new implementation of, Praat’s methods: its aim is
+to return what the Praat application returns (checked against Praat in
+`tests/testthat/test-praat-faithfulness.R`), and to make that available
+as typed R objects.
+
 This package was developed to serve our specific needs and does not suit
 everyone. If our needs do not overlap with yours, please consider these
 alternative routes to do what you want:
@@ -105,6 +113,15 @@ alternative routes to do what you want:
   Praat could do, but may struggle with parallelism and relies on
   callouts to the shell that can be inefficient and sensitive to errors
   in expectations at the handoff between R and Praat.
+- [rPraat](https://cran.r-project.org/package=rPraat) reads and writes
+  Praat file formats (TextGrid, PitchTier, Pitch, Formant, …) natively
+  in R and provides functions to manipulate those objects, but does not
+  run Praat’s signal-processing algorithms.
+- [PraatR](https://github.com/usagi5886/PraatR) calls the Praat
+  executable from R, exchanging data through files.
+- [wrassp](https://cran.r-project.org/package=wrassp) wraps the libassp
+  speech-signal-processing library (F0, formants, spectra). It is a
+  different implementation, so its numbers are not Praat’s.
 
 ## Documentation
 
@@ -477,7 +494,7 @@ use:
 
 > Nylén, Fredrik, Skotare, Tomas & von Boer, Johan (2026). *pladdrr:
 > Direct Access to the Core Algorithms of Praat*. R package version
-> 5.1.0. <https://doi.org/10.5281/zenodo.21884217>
+> 5.2.0. <https://doi.org/10.5281/zenodo.21884217>
 
 Please also cite Praat itself:
 
@@ -535,6 +552,11 @@ change global behaviour.
 - [`pladdrr-package`](https://humlab-speech.github.io/pladdrr/reference/pladdrr-package.md)
   [`pladdrr`](https://humlab-speech.github.io/pladdrr/reference/pladdrr-package.md)
   : pladdrr: Direct Access to Praat's Core Algorithms from R
+- [`pladdrr-references`](https://humlab-speech.github.io/pladdrr/reference/pladdrr-references.md)
+  [`pladdrr_references`](https://humlab-speech.github.io/pladdrr/reference/pladdrr-references.md)
+  : Primary references for the algorithms in pladdrr
+- [`pladdrr-test-data`](https://humlab-speech.github.io/pladdrr/reference/pladdrr-test-data.md)
+  : Data files shipped with pladdrr, and how the tests use them
 - [`with_pladdrr_errors()`](https://humlab-speech.github.io/pladdrr/reference/with_pladdrr_errors.md)
   : Run an expression, reclassifying tagged pladdrr C++ errors and
   warnings
@@ -1313,6 +1335,8 @@ dispatch bridge that the TextGrid batch functions install.
   pladdrr](https://humlab-speech.github.io/pladdrr/articles/migration-from-praat.md):
 - [Migration Guide: From Parselmouth (Python) to
   pladdrr](https://humlab-speech.github.io/pladdrr/articles/migration-from-parselmouth.md):
+- [Terminology, definitions and
+  conventions](https://humlab-speech.github.io/pladdrr/articles/terminology.md):
 
 ### Analysis Workflows
 

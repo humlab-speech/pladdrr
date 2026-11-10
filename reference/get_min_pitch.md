@@ -24,7 +24,7 @@ get_min_pitch(pitch, unit = "Hz", time_range = NULL)
 
 ## Value
 
-Minimum pitch value
+Numeric: minimum pitch in Hz
 
 ## Examples
 

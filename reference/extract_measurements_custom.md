@@ -47,7 +47,7 @@ extract_measurements_custom(
 
 ## Value
 
-Data frame with measurements for each interval/point
+A data.frame with measurements for each interval/point
 
 ## Examples
 

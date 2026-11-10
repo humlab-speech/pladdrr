@@ -95,7 +95,7 @@ dtw <- sounds_to_dtw(reference, candidate,
 
 # Check alignment quality
 cat("Distance:", dtw$get_weighted_distance(), "\n")
-#> Distance: 115.0691 
+#> Distance: 115.4487 
 
 # Map time point from candidate to reference
 ref_time <- dtw$get_y_time_from_x_time(0.1)

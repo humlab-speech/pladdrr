@@ -436,7 +436,7 @@ results <- lapply(seq_len(nrow(intervals)), function(i) {
 phone_formants <- do.call(rbind, results)
 print(phone_formants)
 #>   phone       f1       f2
-#> 1     h 420.9057 464.9144
+#> 1     h 420.9056 464.9144
 #> 2     ɛ 420.9347 464.9425
 ```
 
@@ -486,10 +486,10 @@ requested. Measure on your own data:
 ``` r
 system.time(frm_result <- sound$to_formant_burg())
 #>    user  system elapsed 
-#>   0.016   0.000   0.007
+#>   0.012   0.000   0.006
 system.time(fp <- sound$to_formant_path(num_steps_up_down = 2L))
 #>    user  system elapsed 
-#>   0.075   0.000   0.032
+#>   0.055   0.000   0.022
 ```
 
 ## Best Practices
@@ -529,14 +529,14 @@ system.time(fp <- sound$to_formant_path(num_steps_up_down = 2L))
 
 pladdrr provides direct R access to Praat’s FormantPath algorithm:
 
-| Feature                  | pladdrr                                  | Praat GUI       |
-|--------------------------|------------------------------------------|-----------------|
-| Multiple candidates      | Yes                                      | Yes             |
-| Automatic path selection | Yes                                      | Yes             |
-| Manual path override     | Yes, but see the known crash noted above | Yes             |
-| Data export              | Yes (data.frame)                         | Yes (text file) |
-| Batch processing         | Yes (R loops)                            | No (manual)     |
-| Visualization            | Yes (ggplot2)                            | Yes (built-in)  |
+| Feature | pladdrr | Praat GUI |
+|----|----|----|
+| Multiple candidates | Yes | Yes |
+| Automatic path selection | Yes | Yes |
+| Manual path override | Yes, but see the known crash noted above | Yes |
+| Data export | Yes (data.frame) | Yes (text file) |
+| Batch processing | Yes (R loops) | No (manual) |
+| Visualization | Yes (ggplot2) | Yes (built-in) |
 
 ### vs Parselmouth
 
@@ -621,11 +621,11 @@ audio - `ceiling_step_fraction`: 0.05 (narrow) to 0.10 (wide)
 sessionInfo()
 #> R version 4.6.2 (2026-10-29)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.5 LTS
+#> Running under: Ubuntu 26.04.1 LTS
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
-#> LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
+#> LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.32.so;  LAPACK version 3.12.0
 #> 
 #> locale:
 #>  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
@@ -640,7 +640,7 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] ggplot2_4.0.3 pladdrr_5.1.0
+#> [1] ggplot2_4.0.3 pladdrr_5.2.0
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] gtable_0.3.6        jsonlite_2.0.0      dplyr_1.2.1        

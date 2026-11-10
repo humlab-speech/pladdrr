@@ -13,13 +13,13 @@ clarifies the purpose of different function suffixes.
 
 #### Standard Suffixes
 
-| Suffix      | Purpose                      | Example                                                                                                   | API Tier |
-|-------------|------------------------------|-----------------------------------------------------------------------------------------------------------|----------|
-| None        | Standard high-level API      | `sound$to_pitch()`                                                                                        | Tier 1   |
-| `_direct`   | XPtr input, skip R6 dispatch | [`to_pitch_direct()`](https://humlab-speech.github.io/pladdrr/reference/to_pitch_direct.md)               | Tier 2   |
-| `_batch`    | Multi-item processing        | [`sound_to_pitch_batch()`](https://humlab-speech.github.io/pladdrr/reference/sound_to_pitch_batch.md)     | Tier 3   |
-| `_parallel` | Multi-core processing        | [`extract_pitch_parallel()`](https://humlab-speech.github.io/pladdrr/reference/extract_pitch_parallel.md) | Tier 3   |
-| `_at_times` | Vectorized time queries      | [`get_pitch_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_pitch_at_times.md)         | Tier 3   |
+| Suffix | Purpose | Example | API Tier |
+|----|----|----|----|
+| None | Standard high-level API | `sound$to_pitch()` | Tier 1 |
+| `_direct` | XPtr input, skip R6 dispatch | [`to_pitch_direct()`](https://humlab-speech.github.io/pladdrr/reference/to_pitch_direct.md) | Tier 2 |
+| `_batch` | Multi-item processing | [`sound_to_pitch_batch()`](https://humlab-speech.github.io/pladdrr/reference/sound_to_pitch_batch.md) | Tier 3 |
+| `_parallel` | Multi-core processing | [`extract_pitch_parallel()`](https://humlab-speech.github.io/pladdrr/reference/extract_pitch_parallel.md) | Tier 3 |
+| `_at_times` | Vectorized time queries | [`get_pitch_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_pitch_at_times.md) | Tier 3 |
 
 #### Special Cases
 
@@ -29,11 +29,11 @@ clarifies the purpose of different function suffixes.
 
 Three functions use `_fast` suffix instead of `_direct`:
 
-| Function                                                                                                      | Purpose                      | API Tier | Note                    |
-|---------------------------------------------------------------------------------------------------------------|------------------------------|----------|-------------------------|
-| [`calculate_cpps_fast()`](https://humlab-speech.github.io/pladdrr/reference/calculate_cpps_fast.md)           | One-shot CPPS calculation    | Tier 2   | Combines create + query |
-| [`to_powercepstrogram_fast()`](https://humlab-speech.github.io/pladdrr/reference/to_powercepstrogram_fast.md) | Create PowerCepstrogram XPtr | Tier 2   | Direct conversion       |
-| [`get_cpps_fast()`](https://humlab-speech.github.io/pladdrr/reference/get_cpps_fast.md)                       | Query CPPS from XPtr         | Tier 2   | Direct query            |
+| Function | Purpose | API Tier | Note |
+|----|----|----|----|
+| [`calculate_cpps_fast()`](https://humlab-speech.github.io/pladdrr/reference/calculate_cpps_fast.md) | One-shot CPPS calculation | Tier 2 | Combines create + query |
+| [`to_powercepstrogram_fast()`](https://humlab-speech.github.io/pladdrr/reference/to_powercepstrogram_fast.md) | Create PowerCepstrogram XPtr | Tier 2 | Direct conversion |
+| [`get_cpps_fast()`](https://humlab-speech.github.io/pladdrr/reference/get_cpps_fast.md) | Query CPPS from XPtr | Tier 2 | Direct query |
 
 **Why `_fast` instead of `_direct`?**
 
@@ -283,15 +283,15 @@ formants <- sound_extract_and_formant(sound, starts, ends)
 
 ### Function Organization by File
 
-| File                    | Primary Pattern      | API Tier | Examples                                                                                                  |
-|-------------------------|----------------------|----------|-----------------------------------------------------------------------------------------------------------|
-| `sound-wrapper.R`       | Object methods       | Tier 1   | `$to_pitch()`, `$to_formant()`                                                                            |
-| `praat-direct.R`        | `*_direct`           | Tier 2   | [`to_pitch_direct()`](https://humlab-speech.github.io/pladdrr/reference/to_pitch_direct.md)               |
-| `performance-helpers.R` | `*_fast` (legacy)    | Tier 2   | [`calculate_cpps_fast()`](https://humlab-speech.github.io/pladdrr/reference/calculate_cpps_fast.md)       |
-| `batch-ops.R`           | `*_batch`, `*_and_*` | Tier 3   | [`sound_to_pitch_batch()`](https://humlab-speech.github.io/pladdrr/reference/sound_to_pitch_batch.md)     |
-| `batch-queries.R`       | `get_*_at_times`     | Tier 3   | [`get_pitch_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_pitch_at_times.md)         |
-| `parallel-batch.R`      | `*_parallel`         | Tier 3   | [`analyze_files_parallel()`](https://humlab-speech.github.io/pladdrr/reference/analyze_files_parallel.md) |
-| `fast-access.R`         | `*_fast`             | Tier 3+  | [`get_sound_values_fast()`](https://humlab-speech.github.io/pladdrr/reference/get_sound_values_fast.md)   |
+| File | Primary Pattern | API Tier | Examples |
+|----|----|----|----|
+| `sound-wrapper.R` | Object methods | Tier 1 | `$to_pitch()`, `$to_formant()` |
+| `praat-direct.R` | `*_direct` | Tier 2 | [`to_pitch_direct()`](https://humlab-speech.github.io/pladdrr/reference/to_pitch_direct.md) |
+| `performance-helpers.R` | `*_fast` (legacy) | Tier 2 | [`calculate_cpps_fast()`](https://humlab-speech.github.io/pladdrr/reference/calculate_cpps_fast.md) |
+| `batch-ops.R` | `*_batch`, `*_and_*` | Tier 3 | [`sound_to_pitch_batch()`](https://humlab-speech.github.io/pladdrr/reference/sound_to_pitch_batch.md) |
+| `batch-queries.R` | `get_*_at_times` | Tier 3 | [`get_pitch_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_pitch_at_times.md) |
+| `parallel-batch.R` | `*_parallel` | Tier 3 | [`analyze_files_parallel()`](https://humlab-speech.github.io/pladdrr/reference/analyze_files_parallel.md) |
+| `fast-access.R` | `*_fast` | Tier 3+ | [`get_sound_values_fast()`](https://humlab-speech.github.io/pladdrr/reference/get_sound_values_fast.md) |
 
 ------------------------------------------------------------------------
 
@@ -343,15 +343,15 @@ unless user feedback demands change.
 
 ### Summary Table
 
-| Pattern            | Purpose          | Examples                                                                                                    |
-|--------------------|------------------|-------------------------------------------------------------------------------------------------------------|
-| `$method()`        | Standard API     | `sound$to_pitch()`                                                                                          |
-| `*_direct()`       | Skip dispatch    | [`to_pitch_direct()`](https://humlab-speech.github.io/pladdrr/reference/to_pitch_direct.md)                 |
-| `*_fast()`         | Legacy direct    | [`calculate_cpps_fast()`](https://humlab-speech.github.io/pladdrr/reference/calculate_cpps_fast.md)         |
-| `*_batch()`        | Multi-item       | [`sound_to_pitch_batch()`](https://humlab-speech.github.io/pladdrr/reference/sound_to_pitch_batch.md)       |
-| `get_*_at_times()` | Vectorized query | [`get_pitch_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_pitch_at_times.md)           |
-| `*_parallel()`     | Multi-core       | [`extract_pitch_parallel()`](https://humlab-speech.github.io/pladdrr/reference/extract_pitch_parallel.md)   |
-| `*_and_*()`        | Combined ops     | [`sound_extract_and_pitch()`](https://humlab-speech.github.io/pladdrr/reference/sound_extract_and_pitch.md) |
+| Pattern | Purpose | Examples |
+|----|----|----|
+| `$method()` | Standard API | `sound$to_pitch()` |
+| `*_direct()` | Skip dispatch | [`to_pitch_direct()`](https://humlab-speech.github.io/pladdrr/reference/to_pitch_direct.md) |
+| `*_fast()` | Legacy direct | [`calculate_cpps_fast()`](https://humlab-speech.github.io/pladdrr/reference/calculate_cpps_fast.md) |
+| `*_batch()` | Multi-item | [`sound_to_pitch_batch()`](https://humlab-speech.github.io/pladdrr/reference/sound_to_pitch_batch.md) |
+| `get_*_at_times()` | Vectorized query | [`get_pitch_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_pitch_at_times.md) |
+| `*_parallel()` | Multi-core | [`extract_pitch_parallel()`](https://humlab-speech.github.io/pladdrr/reference/extract_pitch_parallel.md) |
+| `*_and_*()` | Combined ops | [`sound_extract_and_pitch()`](https://humlab-speech.github.io/pladdrr/reference/sound_extract_and_pitch.md) |
 
 ------------------------------------------------------------------------
 

@@ -29,7 +29,7 @@ generate_sine_wave(frequency, duration, sampling_rate = 44100, amplitude = 1)
 
 ## Value
 
-A praat_sound object containing the sine wave
+A Sound object containing the sine wave
 
 ## Details
 

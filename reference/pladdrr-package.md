@@ -106,6 +106,11 @@ is the place to start. Other vignettes worth knowing about:
   [`vignette("migration-from-parselmouth")`](https://humlab-speech.github.io/pladdrr/articles/migration-from-parselmouth.md) -
   for those coming from Praat scripting or Python
 
+## References
+
+The published sources of the algorithms are listed in
+[`pladdrr-references`](https://humlab-speech.github.io/pladdrr/reference/pladdrr-references.md).
+
 ## License and Attribution
 
 pladdrr is licensed under GPL-3, compatible with Praat's own GPL-2+

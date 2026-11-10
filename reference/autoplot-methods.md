@@ -20,6 +20,7 @@ autoplot(
   to_time = NULL,
   color = "darkgreen",
   show_voicing = FALSE,
+  connect_gaps = TRUE,
   ...
 )
 
@@ -503,6 +504,12 @@ autolayer(
 - show_voicing:
 
   Color by voicing strength (default: FALSE)
+
+- connect_gaps:
+
+  For `autoplot.Pitch`: if `TRUE` (the default) unvoiced frames are
+  dropped and the line runs on across them; if `FALSE` they are kept as
+  missing values and the line is broken wherever the pitch is undefined.
 
 - geom:
 

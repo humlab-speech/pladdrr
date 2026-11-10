@@ -35,7 +35,7 @@ get_mean_formant(formant, formant_number, time_range = NULL)
 
 ## Value
 
-Mean formant frequency in Hz, or NA if undefined
+Numeric: mean formant frequency in Hz, or NA if undefined
 
 ## Examples
 

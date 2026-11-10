@@ -16,7 +16,7 @@ get_duration(sound)
 
 ## Value
 
-Duration in seconds
+Duration in seconds, a single numeric value
 
 ## Examples
 

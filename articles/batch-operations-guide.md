@@ -347,15 +347,15 @@ stats <- lapply(pitch_ptrs, get_pitch_stats_direct)
 
 ### Function Reference Table
 
-| Function                                                                                                    | Input           | Output             | Use Case                            |
-|-------------------------------------------------------------------------------------------------------------|-----------------|--------------------|-------------------------------------|
-| [`sound_to_pitch_batch()`](https://humlab-speech.github.io/pladdrr/reference/sound_to_pitch_batch.md)       | List of Sounds  | List of Pitch      | Batch pitch extraction              |
-| [`sound_to_formant_batch()`](https://humlab-speech.github.io/pladdrr/reference/sound_to_formant_batch.md)   | List of Sounds  | List of Formant    | Batch formant extraction            |
-| [`sound_extract_and_pitch()`](https://humlab-speech.github.io/pladdrr/reference/sound_extract_and_pitch.md) | Sound + times   | List of Pitch      | Interval analysis                   |
-| `pitch$get_values_at_times()`                                                                               | Pitch + times   | Numeric vector     | F0 tracking (R6 method)             |
-| [`get_formants_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_formants_at_times.md)     | Formant + times | List (F1,F2,F3,F4) | Formant tracking                    |
-| `formant$get_values_at_times()`                                                                             | Formant + times | Numeric vector     | Single formant tracking (R6 method) |
-| [`sound_concatenate_all()`](https://humlab-speech.github.io/pladdrr/reference/sound_concatenate_all.md)     | List of Sounds  | Sound              | Concatenation                       |
+| Function | Input | Output | Use Case |
+|----|----|----|----|
+| [`sound_to_pitch_batch()`](https://humlab-speech.github.io/pladdrr/reference/sound_to_pitch_batch.md) | List of Sounds | List of Pitch | Batch pitch extraction |
+| [`sound_to_formant_batch()`](https://humlab-speech.github.io/pladdrr/reference/sound_to_formant_batch.md) | List of Sounds | List of Formant | Batch formant extraction |
+| [`sound_extract_and_pitch()`](https://humlab-speech.github.io/pladdrr/reference/sound_extract_and_pitch.md) | Sound + times | List of Pitch | Interval analysis |
+| `pitch$get_values_at_times()` | Pitch + times | Numeric vector | F0 tracking (R6 method) |
+| [`get_formants_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_formants_at_times.md) | Formant + times | List (F1,F2,F3,F4) | Formant tracking |
+| `formant$get_values_at_times()` | Formant + times | Numeric vector | Single formant tracking (R6 method) |
+| [`sound_concatenate_all()`](https://humlab-speech.github.io/pladdrr/reference/sound_concatenate_all.md) | List of Sounds | Sound | Concatenation |
 
 ------------------------------------------------------------------------
 

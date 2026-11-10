@@ -39,7 +39,7 @@ get_formant_at_time(formant, formant_number, time, interpolate = FALSE)
 
 ## Value
 
-Formant frequency in Hz, or NA if undefined
+Numeric: formant frequency in Hz, or NA if undefined
 
 ## Examples
 

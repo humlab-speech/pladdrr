@@ -82,13 +82,13 @@ print(info)
 #> [1] TRUE
 #> 
 #> $architecture
-#> [1] "Generic"
+#> [1] "AVX2"
 #> 
 #> $batch_size_double
-#> [1] 2
+#> [1] 4
 #> 
 #> $batch_size_float
-#> [1] 4
+#> [1] 8
 #> 
 #> $version
 #> [1] "xsimd"
@@ -100,6 +100,7 @@ print(info)
 if (info$architecture == "AVX2") {
   message("AVX2 SIMD support detected")
 }
+#> AVX2 SIMD support detected
 
 # Disable SIMD temporarily for testing
 pladdrr_simd(FALSE)

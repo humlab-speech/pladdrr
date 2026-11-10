@@ -30,7 +30,7 @@ aggregate_measurements(
 
 ## Value
 
-Data frame with aggregated statistics.
+A data.frame with aggregated statistics.
 
 ## Examples
 

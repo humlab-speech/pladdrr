@@ -20,7 +20,7 @@ get_sd_intensity(intensity, time_range = NULL)
 
 ## Value
 
-Standard deviation in dB
+Numeric: standard deviation of intensity in dB
 
 ## Examples
 
@@ -29,5 +29,5 @@ sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
  16000)
 intensity <- sound$to_intensity()
 suppressWarnings(get_sd_intensity(intensity))
-#> [1] 0.0001379489
+#> [1] 0.0001375886
 ```

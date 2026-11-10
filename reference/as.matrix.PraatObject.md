@@ -1,14 +1,14 @@
 # Convert a pladdrr object to a matrix
 
-Fallback [`as.matrix()`](https://rdrr.io/r/base/matrix.html) method for
-every pladdrr object class: it returns the numbers of the object's own
-`$as_matrix()` method (`frame` x `2` for Pitch and the tiers,
-`frequency` x `time` for Spectrogram and the other 2-D objects,
-`channel` x `sample` for Sound). Classes without `$as_matrix()`
-(Formant, PointProcess, TextGrid, Table, ...) raise a
-`pladdrr_input_error` naming the class and the accessor to use instead;
-they never silently return a matrix-shaped wrapper. `Matrix` and
-`Polygon` keep their own methods.
+Fallback \`as.matrix()\` method for every pladdrr object class: it
+returns the numbers of the object's own \`\$as_matrix()\` method
+(\`frame\` x \`2\` for Pitch and the tiers, \`frequency\` x \`time\` for
+Spectrogram and the other 2-D objects, \`channel\` x \`sample\` for
+Sound). Classes without \`\$as_matrix()\` (Formant, PointProcess,
+TextGrid, Table, ...) raise a \`pladdrr_input_error\` naming the class
+and the accessor to use instead; they never silently return a
+matrix-shaped wrapper. \`Matrix\` and \`Polygon\` keep their own
+methods.
 
 ## Usage
 

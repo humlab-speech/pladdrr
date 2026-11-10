@@ -24,7 +24,7 @@ get_intensity_at_time(intensity, time, interpolate = FALSE)
 
 ## Value
 
-Intensity in dB
+Numeric: intensity in dB
 
 ## Examples
 

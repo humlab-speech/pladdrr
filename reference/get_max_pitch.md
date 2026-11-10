@@ -24,7 +24,7 @@ get_max_pitch(pitch, unit = "Hz", time_range = NULL)
 
 ## Value
 
-Maximum pitch value
+Numeric: maximum pitch in Hz
 
 ## Examples
 

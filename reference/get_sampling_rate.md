@@ -16,7 +16,7 @@ get_sampling_rate(sound)
 
 ## Value
 
-Sampling rate in Hz
+Numeric: sampling rate in Hz
 
 ## Examples
 

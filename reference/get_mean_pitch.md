@@ -24,7 +24,7 @@ get_mean_pitch(pitch, unit = "Hz", time_range = NULL)
 
 ## Value
 
-Mean pitch value
+Numeric: mean pitch in Hz
 
 ## Examples
 

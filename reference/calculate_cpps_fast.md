@@ -153,12 +153,12 @@ sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 # \donttest{
 # One-call CPPS with the default (AVQI-convention) parameters
 calculate_cpps_fast(sound)
-#> [1] 9.920529
+#> [1] 9.923184
 
 # The object API gives the identical value
 pcep <- sound$to_powercepstrogram(60, 0.002, 5000, 50)
 pcep$get_cpps()
-#> [1] 9.920529
+#> [1] 9.923184
 
 # Reproduce Praat's own "Get CPPS..." defaults
 calculate_cpps_fast(sound,
@@ -166,7 +166,7 @@ calculate_cpps_fast(sound,
   qstart_fit = 0.001, qend_fit = 0.05,
   trend_line_type = "exponential", fit_method = "least_squares"
 )
-#> [1] 5.671056
+#> [1] 5.668984
 # }
 # Single-interval CPP is a different, cheaper path
 segment <- sound$extract_part(0, 0.5)

@@ -371,12 +371,12 @@ pladdrr also provides traditional
 [`plot()`](https://rdrr.io/r/graphics/plot.default.html) S3 methods.
 Here’s when to use each:
 
-| Use Case                 | Recommended                                                                             |
-|--------------------------|-----------------------------------------------------------------------------------------|
-| Quick single-object plot | `plot(object)` or `autoplot(object)`                                                    |
-| Multi-object composition | `autoplot() + autolayer()`                                                              |
-| Maximum customization    | [`autoplot()`](https://ggplot2.tidyverse.org/reference/autoplot.html) (returns ggplot2) |
-| Base R graphics pipeline | [`plot()`](https://rdrr.io/r/graphics/plot.default.html)                                |
+| Use Case | Recommended |
+|----|----|
+| Quick single-object plot | `plot(object)` or `autoplot(object)` |
+| Multi-object composition | `autoplot() + autolayer()` |
+| Maximum customization | [`autoplot()`](https://ggplot2.tidyverse.org/reference/autoplot.html) (returns ggplot2) |
+| Base R graphics pipeline | [`plot()`](https://rdrr.io/r/graphics/plot.default.html) |
 
 ## Saving Plots
 

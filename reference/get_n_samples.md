@@ -16,7 +16,7 @@ get_n_samples(sound)
 
 ## Value
 
-Number of samples
+Integer: number of samples
 
 ## Examples
 

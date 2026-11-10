@@ -32,7 +32,7 @@ generate_noise(duration, sampling_rate = 44100, amplitude = 1, seed = NULL)
 
 ## Value
 
-A praat_sound object containing white noise
+A Sound object containing white noise
 
 ## Details
 

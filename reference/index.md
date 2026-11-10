@@ -8,6 +8,11 @@ change global behaviour.
 - [`pladdrr-package`](https://humlab-speech.github.io/pladdrr/reference/pladdrr-package.md)
   [`pladdrr`](https://humlab-speech.github.io/pladdrr/reference/pladdrr-package.md)
   : pladdrr: Direct Access to Praat's Core Algorithms from R
+- [`pladdrr-references`](https://humlab-speech.github.io/pladdrr/reference/pladdrr-references.md)
+  [`pladdrr_references`](https://humlab-speech.github.io/pladdrr/reference/pladdrr-references.md)
+  : Primary references for the algorithms in pladdrr
+- [`pladdrr-test-data`](https://humlab-speech.github.io/pladdrr/reference/pladdrr-test-data.md)
+  : Data files shipped with pladdrr, and how the tests use them
 - [`with_pladdrr_errors()`](https://humlab-speech.github.io/pladdrr/reference/with_pladdrr_errors.md)
   : Run an expression, reclassifying tagged pladdrr C++ errors and
   warnings

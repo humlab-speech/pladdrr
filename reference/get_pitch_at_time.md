@@ -28,7 +28,7 @@ get_pitch_at_time(pitch, time, unit = "Hz", interpolate = FALSE)
 
 ## Value
 
-Pitch value or NA
+Numeric: pitch in Hz, or NA if undefined
 
 ## Examples
 

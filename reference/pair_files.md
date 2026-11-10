@@ -46,7 +46,7 @@ pair_files(
 
 ## Value
 
-Data frame with columns: sound_file, textgrid_file, basename.
+A data.frame with columns: sound_file, textgrid_file, basename.
 
 ## Examples
 

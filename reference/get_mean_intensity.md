@@ -20,7 +20,7 @@ get_mean_intensity(intensity, time_range = NULL)
 
 ## Value
 
-Mean intensity in dB
+Numeric: mean intensity in dB
 
 ## Examples
 

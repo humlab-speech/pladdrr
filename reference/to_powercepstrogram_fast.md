@@ -62,5 +62,5 @@ pcep_ptr <- to_powercepstrogram_fast(sound, 60, 0.002, 5000, 50)
 # Wrap it when you want the method API
 pcep <- PowerCepstrogram(.xptr = pcep_ptr)
 pcep$get_cpps()
-#> [1] 9.920529
+#> [1] 9.923184
 ```

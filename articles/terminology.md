@@ -1,0 +1,140 @@
+# Terminology, definitions and conventions
+
+pladdrr returns what Praat returns. This page states, in one place, what
+each measure means, which convention a number follows, and what the
+package does with missing or undefined values. Algorithm sources are in
+`?pladdrr-references`; Praat’s manual remains the authority on the exact
+variant of each command.
+
+## Signals and time
+
+- A **Sound** is a sampled signal: `get_sampling_frequency()` samples
+  per second, starting at `get_start_time()` seconds. Time is always in
+  seconds relative to that start, and frequency in hertz.
+- A **frame** is one analysis step. Pitch, intensity, formant,
+  harmonicity and cepstrogram objects are regularly spaced in time
+  (`time_step` seconds apart); PointProcess and the \*Tier classes are
+  irregularly spaced and stay sorted by time.
+- **Stationarity.** Every short-time analysis here assumes the signal is
+  approximately stationary within one analysis window (a few periods of
+  the lowest expected pitch for pitch and harmonicity; the *effective*
+  window of a formant analysis, `window_length`, is the duration of a
+  Gaussian window, whose actual length is twice that). The signal as a
+  whole is *not* assumed stationary: that is why the result is a track
+  over time rather than a number. Pitch floors that are too low for the
+  speaker, or windows spanning a pitch glide, are the usual way to
+  violate the assumption.
+
+## Measures
+
+**Fundamental frequency (F0, pitch).** The rate in hertz at which the
+voice source repeats, estimated per frame by autocorrelation
+(`to_pitch_ac`), cross-correlation (`to_pitch_cc`) or subharmonic
+summation (`to_pitch_shs`). A frame is *voiced* when a candidate passes
+the voicing threshold; other frames are undefined (see below).
+`pitch_floor` and `pitch_ceiling` bound the search.
+
+**Harmonics-to-noise ratio (HNR).** In decibels,
+`10 * log10(r / (1 - r))`, where `r` is the normalised autocorrelation
+at the pitch period: the energy of the periodic part relative to the
+rest. A pure tone has a very high HNR; white noise has a strongly
+negative one.
+
+**Intensity.** Sound pressure level in decibels relative to 2e-5 Pa,
+from the squared signal smoothed with a Kaiser window whose length
+depends on `minimum_pitch`. `get_mean(from, to, "energy")` averages in
+the energy domain (`10 * log10(mean(10^(I/10)))`); the other averaging
+methods average the decibel values. For a sine of amplitude `A` the
+energy mean is `20 * log10(A / sqrt(2) / 2e-5)` (checked in the
+test-suite).
+
+**Formants.** Resonance frequencies of the vocal tract, estimated from a
+linear-prediction model fitted by Burg’s method (`to_formant_burg`).
+`max_frequency` is the ceiling of the formant search (about 5000 Hz for
+adult male voices, 5500 Hz for adult female voices) and `max_formants`
+how many formants may be fitted. Formants in each frame are numbered in
+order of increasing frequency as the fit finds them, with no tracking
+across frames; `FormantPath` is the robust, tracked variant.
+
+**Jitter.** Cycle-to-cycle variation of the period, from a PointProcess.
+With periods `T_i` and `N` cycles:
+
+- *local*: mean of `|T_i - T_(i-1)|` divided by mean of `T_i`;
+- *rap* (relative average perturbation): the same with each period
+  compared with the mean of itself and its two neighbours; *ppq5* uses
+  five periods;
+- *ddp* is `3 * rap`.
+
+**Shimmer.** The same constructions applied to peak amplitudes `A_i`:
+*local* (relative), *local dB* (mean absolute
+`20 * log10(A_(i+1) / A_i)`), *apq3*, *apq5*, *apq11* (3-, 5- and
+11-point amplitude perturbation quotients) and *dda* (`3 * apq3`).
+
+**Cepstral peak prominence (CPP) and its smoothed form (CPPS).** The
+cepstrum is the spectrum of the log power spectrum; a periodic voice
+shows a peak at the quefrency of its period. CPP is the height, in
+decibels, of that peak above a straight line fitted to the cepstrum over
+the search range. CPPS smooths the cepstrogram over time and quefrency
+before taking the peak, which gives a steadier value on running speech.
+The smoothing windows are parameters; the package defaults differ
+between `get_cpps()` (time 0.001 s, quefrency 0.0005 s) and
+[`get_cpps_fast()`](https://humlab-speech.github.io/pladdrr/reference/get_cpps_fast.md)
+(0.01 s and 0.001 s, the AVQI settings). The trend line is fitted
+robustly by default (Siegel’s repeated medians). Praat’s alternative
+`"robust slow"` fit is **not deterministic** in Praat itself, and
+pladdrr reproduces that; do not expect repeated runs to agree.
+
+**AVQI.** The Acoustic Voice Quality Index combines six measures (CPPS,
+HNR, shimmer local, shimmer local dB, LTAS slope and tilt) from a
+concatenated sustained vowel and running speech sample into one score
+(Maryn et al., 2010; Maryn & Weenink, 2015).
+
+## Option strings
+
+Parameters that select an option by name (units, window shapes,
+averaging methods, file formats) are matched case-insensitively:
+`"Hertz"` and `"hertz"` are the same unit. Where a parameter’s help page
+lists its choices as a vector, the argument is matched exactly with
+[`match.arg()`](https://rdrr.io/r/base/match.arg.html) and is
+case-sensitive, as that listing shows.
+
+## Missing and undefined values
+
+Praat has no missing-value type for *samples*, and a frame in which a
+measure cannot be computed (an unvoiced frame has no pitch) is
+*undefined*. pladdrr follows both facts:
+
+- **Input.** `NA`, `NaN` and `Inf` samples are rejected with a
+  `pladdrr_input_error`; pladdrr never silently imputes or drops them.
+  Decide in R (interpolate, trim, or split into segments) and pass clean
+  values.
+- **Output.** An undefined result is returned as `NaN`, Praat’s
+  “–undefined–”. Aggregates such as `get_mean()` skip undefined frames,
+  so they are `NaN` only when *every* frame is undefined. Where Praat
+  itself reports `0` (for example, a formant number that does not exist
+  in a keep-all analysis), pladdrr reports `0` too.
+
+``` r
+silence <- Sound$from_values(numeric(16000), 16000)
+silence$to_pitch_cc()$get_value_at_time(0.5, "Hertz")
+#> [1] NaN
+```
+
+This is deliberate and is the package’s answer to the usual “how are
+missing data handled” options (error / ignore / impute): input is an
+error, undefined output is `NaN`, and imputation is left to the caller.
+
+## Equality of floating-point numbers
+
+Wrapper code compares floating-point results with a tolerance. A few
+arguments use `0` as a *sentinel* meaning “use the default” (for example
+`time_step = 0`, or `tmax = 0` for “to the end”); those are exact
+comparisons with a value the caller typed, not with a computed result.
+The vendored Praat sources compare floating-point numbers exactly in
+many places; those are Praat’s own and are left untouched on purpose,
+since pladdrr’s contract is to reproduce Praat’s numbers (changes are
+recorded in `inst/agents/PRAAT_MODIFICATIONS.md`).
+
+## References
+
+See `?pladdrr-references` for the published source of each method.

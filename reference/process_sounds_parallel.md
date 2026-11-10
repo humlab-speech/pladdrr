@@ -42,7 +42,7 @@ process_sounds_parallel(
 
 ## Value
 
-List of results
+A list of results, one per sound
 
 ## Examples
 

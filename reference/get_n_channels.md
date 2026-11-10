@@ -16,7 +16,7 @@ get_n_channels(sound)
 
 ## Value
 
-Number of channels
+Integer: number of channels
 
 ## Examples
 

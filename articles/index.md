@@ -8,6 +8,8 @@
   pladdrr](https://humlab-speech.github.io/pladdrr/articles/migration-from-praat.md):
 - [Migration Guide: From Parselmouth (Python) to
   pladdrr](https://humlab-speech.github.io/pladdrr/articles/migration-from-parselmouth.md):
+- [Terminology, definitions and
+  conventions](https://humlab-speech.github.io/pladdrr/articles/terminology.md):
 
 ### Analysis Workflows
 

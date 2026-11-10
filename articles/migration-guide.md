@@ -41,10 +41,10 @@ Update your code to use the preferred alternatives.
 
 Three functions have been deprecated in favor of more consistent naming:
 
-| Deprecated (batch-ops.R)          | Use Instead (batch-queries.R)                                                                             | Status                    |
-|-----------------------------------|-----------------------------------------------------------------------------------------------------------|---------------------------|
-| `pitch_get_values_at_times()`     | [`get_pitch_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_pitch_at_times.md)         | Will be removed in v3.0.0 |
-| `formant_get_values_at_times()`   | [`get_formants_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_formants_at_times.md)   | Will be removed in v3.0.0 |
+| Deprecated (batch-ops.R) | Use Instead (batch-queries.R) | Status |
+|----|----|----|
+| `pitch_get_values_at_times()` | [`get_pitch_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_pitch_at_times.md) | Will be removed in v3.0.0 |
+| `formant_get_values_at_times()` | [`get_formants_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_formants_at_times.md) | Will be removed in v3.0.0 |
 | `intensity_get_values_at_times()` | [`get_intensity_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_intensity_at_times.md) | Will be removed in v3.0.0 |
 
 **Migration:**
@@ -452,21 +452,21 @@ for v3.0.0.
 
 #### Function Replacements
 
-| Old (Deprecated)                  | New (Preferred)                                                                                           | Change Required              |
-|-----------------------------------|-----------------------------------------------------------------------------------------------------------|------------------------------|
-| `pitch_get_values_at_times()`     | [`get_pitch_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_pitch_at_times.md)         | Rename only                  |
-| `formant_get_values_at_times()`   | [`get_formants_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_formants_at_times.md)   | Rename + access `$F1`, `$F2` |
-| `intensity_get_values_at_times()` | [`get_intensity_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_intensity_at_times.md) | Rename only                  |
-| `PowerCepstrogram$new()`          | [`PowerCepstrogram()`](https://humlab-speech.github.io/pladdrr/reference/PowerCepstrogram.md)             | Remove `$new`                |
+| Old (Deprecated) | New (Preferred) | Change Required |
+|----|----|----|
+| `pitch_get_values_at_times()` | [`get_pitch_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_pitch_at_times.md) | Rename only |
+| `formant_get_values_at_times()` | [`get_formants_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_formants_at_times.md) | Rename + access `$F1`, `$F2` |
+| `intensity_get_values_at_times()` | [`get_intensity_at_times()`](https://humlab-speech.github.io/pladdrr/reference/get_intensity_at_times.md) | Rename only |
+| `PowerCepstrogram$new()` | [`PowerCepstrogram()`](https://humlab-speech.github.io/pladdrr/reference/PowerCepstrogram.md) | Remove `$new` |
 
 #### New Features to Adopt
 
-| Feature             | Function                                                                                                    | What It Does                                 |
-|---------------------|-------------------------------------------------------------------------------------------------------------|----------------------------------------------|
-| Parallel processing | [`analyze_files_parallel()`](https://humlab-speech.github.io/pladdrr/reference/analyze_files_parallel.md)   | Distributes file-level work across cores     |
-| Direct API          | `to_*_direct()`                                                                                             | Skips R6 object dispatch                     |
-| Batch stats         | [`get_pitch_stats_direct()`](https://humlab-speech.github.io/pladdrr/reference/get_pitch_stats_direct.md)   | Returns all statistics in one call           |
-| Combined ops        | [`sound_extract_and_pitch()`](https://humlab-speech.github.io/pladdrr/reference/sound_extract_and_pitch.md) | Combines extraction and analysis in one call |
+| Feature | Function | What It Does |
+|----|----|----|
+| Parallel processing | [`analyze_files_parallel()`](https://humlab-speech.github.io/pladdrr/reference/analyze_files_parallel.md) | Distributes file-level work across cores |
+| Direct API | `to_*_direct()` | Skips R6 object dispatch |
+| Batch stats | [`get_pitch_stats_direct()`](https://humlab-speech.github.io/pladdrr/reference/get_pitch_stats_direct.md) | Returns all statistics in one call |
+| Combined ops | [`sound_extract_and_pitch()`](https://humlab-speech.github.io/pladdrr/reference/sound_extract_and_pitch.md) | Combines extraction and analysis in one call |
 
 ------------------------------------------------------------------------
 

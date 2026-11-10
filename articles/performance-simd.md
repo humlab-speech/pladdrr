@@ -71,13 +71,13 @@ print(info)
 #> [1] TRUE
 #> 
 #> $architecture
-#> [1] "Generic"
+#> [1] "AVX2"
 #> 
 #> $batch_size_double
-#> [1] 2
+#> [1] 4
 #> 
 #> $batch_size_float
-#> [1] 4
+#> [1] 8
 #> 
 #> $version
 #> [1] "xsimd"
@@ -124,12 +124,12 @@ simd_time <- microbenchmark(sound$to_pitch(), times = 50)
 
 print(scalar_time)
 #> Unit: milliseconds
-#>              expr     min       lq     mean  median       uq      max neval
-#>  sound$to_pitch() 3.76621 4.112496 7.617222 4.13855 4.168751 178.2341    50
+#>              expr     min       lq     mean   median       uq     max neval
+#>  sound$to_pitch() 3.27511 3.330732 5.807863 3.360724 3.393526 125.589    50
 print(simd_time)
 #> Unit: milliseconds
 #>              expr      min       lq     mean   median       uq      max neval
-#>  sound$to_pitch() 3.924495 4.110389 4.145993 4.137713 4.164423 4.936604    50
+#>  sound$to_pitch() 3.247168 3.311584 3.352192 3.341413 3.385013 3.673932    50
 ```
 
 Gains vary by routine, CPU, compiler, and vector length — there is no
@@ -657,14 +657,14 @@ clipped <- apply_transform_xptr(sound, soft_clip)
 
 ### When to Use Advanced APIs
 
-| API                                                                                                   | Use When                         |
-|-------------------------------------------------------------------------------------------------------|----------------------------------|
-| `pitch_get_statistics_batch()`                                                                        | \>10 intervals, multiple metrics |
-| `intensity_get_statistics_batch()`                                                                    | \>10 intervals, multiple metrics |
-| [`calculate_cpps_fast()`](https://humlab-speech.github.io/pladdrr/reference/calculate_cpps_fast.md)   | AVQI, voice quality analysis     |
-| `pitch_get_adaptive_range()`                                                                          | Two-pass pitch analysis          |
-| [`apply_window_xptr()`](https://humlab-speech.github.io/pladdrr/reference/apply_window_xptr.md)       | Custom windowing on large files  |
-| [`apply_transform_xptr()`](https://humlab-speech.github.io/pladdrr/reference/apply_transform_xptr.md) | Custom DSP on large files        |
+| API | Use When |
+|----|----|
+| `pitch_get_statistics_batch()` | \>10 intervals, multiple metrics |
+| `intensity_get_statistics_batch()` | \>10 intervals, multiple metrics |
+| [`calculate_cpps_fast()`](https://humlab-speech.github.io/pladdrr/reference/calculate_cpps_fast.md) | AVQI, voice quality analysis |
+| `pitch_get_adaptive_range()` | Two-pass pitch analysis |
+| [`apply_window_xptr()`](https://humlab-speech.github.io/pladdrr/reference/apply_window_xptr.md) | Custom windowing on large files |
+| [`apply_transform_xptr()`](https://humlab-speech.github.io/pladdrr/reference/apply_transform_xptr.md) | Custom DSP on large files |
 
 ## Further Reading
 
@@ -680,11 +680,11 @@ clipped <- apply_transform_xptr(sound, soft_clip)
 sessionInfo()
 #> R version 4.6.2 (2026-10-29)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.5 LTS
+#> Running under: Ubuntu 26.04.1 LTS
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
-#> LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
+#> LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.32.so;  LAPACK version 3.12.0
 #> 
 #> locale:
 #>  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
@@ -699,7 +699,7 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] RcppXPtrUtils_0.1.3  microbenchmark_1.5.0 pladdrr_5.1.0       
+#> [1] RcppXPtrUtils_0.1.3  microbenchmark_1.5.0 pladdrr_5.2.0       
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] gtable_0.3.6        jsonlite_2.0.0      dplyr_1.2.1        

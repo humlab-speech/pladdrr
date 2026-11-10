@@ -45,7 +45,7 @@ analyze_files_parallel(
 
 ## Value
 
-List of results from analysis_func, one per file
+A list of results from analysis_func, one per file
 
 ## Details
 

@@ -25,7 +25,7 @@ benchmark_parallel(files, analysis_func, core_counts = c(1, 2, 4))
 
 ## Value
 
-Data frame with timing results
+A data.frame with timing results
 
 ## Examples
 
@@ -50,7 +50,7 @@ results <- benchmark_parallel(
 #> Processing 1 files using 2 cores (2 thread(s)/worker)
 print(results)
 #>   cores    time_sec   speedup
-#> 1     1 0.002258778 1.0000000
-#> 2     2 0.002985477 0.7565884
+#> 1     1 0.001704693 1.0000000
+#> 2     2 0.002319574 0.7349162
 # }
 ```

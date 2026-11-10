@@ -2021,12 +2021,12 @@ spec <- Spectrum(.xptr = spec_ptr)
 
 ## Summary of Performance Tiers
 
-| Tier         | Use Case                | Example                                                                                                   | Speedup       |
-|--------------|-------------------------|-----------------------------------------------------------------------------------------------------------|---------------|
-| 1 (Standard) | Interactive, \<10 files | `sound$to_pitch()`                                                                                        | 1x (baseline) |
-| 2 (Direct)   | Loops, 10-100 files     | [`to_pitch_direct()`](https://humlab-speech.github.io/pladdrr/reference/to_pitch_direct.md)               | 2-3x          |
-| 3 (Batch)    | Production, \>100 files | [`sound_to_pitch_batch()`](https://humlab-speech.github.io/pladdrr/reference/sound_to_pitch_batch.md)     | 5-10x         |
-| 3 (Parallel) | Large datasets          | [`extract_pitch_parallel()`](https://humlab-speech.github.io/pladdrr/reference/extract_pitch_parallel.md) | 10-20x        |
+| Tier | Use Case | Example | Speedup |
+|----|----|----|----|
+| 1 (Standard) | Interactive, \<10 files | `sound$to_pitch()` | 1x (baseline) |
+| 2 (Direct) | Loops, 10-100 files | [`to_pitch_direct()`](https://humlab-speech.github.io/pladdrr/reference/to_pitch_direct.md) | 2-3x |
+| 3 (Batch) | Production, \>100 files | [`sound_to_pitch_batch()`](https://humlab-speech.github.io/pladdrr/reference/sound_to_pitch_batch.md) | 5-10x |
+| 3 (Parallel) | Large datasets | [`extract_pitch_parallel()`](https://humlab-speech.github.io/pladdrr/reference/extract_pitch_parallel.md) | 10-20x |
 
 ## Files Added/Modified
 

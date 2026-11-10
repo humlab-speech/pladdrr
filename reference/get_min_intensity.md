@@ -20,7 +20,7 @@ get_min_intensity(intensity, time_range = NULL)
 
 ## Value
 
-Minimum intensity in dB
+Numeric: minimum intensity in dB
 
 ## Examples
 
