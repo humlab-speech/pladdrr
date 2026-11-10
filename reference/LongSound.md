@@ -108,7 +108,7 @@ Sound$create_tone(frequency = 150, duration = 1.0)$save(tmp)
 ls <- LongSound$open(tmp)
 print(ls)
 #> <Praat LongSound>
-#>   File: /tmp/RtmpEHCx5B/file21d8744deb7f.wav 
+#>   File: /tmp/RtmptNJzAu/file21bb71545d80.wav 
 #>   Duration: 1.000 seconds
 #>   Sample rate: 44100 Hz
 #>   Channels: 1 

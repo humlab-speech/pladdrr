@@ -12,8 +12,8 @@ in `tests/testthat/test-praat-faithfulness.R`.
 ## Software
 
 - Boersma, P. & Weenink, D. Praat: doing phonetics by computer.
-  <https://www.praat.org>. Cite the Praat version bundled with the
-  package (see `citation("pladdrr")`).
+  <https://praat.org/>. Cite the Praat version bundled with the package
+  (see `citation("pladdrr")`).
 
 ## Pitch (`to_pitch_ac`, `to_pitch_cc`, `to_pitch_shs`) and harmonicity (`to_harmonicity_ac`, `to_harmonicity_cc`)
 
