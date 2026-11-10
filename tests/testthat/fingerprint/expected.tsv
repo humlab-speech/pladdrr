@@ -1,6 +1,7 @@
 sound.duration	1
 sound.nx	44100
-sound.dx	44100
+sound.sampling_frequency	44100
+sound.dx	2.2675736961451248e-05
 sound.mean	-3.3102142845895754e-18
 sound.rms	0.46943583161067537
 sound.energy	0.22037000000000637
@@ -14,7 +15,7 @@ pitch.nframes	97
 pitch.dt	0.01
 pitch.mean	120.0007962563289
 pitch.stdev	0.0048683345757684253
-pitch.quantile90	120.00274127386685
+pitch.quantile90	120.00736683331411
 pitch.voiced	97
 pitch.df_sum	11785.577236863903
 pitch_ac.mean	120.0007962563289
