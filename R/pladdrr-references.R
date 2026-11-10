@@ -11,7 +11,7 @@
 #' @section Software:
 #' \itemize{
 #'   \item Boersma, P. & Weenink, D. Praat: doing phonetics by computer.
-#'     \url{https://www.praat.org}. Cite the Praat version bundled with the
+#'     \url{https://praat.org/}. Cite the Praat version bundled with the
 #'     package (see \code{citation("pladdrr")}).
 #' }
 #'
