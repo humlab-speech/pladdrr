@@ -113,6 +113,11 @@ NULL
 # Helper: resolve tier name/number
 # ============================================================================
 
+#' Resolve a TextGrid tier given by number or name to its integer index.
+#' Numeric input is returned as an integer unchanged; a name is looked up in the
+#' tier names and the first match is used. Errors if the name is absent or the
+#' type is neither numeric nor character.
+#' @noRd
 .textgrid_resolve_tier <- function(cpp_tg, tier) {
   if (is.numeric(tier)) {
     return(as.integer(tier))
@@ -129,6 +134,8 @@ NULL
 }
 
 # Build an interval-tier data frame (start/end/label) filtered to time range.
+#' Interval-tier data frame (start, end, label) of a TextGrid tier, cropped to the time range.
+#' @noRd
 .textgrid_interval_data <- function(object, tier, from_time = NULL,
   to_time = NULL) {
   n <- object$get_number_of_intervals(tier)
@@ -147,6 +154,8 @@ NULL
 }
 
 # Build a point-tier data frame (time/label) filtered to time range.
+#' Point-tier data frame (time, label) of a TextGrid tier, cropped to the time range.
+#' @noRd
 .textgrid_point_data <- function(object, tier, from_time = NULL,
   to_time = NULL) {
   n <- object$get_number_of_points(tier)
@@ -249,7 +258,7 @@ NULL
                                                       extract_sounds = FALSE) {
   tier_num <- .textgrid_resolve_tier(.self$.cpp, tier)
   if (extract_sounds && is.null(sound)) {
-    stop("sound argument required when extract_sounds = TRUE")
+    stop("textgrid$extract_intervals_batch(): sound argument required when extract_sounds = TRUE")
   }
   result <- textgrid_extract_intervals_batch(
     textgrid_xptr = .self$.xptr,
@@ -270,7 +279,7 @@ NULL
                                                        text = "",
                                                            preserve_times =
                                                            FALSE) {
-  if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
+  if (!inherits(sound, "Sound")) stop("textgrid$extract_intervals_where(): sound must be a Sound object")
 
   criterion_map <- c(
     "is equal to" = 1L, "is not equal to" = 2L, "contains" = 3L,
@@ -418,7 +427,7 @@ NULL
 }
 .textgrid_methods$get_info <- function(.self) .self$.cpp$get_info()
 .textgrid_methods$save <- function(.self,
-  path) .self$.cpp$save(as.character(path))
+  path) .self$.cpp$save(.ensure_suffix(path, "TextGrid"))
 .textgrid_methods$get_xptr <- function(.self) .self$.xptr
 
 # --- Convenience ---
@@ -473,7 +482,7 @@ TextGrid <- function(path = NULL, .xptr = NULL) {
     }
     ptr <- .textgrid_read_from_file(path)
   } else {
-    stop("Must provide either path or .xptr")
+    stop("TextGrid(): Must provide either path or .xptr")
   }
   tg_mod <- get_module("textgrid_module")
   cpp_tg <- with_pladdrr_errors(tg_mod$RTextGrid$new(ptr))

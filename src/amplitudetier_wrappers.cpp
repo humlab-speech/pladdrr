@@ -17,6 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 #include <Rcpp.h>
+#include "praat_xptr_utils.h"
 #include "praat.github.io/sys/Thing.h"
 #include "praat.github.io/fon/AmplitudeTier.h"
 #include "praat.github.io/fon/IntensityTier.h"
@@ -37,7 +38,7 @@ SEXP amplitude_tier_create_cpp(double tmin, double tmax) {
 // [[Rcpp::export]]
 SEXP intensity_tier_to_amplitude_tier_cpp(SEXP xptr) {
   try {
-    IntensityTier tier = static_cast<IntensityTier>(R_ExternalPtrAddr(xptr));
+    IntensityTier tier = get_ptr(Rcpp::XPtr<structIntensityTier>(xptr), "IntensityTier");
     autoAmplitudeTier result = IntensityTier_to_AmplitudeTier(tier);
     return Rcpp::XPtr<structAmplitudeTier>(result.releaseToAmbiguousOwner());
   } catch (MelderError) {
@@ -49,8 +50,8 @@ SEXP intensity_tier_to_amplitude_tier_cpp(SEXP xptr) {
 // [[Rcpp::export]]
 SEXP point_process_sound_to_amplitude_tier_point_cpp(SEXP pp_xptr, SEXP sound_xptr) {
   try {
-    PointProcess pp = static_cast<PointProcess>(R_ExternalPtrAddr(pp_xptr));
-    Sound sound = static_cast<Sound>(R_ExternalPtrAddr(sound_xptr));
+    PointProcess pp = get_ptr(Rcpp::XPtr<structPointProcess>(pp_xptr), "PointProcess");
+    Sound sound = get_ptr(Rcpp::XPtr<structSound>(sound_xptr), "Sound");
     autoAmplitudeTier result = PointProcess_Sound_to_AmplitudeTier_point(pp, sound);
     return Rcpp::XPtr<structAmplitudeTier>(result.releaseToAmbiguousOwner());
   } catch (MelderError) {

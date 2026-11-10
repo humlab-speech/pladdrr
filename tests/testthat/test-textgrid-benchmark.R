@@ -1,6 +1,6 @@
 test_that("Benchmark TextGrid 60min loads successfully", {
 library(data.table)
-  skip_on_cran()  # Large file, skip on CRAN
+  skip_if_not_extended()  # Large file
   
   tg_path <- system.file("extdata", "benchmarkdata60min.TextGrid",
     package = "speaker")
@@ -22,7 +22,7 @@ library(data.table)
 })
 
 test_that("Benchmark TextGrid 90min loads successfully", {
-  skip_on_cran()  # Large file, skip on CRAN
+  skip_if_not_extended()  # Large file
   
   tg_path <- system.file("extdata", "benchmarkdata90min.TextGrid",
     package = "speaker")
@@ -44,7 +44,7 @@ test_that("Benchmark TextGrid 90min loads successfully", {
 })
 
 test_that("Benchmark TextGrid query performance is acceptable", {
-  skip_on_cran()
+  skip_if_not_extended()
   
   tg_path <- system.file("extdata", "benchmarkdata60min.TextGrid",
     package = "speaker")
@@ -69,7 +69,7 @@ test_that("Benchmark TextGrid query performance is acceptable", {
 })
 
 test_that("Benchmark TextGrid interval queries work", {
-  skip_on_cran()
+  skip_if_not_extended()
   
   tg_path <- system.file("extdata", "benchmarkdata60min.TextGrid",
     package = "speaker")
@@ -97,7 +97,7 @@ test_that("Benchmark TextGrid interval queries work", {
 })
 
 test_that("Benchmark TextGrid data frame export works", {
-  skip_on_cran()
+  skip_if_not_extended()
   
   tg_path <- system.file("extdata", "benchmarkdata60min.TextGrid",
     package = "speaker")

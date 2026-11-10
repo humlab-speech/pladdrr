@@ -141,6 +141,9 @@ NULL
 # (fon/Ltas.cpp:87, :95). Whatever the unit averaged in, the answer comes back in
 # dB -- see the *_standardUnit entry points cited in
 # tests/testthat/test-ltas-averaging-unit.R.
+#' Map an Ltas averaging unit (energy, sones, dB) to Praat's integer code;
+#' anything else is a `pladdrr_input_error` attributed to `routine`.
+#' @noRd
 .ltas_unit_code <- function(unit, routine = "get_mean") {
   switch(tolower(unit), "energy" = 1L, "sones" = 2L, "db" = 3L,
     .stop_input(routine, "unit",
@@ -152,6 +155,8 @@ NULL
 # kept a `unit` argument, which used to be ignored, so unit = "energy" silently
 # returned dB. Refuse anything but dB rather than answer in a unit that was not
 # the one asked for.
+#' Require `unit` to be "dB" for the Ltas queries that only answer in dB.
+#' @noRd
 .check_ltas_db_unit <- function(unit, routine) {
   if (!.is_string_scalar(unit) || is.na(unit) || tolower(unit) != "db") {
     .stop_input(routine, "unit",
@@ -317,7 +322,7 @@ NULL
   Matrix(.xptr = ptr)
 }
 .ltas_methods$save <- function(.self, path) {
-  .self$.cpp$save(path.expand(path))
+  .self$.cpp$save(.ensure_suffix(path.expand(path), "Ltas"))
   invisible(.self)
 }
 

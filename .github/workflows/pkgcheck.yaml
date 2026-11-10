@@ -24,6 +24,8 @@ jobs:
       # testthat::skip_on_cran() tests are silently skipped during the
       # action's internal covr coverage run, undercounting coverage.
       NOT_CRAN: "true"
+      # Count the extended tests in the coverage figure.
+      PLADDRR_EXTENDED_TESTS: "true"
     steps:
       - uses: actions/checkout@v4
         with:
@@ -54,6 +56,30 @@ jobs:
           # each run instead of appending a comment: the action's default
           # (append-to-issue: true) left the issue body pointing at an old
           # commit (v5.0.3/171c1780) while the run was v5.0.4/ab24af91.
+          append-to-issue: false
+
+      # pkgcheck downloads pkgstats-CRAN-current.Rds from a GitHub release
+      # that upstream re-uploads daily (~05:50-06:00 UTC); a run inside that
+      # window dies in get_pkgstats_data() with no report ("Unable to
+      # download 'pkgstats' data"; run 42567488628). Retry once after the
+      # upload window instead of failing the gate on an upstream race.
+      - name: Detect missing pkgcheck report
+        id: report
+        shell: bash
+        run: |
+          if [ -f .pkgcheck/summary.md ]; then
+            echo "missing=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::pkgcheck produced no report (likely upstream pkgstats download race); retrying in 10 min."
+            echo "missing=true" >> "$GITHUB_OUTPUT"
+            sleep 600
+          fi
+
+      - uses: ropensci-review-tools/pkgcheck-action@main
+        if: steps.report.outputs.missing == 'true'
+        continue-on-error: true
+        with:
+          ref: ""
           append-to-issue: false
 
       # --------------------------------------------------------------------

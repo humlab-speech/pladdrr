@@ -101,7 +101,7 @@
 }
 
 .mc_saved <- function(values, sampling_rate = 8000, format = "WAV") {
-	path <- tempfile(fileext = tolower(format))
+	path <- tempfile(fileext = paste0(".", tolower(format)))
 	sound <- Sound$from_values(values, sampling_rate)
 	# No skip(): a platform that cannot write the format must fail this file
 	# loudly, because silent WAV output is the user-facing promise.

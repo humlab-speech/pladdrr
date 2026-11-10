@@ -130,7 +130,7 @@ calculate_cpps_fast <- function(
   } else if (inherits(sound, "externalptr")) {
     sound
   } else {
-    stop("sound must be a Sound object or external pointer")
+    stop("calculate_cpps_fast(): sound must be a Sound object or external pointer")
   }
 
   # Map string arguments to integer codes (Praat convention)
@@ -211,7 +211,7 @@ to_powercepstrogram_fast <- function(sound,
   } else if (inherits(sound, "externalptr")) {
     sound
   } else {
-    stop("sound must be a Sound object or external pointer")
+    stop("to_powercepstrogram_fast(): sound must be a Sound object or external pointer")
   }
 
   .sound_to_powercepstrogram(
@@ -387,14 +387,14 @@ apply_window_xptr <- function(sound, window_func) {
   } else if (inherits(sound, "externalptr")) {
     sound
   } else {
-    stop("sound must be a Sound object or external pointer")
+    stop("apply_window_xptr(): sound must be a Sound object or external pointer")
   }
 
   # Get internal RSound module
   sound_module <- get_module("sound_module")
 
   # Create RSound wrapper and call method
-  rsound <- sound_module$RSound$new(sound_ptr)
+  rsound <- with_pladdrr_errors(sound_module$RSound$new(sound_ptr))
   result_ptr <- rsound$apply_window_xptr(window_func)
 
   # Wrap result in R6 Sound object
@@ -456,14 +456,14 @@ apply_transform_xptr <- function(sound, transform_func) {
   } else if (inherits(sound, "externalptr")) {
     sound
   } else {
-    stop("sound must be a Sound object or external pointer")
+    stop("apply_transform_xptr(): sound must be a Sound object or external pointer")
   }
 
   # Get internal RSound module
   sound_module <- get_module("sound_module")
 
   # Create RSound wrapper and call method
-  rsound <- sound_module$RSound$new(sound_ptr)
+  rsound <- with_pladdrr_errors(sound_module$RSound$new(sound_ptr))
   result_ptr <- rsound$apply_transform_xptr(transform_func)
 
   # Wrap result in R6 Sound object
@@ -662,7 +662,7 @@ calculate_cpps_ultra <- function(
   } else if (inherits(sound, "externalptr")) {
     sound
   } else {
-    stop("sound must be a Sound object or external pointer")
+    stop("calculate_cpps_ultra(): sound must be a Sound object or external pointer")
   }
 
   # Map string arguments to integer codes (Praat convention)
@@ -795,7 +795,7 @@ extract_voiced_segments_ultra <- function(
   } else if (inherits(sound, "externalptr")) {
     sound
   } else {
-    stop("sound must be a Sound object or external pointer")
+    stop("extract_voiced_segments_ultra(): sound must be a Sound object or external pointer")
   }
 
   # Single C++ call for entire voiced extraction pipeline
@@ -861,7 +861,7 @@ build_multiband_harmonicity <- function(
 ) {
   if (length(bands) != 5) {
     stop(
-      "bands parameter must have exactly 5 elements ",
+      "build_multiband_harmonicity(): bands parameter must have exactly 5 elements ",
       "(e.g., c(0, 500, 1500, 2500, 3500))")
   }
 
@@ -879,10 +879,14 @@ build_multiband_harmonicity <- function(
 
 
 # Do multiband names form a non-empty set of unique non-blank labels?
+#' Are the band names present, non-NA, non-empty and unique?
+#' @noRd
 .valid_multiband_names <- function(multiband) {
   !is.null(names(multiband)) && !anyNA(names(multiband)) &&
     !any(names(multiband) == "") && !anyDuplicated(names(multiband))
 }
+#' Validate a `multiband` argument: a named list of five Harmonicity objects with unique band names.
+#' @noRd
 .coerce_multiband_harmonicity <- function(multiband) {
   if (!is.list(multiband) || length(multiband) != 5L) {
     stop("multiband must be a named list of 5 Harmonicity objects")
@@ -904,6 +908,8 @@ build_multiband_harmonicity <- function(
 
 
 # Validate a (from_time, to_time) pair as single numeric values.
+#' Require `from_time` and `to_time` to be single numbers.
+#' @noRd
 .validate_time_pair <- function(from_time, to_time) {
   if (!.is_numeric_scalar(from_time) || !.is_numeric_scalar(to_time)) {
     stop("from_time and to_time must be single numeric values")
@@ -912,6 +918,8 @@ build_multiband_harmonicity <- function(
 }
 
 # Build the _mean/_sd result names for multi-band HNR.
+#' Result names for multiband statistics: `<band>_mean` and `<band>_sd` interleaved.
+#' @noRd
 .multiband_result_names <- function(band_names) {
   as.vector(rbind(paste0(band_names, "_mean"), paste0(band_names, "_sd")))
 }
@@ -1021,7 +1029,7 @@ calculate_multiband_hnr_ultra <- function(
   # Validate bands parameter
   if (length(bands) != 5) {
     stop(
-      "bands parameter must have exactly 5 elements ",
+      "calculate_multiband_hnr_ultra(): bands parameter must have exactly 5 elements ",
       "(e.g., c(0, 500, 1500, 2500, 3500))")
   }
 

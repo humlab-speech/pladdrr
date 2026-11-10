@@ -107,11 +107,20 @@ NULL
 # Helpers
 # ============================================================================
 
-# Helper: pitch unit string -> integer code.
-# Same mapping as .pitch_unit_code() in pitch-wrapper.R — delegate to avoid
-#  drift.
+# Helper: pitch unit string -> the code PitchTier_shiftFrequencies handles
+# (hertz, mel, logHertz, semitones, ERB). A shift is relative, so every
+# semitones reference gives the same result. The module enforces the same set.
+#' Map a pitch unit name to the code `PitchTier_shiftFrequencies` handles; error for unshiftable units.
+#' @noRd
 .pitchtier_unit_code <- function(unit) {
-  .pitch_unit_code(unit)
+  code <- .pitch_unit_code(unit)
+  if (code %in% 5:7) code <- 4L
+  if (!code %in% c(0L, 2L, 3L, 4L, 8L)) {
+    .stop_input("PitchTier$shift_frequencies", "unit",
+      paste0("cannot shift in unit ", deparse(unit),
+        "; use hertz, mel, loghertz, semitones or erb"))
+  }
+  code
 }
 
 # ============================================================================
@@ -298,7 +307,7 @@ NULL
 }
 
 .pitchtier_methods$save <- function(.self, path) {
-  .self$.cpp$save(as.character(path))
+  .self$.cpp$save(.ensure_suffix(path, "PitchTier"))
   invisible(.self)
 }
 
@@ -353,7 +362,7 @@ PitchTier <- function(tmin = NULL, tmax = NULL, .xptr = NULL) {
   } else if (!is.null(tmin) && !is.null(tmax)) {
     ptr <- .pitchtier_create(as.numeric(tmin), as.numeric(tmax))
   } else {
-    stop("Must provide either (tmin, tmax) or .xptr")
+    stop("PitchTier(): Must provide either (tmin, tmax) or .xptr")
   }
 
   tier_mod <- get_module("pitchtier_module")

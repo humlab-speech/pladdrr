@@ -1,3 +1,6 @@
+# Fixed seed for reproducible random test data (rOpenSci G5.5).
+withr::local_seed(20261109L)
+
 # Test Suite for Cochleagram R6 Class
 # Tests for auditory modeling using Bark scale representation
 

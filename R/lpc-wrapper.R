@@ -152,14 +152,14 @@ NULL
 
 # Inverse Filtering
 .lpc_methods$filter_inverse <- function(.self, sound) {
-  if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
+  if (!inherits(sound, "Sound")) stop("lpc$filter_inverse(): sound must be a Sound object")
   source_ptr <- .lpc_sound_filter_inverse_r6(.self$.xptr, sound)
   Sound(.xptr = source_ptr)
 }
 
 .lpc_methods$filter_inverse_at_time <- function(.self, sound, time,
   channel = 1) {
-  if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
+  if (!inherits(sound, "Sound")) stop("lpc$filter_inverse_at_time(): sound must be a Sound object")
   if (
     !is.numeric(
       time) || length(time) != 1) stop("time must be a single numeric value")

@@ -49,7 +49,7 @@ extract_pitch <- function(sound, pitch_floor = 75, pitch_ceiling = 600,
 #' @inheritParams pladdrr_shared_params time
 #' @inheritParams pladdrr_shared_params unit
 #' @inheritParams pladdrr_shared_params interpolate
-#' @return Pitch value or NA
+#' @return Numeric: pitch in Hz, or NA if undefined
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
 #'  16000)
@@ -71,7 +71,7 @@ get_pitch_at_time <- function(pitch, time, unit = "Hz", interpolate = FALSE) {
 #' @inheritParams pladdrr_shared_pitch_r6 pitch
 #' @inheritParams pladdrr_shared_params unit
 #' @inheritParams pladdrr_shared_params time_range
-#' @return Mean pitch value
+#' @return Numeric: mean pitch in Hz
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
 #'  16000)
@@ -95,7 +95,7 @@ get_mean_pitch <- function(pitch, unit = "Hz", time_range = NULL) {
 #' @inheritParams pladdrr_shared_pitch_r6 pitch
 #' @inheritParams pladdrr_shared_params unit
 #' @inheritParams pladdrr_shared_params time_range
-#' @return Minimum pitch value
+#' @return Numeric: minimum pitch in Hz
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
 #'  16000)
@@ -119,7 +119,7 @@ get_min_pitch <- function(pitch, unit = "Hz", time_range = NULL) {
 #' @inheritParams pladdrr_shared_pitch_r6 pitch
 #' @inheritParams pladdrr_shared_params unit
 #' @inheritParams pladdrr_shared_params time_range
-#' @return Maximum pitch value
+#' @return Numeric: maximum pitch in Hz
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =
 #'  16000)

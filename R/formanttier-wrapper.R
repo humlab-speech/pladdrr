@@ -85,7 +85,7 @@ NULL
 
 # Transformation
 .formanttier_methods$filter_sound <- function(.self, sound, scale = TRUE) {
-  if (!inherits(sound, "Sound")) stop("sound must be a Sound object")
+  if (!inherits(sound, "Sound")) stop("formanttier$filter_sound(): sound must be a Sound object")
   result_ptr <- .self$.cpp$filter_sound_ptr(sound$.xptr, scale)
   Sound(.xptr = result_ptr)
 }
@@ -94,7 +94,7 @@ NULL
 .formanttier_methods$as_data_frame <- function(.self) .self$.cpp$as_data_frame()
 
 .formanttier_methods$save <- function(.self, path) {
-  .self$.cpp$save(as.character(path))
+  .self$.cpp$save(.ensure_suffix(path, "FormantTier"))
   invisible(.self)
 }
 
@@ -175,7 +175,7 @@ FormantTier <- function(tmin = 0, tmax = 1, .xptr = NULL) {
 #' ft <- FormantTier$from_formant(formant)
 #' print(ft)
 formanttier_from_formant <- function(formant) {
-  if (!inherits(formant, "Formant")) stop("formant must be a Formant object")
+  if (!inherits(formant, "Formant")) stop("formanttier_from_formant(): formant must be a Formant object")
   ptr <- .formanttier_from_formant(formant$.xptr)
   FormantTier(.xptr = ptr)
 }

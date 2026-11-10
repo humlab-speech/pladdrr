@@ -14,7 +14,7 @@ benchmark_parallel(files, analysis_func, core_counts = c(1, 2, 4))
 \item{core_counts}{Integer vector. Core counts to test (default: c(1, 2, 4))}
 }
 \value{
-Data frame with timing results
+A data.frame with timing results
 }
 \description{
 Compare performance of parallel vs sequential processing.

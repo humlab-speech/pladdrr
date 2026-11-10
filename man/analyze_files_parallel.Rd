@@ -30,7 +30,7 @@ workers.}
 \item{...}{Additional arguments passed to analysis_func}
 }
 \value{
-List of results from analysis_func, one per file
+A list of results from analysis_func, one per file
 }
 \description{
 Process multiple audio files in parallel across multiple CPU cores,

@@ -5,6 +5,9 @@
 # error messages.
 
 # Raise a classed pladdrr_input_error (consistent with R/validators.R).
+#' Raise a `pladdrr_input_error` for a validation failure in `routine`/`name`.
+#' Older sibling of `.stop_input()`; the condition's call is the caller's caller.
+#' @noRd
 .stop_validate <- function(routine, name, message) {
   stop(pladdrr_error_cond("pladdrr_input_error", routine, name, message,
                           call = sys.call(-1L)))
@@ -102,6 +105,8 @@ validate_positive_int <- function(x, name = deparse(substitute(x))) {
 
 
 # Validate a legacy praat_sound-shaped object (deprecated S3 path).
+#' Does `x` have the structure of a legacy `praat_sound` list (class and required fields)?
+#' @noRd
 .is_valid_praat_sound_legacy <- function(x) {
   if (!inherits(x, "praat_sound")) return(FALSE)
   if (!is.list(x)) return(FALSE)
@@ -331,14 +336,39 @@ is_praat_intensity <- function(x) {
 # codes everywhere they're used (Sound, Harmonicity, Intensity, Ltas); these
 # were previously copy-pasted per wrapper file with an inconsistent default.
 
-.praat_interpolation_code <- function(method, default = 2L) {
-  switch(tolower(method),
-    "nearest" = 0L, "linear" = 1L, "cubic" = 2L,
-    "sinc70" = 3L, "sinc700" = 4L, as.integer(default))
+# A method is a name or the code itself (0:4). Anything else is an input error:
+# an unknown name used to become the default, so "banana" and 0 ("nearest") both
+# answered with the cubic value.
+#' Resolve an interpolation name or code 0-4 against `names`; unknown values are an input error.
+#' @noRd
+.interpolation_code <- function(method, names, what) {
+  code <- NA_integer_
+  if (is.character(method) && length(method) == 1L && !is.na(method)) {
+    code <- unname(names[tolower(method)])
+  } else if (is.numeric(method) && length(method) == 1L && !is.na(method) &&
+    method %in% unname(names)) {
+    code <- as.integer(method)
+  }
+  if (is.na(code)) {
+    .stop_input(what, "interpolation",
+      paste0("Unknown interpolation: ", deparse(method), ". Use one of: ",
+        paste(unique(names(names)), collapse = ", ")))
+  }
+  code
 }
 
-.praat_peak_interpolation_code <- function(method, default = 1L) {
-  switch(tolower(method),
-    "none" = 0L, "parabolic" = 1L, "cubic" = 2L,
-    "sinc70" = 3L, "sinc700" = 4L, as.integer(default))
+#' Map an interpolation name (nearest, linear, cubic, sinc70, sinc700) or code to Praat's integer code.
+#' @noRd
+.praat_interpolation_code <- function(method) {
+  .interpolation_code(method,
+    c(nearest = 0L, linear = 1L, cubic = 2L, sinc70 = 3L, sinc700 = 4L),
+    "interpolation")
+}
+
+#' Map a peak-interpolation name (none, parabolic, cubic, sinc70, sinc700) or code to Praat's integer code.
+#' @noRd
+.praat_peak_interpolation_code <- function(method) {
+  .interpolation_code(method,
+    c(none = 0L, parabolic = 1L, cubic = 2L, sinc70 = 3L, sinc700 = 4L),
+    "peak_interpolation")
 }

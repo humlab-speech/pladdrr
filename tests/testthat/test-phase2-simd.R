@@ -1,3 +1,6 @@
+# Fixed seed for reproducible random test data (rOpenSci G5.5).
+withr::local_seed(20261109L)
+
 # Phase 2 SIMD Integration Tests
 # Tasks 2.1-2.3: Spectrogram, Pre-emphasis, Pitch Filter
 # Created: 2026-01-22

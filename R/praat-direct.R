@@ -80,11 +80,9 @@ get_pitch_stats_direct <- function(pitch, from_time = 0, to_time = 0,
 
   # Convert unit
   unit <- match.arg(unit)
-  unit_code <- switch(unit,
-    hertz = 0L, semitones = 1L, mel = 2L, erb = 3L, loghertz = 4L
-  )
+  unit_code <- .pitch_unit_code(unit)
 
-  pitch_get_all_stats_direct(pitch_ptr, from_time, to_time, unit_code)
+  .direct_door(pitch_get_all_stats_direct(pitch_ptr, from_time, to_time, unit_code))
 }
 
 
@@ -124,7 +122,7 @@ get_formants_direct <- function(formant, time, unit = c("hertz", "bark")) {
   unit <- match.arg(unit)
   unit_code <- switch(unit, hertz = 0L, bark = 1L)
 
-  formant_get_f1_f4_direct(formant_ptr, time, unit_code)
+  .direct_door(formant_get_f1_f4_direct(formant_ptr, time, unit_code))
 }
 
 
@@ -170,10 +168,10 @@ to_pitch_direct <- function(sound, time_step = 0, pitch_floor = 75,
   } else if (inherits(sound, "externalptr")) {
     sound
   } else {
-    stop("sound must be a Sound object or external pointer")
+    stop("to_pitch_direct(): sound must be a Sound object or external pointer")
   }
 
-  sound_to_pitch_direct(sound_ptr, time_step, pitch_floor, pitch_ceiling)
+  .direct_door(sound_to_pitch_direct(sound_ptr, time_step, pitch_floor, pitch_ceiling))
 }
 
 
@@ -226,12 +224,15 @@ to_pitch_ac_direct <- function(sound,
                                 voiced_unvoiced_cost = 0.14,
                                 # Praat-compatible aliases
                                 max_number_of_candidates = NULL) {
+  .check_time_step(time_step)
+  .check_pitch_range(pitch_floor, pitch_ceiling)
+  .check_positive_count(max_candidates, "max_candidates")
   sound_ptr <- if (inherits(sound, "Sound")) {
     sound$.xptr
   } else if (inherits(sound, "externalptr")) {
     sound
   } else {
-    stop("sound must be a Sound object or external pointer")
+    stop("to_pitch_ac_direct(): sound must be a Sound object or external pointer")
   }
 
   # Apply aliases (Praat-compatible names take precedence if provided)
@@ -293,12 +294,15 @@ to_pitch_cc_direct <- function(sound,
                                 voiced_unvoiced_cost = 0.14,
                                 # Praat-compatible aliases
                                 max_number_of_candidates = NULL) {
+  .check_time_step(time_step)
+  .check_pitch_range(pitch_floor, pitch_ceiling)
+  .check_positive_count(max_candidates, "max_candidates")
   sound_ptr <- if (inherits(sound, "Sound")) {
     sound$.xptr
   } else if (inherits(sound, "externalptr")) {
     sound
   } else {
-    stop("sound must be a Sound object or external pointer")
+    stop("to_pitch_cc_direct(): sound must be a Sound object or external pointer")
   }
 
   # Apply aliases (Praat-compatible names take precedence if provided)
@@ -343,12 +347,17 @@ to_pitch_shs_direct <- function(sound,
                                  max_candidates = 15L,
                                  compression_factor = 0.84,
                                  n_points_per_octave = 48L) {
+  .check_time_step(time_step)
+  .check_pitch_range(pitch_floor, pitch_ceiling)
+  .check_positive_count(max_candidates, "max_candidates")
+  .check_positive_count(max_subharmonics, "max_subharmonics")
+  .check_positive_count(n_points_per_octave, "n_points_per_octave")
   sound_ptr <- if (inherits(sound, "Sound")) {
     sound$.xptr
   } else if (inherits(sound, "externalptr")) {
     sound
   } else {
-    stop("sound must be a Sound object or external pointer")
+    stop("to_pitch_shs_direct(): sound must be a Sound object or external pointer")
   }
 
   .sound_to_pitch_shs(sound_ptr, time_step, pitch_floor, max_frequency,
@@ -392,12 +401,16 @@ to_pitch_spinet_direct <- function(sound,
                                     n_filters = 250L,
                                     pitch_ceiling = 500,
                                     max_candidates = 15L) {
+  .check_time_step(time_step)
+  .check_positive_number(pitch_ceiling, "pitch_ceiling")
+  .check_positive_count(n_filters, "n_filters")
+  .check_positive_count(max_candidates, "max_candidates")
   sound_ptr <- if (inherits(sound, "Sound")) {
     sound$.xptr
   } else if (inherits(sound, "externalptr")) {
     sound
   } else {
-    stop("sound must be a Sound object or external pointer")
+    stop("to_pitch_spinet_direct(): sound must be a Sound object or external pointer")
   }
 
   .sound_to_pitch_spinet(sound_ptr, time_step, window_duration,
@@ -442,7 +455,7 @@ to_formant_direct <- function(sound, time_step = 0, max_formants = 5,
   } else if (inherits(sound, "externalptr")) {
     sound
   } else {
-    stop("sound must be a Sound object or external pointer")
+    stop("to_formant_direct(): sound must be a Sound object or external pointer")
   }
 
   # Apply aliases (Praat-compatible names take precedence if provided)
@@ -450,8 +463,8 @@ to_formant_direct <- function(sound, time_step = 0, max_formants = 5,
   max_formant <- maximum_formant %||% max_formant
   pre_emphasis <- pre_emphasis_from %||% pre_emphasis
 
-  sound_to_formant_direct(sound_ptr, time_step, max_formants, max_formant,
-                           window_length, pre_emphasis)
+  .direct_door(sound_to_formant_direct(sound_ptr, time_step, max_formants, max_formant,
+                           window_length, pre_emphasis))
 }
 
 
@@ -477,10 +490,10 @@ to_intensity_direct <- function(sound, minimum_pitch = 100, time_step = 0,
   } else if (inherits(sound, "externalptr")) {
     sound
   } else {
-    stop("sound must be a Sound object or external pointer")
+    stop("to_intensity_direct(): sound must be a Sound object or external pointer")
   }
 
-  sound_to_intensity_direct(sound_ptr, minimum_pitch, time_step, subtract_mean)
+  .direct_door(sound_to_intensity_direct(sound_ptr, minimum_pitch, time_step, subtract_mean))
 }
 
 
@@ -509,11 +522,11 @@ to_harmonicity_direct <- function(sound, time_step = 0.01, minimum_pitch = 75,
   } else if (inherits(sound, "externalptr")) {
     sound
   } else {
-    stop("sound must be a Sound object or external pointer")
+    stop("to_harmonicity_direct(): sound must be a Sound object or external pointer")
   }
 
-  sound_to_harmonicity_direct(sound_ptr, time_step, minimum_pitch,
-                               silence_threshold, periods_per_window)
+  .direct_door(sound_to_harmonicity_direct(sound_ptr, time_step, minimum_pitch,
+                               silence_threshold, periods_per_window))
 }
 
 
@@ -540,9 +553,8 @@ to_harmonicity_direct <- function(sound, time_step = 0.01, minimum_pitch = 75,
 get_pitch_value_direct <- function(pitch, time, unit = "hertz",
   interpolate = TRUE) {
   pitch_ptr <- if (inherits(pitch, "Pitch")) pitch$.xptr else pitch
-  unit_code <- switch(unit, hertz = 0L, semitones = 1L, mel = 2L, erb = 3L,
-    loghertz = 4L, 0L)
-  pitch_get_value_direct(pitch_ptr, time, unit_code, interpolate)
+  unit_code <- .pitch_unit_code(unit)
+  .direct_door(pitch_get_value_direct(pitch_ptr, time, unit_code, interpolate))
 }
 
 #' Get Single Intensity Value Directly
@@ -564,9 +576,8 @@ get_intensity_value_direct <- function(intensity, time,
   interpolation = "cubic") {
   intensity_ptr <- if (
     inherits(intensity, "Intensity")) intensity$.xptr else intensity
-  interp_code <- switch(interpolation, nearest = 0L, linear = 1L, cubic = 2L,
-    sinc70 = 3L, sinc700 = 4L, 2L)
-  intensity_get_value_direct(intensity_ptr, time, interp_code)
+  interp_code <- .praat_interpolation_code(interpolation)
+  .direct_door(intensity_get_value_direct(intensity_ptr, time, interp_code))
 }
 
 #' Get Single Formant Value Directly
@@ -589,7 +600,7 @@ get_formant_value_direct <- function(formant, formant_number, time,
   unit = "hertz") {
   formant_ptr <- if (inherits(formant, "Formant")) formant$.xptr else formant
   unit_code <- switch(unit, hertz = 0L, bark = 1L, 0L)
-  formant_get_value_direct(formant_ptr, formant_number, time, unit_code)
+  .direct_door(formant_get_value_direct(formant_ptr, formant_number, time, unit_code))
 }
 
 
@@ -624,10 +635,8 @@ get_pitch_quantile_direct <- function(pitch, quantile, from_time = 0,
                                          "erb", "loghertz")) {
   pitch_ptr <- if (inherits(pitch, "Pitch")) pitch$.xptr else pitch
   unit <- match.arg(unit)
-  unit_code <- switch(unit,
-    hertz = 0L, semitones = 1L, mel = 2L, erb = 3L, loghertz = 4L
-  )
-  pitch_get_quantile_direct(pitch_ptr, quantile, from_time, to_time, unit_code)
+  unit_code <- .pitch_unit_code(unit)
+  .direct_door(pitch_get_quantile_direct(pitch_ptr, quantile, from_time, to_time, unit_code))
 }
 
 #' Get Pitch Mean Directly (Bypass R6)
@@ -654,10 +663,8 @@ get_pitch_mean_direct <- function(pitch, from_time = 0, to_time = 0,
                                      "erb", "loghertz")) {
   pitch_ptr <- if (inherits(pitch, "Pitch")) pitch$.xptr else pitch
   unit <- match.arg(unit)
-  unit_code <- switch(unit,
-    hertz = 0L, semitones = 1L, mel = 2L, erb = 3L, loghertz = 4L
-  )
-  pitch_get_mean_direct(pitch_ptr, from_time, to_time, unit_code)
+  unit_code <- .pitch_unit_code(unit)
+  .direct_door(pitch_get_mean_direct(pitch_ptr, from_time, to_time, unit_code))
 }
 
 #' Get Pitch Standard Deviation Directly (Bypass R6)
@@ -684,10 +691,8 @@ get_pitch_stdev_direct <- function(pitch, from_time = 0, to_time = 0,
                                       "erb", "loghertz")) {
   pitch_ptr <- if (inherits(pitch, "Pitch")) pitch$.xptr else pitch
   unit <- match.arg(unit)
-  unit_code <- switch(unit,
-    hertz = 0L, semitones = 1L, mel = 2L, erb = 3L, loghertz = 4L
-  )
-  pitch_get_stdev_direct(pitch_ptr, from_time, to_time, unit_code)
+  unit_code <- .pitch_unit_code(unit)
+  .direct_door(pitch_get_stdev_direct(pitch_ptr, from_time, to_time, unit_code))
 }
 
 
@@ -977,6 +982,8 @@ pp_get_stdev_period_direct <- function(pointprocess,
 
 
 # Run one pitch-extraction pass at the given floor/ceiling.
+#' Run one pitch-extraction pass with `pitch_fn` and the given range and cost parameters.
+#' @noRd
 .run_pitch_pass <- function(pitch_fn, sound_ptr, pitch_floor, pitch_ceiling,
   time_step,
                             voicing_threshold, silence_threshold, octave_cost,
@@ -1108,6 +1115,11 @@ two_pass_adaptive_pitch <- function(sound,
 # Compute the adaptive pitch range for the second pass. Returns a list with
 # min_pitch/max_pitch/q1/q3 plus a fallback flag set when no voiced frames
 # were found (q1/q3 missing or non-positive).
+#' Pitch floor and ceiling derived from the quartiles of a rough first pass
+#' (`q1_factor`, `q3_factor`). Falls back to the initial floor and ceiling when a
+#' quartile is undefined or non-positive. Returns `min_pitch`, `max_pitch`, `q1`, `q3`
+#' and a `fallback` flag.
+#' @noRd
 .adaptive_pitch_range <- function(pitch_rough, q1_factor, q3_factor,
                                   initial_floor, initial_ceiling) {
   range <- pitch_get_adaptive_range(pitch_rough, q1_factor = q1_factor,

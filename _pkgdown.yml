@@ -97,6 +97,8 @@ reference:
     change global behaviour.
   contents:
   - pladdrr-package
+  - pladdrr-references
+  - pladdrr-test-data
   - with_pladdrr_errors
   - pladdrr_threads
   - pladdrr_simd
@@ -377,6 +379,7 @@ articles:
   - getting-started
   - migration-from-praat
   - migration-from-parselmouth
+  - terminology
 
 - title: Analysis Workflows
   desc: Common phonetic analysis tasks

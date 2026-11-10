@@ -4,21 +4,32 @@
 # default must therefore follow the variable the way parallel:::.check_ncores
 # does. The pool size is read once per process, so each case is a child process.
 
-processors_with <- function(value) {
-  # "Unset" must be set to empty: an empty env vector makes system2 inherit the
-  # parent's variable, and R CMD check --as-cran exports it as TRUE. Empty is
-  # treated as uncapped, the same as unset.
-  # The variable goes through Sys.setenv, not system2(env=): on Windows system2
-  # pastes env into the command line instead of the child's environment.
+child_with <- function(value, code) {
+  # NA means genuinely unset: the child inherits the parent's environment, so
+  # the variable is removed here (R CMD check --as-cran exports it as TRUE).
+  # The variable goes through Sys.setenv/unsetenv, not system2(env=): on Windows
+  # system2 pastes env into the command line instead of the child's environment.
   old <- Sys.getenv("_R_CHECK_LIMIT_CORES_", NA)
   on.exit(if (is.na(old)) Sys.unsetenv("_R_CHECK_LIMIT_CORES_") else
     Sys.setenv("_R_CHECK_LIMIT_CORES_" = old), add = TRUE)
-  Sys.setenv("_R_CHECK_LIMIT_CORES_" = if (is.na(value)) "" else value)
-  out <- system2(file.path(R.home("bin"), "Rscript"),
-    c("-e", shQuote("suppressMessages(library(pladdrr)); cat('P=', pladdrr_threads()$max_threads, '\\n')")),
+  if (is.na(value)) Sys.unsetenv("_R_CHECK_LIMIT_CORES_") else
+    Sys.setenv("_R_CHECK_LIMIT_CORES_" = value)
+  system2(file.path(R.home("bin"), "Rscript"), c("-e", shQuote(code)),
     stdout = TRUE, stderr = FALSE)
+}
+
+processors_with <- function(value) {
+  out <- child_with(value,
+    "suppressMessages(library(pladdrr)); cat('P=', pladdrr_threads()$max_threads, '\\n')")
   as.integer(sub(".*P= *", "", grep("P=", out, value = TRUE)))
 }
+
+test_that("an NA value really leaves the variable unset in the child", {
+  skip_on_cran()
+  code <- "cat('U=', is.na(Sys.getenv('_R_CHECK_LIMIT_CORES_', NA)), '\\n')"
+  expect_match(child_with(NA, code), "U= TRUE")
+  expect_match(child_with("", code), "U= FALSE")
+})
 
 test_that("the automatic thread cap is two under R CMD check", {
   skip_on_cran()

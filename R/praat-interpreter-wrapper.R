@@ -15,6 +15,9 @@
 # See docs/MODULE_VS_R6_DESIGN.md for detailed rationale.
 
 # Helper: Wrap raw Praat pointer in appropriate R6 class
+#' Wrap a pointer returned by the Praat interpreter in the R6 class named by its
+#' `praat_class` attribute; without the attribute, warn and return the raw pointer.
+#' @noRd
 .wrap_praat_object <- function(xptr) {
   if (is.null(xptr)) return(NULL)
 
@@ -61,6 +64,9 @@
   )
 }
 
+#' External pointer behind a pladdrr object: its `.xptr` field, else the result of its
+#' `get_xptr()` method.
+#' @noRd
 .praat_object_xptr <- function(object) {
   xptr <- .subset2(object, ".xptr")
   if (!is.null(xptr)) return(xptr)

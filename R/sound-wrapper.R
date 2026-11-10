@@ -161,6 +161,9 @@ NULL
 .sound_methods <- new.env(hash = TRUE, parent = emptyenv())
 
 # --- Helpers (package-level, not per-instance) ---
+#' Map a window shape name (rectangular ... kaiser2) to Praat's integer code;
+#' an unrecognised name gives rectangular.
+#' @noRd
 .window_shape_code <- function(window_shape) {
   switch(tolower(window_shape),
     "rectangular" = 0L, "triangular" = 1L, "parabolic" = 2L,
@@ -270,8 +273,7 @@ NULL
 .sound_methods$get_values_at_times <- function(.self, times, channel = 1,
   interpolation = "linear") {
   .self$.cpp$get_values_at_times(as.numeric(times), as.integer(channel),
-                                   .praat_interpolation_code(interpolation,
-                                     default = 1L))
+                                   .praat_interpolation_code(interpolation))
 }
 
 .sound_methods$get_values_in_range <- function(.self, from_time = 0.0,
@@ -341,6 +343,7 @@ NULL
   max_formants <- max_number_of_formants %||% max_formants
   max_frequency <- maximum_formant %||% max_frequency
   pre_emphasis_from <- pre_emphasis %||% pre_emphasis_from
+  .check_positive_count(max_formants, "max_formants", max = 1000)
   formant_ptr <- .self$.cpp$to_formant_burg(
     as.numeric(time_step), as.numeric(max_formants),
     as.numeric(max_frequency), as.numeric(window_length),
@@ -405,6 +408,7 @@ NULL
 
 .sound_methods$to_intensity <- function(.self, minimum_pitch = 100.0,
   time_step = 0.0, subtract_mean = TRUE) {
+  .check_window_fits(.self, 6.4, minimum_pitch, "minimum_pitch", "sound$to_intensity")
   intensity_ptr <- .self$.cpp$to_intensity_ptr(as.numeric(minimum_pitch),
     as.numeric(time_step),
                                                  as.logical(subtract_mean))
@@ -415,6 +419,10 @@ NULL
   min_pitch = 75.0,
                                               silence_threshold = 0.1,
                                                   periods_per_window = 1.0) {
+  if (.is_numeric_scalar(periods_per_window)) {
+    .check_window_fits(.self, periods_per_window + 1, min_pitch, "min_pitch",
+                       "sound$to_harmonicity_cc")
+  }
   harm_ptr <- .self$.cpp$to_harmonicity_cc_ptr(
     as.numeric(time_step), as.numeric(min_pitch),
     as.numeric(silence_threshold), as.numeric(periods_per_window))
@@ -533,7 +541,10 @@ NULL
     "AIFF" = 1L, "AIFC" = 2L, "WAV" = 3L,
     "NEXT" = 4L, "SUN" = 4L, "NIST" = 5L,
     "FLAC" = 6L, "MP3" = 7L, 3L)
-  .self$.cpp$save(as.character(path), as.integer(format_code))
+  suffix <- switch(toupper(format), AIFF = "aiff", AIFC = "aifc", WAV = "wav",
+                   NEXT = "au", SUN = "au", NIST = "nist", FLAC = "flac",
+                   MP3 = "mp3", "wav")
+  .self$.cpp$save(.ensure_suffix(path, suffix), as.integer(format_code))
   invisible(NULL)
 }
 
@@ -549,6 +560,7 @@ NULL
                                         voiced_unvoiced_cost = 0.14,
                                         max_number_of_candidates = NULL) {
   .check_pitch_range(pitch_floor, pitch_ceiling)
+  .check_window_fits(.self, 3, pitch_floor, "pitch_floor", "sound$to_pitch_ac")
   max_candidates <- max_number_of_candidates %||% max_candidates
   pitch_ptr <- .sound_to_pitch_ac(
     .self$.xptr, time_step, pitch_floor, pitch_ceiling,
@@ -569,6 +581,7 @@ NULL
                                         voiced_unvoiced_cost = 0.14,
                                         max_number_of_candidates = NULL) {
   .check_pitch_range(pitch_floor, pitch_ceiling)
+  .check_window_fits(.self, 2, pitch_floor, "pitch_floor", "sound$to_pitch_cc")
   max_candidates <- max_number_of_candidates %||% max_candidates
   pitch_ptr <- .sound_to_pitch_cc(
     .self$.xptr, time_step, pitch_floor, pitch_ceiling,
@@ -699,6 +712,8 @@ NULL
 # negative band count and comes back as a Cochleagram whose as.matrix() fails
 # far from the call; the size bound for huge requests is in C++
 # (src/pladdrr_limits.h) because the script and module doors need it too.
+#' Require every named step (`dt`, `df`, `window_length`) to be a positive, finite number.
+#' @noRd
 .check_cochleagram_steps <- function(routine, ...) {
   steps <- list(...)
   for (nm in names(steps)) {
@@ -829,7 +844,7 @@ NULL
 .sound_methods$to_dtw <- function(.self, reference, analysis_width = 0.015,
   time_step = 0.005,
                                    band = 0.0, slope = 3) {
-  if (!inherits(reference, "Sound")) stop("reference must be a Sound object")
+  if (!inherits(reference, "Sound")) stop("sound$to_dtw(): reference must be a Sound object")
   sounds_to_dtw(reference, .self, analysis_width, time_step, band, slope)
 }
 
@@ -916,7 +931,7 @@ NULL
   smooth = 100.0) {
   if (fmin < 0 || fmax <= fmin) {
     stop(
-      "Invalid frequency range: fmin must be >= 0 and fmax must be > fmin")
+      "sound$filter_pass_hann_band(): Invalid frequency range: fmin must be >= 0 and fmax must be > fmin")
   }
   sound_ptr <- .sound_filter_pass_hann_band(.self$.xptr, fmin, fmax, smooth)
   Sound(.xptr = sound_ptr)
@@ -926,7 +941,7 @@ NULL
   smooth = 100.0) {
   if (fmin < 0 || fmax <= fmin) {
     stop(
-      "Invalid frequency range: fmin must be >= 0 and fmax must be > fmin")
+      "sound$filter_stop_hann_band(): Invalid frequency range: fmin must be >= 0 and fmax must be > fmin")
   }
   sound_ptr <- .sound_filter_stop_hann_band(.self$.xptr, fmin, fmax, smooth)
   Sound(.xptr = sound_ptr)
@@ -959,16 +974,16 @@ NULL
 
 .sound_methods$concatenate <- function(.self, other_sound, overlap = 0) {
   if (
-    !inherits(other_sound, "Sound")) stop("other_sound must be a Sound object")
-  if (!other_sound$is_valid()) stop("other_sound is not a valid Sound object")
+    !inherits(other_sound, "Sound")) stop("sound$concatenate(): other_sound must be a Sound object")
+  if (!other_sound$is_valid()) stop("sound$concatenate(): other_sound is not a valid Sound object")
   sound_ptr <- .sound_concatenate(.self$.xptr, other_sound$.xptr, overlap)
   Sound(.xptr = sound_ptr)
 }
 
 .sound_methods$mix <- function(.self, other_sound, balance = 1.0) {
   if (
-    !inherits(other_sound, "Sound")) stop("other_sound must be a Sound object")
-  if (!other_sound$is_valid()) stop("other_sound is not a valid Sound object")
+    !inherits(other_sound, "Sound")) stop("sound$mix(): other_sound must be a Sound object")
+  if (!other_sound$is_valid()) stop("sound$mix(): other_sound is not a valid Sound object")
   sound_ptr <- .sound_mix(.self$.xptr, other_sound$.xptr, balance)
   Sound(.xptr = sound_ptr)
 }
@@ -978,7 +993,7 @@ NULL
                                                     text = "", preserve_times =
                                                         FALSE) {
   if (
-    !inherits(textgrid, "TextGrid")) stop("textgrid must be a TextGrid object")
+    !inherits(textgrid, "TextGrid")) stop("sound$extract_intervals_where(): textgrid must be a TextGrid object")
   textgrid$extract_intervals_where(.self, tier_number, criterion, text,
     preserve_times)
 }
@@ -1011,6 +1026,7 @@ NULL
                                               pre_emphasis_from = 50.0,
                                               num_std_dev = 1.5,
                                                   max_iterations = 5L) {
+  .check_positive_count(max_formants, "max_formants", max = 1000)
   formant_ptr <- .sound_to_formant_robust(
     .self$.xptr, time_step, max_formants, max_frequency, window_length,
         pre_emphasis_from,
@@ -1019,13 +1035,13 @@ NULL
 }
 
 .sound_methods$filter_by_formant <- function(.self, formant) {
-  if (!inherits(formant, "Formant")) stop("formant must be a Formant object")
+  if (!inherits(formant, "Formant")) stop("sound$filter_by_formant(): formant must be a Formant object")
   sound_ptr <- .sound_formant_filter(.self$.xptr, formant$.xptr)
   Sound(.xptr = sound_ptr)
 }
 
 .sound_methods$filter_by_formant_noscale <- function(.self, formant) {
-  if (!inherits(formant, "Formant")) stop("formant must be a Formant object")
+  if (!inherits(formant, "Formant")) stop("sound$filter_by_formant_noscale(): formant must be a Formant object")
   sound_ptr <- .sound_formant_filter_noscale(.self$.xptr, formant$.xptr)
   Sound(.xptr = sound_ptr)
 }
@@ -1072,7 +1088,7 @@ NULL
                                                           1.0,
                                                       duration_multiplier =
                                                           1.0) {
-  if (!inherits(pitch, "Pitch")) stop("pitch must be a Pitch object")
+  if (!inherits(pitch, "Pitch")) stop("sound$change_speaker_with_pitch(): pitch must be a Pitch object")
   sound_ptr <- .sound_pitch_change_speaker(.self$.xptr, pitch$.xptr,
     formant_multiplier, pitch_multiplier, pitch_range_multiplier,
         duration_multiplier)
@@ -1093,7 +1109,7 @@ NULL
 .sound_methods$convolve <- function(.self, other_sound, scaling = "peak_0.99",
   signal_outside = "zero") {
   if (
-    !inherits(other_sound, "Sound")) stop("other_sound must be a Sound object")
+    !inherits(other_sound, "Sound")) stop("sound$convolve(): other_sound must be a Sound object")
   sc <- match.arg(scaling, c("integral", "sum", "normalize", "peak_0.99"))
   so <- match.arg(signal_outside, c("zero", "similar"))
   sc_code <- match(sc, c("integral", "sum", "normalize", "peak_0.99"))
@@ -1106,7 +1122,7 @@ NULL
 .sound_methods$cross_correlate <- function(.self, other_sound,
   scaling = "peak_0.99", signal_outside = "zero") {
   if (
-    !inherits(other_sound, "Sound")) stop("other_sound must be a Sound object")
+    !inherits(other_sound, "Sound")) stop("sound$cross_correlate(): other_sound must be a Sound object")
   sc <- match.arg(scaling, c("integral", "sum", "normalize", "peak_0.99"))
   so <- match.arg(signal_outside, c("zero", "similar"))
   sc_code <- match(sc, c("integral", "sum", "normalize", "peak_0.99"))
@@ -1180,6 +1196,9 @@ lockEnvironment(.sound_methods, bindings = TRUE)
 
 
 # Read a sound file: native Praat reader first, av fallback for exotic formats.
+#' Read an audio file into a Sound pointer: Praat's own reader first, then the `av`
+#' fallback (with a `pladdrr_decoder_fallback` warning) for formats Praat cannot read.
+#' @noRd
 .sound_ptr_from_path <- function(path) {
   if (!file.exists(path)) stop("Sound file not found: ", path)
   loss <- new.env(parent = emptyenv())
@@ -1246,7 +1265,7 @@ Sound <- function(path = NULL, .xptr = NULL) {
   } else if (!is.null(path)) {
     ptr <- .sound_ptr_from_path(path)
   } else {
-    stop("Must provide either path or .xptr")
+    stop("Sound(): Must provide either path or .xptr")
   }
 
   # Load Rcpp Module and create C++ wrapper
@@ -1268,7 +1287,11 @@ Sound <- function(path = NULL, .xptr = NULL) {
 #' Use `Sound$from_values()` for backward compatibility (calls this function).
 #'
 #' @param values Numeric matrix with channels as rows, samples as columns (or
-#'  vector for mono)
+#'  vector for mono). Integer vectors, \code{units} vectors (units are dropped)
+#'  and \code{\link[stats]{ts}} series are accepted. For a \code{ts}, a
+#'  \code{sampling_rate} or \code{start_time} you leave out is taken from the
+#'  series' \code{frequency} and start, which are then read as samples per
+#'  second and seconds. NA, NaN, Inf and non-numeric input are an error.
 #' @inheritParams pladdrr_shared_params sampling_rate
 #' @param start_time Start time of the sound in seconds (default: 0.0)
 #' @return A Sound object
@@ -1280,7 +1303,20 @@ Sound <- function(path = NULL, .xptr = NULL) {
 #'
 #' # Or using Sound$from_values() (same thing)
 #' sound <- Sound$from_values(values, 4410)
+#'
+#' # A ts supplies the sampling rate and start time
+#' series <- ts(values, start = 0.5, frequency = 4410)
+#' sound <- Sound$from_values(series)
+#' sound$get_start_time()
 sound_from_values <- function(values, sampling_rate = 44100, start_time = 0.0) {
+  if (stats::is.ts(values)) {
+    if (missing(sampling_rate)) sampling_rate <- stats::frequency(values)
+    if (missing(start_time)) start_time <- stats::tsp(values)[1L]
+  }
+  # ts, units and similar classed vectors: keep the numbers, drop the class
+  if (is.numeric(values) && !is.matrix(values) && !is.null(attributes(values))) {
+    values <- as.vector(unclass(values))
+  }
   if (is.vector(values)) {
     values <- matrix(values, nrow = 1)
   }
@@ -1288,17 +1324,27 @@ sound_from_values <- function(values, sampling_rate = 44100, start_time = 0.0) {
   if (!is.matrix(values)) {
     stop("values must be a numeric vector or matrix")
   }
+  .check_finite_samples(values, "sound_from_values")
 
   ptr <- .sound_create_from_values(values, sampling_rate, start_time)
   Sound(.xptr = ptr)
 }
 
 # Shared by the create_* factories: duration and rate are positive and finite and
-# their product is a sample count the allocator can be asked for.
-.check_sound_size <- function(routine, duration, sampling_rate) {
+# their product (times the channel count) is a cell count the allocator can be
+# asked for.
+#' Validate `duration`, `sampling_rate` and `channels` and that their product is an allocatable cell count.
+#' @noRd
+.check_sound_size <- function(routine, duration, sampling_rate, channels = 1L) {
   .check_positive_finite(duration, "duration", routine)
   .check_positive_finite(sampling_rate, "sampling_rate", routine)
-  .check_cell_count(duration * sampling_rate, routine, duration = duration)
+  .check_positive_count(channels, "channels", max = 1000)
+  cells <- duration * sampling_rate * channels
+  if (channels > 1) {
+    .check_cell_count(cells, routine, channels = channels)
+  } else {
+    .check_cell_count(cells, routine, duration = duration)
+  }
 }
 
 #' Create a pure tone Sound
@@ -1346,7 +1392,7 @@ sound_create_pure_tone <- function(frequency = 440.0, duration = 1.0,
                                     fade_in_duration = 0.01, fade_out_duration =
                                         0.01,
                                     channels = 1L) {
-  .check_sound_size("sound_create_pure_tone", duration, sampling_rate)
+  .check_sound_size("sound_create_pure_tone", duration, sampling_rate, channels)
   ptr <- .sound_create_pure_tone(as.integer(channels), 0.0, duration,
     sampling_rate,
     frequency, amplitude, fade_in_duration, fade_out_duration)

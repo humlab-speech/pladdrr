@@ -120,6 +120,13 @@ start. Other vignettes worth knowing about:
 }
 }
 
+\section{References}{
+
+
+The published sources of the algorithms are listed in
+\code{\link{pladdrr-references}}.
+}
+
 \section{License and Attribution}{
 
 

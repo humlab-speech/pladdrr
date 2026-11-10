@@ -109,7 +109,7 @@ NULL
   data.frame(time = times, amplitude_pa = values)
 }
 .amplitudetier_methods$save <- function(.self, path) {
-  .self$.cpp$save(as.character(path))
+  .self$.cpp$save(.ensure_suffix(path, "AmplitudeTier"))
   invisible(.self)
 }
 
@@ -210,10 +210,10 @@ amplitude_tier_create <- function(tmin, tmax) {
 #' @export
 amplitude_tier_from_point_process <- function(point_process, sound) {
   if (!inherits(point_process, "PointProcess")) {
-    stop("point_process must be a PointProcess object")
+    stop("amplitude_tier_from_point_process(): point_process must be a PointProcess object")
   }
   if (!inherits(sound, "Sound")) {
-    stop("sound must be a Sound object")
+    stop("amplitude_tier_from_point_process(): sound must be a Sound object")
   }
   ptr <- point_process_sound_to_amplitude_tier_point_cpp(point_process$.xptr,
     sound$.xptr)

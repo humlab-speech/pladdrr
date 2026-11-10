@@ -12,7 +12,7 @@ get_min_intensity(intensity, time_range = NULL)
 \item{time_range}{Optional time range c(start, end)}
 }
 \value{
-Minimum intensity in dB
+Numeric: minimum intensity in dB
 }
 \description{
 **DEPRECATED:** Use \code{intensity$get_minimum()} instead.

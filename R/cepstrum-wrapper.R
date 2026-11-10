@@ -85,7 +85,7 @@ lockEnvironment(.cepstrum_methods, bindings = TRUE)
 #' @export
 Cepstrum <- function(.xptr) {
   if (!inherits(.xptr, "externalptr")) {
-    stop(".xptr must be an external pointer")
+    stop("Cepstrum(): .xptr must be an external pointer")
   }
   
   ceps_mod <- get_module("cepstrum_module")

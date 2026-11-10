@@ -74,7 +74,7 @@ static void PitchTier_modifyExcursionRange (PitchTier me, double tmin, double tm
 }
 
 static void Pitch_scaleDuration (Pitch me, double multiplier) {
-	if (multiplier == 1.0) return;
+	if (multiplier == 1.0) return;  // G3.0: exact - boundary value typed by the caller, not a computed result
 	my xmin *= multiplier;
 	my xmax *= multiplier;
 	my x1 *= multiplier;
@@ -101,7 +101,7 @@ autoSound Sound_Pitch_changeSpeaker (Sound me, Pitch him,
 			U"The Pitch and the Sound object should have the same domain.");
 		autoSound sound = Data_copy (me);
 		Vector_subtractMean (sound.get());
-		if (formantMultiplier != 1.0)
+		if (formantMultiplier != 1.0)  // G3.0: exact - boundary value typed by the caller, not a computed result
 			Sound_overrideSamplingFrequency (sound.get(), samplingFrequency_old * formantMultiplier);
 		autoPitch pitch = Data_copy (him);
 		Pitch_scaleDuration (pitch.get(), 1.0 / formantMultiplier);
@@ -109,7 +109,7 @@ autoSound Sound_Pitch_changeSpeaker (Sound me, Pitch him,
 		autoPointProcess pulses = Sound_Pitch_to_PointProcess_cc (sound.get(), pitch.get());
 		autoPitchTier pitchTier = Pitch_to_PitchTier (pitch.get());
 		const double median = Pitch_getQuantile (pitch.get(), 0.0, 0.0, 0.5, kPitch_unit::HERTZ);
-		if (isdefined (median) && median != 0.0) {
+		if (isdefined (median) && median != 0.0) {  // G3.0: exact - division-by-zero guard; a tolerance would change the result
 			PitchTier_multiplyFrequencies (pitchTier.get(), sound -> xmin, sound -> xmax,
 				pitchMultiplier / formantMultiplier);
 			PitchTier_modifyExcursionRange (pitchTier.get(), sound -> xmin, sound -> xmax,
@@ -122,7 +122,7 @@ autoSound Sound_Pitch_changeSpeaker (Sound me, Pitch him,
 			formantMultiplier * durationMultiplier);
 		autoSound thee = Sound_Point_Pitch_Duration_to_Sound (sound.get(), pulses.get(),
 			pitchTier.get(), duration.get(), MAX_T);
-		if (formantMultiplier != 1.0)
+		if (formantMultiplier != 1.0)  // G3.0: exact - boundary value typed by the caller, not a computed result
 			thee = Sound_resample (thee.get(), samplingFrequency_old, 10);
 		return thee;
 	} catch (MelderError) {

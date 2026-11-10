@@ -15,6 +15,8 @@ NULL
 #'
 
 # Apply the shared cepstrum plot theme (minimal/bw/classic + title styling).
+#' Add the named ggplot2 theme (minimal, bw, classic) plus the cepstrum title styling to `p`.
+#' @noRd
 .apply_cepstrum_theme <- function(p, theme) {
   p + switch(theme,
     minimal = ggplot2::theme_minimal(),
@@ -27,6 +29,8 @@ NULL
 }
 
 # Sample the CPP time series at the given times (NA on error).
+#' CPP at each of `sample_times` from a PowerCepstrogram (NA where the query fails).
+#' @noRd
 .sample_cpp_timeseries <- function(cepstrogram, sample_times, qmin, qmax) {
   vapply(sample_times, function(t) {
     tryCatch(
@@ -38,6 +42,9 @@ NULL
 }
 
 # Add a peak marker + CPP label to a power cepstrum plot.
+#' Annotate a cepstrum plot with the quefrency and prominence of its peak; silently
+#' leaves the plot unchanged when the peak cannot be computed.
+#' @noRd
 .add_peak_annotation <- function(p, cepstrum, qmin, qmax, fit_method) {
   tryCatch({
     peak_quefrency <- cepstrum$get_quefrency_of_peak(
@@ -63,6 +70,8 @@ NULL
 }
 
 # Per-time-frame cepstral peak quefrency from a cepstrogram raster.
+#' For each time, the quefrency at which `power_db` is largest (the peak track).
+#' @noRd
 .cpp_peak_by_time <- function(plot_data) {
   do.call(rbind, lapply(
     split(plot_data, plot_data$time),
@@ -76,6 +85,8 @@ NULL
 }
 
 # Arrange the three cepstrum panels and optionally save the report.
+#' Stack three plots with gridExtra and, when `save_path` is given, write the figure.
+#' @noRd
 .assemble_cepstrum_report <- function(p1, p2, p3, save_path, dpi, format) {
   combined <- gridExtra::grid.arrange(p1, p2, p3, ncol = 1,
     heights = c(1, 1.5, 1))
@@ -144,11 +155,6 @@ plot_powercepstrum <- function(cepstrum,
                               title = NULL,
                               theme = c("minimal", "bw", "classic")) {
   
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
-  }
-# nocov end
   
   if (!inherits(cepstrum, "PowerCepstrum")) {
     stop("cepstrum must be a PowerCepstrum object")
@@ -234,14 +240,9 @@ plot_powercepstrogram <- function(cepstrogram,
                                  title = NULL,
                                  theme = c("minimal", "bw", "classic")) {
   
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
-  }
-# nocov end
   
   if (!inherits(cepstrogram, "PowerCepstrogram")) {
-    stop("cepstrogram must be a PowerCepstrogram object")
+    stop("plot_powercepstrogram(): cepstrogram must be a PowerCepstrogram object")
   }
   
   color_scale <- match.arg(color_scale)
@@ -321,12 +322,8 @@ plot_cpp_timeseries <- function(cepstrogram,
                                title = NULL,
                                theme = c("minimal", "bw", "classic")) {
   
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
-  }
-  
   if (!inherits(cepstrogram, "PowerCepstrogram")) {
-    stop("cepstrogram must be a PowerCepstrogram object")
+    stop("plot_cpp_timeseries(): cepstrogram must be a PowerCepstrogram object")
   }
   
   theme <- match.arg(theme)
@@ -403,11 +400,6 @@ create_cepstrum_report <- function(cepstrogram,
                                   format = c("png", "pdf", "svg"),
                                   dpi = 300) {
   
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required. Please install it.")
-  }
-# nocov end
   
   if (!requireNamespace("gridExtra", quietly = TRUE)) {
     stop(
@@ -450,6 +442,9 @@ create_cepstrum_report <- function(cepstrogram,
 
 
 # Build cepstrogram plot data (long format, dB) filtered to ranges.
+#' Cepstrogram as a data frame with a `power_db` column, optionally cropped to
+#' `time_range` and `quefrency_range`.
+#' @noRd
 .cepstrogram_plot_data <- function(cepstrogram, time_range, quefrency_range) {
   plot_data <- as.data.frame(cepstrogram)
   plot_data$power_db <- 10 * log10(pmax(plot_data$power, 1e-20))
@@ -463,6 +458,8 @@ create_cepstrum_report <- function(cepstrogram,
 
 
 # Add dashed horizontal reference lines to a CPP time-series plot.
+#' Add dashed red horizontal reference lines at the given y values.
+#' @noRd
 .add_reference_lines <- function(p, reference_lines) {
   if (is.null(reference_lines)) return(p)
   for (ref_val in reference_lines) {
@@ -473,6 +470,8 @@ create_cepstrum_report <- function(cepstrogram,
 }
 
 # Add the mean CPP line + label.
+#' Add a horizontal line and label at the mean CPP of the plot data.
+#' @noRd
 .add_mean_cpp_line <- function(p, plot_data) {
   if (nrow(plot_data) == 0) return(p)
   mean_cpp <- mean(plot_data$cpp, na.rm = TRUE)
@@ -486,6 +485,8 @@ create_cepstrum_report <- function(cepstrogram,
 
 
 # Add a linear-regression trend line to a power cepstrum plot.
+#' Add the least-squares trend line of power (dB) against quefrency when `show_trendline`.
+#' @noRd
 .add_trendline <- function(p, plot_data, show_trendline) {
   if (!show_trendline) return(p)
   fit <- lm(power_db ~ quefrency, data = plot_data)
@@ -497,6 +498,8 @@ create_cepstrum_report <- function(cepstrogram,
 
 
 # Finish a power cepstrum plot: dB range, labels, theme.
+#' Title, axis labels, optional dB range and theme for a power-cepstrum plot.
+#' @noRd
 .finish_powercepstrum_plot <- function(p, title, db_range, theme) {
   if (!is.null(db_range)) p <- p + ggplot2::coord_cartesian(ylim = db_range)
   if (is.null(title)) title <- "Power Cepstrum"
@@ -508,6 +511,8 @@ create_cepstrum_report <- function(cepstrogram,
 
 
 # Apply the cepstrogram color scale, optionally with a dB range.
+#' Apply the named fill scale (viridis, inferno, ...) to a cepstrogram plot.
+#' @noRd
 .apply_cepstrogram_color_scale <- function(p, color_scale, db_range) {
   p <- p + switch(color_scale,
     viridis = ggplot2::scale_fill_viridis_c(name = "Power (dB)",
@@ -528,6 +533,8 @@ create_cepstrum_report <- function(cepstrogram,
 
 
 # Finish a CPP time-series plot: labels + theme.
+#' Title (with mean and SD of CPP in the subtitle), axis labels and theme for a CPP time series.
+#' @noRd
 .finish_cpp_timeseries_plot <- function(p, plot_data, title, theme) {
   if (is.null(title)) title <- "CPP Time Series"
   p <- p + ggplot2::labs(title = title,
@@ -544,6 +551,8 @@ create_cepstrum_report <- function(cepstrogram,
 
 
 # Sample a CPP time series and build NA-filtered plot data.
+#' CPP sampled at `n_samples` times across `time_range`, as a data frame without undefined values.
+#' @noRd
 .cpp_timeseries_data <- function(cepstrogram, time_range, n_samples, qmin,
   qmax) {
   sample_times <- seq(time_range[1], time_range[2], length.out = n_samples)
@@ -554,6 +563,8 @@ create_cepstrum_report <- function(cepstrogram,
 
 
 # Overlay the cepstral-peak quefrency contour.
+#' Overlay the peak-quefrency contour on a cepstrogram when `show_cpp_contour`.
+#' @noRd
 .add_cpp_contour <- function(p, plot_data, show_cpp_contour, contour_color) {
   if (!show_cpp_contour || nrow(plot_data) == 0) return(p)
   peak_q_by_time <- .cpp_peak_by_time(plot_data)
@@ -563,6 +574,8 @@ create_cepstrum_report <- function(cepstrogram,
 }
 
 # Finish a cepstrogram plot: labels + theme.
+#' Title, axis labels and theme for a cepstrogram plot.
+#' @noRd
 .finish_cepstrogram_plot <- function(p, title, theme) {
   if (is.null(title)) title <- "Power Cepstrogram"
   p <- p + ggplot2::labs(title = title,

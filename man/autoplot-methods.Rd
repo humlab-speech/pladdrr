@@ -90,6 +90,7 @@
   to_time = NULL,
   color = "darkgreen",
   show_voicing = FALSE,
+  connect_gaps = TRUE,
   ...
 )
 
@@ -486,6 +487,11 @@ PowerCepstrum, or TextGrid)}
 \item{...}{Additional arguments passed to geom_line}
 
 \item{show_voicing}{Color by voicing strength (default: FALSE)}
+
+\item{connect_gaps}{For \code{autoplot.Pitch}: if \code{TRUE} (the default)
+unvoiced frames are dropped and the line runs on across them; if
+\code{FALSE} they are kept as missing values and the line is broken
+wherever the pitch is undefined.}
 
 \item{geom}{For Pitch: type of geometry ("line" or "point")}
 

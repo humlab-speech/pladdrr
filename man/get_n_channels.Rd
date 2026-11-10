@@ -10,7 +10,7 @@ get_n_channels(sound)
 \item{sound}{A Sound R6 object}
 }
 \value{
-Number of channels
+Integer: number of channels
 }
 \description{
 **DEPRECATED:** Use \code{sound$get_number_of_channels()} instead.

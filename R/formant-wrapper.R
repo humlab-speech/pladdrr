@@ -113,6 +113,8 @@ NULL
 .formant_methods <- new.env(hash = TRUE, parent = emptyenv())
 
 # Helper: formant unit code
+#' Map a formant frequency unit (hertz or bark) to Praat's integer code.
+#' @noRd
 .formant_unit_code <- function(unit) {
   unit <- match.arg(tolower(unit), c("hertz", "bark"))
   if (unit == "hertz") 0L else 1L
@@ -252,7 +254,7 @@ NULL
   .formant_as_data_frame(.self$.xptr, as.integer(max_formants))
 }
 .formant_methods$save <- function(.self, filepath) {
-  .formant_save(.self$.xptr, filepath)
+  .formant_save(.self$.xptr, .ensure_suffix(filepath, "Formant"))
   invisible(.self)
 }
 
@@ -293,7 +295,7 @@ NULL
 }
 .formant_methods$to_formant_modeler <- function(.self, tmin = 0.0, tmax = 0.0,
   num_tracks = 4, num_params = 5) {
-  if (tmax == 0.0) tmax <- .self$.cpp$get_xmax()
+  if (identical(as.numeric(tmax), 0)) tmax <- .self$.cpp$get_xmax()  # 0 = whole object (sentinel, not a measurement)
   fm_mod <- get_module("formantmodeler_module")
   fm_ptr <- fm_mod$Formant_to_FormantModeler(
     .self$.xptr, tmin, tmax, as.integer(num_tracks), as.integer(num_params)

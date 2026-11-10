@@ -31,7 +31,7 @@ custom function.}
 \item{require_both}{Logical. Require both files to exist (default: TRUE).}
 }
 \value{
-Data frame with columns: sound_file, textgrid_file, basename.
+A data.frame with columns: sound_file, textgrid_file, basename.
 }
 \description{
 Find matching pairs of Sound and TextGrid files based on filename matching.

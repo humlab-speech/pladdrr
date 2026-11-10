@@ -16,7 +16,7 @@ get_pitch_at_time(pitch, time, unit = "Hz", interpolate = FALSE)
 \item{interpolate}{Whether to interpolate}
 }
 \value{
-Pitch value or NA
+Numeric: pitch in Hz, or NA if undefined
 }
 \description{
 **DEPRECATED:** Use \code{pitch$get_value_at_time(time, unit)} instead.

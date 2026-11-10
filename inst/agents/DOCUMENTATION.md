@@ -31,7 +31,7 @@ passes `@section` body text through mostly unprocessed, so `\itemize`,
 #'
 #' @section Usage:
 #' \preformatted{
-#' obj <- Sound$create_tone(440, 1.0)$to_pitch()
+#' obj <- Sound$create_tone(frequency = 440, duration = 1.0)$to_pitch()
 #' }
 #'
 #' @section Query methods:
@@ -50,7 +50,7 @@ passes `@section` body text through mostly unprocessed, so `\itemize`,
 #' @return A ClassName object.
 #'
 #' @examples
-#' pitch <- Sound$create_tone(220, 0.5)$to_pitch()
+#' pitch <- Sound$create_tone(frequency = 220, duration = 0.5)$to_pitch()
 #' pitch$get_mean()
 #'
 #' @seealso [Sound], [Formant]

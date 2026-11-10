@@ -1,3 +1,6 @@
+# Fixed seed for reproducible random test data (rOpenSci G5.5).
+withr::local_seed(20261109L)
+
 # Test SIMD matrix operations
 # Validates numerical accuracy of SIMD-accelerated matrix functions
 

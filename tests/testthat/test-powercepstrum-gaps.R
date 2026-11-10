@@ -151,9 +151,9 @@ windows_probe_test("PowerCepstrum$to_matrix and $as_matrix export data", {
 windows_probe_test("PowerCepstrum$save writes a file", {
   pc <- sound_fixture()$to_spectrum()$to_power_cepstrum()
   tmp <- tempfile()
-  on.exit(unlink(tmp))
+  on.exit(unlink(paste0(tmp, ".PowerCepstrum")))
   expect_no_error(pc$save(tmp))
-  expect_true(file.exists(tmp))
+  expect_true(file.exists(paste0(tmp, ".PowerCepstrum")))  # suffix added (G4.0)
 })
 
 # ---------------------------------------------------------------------------

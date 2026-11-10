@@ -12,7 +12,7 @@ get_sd_intensity(intensity, time_range = NULL)
 \item{time_range}{Optional time range c(start, end)}
 }
 \value{
-Standard deviation in dB
+Numeric: standard deviation of intensity in dB
 }
 \description{
 **DEPRECATED:** Use \code{intensity$get_standard_deviation()} instead.

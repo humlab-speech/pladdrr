@@ -25,7 +25,7 @@ get_formant_at_time(formant, formant_number, time, interpolate = FALSE)
 \item{interpolate}{Logical; if TRUE, interpolate between frames}
 }
 \value{
-Formant frequency in Hz, or NA if undefined
+Numeric: formant frequency in Hz, or NA if undefined
 }
 \description{
 **DEPRECATED:** Use the R6 interface instead: `formant$get_value_at_time()`

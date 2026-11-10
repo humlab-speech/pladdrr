@@ -1826,7 +1826,7 @@ static std::vector<autoHarmonicity> build_multiband_harmonicities(
 
         autoSound filtered;
         Sound band_sound = sound;
-        if (upper_freq != 0.0) {
+        if (upper_freq != 0.0) {  // G3.0: exact - 0 means "default / whole range" (user-typed sentinel)
             filtered = Sound_filter_passHannBand(
                 sound,
                 0.0,
@@ -2002,7 +2002,7 @@ List get_spectral_moments_batch_cpp(SEXP spectrogram_xptr, double power = 2.0) {
                 double val = sg->z[iy][ix];
                 if (val <= 0.0) continue;   // skip non-positive bins
                 all_zero = false;
-                longdouble energy = halfpower != 1.0
+                longdouble energy = halfpower != 1.0  // G3.0: exact - boundary value typed by the caller, not a computed result
                     ? (longdouble) pow(val, halfpower)
                     : (longdouble) val;
                 longdouble f = f1 + (iy - 1) * df;
@@ -2010,7 +2010,7 @@ List get_spectral_moments_batch_cpp(SEXP spectrogram_xptr, double power = 2.0) {
                 sum_f_energy += f * energy;
             }
 
-            if (all_zero || sum_energy == 0.0) {
+            if (all_zero || sum_energy == 0.0) {  // G3.0: exact - division-by-zero guard; a tolerance would change the result
                 cog_vec[ix - 1]   = NA_REAL;
                 sd_vec[ix - 1]    = NA_REAL;
                 skew_vec[ix - 1]  = NA_REAL;
@@ -2026,7 +2026,7 @@ List get_spectral_moments_batch_cpp(SEXP spectrogram_xptr, double power = 2.0) {
             for (integer iy = 1; iy <= ny; iy++) {
                 double val = sg->z[iy][ix];
                 if (val <= 0.0) continue;
-                longdouble energy = halfpower != 1.0
+                longdouble energy = halfpower != 1.0  // G3.0: exact - boundary value typed by the caller, not a computed result
                     ? (longdouble) pow(val, halfpower)
                     : (longdouble) val;
                 longdouble diff = (longdouble)(f1 + (iy - 1) * df) - (longdouble)cog;
@@ -2047,11 +2047,11 @@ List get_spectral_moments_batch_cpp(SEXP spectrogram_xptr, double power = 2.0) {
 
                 double m3 = (double)(sum_m3 / sum_energy);
                 double denom = m2 * sd;
-                skew_vec[ix - 1] = (denom == 0.0) ? NA_REAL : (m3 / denom);
+                skew_vec[ix - 1] = (denom == 0.0) ? NA_REAL : (m3 / denom);  // G3.0: exact - division-by-zero guard; a tolerance would change the result
 
                 double m4 = (double)(sum_m4 / sum_energy);
                 double denom_k = m2 * m2;
-                kurt_vec[ix - 1] = (denom_k == 0.0) ? NA_REAL : ((m4 / denom_k) - 3.0);
+                kurt_vec[ix - 1] = (denom_k == 0.0) ? NA_REAL : ((m4 / denom_k) - 3.0);  // G3.0: exact - division-by-zero guard; a tolerance would change the result
             }
         }
     } catch (MelderError) {

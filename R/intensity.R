@@ -37,7 +37,7 @@ extract_intensity <- function(sound, time_step = 0.0, minimum_pitch = 100,
 #' @inheritParams pladdrr_shared_params intensity
 #' @inheritParams pladdrr_shared_params time
 #' @inheritParams pladdrr_shared_params interpolate
-#' @return Intensity in dB
+#' @return Numeric: intensity in dB
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
 #'  16000)
@@ -47,7 +47,7 @@ extract_intensity <- function(sound, time_step = 0.0, minimum_pitch = 100,
 get_intensity_at_time <- function(intensity, time, interpolate = FALSE) {
   .Deprecated("intensity$get_value_at_time()", package = "pladdrr")
   intensity$get_value_at_time(time,
-    interpolation = if (interpolate) "cubic" else "none")
+    interpolation = if (interpolate) "cubic" else "nearest")
 }
 
 #' Get mean intensity (DEPRECATED)
@@ -56,7 +56,7 @@ get_intensity_at_time <- function(intensity, time, interpolate = FALSE) {
 #'
 #' @inheritParams pladdrr_shared_params intensity
 #' @inheritParams pladdrr_shared_params time_range
-#' @return Mean intensity in dB
+#' @return Numeric: mean intensity in dB
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
 #'  16000)
@@ -78,7 +78,7 @@ get_mean_intensity <- function(intensity, time_range = NULL) {
 #'
 #' @inheritParams pladdrr_shared_params intensity
 #' @inheritParams pladdrr_shared_params time_range
-#' @return Minimum intensity in dB
+#' @return Numeric: minimum intensity in dB
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
 #'  16000)
@@ -100,7 +100,7 @@ get_min_intensity <- function(intensity, time_range = NULL) {
 #'
 #' @inheritParams pladdrr_shared_params intensity
 #' @inheritParams pladdrr_shared_params time_range
-#' @return Maximum intensity in dB
+#' @return Numeric: maximum intensity in dB
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
 #'  16000)
@@ -122,7 +122,7 @@ get_max_intensity <- function(intensity, time_range = NULL) {
 #'
 #' @inheritParams pladdrr_shared_params intensity
 #' @inheritParams pladdrr_shared_params time_range
-#' @return Standard deviation in dB
+#' @return Numeric: standard deviation of intensity in dB
 #' @examples
 #' sound <- Sound$create_tone(frequency = 220, duration = 0.5, sampling_rate =
 #'  16000)

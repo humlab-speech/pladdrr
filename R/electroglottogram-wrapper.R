@@ -117,7 +117,7 @@ NULL
 .egg_methods$as_data_frame <- function(.self) .self$.cpp$as_data_frame()
 .egg_methods$get_info <- function(.self) .self$.cpp$get_info()
 .egg_methods$save <- function(.self, path) {
-  .self$.cpp$save(as.character(path))
+  .self$.cpp$save(.ensure_suffix(path, "ElectroGlottogram"))
   invisible(.self)
 }
 .egg_methods$get_xptr <- function(.self) .self$.xptr

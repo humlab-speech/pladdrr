@@ -6,6 +6,9 @@
 # Helpers
 # ===========================================================================
 
+#' Colours for formant lines: the user's `colors` if given, otherwise an
+#' eight-colour palette recycled to the number of distinct formant labels.
+#' @noRd
 .formant_colors <- function(df, colors) {
   if (!is.null(colors)) return(colors)
   n <- length(unique(df$formant_label))
@@ -14,6 +17,10 @@
   rep_len(pal, max(n, 1L))
 }
 
+#' Normalise a formant data frame for plotting.
+#' Renames `formant` to `formant_number` where needed and keeps rows inside
+#' `from_time`/`to_time` with `formant_number <= max_formant`.
+#' @noRd
 .prep_formant_df <- function(df, from_time, to_time, max_formant) {
   if (!"formant_number" %in% names(df) && "formant" %in% names(df)) {
     names(df)[names(df) == "formant"] <- "formant_number"
@@ -25,6 +32,9 @@
   df
 }
 
+#' Map a KlattGrid formant type name (oral, nasal, frication, tracheal,
+#' nasal_anti, tracheal_anti, delta) to Praat's integer code.
+#' @noRd
 .klattgrid_formant_type_code <- function(type) {
   codes <- c(oral = 1L, nasal = 2L, frication = 3L, tracheal = 4L,
              nasal_anti = 5L, tracheal_anti = 6L, delta = 7L)
@@ -46,10 +56,6 @@
 #' @export
 autoplot.AmplitudeTier <- function(object, from_time = NULL, to_time = NULL,
                                     color = "darkred", garnish = TRUE, ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
-# nocov end
   df <- as.data.frame(object)
   if (!is.null(from_time)) df <- df[df$time >= from_time, ]
   if (!is.null(to_time))   df <- df[df$time <= to_time, ]
@@ -89,10 +95,6 @@ autolayer.AmplitudeTier <- function(object, from_time = NULL, to_time = NULL,
 #' @export
 autoplot.DurationTier <- function(object, from_time = NULL, to_time = NULL,
                                     color = "steelblue", garnish = TRUE, ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
-# nocov end
   df <- as.data.frame(object)
   if (!is.null(from_time)) df <- df[df$time >= from_time, ]
   if (!is.null(to_time))   df <- df[df$time <= to_time, ]
@@ -134,10 +136,6 @@ autolayer.DurationTier <- function(object, from_time = NULL, to_time = NULL,
 #' @export
 autoplot.IntensityTier <- function(object, from_time = NULL, to_time = NULL,
                                     color = "darkgreen", garnish = TRUE, ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
-# nocov end
   df <- as.data.frame(object)
   if (!is.null(from_time)) df <- df[df$time >= from_time, ]
   if (!is.null(to_time))   df <- df[df$time <= to_time, ]
@@ -178,10 +176,6 @@ autolayer.IntensityTier <- function(object, from_time = NULL, to_time = NULL,
 #' @export
 autoplot.PitchTier <- function(object, from_time = NULL, to_time = NULL,
                                     color = "blue", garnish = TRUE, ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
-# nocov end
   df <- as.data.frame(object)
   if (!is.null(from_time)) df <- df[df$time >= from_time, ]
   if (!is.null(to_time))   df <- df[df$time <= to_time, ]
@@ -232,10 +226,6 @@ autoplot.FormantTier <- function(object, from_time = NULL, to_time = NULL,
                                   time_step = 0.005,
                                   style = c("speckle", "line"),
                                   garnish = TRUE, ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
-# nocov end
   style <- match.arg(style)
   tmin <- if (is.null(from_time)) object$get_start_time() else from_time
   tmax <- if (is.null(to_time)) object$get_end_time() else to_time
@@ -313,10 +303,6 @@ autolayer.FormantTier <- function(object, from_time = NULL, to_time = NULL,
 autoplot.FormantGrid <- function(object, from_time = NULL, to_time = NULL,
                                   max_formant = 3L, colors = NULL,
                                   garnish = TRUE, ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
-# nocov end
   df <- .prep_formant_df(object$as_data_frame(), from_time, to_time,
     max_formant)
   if (nrow(df) == 0) {
@@ -364,10 +350,6 @@ autolayer.FormantGrid <- function(object, from_time = NULL, to_time = NULL,
 autoplot.FormantPath <- function(object, from_time = NULL, to_time = NULL,
                                   max_formant = 3L, colors = NULL,
                                   show_candidates = TRUE, garnish = TRUE, ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
-# nocov end
   df <- .prep_formant_df(object$as_data_frame(max_formants = max_formant),
                           from_time, to_time, max_formant)
   if (nrow(df) == 0) {
@@ -446,10 +428,6 @@ autolayer.FormantPath <- function(object, from_time = NULL, to_time = NULL,
 #' @export
 autoplot.Excitation <- function(object, garnish = TRUE,
                                  color = "darkred", ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
-# nocov end
   df <- as.data.frame(object)
   if (nrow(df) == 0) {
     warning("Excitation has no data")
@@ -477,6 +455,9 @@ autolayer.Excitation <- function(object, color = "darkred", ...) {
 
 
 # Filter a ComplexSpectrogram data frame to time/freq ranges.
+#' Restrict a ComplexSpectrogram data frame to the given time and frequency ranges
+#' (NULL leaves a bound open).
+#' @noRd
 .filter_complex_spectrogram_df <- function(df, from_time, to_time, from_freq,
   to_freq) {
   if (!is.null(from_time)) df <- df[df$time >= from_time, ]
@@ -487,11 +468,14 @@ autolayer.Excitation <- function(object, color = "darkred", ...) {
 }
 
 # Ensure a ComplexSpectrogram data frame has an amplitude_dB column.
+#' Add an `amplitude_dB` column (re the maximum) to a ComplexSpectrogram data frame
+#' unless it already has one; errors when there is no `amplitude` column.
+#' @noRd
 .to_amplitude_db <- function(df, dynamic_range) {
   if ("amplitude_dB" %in% names(df)) return(df)
   if (
     !"amplitude" %in% names(
-      df)) stop("ComplexSpectrogram data frame missing amplitude column")
+      df)) stop(".to_amplitude_db(): ComplexSpectrogram data frame missing amplitude column")
   ref <- max(df$amplitude, 1e-300)
   df$amplitude_dB <- 20 * log10(pmax(df$amplitude, 1e-300) / ref)
   floor_dB <- -dynamic_range
@@ -506,10 +490,6 @@ autoplot.ComplexSpectrogram <- function(object, from_time = NULL,
   to_time = NULL,
     from_freq = NULL, to_freq = NULL, dynamic_range = 70,
     garnish = TRUE, show_phase = FALSE, ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
-# nocov end
   df <- as.data.frame(object)
   df <- .filter_complex_spectrogram_df(df, from_time, to_time, from_freq,
     to_freq)
@@ -562,7 +542,7 @@ autolayer.ComplexSpectrogram <- function(object, from_time = NULL,
   if (!"amplitude_dB" %in% names(df)) {
     if (
       !"amplitude" %in% names(
-        df)) stop("ComplexSpectrogram data frame missing amplitude column")
+        df)) stop("autolayer.ComplexSpectrogram(): ComplexSpectrogram data frame missing amplitude column")
     ref <- max(df$amplitude, 1e-300)
     # equivalent to 10*log10(power/ref^2) since power = amplitude^2
     df$amplitude_dB <- 20 * log10(pmax(df$amplitude, 1e-300) / ref)
@@ -586,10 +566,6 @@ autolayer.ComplexSpectrogram <- function(object, from_time = NULL,
 #' @export
 autoplot.Cepstrum <- function(object, power = FALSE, garnish = TRUE,
   color = "darkblue", ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
-# nocov end
   df <- as.data.frame(object, power = power)
   if (nrow(df) == 0) {
     warning("Cepstrum has no data")
@@ -623,10 +599,6 @@ autolayer.Cepstrum <- function(object, power = FALSE, color = "darkblue", ...) {
 #' @export
 autoplot.Cochleagram <- function(object, from_time = NULL, to_time = NULL,
     garnish = TRUE, ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
-# nocov end
   df <- as.data.frame(object)
   if (!is.null(from_time)) df <- df[df$time >= from_time, ]
   if (!is.null(to_time))   df <- df[df$time <= to_time, ]
@@ -669,10 +641,6 @@ autolayer.Cochleagram <- function(object, from_time = NULL, to_time = NULL,
 #' @export
 autoplot.PowerCepstrogram <- function(object, from_time = NULL, to_time = NULL,
     quefrency_range = NULL, garnish = TRUE, ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
-# nocov end
   df <- as.data.frame(object)
   if (!is.null(from_time)) df <- df[df$time >= from_time, ]
   if (!is.null(to_time))   df <- df[df$time <= to_time, ]
@@ -726,10 +694,6 @@ autolayer.PowerCepstrogram <- function(object, from_time = NULL, to_time = NULL,
 #' @export
 autoplot.MFCC <- function(object, coefficient_range = NULL, garnish = TRUE,
   ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
-# nocov end
   df <- as.data.frame(object)
   val_cols <- grep("^c[0-9]+$", names(df), value = TRUE)
   if (length(val_cols) == 0) {
@@ -793,10 +757,6 @@ autolayer.MFCC <- function(object, coefficient_range = NULL, ...) {
 #' @export
 autoplot.LFCC <- function(object, coefficient_range = NULL, garnish = TRUE,
   ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
-# nocov end
   df <- as.data.frame(object)
   val_cols <- grep("^c[0-9]+$", names(df), value = TRUE)
   if (length(val_cols) == 0) {
@@ -858,10 +818,6 @@ autolayer.LFCC <- function(object, coefficient_range = NULL, ...) {
 #' @rdname autoplot-methods
 #' @export
 autoplot.BarkSpectrogram <- function(object, garnish = TRUE, ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
-# nocov end
   df <- as.data.frame(object)
   if (nrow(df) == 0) {
     warning("BarkSpectrogram has no data")
@@ -918,10 +874,6 @@ autolayer.BarkSpectrogram <- function(object, ...) {
 #' @rdname autoplot-methods
 #' @export
 autoplot.MelSpectrogram <- function(object, garnish = TRUE, ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
-# nocov end
   df <- as.data.frame(object)
   if (nrow(df) == 0) {
     warning("MelSpectrogram has no data")
@@ -977,6 +929,10 @@ autolayer.MelSpectrogram <- function(object, ...) {
 
 
 # Resolve auto-detectable plot columns for a Matrix autoplot.
+#' Pick the x, y and fill columns of a data frame for plotting: the caller's choice,
+#' else the first conventional name present (x/time/col, y/frequency/row,
+#' value/power_db), else the first, second and third column.
+#' @noRd
 .resolve_plot_columns <- function(df, x_col, y_col, fill_col) {
   if (is.null(x_col)) {
     x_col <- if ("x" %in% names(df)) "x"
@@ -1005,10 +961,6 @@ autolayer.MelSpectrogram <- function(object, ...) {
 #' @export
 autoplot.Matrix <- function(object, x_col = NULL, y_col = NULL,
     fill_col = NULL, garnish = TRUE, ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
-# nocov end
   df <- as.data.frame(object)
   if (nrow(df) == 0) {
     warning("Matrix has no data")
@@ -1069,10 +1021,6 @@ autolayer.Matrix <- function(object, x_col = NULL, y_col = NULL,
 #' @export
 autoplot.PCA <- function(object, type = c("scree", "scores", "both"),
     garnish = TRUE, ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
-# nocov end
   type <- match.arg(type)
   p_scree <- if (type == "scree" || type == "both") .scree_plot(object, "PC",
     "PCA Scree Plot", garnish) else NULL
@@ -1081,7 +1029,7 @@ autoplot.PCA <- function(object, type = c("scree", "scores", "both"),
   if (type == "both") {
     if (
       requireNamespace("patchwork", quietly = TRUE)) return(p_scree | p_scores)
-    warning("patchwork not installed; returning scree plot only")
+    warning("autoplot.PCA(): patchwork not installed; returning scree plot only")
     return(p_scree)
   }
   if (type == "scree") return(p_scree)
@@ -1103,10 +1051,6 @@ autolayer.PCA <- function(object, ...) {
 #' @export
 autoplot.Discriminant <- function(object, type = c("scree", "scores", "both"),
     garnish = TRUE, ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
-# nocov end
   type <- match.arg(type)
   p_scree <- if (type == "scree" || type == "both") {
     .scree_plot(object, "LD", "Discriminant Scree Plot", garnish)
@@ -1117,7 +1061,7 @@ autoplot.Discriminant <- function(object, type = c("scree", "scores", "both"),
   if (type == "both") {
     if (
       requireNamespace("patchwork", quietly = TRUE)) return(p_scree | p_scores)
-    warning("patchwork not installed; returning scree plot only")
+    warning("autoplot.Discriminant(): patchwork not installed; returning scree plot only")
     return(p_scree)
   }
   if (type == "scree") return(p_scree)
@@ -1140,6 +1084,9 @@ autolayer.Discriminant <- function(object, ...) {
 # need long format (time, formant_number, frequency) filtered to a track
 # range; this reshapes on the *_modeled columns (the fitted/smoothed track,
 # the point of a Modeler).
+#' Reshape a wide FormantModeler data frame to long form (time, formant_number,
+#' frequency) for tracks `from_track`..`to_track` (0 = through the last track).
+#' @noRd
 .formant_modeler_long_df <- function(wide, from_track, to_track, n_tracks) {
   empty <- data.frame(time = numeric(0), formant_number = integer(0),
                        frequency = numeric(0))
@@ -1161,10 +1108,6 @@ autolayer.Discriminant <- function(object, ...) {
 #' @export
 autoplot.FormantModeler <- function(object, from_track = 1L, to_track = 0L,
     garnish = TRUE, ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
-# nocov end
   df <- .formant_modeler_long_df(as.data.frame(object), from_track, to_track,
                                   object$get_number_of_tracks())
   if (nrow(df) == 0) {
@@ -1205,10 +1148,6 @@ autolayer.FormantModeler <- function(object, from_track = 1L, to_track = 0L,
 #' @export
 autoplot.Electroglottogram <- function(object, from_time = NULL, to_time = NULL,
     color = "black", garnish = TRUE, ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
-# nocov end
   df <- as.data.frame(object)
   if (!is.null(from_time)) df <- df[df$time >= from_time, ]
   if (!is.null(to_time))   df <- df[df$time <= to_time, ]
@@ -1245,13 +1184,9 @@ autolayer.Electroglottogram <- function(object, from_time = NULL,
 #' @export
 autoplot.LongSound <- function(object, from_time = 0, to_time = 2,
     color = "black", garnish = TRUE, ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
-# nocov end
   if (is.null(from_time) || is.null(to_time))
     stop(
-      "from_time and to_time are required for LongSound (streaming from disk)")
+      "autoplot.LongSound(): from_time and to_time are required for LongSound (streaming from disk)")
   message("Extracting ", from_time, "-", to_time, " s from LongSound...")
   sound <- object$extract_part(from_time, to_time)
   df <- sound$as_data_frame()
@@ -1269,7 +1204,7 @@ autolayer.LongSound <- function(object, from_time = 0, to_time = 2,
     color = "black", ...) {
   if (is.null(from_time) || is.null(to_time))
     stop(
-      "from_time and to_time are required for LongSound (streaming from disk)")
+      "autolayer.LongSound(): from_time and to_time are required for LongSound (streaming from disk)")
   sound <- object$extract_part(from_time, to_time)
   df <- sound$as_data_frame()
   yc <- if ("amplitude" %in% names(df)) "amplitude" else "value"
@@ -1282,10 +1217,6 @@ autolayer.LongSound <- function(object, from_time = 0, to_time = 2,
 #' @param alpha_path Alpha for warping path line (default: 0.8).
 #' @export
 autoplot.DTW <- function(object, garnish = TRUE, alpha_path = 0.8, ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
-# nocov end
   path <- object$get_path()
   if (is.null(path) || nrow(path) == 0) {
     warning("DTW has no path data")
@@ -1335,10 +1266,6 @@ autolayer.DTW <- function(object, alpha_path = 0.8, ...) {
 #' @export
 autoplot.Polygon <- function(object, garnish = TRUE,
     fill_polygon = FALSE, color = "black", fill_color = "grey80", ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
-# nocov end
   df <- as.data.frame(object)
   if (nrow(df) == 0) {
     warning("Polygon has no points")
@@ -1374,10 +1301,6 @@ autolayer.Polygon <- function(object, color = "black", ...) {
 #' @export
 autoplot.VocalTract <- function(object, garnish = TRUE,
     plot_type = c("area", "line"), ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
-# nocov end
   plot_type <- match.arg(plot_type)
   areas <- object$get_areas()
   n <- length(areas)
@@ -1419,10 +1342,6 @@ autolayer.VocalTract <- function(object, ...) {
 #' @export
 autoplot.LPC <- function(object, frame = 1L, garnish = TRUE,
     color = "darkred", ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
-# nocov end
   spectrum <- object$to_spectrum(frame)
   df <- spectrum$as_data_frame()
   if (!"power_dB" %in% names(df) && "power" %in% names(df))
@@ -1451,6 +1370,9 @@ autolayer.LPC <- function(object, frame = 1L, color = "darkred", ...) {
 
 
 # Extract KlattGrid formant rows for a formant type over a time grid.
+#' Sample a KlattGrid formant track of type `ftype` at 100 times between `tmin` and `tmax`
+#' into plot rows for up to `nf` formants.
+#' @noRd
 .klattgrid_formant_rows <- function(obj, ftype, nf, tmin, tmax) {
   times <- seq(tmin, tmax, length.out = 100)
   rows <- list()
@@ -1474,10 +1396,6 @@ autolayer.LPC <- function(object, frame = 1L, color = "darkred", ...) {
 autoplot.KlattGrid <- function(object, from_time = NULL, to_time = NULL,
     formant_type = c("all", "oral", "nasal", "frication", "tracheal", "delta"),
     max_formant = 6L, garnish = TRUE, ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE))
-    stop("Package 'ggplot2' is required. Please install it.")
-# nocov end
   formant_type <- match.arg(formant_type)
   tmin <- if (is.null(from_time)) object$get_xmin() else from_time
   tmax <- if (is.null(to_time)) object$get_xmax() else to_time
@@ -1547,7 +1465,11 @@ autolayer.KlattGrid <- function(object, from_time = NULL, to_time = NULL,
 # Build one formant row at (formant_number, time); skip if uncomputable.
 
 # Is t within [tmin, tmax]?
+#' Is `t` within [`tmin`, `tmax`]?
+#' @noRd
 .in_time_range <- function(t, tmin, tmax) t >= tmin && t <= tmax
+#' Append one (time, formant number, frequency) row to `rows`, skipping undefined values.
+#' @noRd
 .append_formant_row <- function(rows, object, f, t) {
   freq <- tryCatch(object$get_value_at_time(f, t), error = function(e) NA_real_)
   if (!is.na(freq)) {
@@ -1557,6 +1479,9 @@ autolayer.KlattGrid <- function(object, from_time = NULL, to_time = NULL,
   }
   rows
 }
+#' Collect plot rows from a FormantTier: its stored points ("speckle") or values
+#' sampled every `time_step` between `tmin` and `tmax`.
+#' @noRd
 .formant_tier_rows <- function(object, tmin, tmax, n_max, style, time_step) {
   rows <- list()
   if (style == "speckle") {
@@ -1582,6 +1507,8 @@ autolayer.KlattGrid <- function(object, from_time = NULL, to_time = NULL,
 
 
 # PCA scree plot (variance + cumulative).
+#' Scree plot (variance and cumulative variance per component) for a PCA-like object.
+#' @noRd
 .scree_plot <- function(object, prefix, title, garnish) {
   eigenvals <- object$get_eigenvalues()
   variance <- eigenvals / sum(eigenvals) * 100
@@ -1606,6 +1533,9 @@ autolayer.KlattGrid <- function(object, from_time = NULL, to_time = NULL,
 }
 
 # PCA component-scores scatter plot.
+#' Scatter plot of the first two columns of `as.data.frame(object)`; warns when
+#' there are fewer than two.
+#' @noRd
 .scores_plot <- function(object, type, title, garnish = TRUE, ...) {
   df <- as.data.frame(object)
   if (ncol(df) < 2) {

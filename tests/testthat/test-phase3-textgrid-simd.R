@@ -1,3 +1,6 @@
+# Fixed seed for reproducible random test data (rOpenSci G5.5).
+withr::local_seed(20261109L)
+
 # test-phase3-textgrid-simd.R
 # Phase 3 Task 3.3: TextGrid Batch Operations SIMD Tests
 # Part of pladdrr SIMD implementation (v4.5.3)

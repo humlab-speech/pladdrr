@@ -45,11 +45,6 @@ NULL
 #' @export
 autoplot.Sound <- function(object, from_time = NULL, to_time = NULL,
                            color = "steelblue", ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required. Please install it.")
-  }
-# nocov end
 
 
   df <- object$as_data_frame()
@@ -86,24 +81,28 @@ autolayer.Sound <- function(object, from_time = NULL, to_time = NULL,
 #' @rdname autoplot-methods
 #' @inheritParams pladdrr_shared_autoplot_object object
 #' @param show_voicing Color by voicing strength (default: FALSE)
+#' @param connect_gaps For \code{autoplot.Pitch}: if \code{TRUE} (the default)
+#'   unvoiced frames are dropped and the line runs on across them; if
+#'   \code{FALSE} they are kept as missing values and the line is broken
+#'   wherever the pitch is undefined.
 #' @export
 autoplot.Pitch <- function(object, from_time = NULL, to_time = NULL,
-                           color = "darkgreen", show_voicing = FALSE, ...) {
-# nocov start
- if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required. Please install it.")
-  }
-# nocov end
+                           color = "darkgreen", show_voicing = FALSE,
+                           connect_gaps = TRUE, ...) {
 
   df <- object$as_data_frame(include_strength = show_voicing)
 
-  # Remove unvoiced frames
-  df <- df[!is.na(df$frequency) & df$frequency > 0, ]
+  voiced <- !is.na(df$frequency) & df$frequency > 0
+  if (connect_gaps) {
+    df <- df[voiced, ]
+  } else {
+    df$frequency[!voiced] <- NA_real_
+  }
 
   if (!is.null(from_time)) df <- df[df$time >= from_time, ]
   if (!is.null(to_time)) df <- df[df$time <= to_time, ]
 
-  if (nrow(df) == 0) {
+  if (nrow(df) == 0 || all(is.na(df$frequency))) {
     warning("No voiced frames in Pitch object")
     return(ggplot2::ggplot() + ggplot2::theme_void())
   }
@@ -111,13 +110,13 @@ autoplot.Pitch <- function(object, from_time = NULL, to_time = NULL,
   if (show_voicing && "strength" %in% names(df)) {
     p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$time, y = .data$frequency,
                                           color = .data$strength)) +
-      ggplot2::geom_line(linewidth = 0.8, ...) +
+      ggplot2::geom_line(linewidth = 0.8, na.rm = TRUE, ...) +
       ggplot2::scale_color_gradient(low = "gray70", high = color,
         name = "Voicing")
   } else {
     p <- ggplot2::ggplot(df,
       ggplot2::aes(x = .data$time, y = .data$frequency)) +
-      ggplot2::geom_line(color = color, linewidth = 0.8, ...)
+      ggplot2::geom_line(color = color, linewidth = 0.8, na.rm = TRUE, ...)
   }
 
   p + ggplot2::labs(title = "Pitch", x = "Time (s)", y = "Frequency (Hz)") +
@@ -167,11 +166,6 @@ autolayer.Pitch <- function(object, from_time = NULL, to_time = NULL,
 #' @export
 autoplot.Formant <- function(object, from_time = NULL, to_time = NULL,
                              max_formant = 3, colors = NULL, ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required. Please install it.")
-  }
-# nocov end
 
   # object$as_data_frame() is already long format (time, formant, frequency,
   # bandwidth), one row per (frame, formant number) - no reshape needed.
@@ -249,11 +243,6 @@ autolayer.Formant <- function(object, from_time = NULL, to_time = NULL,
 #' @export
 autoplot.Intensity <- function(object, from_time = NULL, to_time = NULL,
                                color = "darkorange", ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required. Please install it.")
-  }
-# nocov end
 
   df <- object$as_data_frame()
 
@@ -295,11 +284,6 @@ autolayer.Intensity <- function(object, from_time = NULL, to_time = NULL,
 autoplot.Spectrogram <- function(object, from_time = NULL, to_time = NULL,
                                  from_freq = NULL, to_freq = NULL,
                                  dynamic_range = 70, ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required. Please install it.")
-  }
-# nocov end
 
   df <- object$as_data_frame()
   df$power_db <- 10 * log10(pmax(df$power, 1e-20))
@@ -360,11 +344,6 @@ autolayer.Spectrogram <- function(object, from_time = NULL, to_time = NULL,
 #' @export
 autoplot.Spectrum <- function(object, from_freq = NULL, to_freq = NULL,
                               log_freq = FALSE, color = "navy", ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required. Please install it.")
-  }
-# nocov end
 
   df <- object$as_data_frame()
 
@@ -417,11 +396,6 @@ autolayer.Spectrum <- function(object, from_freq = NULL, to_freq = NULL,
 #' @export
 autoplot.Ltas <- function(object, from_freq = NULL, to_freq = NULL,
                           log_freq = FALSE, color = "darkred", ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required. Please install it.")
-  }
-# nocov end
 
   df <- object$as_data_frame()
 
@@ -466,11 +440,6 @@ autolayer.Ltas <- function(object, from_freq = NULL, to_freq = NULL,
 #' @export
 autoplot.Harmonicity <- function(object, from_time = NULL, to_time = NULL,
                                  color = "darkviolet", ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required. Please install it.")
-  }
-# nocov end
 
   df <- object$as_data_frame()
 
@@ -509,11 +478,6 @@ autolayer.Harmonicity <- function(object, from_time = NULL, to_time = NULL,
 #' @export
 autoplot.PointProcess <- function(object, from_time = NULL, to_time = NULL,
                                   color = "black", ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required. Please install it.")
-  }
-# nocov end
 
   n_points <- object$get_number_of_points()
   if (n_points == 0) {
@@ -571,11 +535,6 @@ autolayer.PointProcess <- function(object, from_time = NULL, to_time = NULL,
 autoplot.PowerCepstrum <- function(object, from_quefrency = NULL,
   to_quefrency = NULL,
                                    color = "darkblue", mark_peak = TRUE, ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required. Please install it.")
-  }
-# nocov end
 
   df <- object$as_data_frame()
   if (nrow(df) == 0) {
@@ -679,6 +638,8 @@ autolayer.TextGrid <- function(object, tier = 1, from_time = NULL,
 }
 
 # ggplot layers for an interval tier: filled rectangles plus centered labels
+#' ggplot2 layers (rectangles and labels) for the intervals of one TextGrid tier.
+#' @noRd
 .textgrid_interval_layer <- function(object, tier, from_time, to_time,
                                      color, alpha, ...) {
   tier_data <- .textgrid_interval_data(object, tier, from_time, to_time)
@@ -700,6 +661,8 @@ autolayer.TextGrid <- function(object, tier = 1, from_time = NULL,
 }
 
 # ggplot layers for a point tier: vertical lines plus labels
+#' ggplot2 layers (vertical lines and labels) for the points of one TextGrid tier.
+#' @noRd
 .textgrid_point_layer <- function(object, tier, from_time, to_time,
                                   color, ...) {
   tier_data <- .textgrid_point_data(object, tier, from_time, to_time)

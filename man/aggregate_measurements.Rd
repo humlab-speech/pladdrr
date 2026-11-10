@@ -19,7 +19,7 @@ aggregate_measurements(
 "min", "max", "n".}
 }
 \value{
-Data frame with aggregated statistics.
+A data.frame with aggregated statistics.
 }
 \description{
 Aggregate extracted measurements by interval label (e.g., phoneme, word).

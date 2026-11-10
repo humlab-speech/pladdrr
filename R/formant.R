@@ -3,6 +3,10 @@
 # ============================================================================
 
 # Extract a Hamming-windowed, pre-emphasised frame centered at time t.
+#' Cut the analysis frame centred on time `t` from `signal` (clipped to the signal),
+#' apply a Hamming window and, when `pre_emphasis_from` > 0, pre-emphasis from that
+#' frequency in Hz.
+#' @noRd
 .extract_windowed_frame <- function(signal, sr, t, window_samples,
   pre_emphasis_from) {
   n_samples <- length(signal)
@@ -21,6 +25,9 @@
 }
 
 # Build the per-frame formant row lists (NA for undefined formants).
+#' Plot-style rows (time, formant number, frequency, bandwidth) for one frame; formants
+#' the frame does not have are returned as NA.
+#' @noRd
 .frame_formant_rows <- function(t, formants, n_formants) {
   lapply(seq_len(n_formants), function(f) {
     if (f <= nrow(formants)) {
@@ -123,7 +130,7 @@ extract_formants <- function(sound,
   sr <- sound$sampling_rate
 
   # Auto time step (Praat default: 4 times Nyquist frequency / max_formant)
-  if (time_step == 0.0) {
+  if (identical(as.numeric(time_step), 0)) {  # 0 = automatic (sentinel, not a measurement)
     time_step <- window_length / 4
   }
   
@@ -273,11 +280,18 @@ extract_formants <- function(sound,
 
 
 # Is the running Burg prediction error still usable?
+#' Is the Burg prediction-error power `p` a usable (finite, positive) number?
+#' @noRd
 .burg_error_valid <- function(p) !is.na(p) && is.finite(p) && p > 0
 
 # Are the Burg coefficients a usable filter?
+#' Are Burg prediction coefficients a usable filter (length >= 2, all finite)?
+#' @noRd
 .burg_coefficients_valid <- function(
   a) length(a) >= 2 && !anyNA(a) && all(is.finite(a))
+#' Burg's method: prediction coefficients of order `order` for signal `x`.
+#' NULL when the signal is shorter than `order + 1` or the recursion breaks down.
+#' @noRd
 .burg_algorithm <- function(x, order) {
   
   init <- .burg_initialize(x, order)
@@ -342,7 +356,7 @@ extract_formants <- function(sound,
 #' @inheritParams pladdrr_shared_params time
 #' @param interpolate Logical; if TRUE, interpolate between frames
 #'
-#' @return Formant frequency in Hz, or NA if undefined
+#' @return Numeric: formant frequency in Hz, or NA if undefined
 #' @examples
 #' # A praat_formant-shaped list (see the @param formant description
 #' # above); built directly here for a self-contained example.
@@ -426,7 +440,7 @@ get_formant_at_time <- function(formant, formant_number, time,
 #' @param formant_number Which formant (1 = F1, 2 = F2, etc.)
 #' @param time_range Optional numeric vector c(start, end) in seconds
 #'
-#' @return Mean formant frequency in Hz, or NA if undefined
+#' @return Numeric: mean formant frequency in Hz, or NA if undefined
 #' @examples
 #' # A praat_formant-shaped list (see the @param formant description
 #' # above); built directly here for a self-contained example.
@@ -479,6 +493,9 @@ get_mean_formant <- function(formant, formant_number, time_range = NULL) {
 
 
 # Compute the frame times for formant detection.
+#' Frame centre times for formant detection: one centre when the signal is no longer than
+#' one window, otherwise every `time_step` from half a window in to half a window from the end.
+#' @noRd
 .frame_times_for_detection <- function(duration, window_length, time_step) {
   if (duration <= window_length) return(duration / 2)
   frame_times <- seq(window_length / 2, duration - window_length / 2,
@@ -489,6 +506,9 @@ get_mean_formant <- function(formant, formant_number, time_range = NULL) {
 
 
 # Run Burg formant detection and assemble the (deprecated) formant list.
+#' Detect formants frame by frame with the pure-R Burg implementation
+#' (`.detect_formants_burg()`).
+#' @noRd
 .burg_formants <- function(signal, sr, time_step, max_formant, n_formants,
                            window_length, pre_emphasis_from) {
   formant_data <- .detect_formants_burg(
@@ -503,6 +523,9 @@ get_mean_formant <- function(formant, formant_number, time_range = NULL) {
 
 
 # Validate the (deprecated) formant-extraction arguments.
+#' Validate the arguments of the pure-R formant detector: a Sound object, positive
+#' `max_formant`, positive integer `n_formants`, non-negative `time_step`, and the window arguments.
+#' @noRd
 .validate_formant_args <- function(sound, max_formant, n_formants, time_step,
                                    window_length, pre_emphasis_from) {
   validate_sound_object(sound)
@@ -515,6 +538,9 @@ get_mean_formant <- function(formant, formant_number, time_range = NULL) {
 
 
 # Sort LPC-derived formant frequencies, filter to max, pad/truncate.
+#' Sort candidate formants by frequency, drop those above `max_formant`, and pad with NA
+#' or truncate to exactly `n_formants`.
+#' @noRd
 .sort_filter_formants <- function(freqs, bandwidths, max_formant, n_formants) {
   ord <- order(freqs)
   freqs <- freqs[ord]
@@ -534,6 +560,9 @@ get_mean_formant <- function(formant, formant_number, time_range = NULL) {
 
 
 # Burg reflection coefficient; status abort/break/ok.
+#' Reflection coefficient of the Burg recursion from the forward and backward errors at
+#' `idx`; reports status "abort" when the denominator is zero or not finite.
+#' @noRd
 .burg_reflection_coefficient <- function(f, b, idx) {
   num <- sum(f[idx] * b[idx - 1])
   den <- sum(f[idx]^2) + sum(b[idx - 1]^2)
@@ -545,6 +574,9 @@ get_mean_formant <- function(formant, formant_number, time_range = NULL) {
 }
 
 # Update Burg LPC coefficients for order k with reflection coefficient rc.
+#' Levinson-style update of the prediction coefficients `a` for order `k` with reflection
+#' coefficient `rc`.
+#' @noRd
 .update_burg_coefficients <- function(a, k, rc) {
   a_padded <- c(a, 0)
   a_new <- numeric(k + 1)
@@ -555,6 +587,9 @@ get_mean_formant <- function(formant, formant_number, time_range = NULL) {
 
 
 # Update Burg forward/backward errors and prediction error power.
+#' Update the forward and backward error vectors and the prediction-error power `p`
+#' after a reflection coefficient `rc`.
+#' @noRd
 .update_burg_errors <- function(f, b, idx, rc, p) {
   old_f <- f[idx]
   f[idx] <- old_f + rc * b[idx - 1]
@@ -565,6 +600,9 @@ get_mean_formant <- function(formant, formant_number, time_range = NULL) {
 
 
 # Initialize the Burg algorithm state; NULL if degenerate.
+#' Initial state of the Burg recursion for signal `x`; NULL when the signal is shorter
+#' than `order + 1`.
+#' @noRd
 .burg_initialize <- function(x, order) {
   n <- length(x)
   if (n < order + 1) return(NULL)

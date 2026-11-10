@@ -1,8 +1,8 @@
 # pladdrr Agent Guide
 
-**Version:** 5.1.0 guide refresh (2026-09-04; perf/memory audit notes 2026-10-19; 2026-11 audit round 2026-11-06)
+**Version:** 5.2.0 guide refresh (2026-09-04; perf/memory audit notes 2026-10-19; 2026-11 audit round 2026-11-06)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** Current through package 5.1.0 (the 2026-11 audit round and its follow-ups, see `NEWS.md` under 5.1.0). Shared-dispatch wrappers + threaded Praat backend + xsimd acceleration (enabled at build time, runtime toggle via `pladdrr_simd()`) + clinical Tier 4 helpers + wrapper dispatch migration (Sound/Formant/Spectrum/Spectrogram queries now use direct `.Call()` instead of Rcpp module dispatch) + current `praat.github.io/` build prefix guidance + current CPPS/CPP usage notes + macOS PSOCK parallelism + unified SIMD bridge header (`simd_bridge.h`) + GitHub Actions CI + code coverage + spectral-moments/data-frame allocation cleanup (v4.9.24) + CRAN pre-submission hygiene and full man/ coverage (v5.0.0) + Ltas full Praat-parity query coverage and new SpectrumTier peak-picking class (v5.0.3) + perf/memory audit: load-time RSS fix, FormantPath parity fix, 8 SIMD files removed (development version, 2026-10).
+**Status:** Current through package 5.2.0 (the 2026-11 audit round and its follow-ups, see `NEWS.md` under 5.1.0, 5.1.1 and 5.2.0). Shared-dispatch wrappers + threaded Praat backend + xsimd acceleration (enabled at build time, runtime toggle via `pladdrr_simd()`) + clinical Tier 4 helpers + wrapper dispatch migration (Sound/Formant/Spectrum/Spectrogram queries now use direct `.Call()` instead of Rcpp module dispatch) + current `praat.github.io/` build prefix guidance + current CPPS/CPP usage notes + macOS PSOCK parallelism + unified SIMD bridge header (`simd_bridge.h`) + GitHub Actions CI + code coverage + spectral-moments/data-frame allocation cleanup (v4.9.24) + CRAN pre-submission hygiene and full man/ coverage (v5.0.0) + Ltas full Praat-parity query coverage and new SpectrumTier peak-picking class (v5.0.3) + perf/memory audit: load-time RSS fix, FormantPath parity fix, 8 SIMD files removed (development version, 2026-10).
 - **v4.9.18 — Performance + docs + CI (2026-08-05 assessment, Phases 1-4):**
   - **PointProcess jitter/shimmer batch cache:** First shimmer call fetches all 11 jitter+shimmer metrics via `get_jitter_shimmer_batch_cpp()`. Subsequent jitter or shimmer calls with matching parameters return from cache — no additional C++ crossing. Backward compatible: jitter methods unchanged (no Sound required); cache activates automatically after first shimmer call.
   - **Formant `get_all_values_at_time` — single C++ call:** Added `formant_get_all_values_at_time()` export; replaces `vapply` loop over N module calls with one direct wrapper call.
@@ -157,12 +157,22 @@ the caveats in it live in the test file, and the report names the Praat version 
 against). **Always name the Praat version with a reference number**: the vendored source
 tracks 6.4.47, and the CPPS pipeline differs from 6.4.27 by about 0.13 dB (Praat rewrote
 its CPP-to-CPPS post-processing); against 6.4.47 all 19 registry rows pass and CPPS is
-0.003 dB away. `tests/testthat/test-fidelity-fingerprint.R` is the second gate: 81
+0.003 dB away. `tests/testthat/test-fidelity-fingerprint.R` is the second gate: 89
 numbers from one signal, no oracle needed, refuses any ERR/NA row.
 
 When porting a new Praat routine into pladdrr, add a registry row. Default
 tolerance is `0` for exact-arithmetic routines; looser tolerances require a
 written rationale in the row. Failing rows are first-class regressions.
+
+## What's New in v5.2.0 (pitch units and Intensity interpolation)
+
+Recompute anything you saved with a non-hertz pitch unit or a non-linear Intensity lookup; the
+magnitudes are in `NEWS.md`.
+
+- **Pitch units follow `kPitch_unit` at every door.** `unit = "semitones"` is semitones re 100 Hz and `"erb"` is ERB (both used to return log10(Hz)); `"loghertz"` is log10(Hz). See "Frequency Units" for the table. Unknown units raise `pladdrr_input_error` instead of answering in hertz.
+- **`PitchTier$shift_frequencies()`** works in semitones (was a silent no-op) and ERB (was a logHertz shift, x10); `"hertz_logarithmic"` is refused.
+- **`Intensity$get_value_at_time()`** interpolates as asked: the default `"cubic"` returned the linear value. An interpolation is a name or the code 0 to 4; anything else raises (it used to become cubic). `get_intensity_at_time(interpolate = FALSE)` is nearest.
+- **5.1.1 (guards):** `max_formants` outside 1 to 1000 and a wrong-class pointer at the `*_direct` getters raise instead of crashing; `sound_create_pure_tone()` counts `channels` in its size budget.
 
 ## What's New in v5.1.0 (2026-11 audit round: numbers that change)
 
@@ -493,7 +503,7 @@ to be read in isolation.
 
 **Shared Dispatch Table Architecture (v4.8.33, optimized v4.9.18)**
 
-1. User calls: `pitch <- sound$to_pitch_cc(75, 600)`
+1. User calls: `pitch <- sound$to_pitch_cc(pitch_floor = 75, pitch_ceiling = 600)`
 2. `$.Sound` S3 dispatch looks up `to_pitch_cc` in `.sound_methods` env
 3. Method calls **either** `.self$.cpp$method()` (module, for transforms/complex ops) **or** `.Call("_pladdrr_*", .self$.xptr, args)` (wrapper, for frequent queries). As of v4.9.18: Sound (7 methods), Formant (14), Spectrum (16), Spectrogram (12) use the faster wrapper path (~30-40% less overhead).
 4. C++ calls Praat function (`Sound_to_Pitch_cc()`, `Formant_getValueAtTime()`, etc.)
@@ -606,7 +616,7 @@ some modules like Electroglottogram/DTW/Polygon aren't broken out as separate ro
 | `PowerCepstrum` | `spectrum$to_power_cepstrum()` |
 | `PowerCepstrogram` | `sound$to_powercepstrogram()` |
 | `Cochleagram` | `sound$to_cochleagram()` |
-| `Excitation` | `cochleagram$to_excitation()` |
+| `Excitation` | `cochleagram$to_excitation(time)` (one frame; `time` has no default) or `spectrum$to_excitation(erb_density)` |
 | `LPC` | `sound$to_lpc_burg()` |
 | `FormantPath` | `sound$to_formant_path()` |
 | `FormantModeler` | `formant$to_formant_modeler()` |
@@ -667,17 +677,26 @@ result <- interp$eval('y')  # 84 (numeric tried first, then string)
 
 ### Frequency Units (Pitch, Formant)
 
-**WARNING:** Frequency/pitch unit codes are NOT consistent across the codebase — there are 4 different,
-mutually-incompatible int-code schemes depending on which R file the call goes through. Always use the
-string API (`"hertz"`, `"semitones"`, etc.) rather than passing raw integer codes, and if you must know the
-integer value, check the specific call site below.
+Every pitch door (`Pitch$` methods, `PitchTier$`, the batch queries, `praat-direct.R`) now resolves the
+string through one table, `.pitch_unit_code()` in `R/utils-internal.R`, which is Praat's `kPitch_unit` enum
+(`src/praat.github.io/fon/Pitch_enums.h`). An unknown string raises `pladdrr_input_error`; it no longer
+falls back to hertz. Use the strings; the codes are listed only for reading C++.
 
-| Call site | `hertz` | `semitones` | `mel` | `erb` | `loghertz` |
-|-----------|---------|--------------|-------|-------|------------|
-| `R/pitch-wrapper.R` (`Pitch$` methods) | `0` | `1` | `2` | `3` | not supported |
-| `R/batch-queries.R`, `R/pitchtier-wrapper.R` | `0` | `3` | `1` | `4` | `2` |
-| `R/praat-direct.R` | `0` | `1` | `2` | `3` | `4` |
-| `R/utils-internal.R` (`unit_to_code`, matches Praat's `kPitch_unit` enum) | `0` | `1` | `2` | `3` | `4` |
+| Code | `kPitch_unit` | R string(s) |
+|------|---------------|-------------|
+| `0` | `HERTZ` | `"hertz"`, `"hz"` |
+| `1` | `HERTZ_LOGARITHMIC` | `"hertz_logarithmic"` |
+| `2` | `MEL` | `"mel"` |
+| `3` | `LOG_HERTZ` | `"loghertz"` |
+| `4` | `SEMITONES_1` | `"semitones_re_1hz"` |
+| `5` | `SEMITONES_100` | `"semitones_re_100hz"`, `"semitones"`, `"st"` |
+| `6` | `SEMITONES_200` | `"semitones_re_200hz"` |
+| `7` | `SEMITONES_440` | `"semitones_re_440hz"` |
+| `8` | `ERB` | `"erb"` |
+
+A bare `"semitones"` is Praat's default, semitones re 100 Hz. Before 5.2.0 four tables disagreed with the
+enum: `unit = "semitones"` and `"erb"` returned log10(Hz) from `Pitch$` methods, and the direct getters
+answered `"loghertz"` in semitones re 1 Hz.
 
 ### Formant Units
 
@@ -774,7 +793,7 @@ ltas$get_slope(0, 1000, 1000, 4000, unit = "energy")    # -52.513078
 **String API (recommended):**
 ```r
 # Use string names - automatically converted to codes
-intensity$get_value_at_time(time = 1.0, interpolate = "cubic")
+intensity$get_value_at_time(time = 1.0, interpolation = "cubic")
 get_intensity_at_times(intensity, times, interpolate = "sinc70")
 ```
 
@@ -1155,8 +1174,8 @@ window <- sound_load_window("long_audio.wav", start = 10.5, end = 10.55, resampl
 # Use case: Extract 50ms window from 10-minute file + resample in one operation
 
 # Merge TextGrids efficiently (native Praat function)
-tg1 <- TextGrid(0, 1); tg1$add_interval_tier("words")
-tg2 <- TextGrid(0, 1); tg2$add_point_tier("events")
+tg1 <- TextGrid$create(0, 1, "words", "")           # one interval tier
+tg2 <- TextGrid$create(0, 1, "phones", "events")    # an interval tier and a point tier  (TextGrid(path) only reads a file)
 merged <- textgrid_merge(list(tg1, tg2))
 # Use case: Combine annotation layers from different sources
 
@@ -1639,10 +1658,10 @@ voice_quality <- c(
 two_pass_adaptive_pitch(
   sound,                      # Sound XPtr or wrapper object
   time_step = 0,              # 0 = auto (0.75 / initial_floor)
-  initial_floor = 50,         # Pass 1 pitch floor (Hz)
-  initial_ceiling = 800,      # Pass 1 pitch ceiling (Hz)
   voicing_threshold = 0.45,   # Voicing detection threshold
   silence_threshold = 0.03,   # Silence detection threshold
+  initial_floor = 50,         # Pass 1 pitch floor (Hz)
+  initial_ceiling = 800,      # Pass 1 pitch ceiling (Hz)
   octave_cost = 0.01,         # Cost of octave jumps
   octave_jump_cost = 0.35,    # Cost of octave jump transitions
   voiced_unvoiced_cost = 0.14,# Cost of V→U transitions

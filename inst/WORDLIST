@@ -386,3 +386,14 @@ ggsave
 inheritParams
 param
 params
+enum
+extrema
+GiB
+honour
+honours
+initialised
+OPTIONMENU
+oversized
+preallocated
+uncatchably
+untagged

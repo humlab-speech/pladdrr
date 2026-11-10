@@ -1,3 +1,6 @@
+# Fixed seed for reproducible random test data (rOpenSci G5.5).
+withr::local_seed(20261109L)
+
 # test-sound-generate.R - Tests for synthetic sound generation
 #
 # These tests verify that generated sounds (sine waves, noise) have

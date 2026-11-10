@@ -31,6 +31,10 @@
 
 .pladdrr_tag_re <- "^\\[pladdrr_([a-z_]+):([^:]*):([^\\]]*)\\] (.*)$"
 
+#' Split a C++-side error message of the form
+#' `[pladdrr_<class>:<routine>:<param>] <message>` into its parts.
+#' Returns NULL when the message does not carry a tag.
+#' @noRd
 .parse_pladdrr_tag <- function(msg) {
   # perl=TRUE required: the pattern uses \] inside a bracket expression, which
   # only parses correctly under PCRE (TRE never matches, silently disabling the
@@ -61,6 +65,19 @@ pladdrr_error_cond <- function(klass, routine, param, message,
     list(message = message, call = call, routine = routine, param = param)
   )
 }
+
+# Turn a C++ exception that carries a pladdrr tag in its message into the
+# classed condition; any other error is passed on unchanged.
+.reraise_tagged <- function(e) {
+  tag <- .parse_pladdrr_tag(conditionMessage(e))
+  if (is.null(tag)) stop(e)
+  stop(pladdrr_error_cond(tag$class, tag$routine, tag$param, tag$message,
+                          call = conditionCall(e)))
+}
+
+# The direct getters are called in loops, so they get this tryCatch-only
+# version of with_pladdrr_errors() (no data-loss warning bookkeeping).
+.direct_door <- function(expr) tryCatch(expr, error = .reraise_tagged)
 
 #' Build a classed pladdrr warning condition
 #' @return A condition object with class \code{c(klass, "pladdrr_warning",
@@ -145,14 +162,7 @@ with_pladdrr_errors <- function(expr) {
   result <- withCallingHandlers(
     tryCatch(
       expr,
-      error = function(e) {
-        tag <- .parse_pladdrr_tag(conditionMessage(e))
-        if (is.null(tag)) stop(e)
-        cond <- pladdrr_error_cond(tag$class, tag$routine, tag$param,
-          tag$message,
-                                   call = conditionCall(e))
-        stop(cond)
-      }
+      error = .reraise_tagged
     ),
     warning = function(w) {
       tag <- .parse_pladdrr_tag(conditionMessage(w))

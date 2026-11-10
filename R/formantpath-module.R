@@ -142,7 +142,7 @@ NULL
 
 # I/O
 .formantpath_methods$save <- function(.self, path) {
-  .self$.cpp$save(path)
+  .self$.cpp$save(.ensure_suffix(path, "FormantPath"))
   invisible(.self)
 }
 

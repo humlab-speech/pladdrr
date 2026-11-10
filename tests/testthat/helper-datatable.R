@@ -101,7 +101,7 @@ expect_dt_class <- function(object) {
 #' @param ... Arguments to both functions
 #' @param min_speedup Minimum expected speedup factor (default 2x)
 expect_dt_faster <- function(old_func, new_func, ..., min_speedup = 2) {
-  skip_on_cran()
+  skip_if_not_extended()
   
   # Run old function
   old_time <- system.time({

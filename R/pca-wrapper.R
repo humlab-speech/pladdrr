@@ -82,7 +82,7 @@ NULL
 # Utility
 .pca_methods$get_xptr <- function(.self) .self$.xptr
 .pca_methods$save <- function(.self, path) {
-  .self$.cpp$save(path)
+  .self$.cpp$save(.ensure_suffix(path, "PCA"))
   invisible(.self)
 }
 
@@ -160,7 +160,7 @@ PCA <- function(.xptr = NULL) {
 #' @export
 pca_from_matrix <- function(data) {
   if (!is.matrix(data)) data <- as.matrix(data)
-  if (!is.numeric(data)) stop("data must be numeric")
+  if (!is.numeric(data)) stop("pca_from_matrix(): data must be numeric")
   if (nrow(data) < 2) stop("Need at least 2 observations")
   if (ncol(data) < 2) stop("Need at least 2 variables")
 

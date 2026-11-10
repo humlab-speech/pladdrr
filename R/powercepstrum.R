@@ -253,7 +253,7 @@ NULL
 .powercepstrum_methods$as_data_frame <- function(
   .self) .self$.cpp$as_data_frame()
 .powercepstrum_methods$save <- function(.self,
-  path) .self$.cpp$save(as.character(path))
+  path) .self$.cpp$save(.ensure_suffix(path, "PowerCepstrum"))
 .powercepstrum_methods$get_xptr <- function(.self) .self$.xptr
 
 # --- Print ---
@@ -275,7 +275,7 @@ lockEnvironment(.powercepstrum_methods, bindings = TRUE)
 #' @export
 PowerCepstrum <- function(.xptr = NULL) {
   if (!inherits(.xptr, "externalptr")) {
-    stop(".xptr must be an external pointer")
+    stop("PowerCepstrum(): .xptr must be an external pointer")
   }
   pc_mod <- get_module("powercepstrum_module")
   cpp_pc <- with_pladdrr_errors(pc_mod$RPowerCepstrum$new(.xptr))
@@ -470,7 +470,7 @@ lockEnvironment(.powercepstrogram_methods, bindings = TRUE)
 #' @export
 PowerCepstrogram <- function(.xptr = NULL) {
   if (!inherits(.xptr, "externalptr")) {
-    stop(".xptr must be an external pointer")
+    stop("PowerCepstrogram(): .xptr must be an external pointer")
   }
   # The object is a plain list (its methods are Rcpp functions), but the module
   # class still carries the Thing_isa check; construct one only to run it.

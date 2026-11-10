@@ -67,6 +67,7 @@ double sound_get_duration_direct(SEXP sound_xptr) {
     if (!sound || sound.get() == nullptr) {
         stop("Invalid Sound pointer");
     }
+    require_praat_class(sound.get(), classSound, "Not a Sound", "sound_get_duration_direct", "sound_xptr");
     return sound->xmax - sound->xmin;
 }
 
@@ -85,6 +86,7 @@ double sound_get_rms_direct(SEXP sound_xptr, double from_time = 0, double to_tim
     if (!sound || sound.get() == nullptr) {
         stop("Invalid Sound pointer");
     }
+    require_praat_class(sound.get(), classSound, "Not a Sound", "sound_get_rms_direct", "sound_xptr");
     if (from_time == 0 && to_time == 0) {
         from_time = sound->xmin;
         to_time = sound->xmax;
@@ -112,6 +114,7 @@ double pitch_get_value_direct(SEXP pitch_xptr, double time, int unit = 0, bool i
     if (!pitch || pitch.get() == nullptr) {
         stop("Invalid Pitch pointer");
     }
+    require_praat_class(pitch.get(), classPitch, "Not a Pitch", "pitch_get_value_direct", "pitch_xptr");
     kPitch_unit p_unit = static_cast<kPitch_unit>(unit);
     return Pitch_getValueAtTime(pitch.get(), time, p_unit, interpolate);
 }
@@ -134,6 +137,7 @@ double pitch_get_mean_direct(SEXP pitch_xptr, double from_time = 0, double to_ti
     if (!pitch || pitch.get() == nullptr) {
         stop("Invalid Pitch pointer");
     }
+    require_praat_class(pitch.get(), classPitch, "Not a Pitch", "pitch_get_mean_direct", "pitch_xptr");
     if (from_time == 0 && to_time == 0) {
         from_time = pitch->xmin;
         to_time = pitch->xmax;
@@ -160,6 +164,7 @@ double pitch_get_stdev_direct(SEXP pitch_xptr, double from_time = 0, double to_t
     if (!pitch || pitch.get() == nullptr) {
         stop("Invalid Pitch pointer");
     }
+    require_praat_class(pitch.get(), classPitch, "Not a Pitch", "pitch_get_stdev_direct", "pitch_xptr");
     if (from_time == 0 && to_time == 0) {
         from_time = pitch->xmin;
         to_time = pitch->xmax;
@@ -187,6 +192,7 @@ double pitch_get_minimum_direct(SEXP pitch_xptr, double from_time = 0, double to
     if (!pitch || pitch.get() == nullptr) {
         stop("Invalid Pitch pointer");
     }
+    require_praat_class(pitch.get(), classPitch, "Not a Pitch", "pitch_get_minimum_direct", "pitch_xptr");
     if (from_time == 0 && to_time == 0) {
         from_time = pitch->xmin;
         to_time = pitch->xmax;
@@ -214,6 +220,7 @@ double pitch_get_maximum_direct(SEXP pitch_xptr, double from_time = 0, double to
     if (!pitch || pitch.get() == nullptr) {
         stop("Invalid Pitch pointer");
     }
+    require_praat_class(pitch.get(), classPitch, "Not a Pitch", "pitch_get_maximum_direct", "pitch_xptr");
     if (from_time == 0 && to_time == 0) {
         from_time = pitch->xmin;
         to_time = pitch->xmax;
@@ -242,6 +249,7 @@ double pitch_get_quantile_direct(SEXP pitch_xptr, double quantile,
     if (!pitch || pitch.get() == nullptr) {
         stop("Invalid Pitch pointer");
     }
+    require_praat_class(pitch.get(), classPitch, "Not a Pitch", "pitch_get_quantile_direct", "pitch_xptr");
     if (from_time == 0 && to_time == 0) {
         from_time = pitch->xmin;
         to_time = pitch->xmax;
@@ -265,6 +273,7 @@ int pitch_count_voiced_direct(SEXP pitch_xptr) {
     if (!pitch || pitch.get() == nullptr) {
         stop("Invalid Pitch pointer");
     }
+    require_praat_class(pitch.get(), classPitch, "Not a Pitch", "pitch_count_voiced_direct", "pitch_xptr");
     return Pitch_countVoicedFrames(pitch.get());
 }
 
@@ -289,6 +298,7 @@ double formant_get_value_direct(SEXP formant_xptr, int formant_number, double ti
     if (!formant || formant.get() == nullptr) {
         stop("Invalid Formant pointer");
     }
+    require_praat_class(formant.get(), classFormant, "Not a Formant", "formant_get_value_direct", "formant_xptr");
     kFormant_unit f_unit = static_cast<kFormant_unit>(unit);
     return Formant_getValueAtTime(formant.get(), formant_number, time, f_unit);
 }
@@ -310,6 +320,7 @@ double formant_get_bandwidth_direct(SEXP formant_xptr, int formant_number, doubl
     if (!formant || formant.get() == nullptr) {
         stop("Invalid Formant pointer");
     }
+    require_praat_class(formant.get(), classFormant, "Not a Formant", "formant_get_bandwidth_direct", "formant_xptr");
     kFormant_unit f_unit = static_cast<kFormant_unit>(unit);
     return Formant_getBandwidthAtTime(formant.get(), formant_number, time, f_unit);
 }
@@ -334,6 +345,7 @@ double formant_get_mean_direct(SEXP formant_xptr, int formant_number,
     if (!formant || formant.get() == nullptr) {
         stop("Invalid Formant pointer");
     }
+    require_praat_class(formant.get(), classFormant, "Not a Formant", "formant_get_mean_direct", "formant_xptr");
     if (from_time == 0 && to_time == 0) {
         from_time = formant->xmin;
         to_time = formant->xmax;
@@ -362,6 +374,7 @@ double intensity_get_value_direct(SEXP intensity_xptr, double time, int interpol
     if (!intensity || intensity.get() == nullptr) {
         stop("Invalid Intensity pointer");
     }
+    require_praat_class(intensity.get(), classIntensity, "Not an Intensity", "intensity_get_value_direct", "intensity_xptr");
     kVector_valueInterpolation interp = static_cast<kVector_valueInterpolation>(interpolation);
     return Vector_getValueAtX(intensity.get(), time, 1, interp);
 }
@@ -386,6 +399,7 @@ double intensity_get_mean_direct(SEXP intensity_xptr, double from_time = 0, doub
     if (!intensity || intensity.get() == nullptr) {
         stop("Invalid Intensity pointer");
     }
+    require_praat_class(intensity.get(), classIntensity, "Not an Intensity", "intensity_get_mean_direct", "intensity_xptr");
     if (from_time == 0 && to_time == 0) {
         from_time = intensity->xmin;
         to_time = intensity->xmax;
@@ -410,6 +424,7 @@ double intensity_get_minimum_direct(SEXP intensity_xptr, double from_time = 0, d
     if (!intensity || intensity.get() == nullptr) {
         stop("Invalid Intensity pointer");
     }
+    require_praat_class(intensity.get(), classIntensity, "Not an Intensity", "intensity_get_minimum_direct", "intensity_xptr");
     if (from_time == 0 && to_time == 0) {
         from_time = intensity->xmin;
         to_time = intensity->xmax;
@@ -434,6 +449,7 @@ double intensity_get_maximum_direct(SEXP intensity_xptr, double from_time = 0, d
     if (!intensity || intensity.get() == nullptr) {
         stop("Invalid Intensity pointer");
     }
+    require_praat_class(intensity.get(), classIntensity, "Not an Intensity", "intensity_get_maximum_direct", "intensity_xptr");
     if (from_time == 0 && to_time == 0) {
         from_time = intensity->xmin;
         to_time = intensity->xmax;
@@ -460,6 +476,7 @@ double harmonicity_get_value_direct(SEXP harmonicity_xptr, double time, int inte
     if (!harmonicity || harmonicity.get() == nullptr) {
         stop("Invalid Harmonicity pointer");
     }
+    require_praat_class(harmonicity.get(), classHarmonicity, "Not a Harmonicity", "harmonicity_get_value_direct", "harmonicity_xptr");
     kVector_valueInterpolation interp = static_cast<kVector_valueInterpolation>(interpolation);
     return Vector_getValueAtX(harmonicity.get(), time, 1, interp);
 }
@@ -481,6 +498,7 @@ double harmonicity_get_mean_direct(SEXP harmonicity_xptr, double from_time = 0, 
     if (!harmonicity || harmonicity.get() == nullptr) {
         stop("Invalid Harmonicity pointer");
     }
+    require_praat_class(harmonicity.get(), classHarmonicity, "Not a Harmonicity", "harmonicity_get_mean_direct", "harmonicity_xptr");
     if (from_time == 0 && to_time == 0) {
         from_time = harmonicity->xmin;
         to_time = harmonicity->xmax;
@@ -508,6 +526,7 @@ SEXP sound_to_pitch_direct(SEXP sound_xptr, double time_step = 0,
     if (!sound || sound.get() == nullptr) {
         stop("Invalid Sound pointer");
     }
+    require_praat_class(sound.get(), classSound, "Not a Sound", "sound_to_pitch_direct", "sound_xptr");
 
     NUMmachar();
 
@@ -538,6 +557,7 @@ SEXP sound_to_formant_direct(SEXP sound_xptr, double time_step = 0,
     if (!sound || sound.get() == nullptr) {
         stop("Invalid Sound pointer");
     }
+    require_praat_class(sound.get(), classSound, "Not a Sound", "sound_to_formant_direct", "sound_xptr");
 
     NUMmachar();
 
@@ -571,6 +591,7 @@ SEXP sound_to_intensity_direct(SEXP sound_xptr, double minimum_pitch = 100,
     if (!sound || sound.get() == nullptr) {
         stop("Invalid Sound pointer");
     }
+    require_praat_class(sound.get(), classSound, "Not a Sound", "sound_to_intensity_direct", "sound_xptr");
 
     NUMmachar();
 
@@ -603,6 +624,7 @@ SEXP sound_to_harmonicity_direct(SEXP sound_xptr, double time_step = 0.01,
     if (!sound || sound.get() == nullptr) {
         stop("Invalid Sound pointer");
     }
+    require_praat_class(sound.get(), classSound, "Not a Sound", "sound_to_harmonicity_direct", "sound_xptr");
 
     NUMmachar();
 
@@ -641,6 +663,7 @@ List pitch_get_all_stats_direct(SEXP pitch_xptr, double from_time = 0, double to
     if (!pitch || pitch.get() == nullptr) {
         stop("Invalid Pitch pointer");
     }
+    require_praat_class(pitch.get(), classPitch, "Not a Pitch", "pitch_get_all_stats_direct", "pitch_xptr");
 
     if (from_time == 0 && to_time == 0) {
         from_time = pitch->xmin;
@@ -677,6 +700,7 @@ NumericVector formant_get_f1_f4_direct(SEXP formant_xptr, double time, int unit 
     if (!formant || formant.get() == nullptr) {
         stop("Invalid Formant pointer");
     }
+    require_praat_class(formant.get(), classFormant, "Not a Formant", "formant_get_f1_f4_direct", "formant_xptr");
 
     kFormant_unit f_unit = static_cast<kFormant_unit>(unit);
     NumericVector result(4);
@@ -715,6 +739,7 @@ double get_point_process_mean_period_direct(SEXP pp_xptr,
     if (!pp || pp.get() == nullptr) {
         stop("Invalid PointProcess pointer");
     }
+    require_praat_class(pp.get(), classPointProcess, "Not a PointProcess", "get_point_process_mean_period_direct", "pp_xptr");
     
     if (from_time == 0 && to_time == 0) {
         from_time = pp->xmin;
@@ -751,6 +776,7 @@ double get_point_process_stdev_period_direct(SEXP pp_xptr,
     if (!pp || pp.get() == nullptr) {
         stop("Invalid PointProcess pointer");
     }
+    require_praat_class(pp.get(), classPointProcess, "Not a PointProcess", "get_point_process_stdev_period_direct", "pp_xptr");
     
     if (from_time == 0 && to_time == 0) {
         from_time = pp->xmin;

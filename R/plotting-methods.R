@@ -59,11 +59,6 @@ plot.Sound <- function(x, from_time = NULL, to_time = NULL,
                       garnish = TRUE, title = "Sound", 
                       color = "steelblue", ...) {
   
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
-  }
-# nocov end
   
   if (!inherits(x, "Sound")) {
     stop("x must be a Sound object")
@@ -133,10 +128,6 @@ plot.Pitch <- function(x, from_time = NULL, to_time = NULL,
                       garnish = TRUE, title = "Pitch",
                       color = "darkgreen", show_voicing = TRUE, ...) {
   
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
-  }
-  
   if (!inherits(x, "Pitch")) {
     stop("x must be a Pitch object")
   }
@@ -185,6 +176,9 @@ plot.Pitch <- function(x, from_time = NULL, to_time = NULL,
 
 # Filter a long-format formant data frame to time range, formant number,
 # and defined frequencies.
+#' Keep formant rows inside the time range, with formant number <= `max_formant`
+#' and a defined frequency.
+#' @noRd
 .filter_formant_df <- function(df, from_time, to_time, max_formant) {
   if (!is.null(from_time)) df <- df[df$time >= from_time, ]
   if (!is.null(to_time)) df <- df[df$time <= to_time, ]
@@ -226,11 +220,6 @@ plot.Formant <- function(x, from_time = NULL, to_time = NULL,
                         max_formant = 3, garnish = TRUE, 
                         title = "Formant", colors = NULL, ...) {
   
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
-  }
-# nocov end
   
   if (!inherits(x, "Formant")) {
     stop("x must be a Formant object")
@@ -242,7 +231,7 @@ plot.Formant <- function(x, from_time = NULL, to_time = NULL,
 
   # Check if data frame is empty
   if (nrow(df) == 0) {
-    warning("Formant object has no data to plot")
+    warning("plot.Formant(): Formant object has no data to plot")
     return(ggplot2::ggplot() + ggplot2::theme_void() +
              ggplot2::labs(title = "No formant data available"))
   }
@@ -252,7 +241,7 @@ plot.Formant <- function(x, from_time = NULL, to_time = NULL,
 
   # Check if we have formant data
   if (nrow(df) == 0) {
-    warning("Formant object has no data to plot")
+    warning("plot.Formant(): Formant object has no data in the selected time range")
     return(ggplot2::ggplot() + ggplot2::theme_void() +
              ggplot2::labs(title = "No formant data available"))
   }
@@ -301,11 +290,6 @@ plot.Intensity <- function(x, from_time = NULL, to_time = NULL,
                           garnish = TRUE, title = "Intensity",
                           color = "darkorange", ...) {
   
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
-  }
-# nocov end
   
   if (!inherits(x, "Intensity")) {
     stop("x must be an Intensity object")
@@ -374,11 +358,6 @@ plot.Spectrogram <- function(x, from_time = NULL, to_time = NULL,
                             garnish = TRUE, title = "Spectrogram",
                             dynamic_range = 70, ...) {
   
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
-  }
-# nocov end
   
   if (!inherits(x, "Spectrogram")) {
     stop("x must be a Spectrogram object")
@@ -442,10 +421,6 @@ plot.Spectrogram <- function(x, from_time = NULL, to_time = NULL,
 plot.Spectrum <- function(x, from_freq = NULL, to_freq = NULL,
                          log_freq = FALSE, garnish = TRUE,
                          title = "Spectrum", color = "navy", ...) {
-  
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
-  }
   
   if (!inherits(x, "Spectrum")) {
     stop("x must be a Spectrum object")
@@ -522,11 +497,6 @@ plot.Ltas <- function(x, from_freq = NULL, to_freq = NULL,
                      log_freq = FALSE, garnish = TRUE,
                      title = "LTAS", color = "darkred", ...) {
   
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
-  }
-# nocov end
   
   if (!inherits(x, "Ltas")) {
     stop("x must be an Ltas object")
@@ -597,11 +567,6 @@ plot.Harmonicity <- function(x, from_time = NULL, to_time = NULL,
                             garnish = TRUE, title = "Harmonicity (HNR)",
                             color = "darkviolet", ...) {
   
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
-  }
-# nocov end
   
   if (!inherits(x, "Harmonicity")) {
     stop("x must be a Harmonicity object")
@@ -667,10 +632,6 @@ plot.PointProcess <- function(x, from_time = NULL, to_time = NULL,
                              garnish = TRUE, title = "PointProcess",
                              color = "black", ...) {
   
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
-  }
-  
   if (!inherits(x, "PointProcess")) {
     stop("x must be a PointProcess object")
   }
@@ -719,6 +680,9 @@ plot.PointProcess <- function(x, from_time = NULL, to_time = NULL,
 
 
 # Convert a Matrix to long-format plot data, filtered to the requested ranges.
+#' Long data frame (x, y, value) of a Matrix object's cell centres, cropped to the given
+#' x and y ranges.
+#' @noRd
 .matrix_plot_data <- function(x, from_x, to_x, from_y, to_y) {
   mat <- x$as_matrix()
   nx <- x$get_number_of_columns()
@@ -772,11 +736,6 @@ plot.Matrix <- function(x, from_x = NULL, to_x = NULL,
                         garnish = TRUE, title = "Matrix",
                         x_label = "X", y_label = "Y",
                         color_scale = "viridis", ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
-  }
-# nocov end
   if (!inherits(x, "Matrix")) {
     stop("x must be a Matrix object")
   }
@@ -800,6 +759,8 @@ plot.Matrix <- function(x, from_x = NULL, to_x = NULL,
 # Resolve data-frame column names used by plot.Matrix, tolerating the
 # different conventions of Matrix subclasses (time/x, frequency/y,
 # value/amplitude).
+#' Choose the x, y and fill column names of a Matrix plot data frame, with fallbacks.
+#' @noRd
 .matrix_plot_cols <- function(df) {
   nm <- names(df)
   pick <- function(candidates, fallback) {
@@ -814,6 +775,8 @@ plot.Matrix <- function(x, from_x = NULL, to_x = NULL,
 }
 
 # Map the color_scale argument to a ggplot2 fill scale.
+#' Apply the named fill scale (viridis, magma, plasma, inferno, ...) to a Matrix plot.
+#' @noRd
 .matrix_plot_scale <- function(p, color_scale) {
   switch(color_scale,
     "viridis" = p + ggplot2::scale_fill_viridis_c(),
@@ -830,6 +793,8 @@ plot.Matrix <- function(x, from_x = NULL, to_x = NULL,
 
 
 # Mark the max-power quefrency peak on a cepstrum plot.
+#' Mark the highest `power_db` point on the plot when `mark_peak`.
+#' @noRd
 .mark_df_peak <- function(p, df, mark_peak) {
   if (!mark_peak || nrow(df) == 0) return(p)
   peak_idx <- which.max(df$power_db)
@@ -882,11 +847,6 @@ plot.PowerCepstrum <- function(x, from_quefrency = NULL,
                                to_quefrency = NULL, garnish = TRUE,
                                title = "Power Cepstrum", color = "darkblue",
                                mark_peak = TRUE, ...) {
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
-  }
-# nocov end
   if (!inherits(x, "PowerCepstrum")) {
     stop("x must be a PowerCepstrum object")
   }
@@ -909,6 +869,9 @@ plot.PowerCepstrum <- function(x, from_quefrency = NULL,
 
 # Prepare PowerCepstrum plot data: convert to dB and apply quefrency range.
 # Returns NULL when the object has no data.
+#' PowerCepstrum as a data frame with a `power_db` column, cropped to the quefrency range;
+#' NULL when empty.
+#' @noRd
 .powercepstrum_plot_data <- function(x, from_quefrency, to_quefrency) {
   df <- x$as_data_frame()
   if (nrow(df) == 0) return(NULL)
@@ -924,6 +887,9 @@ plot.PowerCepstrum <- function(x, from_quefrency = NULL,
 # ============================================================================
 
 # Resolve which tier indices to plot (character names or numeric).
+#' Tier indices to plot: all when `tier` is NULL, names matched against `tier_names`
+#' (unmatched names are dropped), otherwise the numbers coerced to integer.
+#' @noRd
 .resolve_textgrid_tiers <- function(x, tier, tier_names) {
   if (is.null(tier)) return(seq_len(x$get_number_of_tiers()))
   if (is.character(tier)) {
@@ -935,6 +901,9 @@ plot.PowerCepstrum <- function(x, from_quefrency = NULL,
 }
 
 # Collect interval data across tiers into a list of data frames.
+#' Interval data frames for each requested tier, tagged with the tier name and its row
+#' position `tier_y`; tiers that cannot be read or are empty are skipped.
+#' @noRd
 .collect_tier_intervals <- function(x, tier_indices, tier_names) {
   all_data <- list()
   for (ti in tier_indices) {
@@ -974,11 +943,6 @@ plot.PowerCepstrum <- function(x, from_quefrency = NULL,
 plot.TextGrid <- function(x, tier = NULL, from_time = NULL, to_time = NULL,
   ...) {
 
-# nocov start
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("Package 'ggplot2' is required for plotting. Please install it.")
-  }
-# nocov end
 
   if (!inherits(x, "TextGrid")) {
     stop("x must be a TextGrid object")
@@ -1019,6 +983,8 @@ plot.TextGrid <- function(x, tier = NULL, from_time = NULL, to_time = NULL,
 
 
 # Build the TextGrid tier plot from long-format interval data.
+#' Plot of interval tiers as labelled rectangles, one row per tier.
+#' @noRd
 .build_textgrid_plot <- function(df, tier_indices, tier_names) {
   ggplot2::ggplot(df) +
     ggplot2::geom_rect(
@@ -1036,6 +1002,8 @@ plot.TextGrid <- function(x, tier = NULL, from_time = NULL, to_time = NULL,
 
 
 # Spectrogram long-format dB data filtered to time/freq ranges.
+#' Spectrogram long-format data with a `power_db` column, cropped to the time and frequency ranges.
+#' @noRd
 .spectrogram_plot_data <- function(x, from_time, to_time, from_freq, to_freq) {
   df <- x$as_data_frame()
   df$power_db <- 10 * log10(pmax(df$power, 1e-20))
@@ -1048,6 +1016,8 @@ plot.TextGrid <- function(x, tier = NULL, from_time = NULL, to_time = NULL,
 
 
 # Point times from a PointProcess object.
+#' Times of all points of a PointProcess as a numeric vector.
+#' @noRd
 .point_process_times <- function(x) {
   n_points <- x$get_number_of_points()
   vapply(seq_len(n_points), x$get_time_from_index, numeric(1))
@@ -1055,6 +1025,8 @@ plot.TextGrid <- function(x, tier = NULL, from_time = NULL, to_time = NULL,
 
 
 # Build a Formant track plot with color scale + optional garnish.
+#' Formant track line plot coloured by formant label; title, labels and theme only when `garnish`.
+#' @noRd
 .build_formant_plot <- function(df, colors, title, garnish) {
   p <- ggplot2::ggplot(df,
             ggplot2::aes(x = .data$time, y = .data$frequency,

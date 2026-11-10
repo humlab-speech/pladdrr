@@ -10,7 +10,7 @@ get_sampling_rate(sound)
 \item{sound}{A Sound R6 object}
 }
 \value{
-Sampling rate in Hz
+Numeric: sampling rate in Hz
 }
 \description{
 **DEPRECATED:** Use \code{sound$get_sampling_frequency()} instead.

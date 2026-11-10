@@ -14,7 +14,7 @@ get_mean_pitch(pitch, unit = "Hz", time_range = NULL)
 \item{time_range}{Optional time range c(start, end)}
 }
 \value{
-Mean pitch value
+Numeric: mean pitch in Hz
 }
 \description{
 **DEPRECATED:** Use \code{pitch$get_mean(unit)} instead.

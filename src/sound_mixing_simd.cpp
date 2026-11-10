@@ -56,7 +56,7 @@ void sound_scale_peak_simd(
             }
         }
         
-        if (current_max == 0.0) return;  // Silence, nothing to scale
+        if (current_max == 0.0) return;  // Silence, nothing to scale  // G3.0: exact - division-by-zero guard; a tolerance would change the result
         
         double scale_factor = new_peak / current_max;
         
@@ -111,7 +111,7 @@ XPtr<structSound> sound_mix_simd(
     try {
         // balance == -1.0 makes the (1 + balance) normalizer zero, producing
         // Inf/NaN throughout the mix formula below.
-        if (balance == -1.0) {
+        if (balance == -1.0) {  // G3.0: exact - boundary value typed by the caller, not a computed result
             Melder_throw(U"balance cannot be -1.0 (division by zero in (1 + balance) normalizer)");
         }
 

@@ -483,7 +483,7 @@ test_that(
 
 # Performance benchmarks
 test_that("Batch queries are faster than loops", {
-  skip_on_cran()
+  skip_if_not_extended()
   skip_if_not_installed("microbenchmark")
   
   sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
@@ -520,7 +520,7 @@ test_that("Batch queries are faster than loops", {
 })
 
 test_that("PointProcess batch operations are faster than loops", {
-  skip_on_cran()
+  skip_if_not_extended()
   skip_if_not_installed("microbenchmark")
   
   sound_path <- system.file("signalfiles/DSI/input/fh1.wav",

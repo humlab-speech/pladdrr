@@ -1,0 +1,37 @@
+.to_amplitude_db(): ComplexSpectrogram data frame missing amplitude column
+All elements must be Sound objects
+autolayer.ComplexSpectrogram(): ComplexSpectrogram data frame missing amplitude column
+autoplot.Discriminant(): patchwork not installed; returning scree plot only
+autoplot.PCA(): patchwork not installed; returning scree plot only
+BarkSpectrogram has no data
+benchmark_parallel(): parallel package required
+DTW has no path data
+Either 'patchwork' or 'gridExtra' is required for combined plots
+Either 'patchwork' or 'gridExtra' package is required for combined plots. Please install one.
+Excitation has no data
+Failed to create Formant from Sound
+FormantGrid has no data
+FormantTier has no data after filtering
+Invalid Pitch object
+LFCC has no coefficient columns
+LPC$to_formant() is not available in this build (requires CLAPACK).\nUse Sound$to_formant_burg() for formant extraction instead.
+Matrix has no data
+MelSpectrogram has no data
+MFCC has no coefficient columns
+NOTE: pladdrr was compiled as a debug build (no NDEBUG, -O0). It is several times slower than an optimised build and must not be used for benchmarking. Reinstall with: R CMD INSTALL --preclean .
+Package 'gridExtra' is required for multi-panel layout. Please install it.
+Package 'parallel' is required for parallel processing
+Package 'patchwork' recommended for better layout. Installing it is recommended.
+parallel package required. Install with: install.packages('parallel')
+PCA scores data frame has fewer than 2 columns
+pitch_module not available - package installation may be incomplete
+pladdrr: direct access to Praat's core algorithms from R.\nSee ?pladdrr for an overview, or citation("pladdrr") for citation details.
+polygon_module not available - package installation may be incomplete
+process_sounds_parallel(): parallel package required
+RcppXPtrUtils package required for apply_transform_xptr(). Install with: install.packages('RcppXPtrUtils')
+RcppXPtrUtils package required for apply_window_xptr(). Install with: install.packages('RcppXPtrUtils')
+RcppXPtrUtils package required for create_window_xptr(). Install with: install.packages('RcppXPtrUtils')
+sound$concatenate(): other_sound is not a valid Sound object
+sound$mix(): other_sound is not a valid Sound object
+TextGrid has no tiers to plot
+time_step, max_period_factor, and max_amplitude_factor are not used by Sound_to_PointProcess_periodic_cc(). Only pitch_floor and pitch_ceiling are used.

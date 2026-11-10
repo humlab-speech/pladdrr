@@ -23,7 +23,7 @@ get_mean_formant(formant, formant_number, time_range = NULL)
 \item{time_range}{Optional numeric vector c(start, end) in seconds}
 }
 \value{
-Mean formant frequency in Hz, or NA if undefined
+Numeric: mean formant frequency in Hz, or NA if undefined
 }
 \description{
 **DEPRECATED:** Use the R6 interface instead: `formant$get_mean()`

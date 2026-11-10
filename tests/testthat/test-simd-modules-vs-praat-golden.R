@@ -80,7 +80,7 @@ for (fixture in mono_fixtures) {
           tolerance = sqrt(.Machine$double.eps))
 
         hnr <- vapply(seq_len(nrow(golden)), function(i) {
-          harm$get_value_at_time(golden$time[i], interpolation = "none")
+          harm$get_value_at_time(golden$time[i], interpolation = "nearest")
         }, numeric(1))
         expect_equal(hnr, golden$hnr_db, tolerance = 1e-3)
       })

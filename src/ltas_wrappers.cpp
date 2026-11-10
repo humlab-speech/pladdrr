@@ -45,8 +45,8 @@ using namespace Rcpp;
 Rcpp::XPtr<structLtas> ltas_compute_trend_line(Rcpp::XPtr<structLtas> ltas, double fmin, double fmax) {
   if (!ltas) Rcpp::stop("Invalid Ltas pointer");
   
-  if (fmin == 0.0) fmin = ltas->xmin;
-  if (fmax == 0.0) fmax = ltas->xmax;
+  if (fmin == 0.0) fmin = ltas->xmin;  // G3.0: exact - 0 means "default / whole range" (user-typed sentinel)
+  if (fmax == 0.0) fmax = ltas->xmax;  // G3.0: exact - 0 means "default / whole range" (user-typed sentinel)
   
   autoLtas trend = Ltas_computeTrendLine(ltas.get(), fmin, fmax);
   return create_xptr_from_auto<structLtas>(trend);
@@ -56,8 +56,8 @@ Rcpp::XPtr<structLtas> ltas_compute_trend_line(Rcpp::XPtr<structLtas> ltas, doub
 Rcpp::XPtr<structLtas> ltas_subtract_trend_line(Rcpp::XPtr<structLtas> ltas, double fmin, double fmax) {
   if (!ltas) Rcpp::stop("Invalid Ltas pointer");
   
-  if (fmin == 0.0) fmin = ltas->xmin;
-  if (fmax == 0.0) fmax = ltas->xmax;
+  if (fmin == 0.0) fmin = ltas->xmin;  // G3.0: exact - 0 means "default / whole range" (user-typed sentinel)
+  if (fmax == 0.0) fmax = ltas->xmax;  // G3.0: exact - 0 means "default / whole range" (user-typed sentinel)
   
   autoLtas corrected = Ltas_subtractTrendLine(ltas.get(), fmin, fmax);
   return create_xptr_from_auto<structLtas>(corrected);
@@ -77,8 +77,8 @@ List ltas_report_spectral_trend(
     structLtas* ltas = get_ptr(xptr, "Ltas");
     
     // Default to full range if not specified
-    if (fmin == 0.0) fmin = ltas->xmin;
-    if (fmax == 0.0) fmax = ltas->xmax;
+    if (fmin == 0.0) fmin = ltas->xmin;  // G3.0: exact - 0 means "default / whole range" (user-typed sentinel)
+    if (fmax == 0.0) fmax = ltas->xmax;  // G3.0: exact - 0 means "default / whole range" (user-typed sentinel)
     
     // Map frequency_scale: "linear" or "logarithmic"
     bool logScale = (frequency_scale == "logarithmic");

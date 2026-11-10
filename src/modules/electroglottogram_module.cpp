@@ -39,7 +39,7 @@ private:
 public:
     RElectroglottogram() : ptr(R_NilValue) {}
     RElectroglottogram(XPtr<structElectroglottogram> xptr) : ptr(xptr) {
-        require_praat_class(ptr.get(), classElectroglottogram, "Not a Electroglottogram", "Electroglottogram", ".xptr");
+        require_praat_class(ptr.get(), classElectroglottogram, "Not an Electroglottogram", "Electroglottogram", ".xptr");
     }
 
     bool is_valid() { return ptr.get() != nullptr; }

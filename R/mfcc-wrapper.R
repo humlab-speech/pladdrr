@@ -155,7 +155,7 @@ NULL
 .mfcc_methods$get_info <- function(.self) .self$.cpp$get_info()
 .mfcc_methods$get_xptr <- function(.self) .self$.xptr
 .mfcc_methods$save <- function(.self, path) {
-  .self$.cpp$save(path)
+  .self$.cpp$save(.ensure_suffix(path, "MFCC"))
   invisible(.self)
 }
 
@@ -297,7 +297,7 @@ NULL
 .lfcc_methods$get_info <- function(.self) .self$.cpp$get_info()
 .lfcc_methods$get_xptr <- function(.self) .self$.xptr
 .lfcc_methods$save <- function(.self, path) {
-  .self$.cpp$save(path)
+  .self$.cpp$save(.ensure_suffix(path, "LFCC"))
   invisible(.self)
 }
 

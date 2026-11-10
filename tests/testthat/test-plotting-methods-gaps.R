@@ -43,7 +43,7 @@ test_that(
   expect_s3_class(p, "ggplot")
 
   expect_warning(p2 <- plot(formant, from_time = 100, to_time = 200),
-                  "Formant object has no data to plot")
+                  "Formant object has no data in the selected time range")
   expect_s3_class(p2, "ggplot")
 })
 

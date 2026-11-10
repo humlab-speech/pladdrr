@@ -1,3 +1,133 @@
+# pladdrr 5.2.0
+
+5.2.0 corrects pitch units and Intensity interpolation, which 5.1.0 still got wrong
+(the audit's open items F-api-01, F-api-02). Numbers that moved are listed first.
+
+## Numbers that change
+
+* Pitch units follow Praat's `kPitch_unit` enum at every door. Four R tables
+  (`Pitch$` methods, `PitchTier$`, the batch queries, `praat-direct.R`) disagreed
+  with it, so on 5.1.x `Pitch$get_value_at_time(t, unit = "semitones")` and
+  `unit = "erb"` both returned log10(Hz) (2.176 at 150 Hz), and the direct
+  getters answered `unit = "loghertz"` in semitones re 1 Hz (86.746). Now
+  `"semitones"` is semitones re 100 Hz (7.0195 at 150 Hz, Praat's default),
+  `"erb"` is the ERB value (4.2530), `"loghertz"` is log10(Hz) at every door.
+  `"hertz"` and `"mel"` were already right and do not move. New unit strings:
+  `"hertz_logarithmic"`, `"semitones_re_1hz"`, `"semitones_re_100hz"`,
+  `"semitones_re_200hz"`, `"semitones_re_440hz"`, `"st"`.
+* `PitchTier$shift_frequencies()` and `$shift_frequencies_in_range()` shift in
+  every unit Praat supports. On 5.1.x `unit = "semitones"` was a silent no-op
+  (150.0017 stayed 150.0017; Praat gives 158.9212) and `unit = "erb"` shifted in
+  logHertz, multiplying the contour by 10 (1500.017 where Praat gives 194.797).
+  A shift is relative, so every semitones reference gives the same result.
+  `unit = "hertz_logarithmic"`, which Praat cannot shift in, raises
+  `pladdrr_input_error` instead of leaving the contour unchanged; the module
+  door refuses the same codes.
+* `Intensity$get_value_at_time()` and `$get_values_at_times()` interpolate as
+  asked. The default, `interpolation = "cubic"`, returned the linear value on
+  5.1.x (87.41128870 where Praat gives 87.41129728 in the fingerprint fixture;
+  up to ~1.4e-4 dB elsewhere), because the module passed the method code to
+  `Sampled_getValueAtX`, whose last parameter is a `bool`. `"nearest"`,
+  `"sinc70"` and `"sinc700"` were also answered linearly. `Harmonicity`, `Ltas`
+  and `Sound` already used the right call.
+* An interpolation method is a name (`"nearest"`, `"linear"`, `"cubic"`,
+  `"sinc70"`, `"sinc700"`) or its code 0 to 4, and anything else raises
+  `pladdrr_input_error`. An unknown name (`"banana"`) or a code the lookup did
+  not know (`0`) used to answer as cubic, and `get_intensity_value_direct(x, t,
+  2)` selected the second name by position, which is linear. The peak
+  interpolation of `get_maximum()` and friends (`"none"`, `"parabolic"`, ...)
+  follows the same rule.
+* The deprecated `get_intensity_at_time(interpolate = FALSE)`, which is the
+  default, now returns the nearest frame. It passed `"none"`, an unknown value
+  interpolation that silently became cubic, so the argument had no effect.
+* An unknown pitch unit (`"banana"`, `"semitone"`) now raises
+  `pladdrr_input_error` at the direct getters and the batch queries. They used
+  to answer in hertz.
+
+## Error messages
+
+* The `*_direct` getters and conversions (`get_pitch_mean_direct()`,
+  `to_pitch_direct()`, ...) and `apply_window_xptr()` / `apply_transform_xptr()`
+  raise a classed `pladdrr_input_error` for a wrong-class pointer. 5.1.1 made
+  them refuse it; the condition was an untagged `Rcpp::exception` carrying the
+  tag in its message.
+* "Not a AmplitudeTier", "Not a Excitation", "Not a Intensity" and the other
+  vowel-initial class names now read "Not an ...".
+
+## Other behaviour changes
+
+* `Sound$from_values()` / `sound_from_values()` now reject non-numeric input
+  (including complex, whose imaginary part used to be dropped with a warning)
+  and any NA, NaN or Inf sample, with a `pladdrr_input_error` that says how many
+  samples were bad. Praat has no missing-value representation for samples, so
+  a non-finite sample used to flow silently through every analysis.
+* Error and warning messages that were word-for-word identical in different
+  functions now begin with the function name (`autoplot.Pitch(): Package
+  'ggplot2' is required...`), so each message identifies its origin. Code that
+  matches on the full old text needs the new prefix; matching on the
+  condition class is unaffected.
+
+* The `save()` methods of the Praat-object classes (and `Sound$save()`,
+  `LongSound$save_part()`/`save_channel()`) append the format's conventional
+  suffix when the path has no extension: `pitch$save("out/p")` writes
+  `out/p.Pitch`, `sound$save("a", format = "AIFF")` writes `a.aiff`. A path that
+  already has an extension is used as given, and `~` is expanded.
+* `Sound$from_values()` also accepts integer, `units` and `ts` vectors; a `ts`
+  supplies `sampling_rate` and `start_time` when you leave them out.
+
+* `amplitude_tier_from_point_process()`, `intensity_tier_to_amplitude_tier()`,
+  the electroglottogram extractor and the BandFilterSpectrogram accessors no
+  longer crash R when given an object whose external pointer is NULL (what
+  `readRDS()` returns for a saved object); they raise an R error.
+
+* `create_file_list()`, `pair_files()`, `pair_sound_textgrid()` and
+  `batch_process()` now check that directories and patterns are single strings
+  and flags are `TRUE`/`FALSE`, and the pitch batch and `*_direct` functions check
+  `time_step`, the pitch floor and ceiling and the candidate/filter counts, with a
+  `pladdrr_input_error` instead of a downstream failure.
+* `to_pitch_ac()`, `to_pitch_cc()`, `to_harmonicity_cc()` and `to_intensity()` on a
+  signal shorter than their analysis window now raise a `pladdrr_input_error`
+  that states the duration the window needs (3, 2, `periods_per_window` + 1 and
+  6.4 periods of the pitch floor), instead of Praat's "Failed to create ...".
+* `autoplot.Pitch()` gains `connect_gaps`; `FALSE` breaks the line at unvoiced
+  frames (default `TRUE` keeps the old behaviour).
+* The never-triggered `requireNamespace("ggplot2")` guards were removed (ggplot2
+  is in Imports). `@return` now states the class for the scalar getters and
+  data-frame helpers; `generate_noise()` and `generate_sine_wave()` return a
+  `Sound`, not a `praat_sound`.
+
+## Testing
+
+* New tests for parameter recovery, machine-precision noise susceptibility and a
+  degenerate-input matrix; random test data is now seeded.
+* Timing, large-fixture and compile-at-test-time tests moved behind
+  `PLADDRR_EXTENDED_TESTS=true` (see `.github/CONTRIBUTING.md`).
+
+# pladdrr 5.1.1
+
+5.1.1 closes input doors the 5.1.0 guards missed. No result a valid call returned
+before changes; calls that used to crash R, read the wrong object or allocate
+without bound now raise a `pladdrr_input_error`.
+
+* `Sound$to_formant()`, `$to_formant_burg()` and `$to_formant_robust()` refuse a
+  `max_formants` that is not a finite number between 1 and 1000. `max_formants =
+  -1` used to segfault R. `.check_positive_count()` (also behind `Matrix`,
+  `Excitation$to_formant` and the Willems/split-Levinson formant methods) now
+  rejects `Inf`, which 5.1.0 NEWS already claimed it did.
+* The exported `*_direct` getters (`get_pitch_mean_direct()`,
+  `get_pitch_value_direct()`, `get_formants_direct()`,
+  `get_intensity_value_direct()` and the rest of `src/praat_direct.cpp`) check the
+  class of the pointer they are given. A pointer of another class used to be
+  reinterpreted: `get_pitch_mean_direct(<TextGrid>)` aborted R and
+  `sound_get_duration_direct(<TextGrid>)` returned 3. They now stop with `Not a
+  Pitch (found TextGrid)` and the usual `pladdrr_input_error` tag.
+* `sound_create_pure_tone()` counts `channels` in its cell budget and validates
+  it, so a request that fits per channel but not in total (64 channels of 1e7
+  samples) is refused instead of allocated.
+* CI: the skip gate accepts the "no cgroup CPU quota" skip of
+  `test-affinity-thread-count.R`, so a runner without a CPU quota no longer fails
+  a green test run.
+
 # pladdrr 5.1.0
 
 5.1.0 collects the 2026-11 audit round: safety and robustness fixes (sessions

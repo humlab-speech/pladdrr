@@ -106,3 +106,6 @@ manual_.*\.cpp$
 ^paper$
 ^audit$
 ^pladdrr-audit-.*$
+
+# testthat failure snapshots
+^tests/testthat/_problems$

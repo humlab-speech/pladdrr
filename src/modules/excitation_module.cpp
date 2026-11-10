@@ -39,7 +39,7 @@ private:
 public:
     RExcitation() : ptr(R_NilValue) {}
     RExcitation(XPtr<structExcitation> xptr) : ptr(xptr) {
-        require_praat_class(ptr.get(), classExcitation, "Not a Excitation", "Excitation", ".xptr");
+        require_praat_class(ptr.get(), classExcitation, "Not an Excitation", "Excitation", ".xptr");
     }
 
     bool is_valid() { return ptr.get() != nullptr; }
