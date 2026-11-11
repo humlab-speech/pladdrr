@@ -34,7 +34,7 @@ test_that("Praat-object writers append their class suffix", {
 
 test_that("every .cpp save call in R/ goes through .ensure_suffix", {
   root <- test_path("..", "..")
-  skip_if(!dir.exists(file.path(root, "R")), "not a source checkout")
+  skip_if(length(list.files(file.path(root, "R"), "\\.R$")) == 0, "not a source checkout")
   src <- unlist(lapply(list.files(file.path(root, "R"), "\\.R$", full.names = TRUE),
                        readLines, warn = FALSE))
   calls <- grep("\\.cpp\\$save(_part|_channel)?\\(|\\.formant_save\\(", src, value = TRUE)
