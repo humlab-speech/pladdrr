@@ -1,4 +1,4 @@
-## PitchTier$shift_frequencies(shift, unit). On 5.1.x a "semitones" shift was a
+## PitchTier$shift_frequencies(shift, unit). On 5.1.0 a "semitones" shift was a
 ## silent no-op (the contour came back unchanged) and "erb" shifted by logHertz,
 ## multiplying the frequencies by 10. Expected values are Praat's conversions
 ## (melder/NUMear.cpp) applied to the same point.
@@ -32,7 +32,7 @@ test_that("PitchTier$shift_frequencies shifts in every supported unit", {
   expect_equal(v[["after"]], 10^(log10(v[["before"]]) + 0.1), tolerance = 1e-12)
   v <- shifted(1, "erb")
   expect_equal(v[["after"]], erb_to_hz(hz_to_erb(v[["before"]]) + 1), tolerance = 1e-12)
-  expect_lt(v[["after"]], 2 * v[["before"]])  # 5.1.x returned 10x
+  expect_lt(v[["after"]], 2 * v[["before"]])  # 5.1.0 returned 10x
 })
 
 test_that("shift_frequencies refuses units it cannot shift in", {

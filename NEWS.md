@@ -1,13 +1,14 @@
-# pladdrr 5.2.0
+# pladdrr 5.1.1
 
-5.2.0 corrects pitch units and Intensity interpolation, which 5.1.0 still got wrong
-(the audit's open items F-api-01, F-api-02). Numbers that moved are listed first.
+5.1.1 corrects pitch units and Intensity interpolation, which 5.1.0 still got wrong
+(the audit's open items F-api-01, F-api-02), and closes input doors the 5.1.0 guards
+missed. Numbers that moved are listed first.
 
 ## Numbers that change
 
 * Pitch units follow Praat's `kPitch_unit` enum at every door. Four R tables
   (`Pitch$` methods, `PitchTier$`, the batch queries, `praat-direct.R`) disagreed
-  with it, so on 5.1.x `Pitch$get_value_at_time(t, unit = "semitones")` and
+  with it, so on 5.1.0 `Pitch$get_value_at_time(t, unit = "semitones")` and
   `unit = "erb"` both returned log10(Hz) (2.176 at 150 Hz), and the direct
   getters answered `unit = "loghertz"` in semitones re 1 Hz (86.746). Now
   `"semitones"` is semitones re 100 Hz (7.0195 at 150 Hz, Praat's default),
@@ -16,7 +17,7 @@
   `"hertz_logarithmic"`, `"semitones_re_1hz"`, `"semitones_re_100hz"`,
   `"semitones_re_200hz"`, `"semitones_re_440hz"`, `"st"`.
 * `PitchTier$shift_frequencies()` and `$shift_frequencies_in_range()` shift in
-  every unit Praat supports. On 5.1.x `unit = "semitones"` was a silent no-op
+  every unit Praat supports. On 5.1.0 `unit = "semitones"` was a silent no-op
   (150.0017 stayed 150.0017; Praat gives 158.9212) and `unit = "erb"` shifted in
   logHertz, multiplying the contour by 10 (1500.017 where Praat gives 194.797).
   A shift is relative, so every semitones reference gives the same result.
@@ -25,7 +26,7 @@
   door refuses the same codes.
 * `Intensity$get_value_at_time()` and `$get_values_at_times()` interpolate as
   asked. The default, `interpolation = "cubic"`, returned the linear value on
-  5.1.x (87.41128870 where Praat gives 87.41129728 in the fingerprint fixture;
+  5.1.0 (87.41128870 where Praat gives 87.41129728 in the fingerprint fixture;
   up to ~1.4e-4 dB elsewhere), because the module passed the method code to
   `Sampled_getValueAtX`, whose last parameter is a `bool`. `"nearest"`,
   `"sinc70"` and `"sinc700"` were also answered linearly. `Harmonicity`, `Ltas`
@@ -48,9 +49,9 @@
 
 * The `*_direct` getters and conversions (`get_pitch_mean_direct()`,
   `to_pitch_direct()`, ...) and `apply_window_xptr()` / `apply_transform_xptr()`
-  raise a classed `pladdrr_input_error` for a wrong-class pointer. 5.1.1 made
-  them refuse it; the condition was an untagged `Rcpp::exception` carrying the
-  tag in its message.
+  raise a classed `pladdrr_input_error` for a wrong-class pointer (see
+  "Input guards" below). The condition is a classed error rather than an untagged
+  `Rcpp::exception` carrying the tag in its message.
 * "Not a AmplitudeTier", "Not a Excitation", "Not a Intensity" and the other
   vowel-initial class names now read "Not an ...".
 
@@ -96,18 +97,11 @@
   data-frame helpers; `generate_noise()` and `generate_sine_wave()` return a
   `Sound`, not a `praat_sound`.
 
-## Testing
+## Input guards
 
-* New tests for parameter recovery, machine-precision noise susceptibility and a
-  degenerate-input matrix; random test data is now seeded.
-* Timing, large-fixture and compile-at-test-time tests moved behind
-  `PLADDRR_EXTENDED_TESTS=true` (see `.github/CONTRIBUTING.md`).
-
-# pladdrr 5.1.1
-
-5.1.1 closes input doors the 5.1.0 guards missed. No result a valid call returned
-before changes; calls that used to crash R, read the wrong object or allocate
-without bound now raise a `pladdrr_input_error`.
+No result a valid call returned before changes in this section; calls that used to
+crash R, read the wrong object or allocate without bound now raise a
+`pladdrr_input_error`.
 
 * `Sound$to_formant()`, `$to_formant_burg()` and `$to_formant_robust()` refuse a
   `max_formants` that is not a finite number between 1 and 1000. `max_formants =
@@ -127,6 +121,13 @@ without bound now raise a `pladdrr_input_error`.
 * CI: the skip gate accepts the "no cgroup CPU quota" skip of
   `test-affinity-thread-count.R`, so a runner without a CPU quota no longer fails
   a green test run.
+
+## Testing
+
+* New tests for parameter recovery, machine-precision noise susceptibility and a
+  degenerate-input matrix; random test data is now seeded.
+* Timing, large-fixture and compile-at-test-time tests moved behind
+  `PLADDRR_EXTENDED_TESTS=true` (see `.github/CONTRIBUTING.md`).
 
 # pladdrr 5.1.0
 

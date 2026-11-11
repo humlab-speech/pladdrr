@@ -52,7 +52,7 @@ fmt("pitch.voiced", p$count_voiced_frames())
 fmt("pitch.df_sum", dfsum(p))
 # Non-hertz units (kPitch_unit). A wrong code answers in another unit with no
 # error, and a row with unit = "hertz" cannot see it. Checked against Praat 6.4.47
-# on the same samples (see NEWS 5.2.0).
+# on the same samples (see NEWS 5.1.1).
 fmt("pitch.q50_semitones", p$get_quantile(0, 0, 0.5, unit = "semitones"))
 fmt("pitch.q50_erb", p$get_quantile(0, 0, 0.5, unit = "erb"))
 fmt("pitch.mean_loghertz", get_pitch_mean_direct(p$.xptr, 0, 0, "loghertz"))
@@ -75,7 +75,7 @@ fmt("intensity.maximum", it$get_maximum())
 fmt("intensity.stdev", it$get_standard_deviation())
 fmt("intensity.q25", it$get_quantile(0.25))
 fmt("intensity.mean_db", it$get_mean(0, 0, averaging_method = "db"))
-# Cubic, not linear: Praat gives 87.41129728213643; 5.1.x returned the linear value.
+# Cubic, not linear: Praat gives 87.41129728213643; 5.1.0 returned the linear value.
 fmt("intensity.value_cubic", it$get_value_at_time(0.4035, interpolation = "cubic"))
 
 # Ltas: the averaging unit, the dB code and the non-interpolating window are

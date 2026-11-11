@@ -2,7 +2,7 @@
 ## (src/praat.github.io/fon/Pitch_enums.h):
 ##   0 HERTZ, 1 HERTZ_LOGARITHMIC, 2 MEL, 3 LOG_HERTZ,
 ##   4-7 SEMITONES re 1/100/200/440 Hz, 8 ERB.
-## Before 5.2.0 four R tables disagreed with it, so unit = "semitones" and "erb"
+## Before 5.1.1 four R tables disagreed with it, so unit = "semitones" and "erb"
 ## returned log10(Hz) and unit = "banana" answered in hertz at the direct doors.
 ## The expected numbers below are Praat's own conversion formulas, applied to the
 ## hertz value the same object returns.
