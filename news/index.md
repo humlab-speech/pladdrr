@@ -7,6 +7,38 @@ still got wrong (the audit’s open items F-api-01, F-api-02), and closes
 input doors the 5.1.0 guards missed. Numbers that moved are listed
 first.
 
+### Class change
+
+- A `Matrix` object is now `c("PraatMatrix", "Matrix", "PraatObject")`
+  (was `c("Matrix", "PraatObject")`). pladdrr no longer registers
+  `as.matrix.Matrix`, which the ‘Matrix’ package owns; `R CMD check`
+  flagged the overwrite and the package loaded last won.
+  `inherits(m, "Matrix")` and `as.matrix(m)` behave as before; code that
+  reads `class(m)[1]` now sees `"PraatMatrix"`. Call
+  [`pladdrr::Matrix()`](https://humlab-speech.github.io/pladdrr/reference/Matrix.md)
+  when ‘Matrix’ is attached, since
+  [`library(Matrix)`](https://codeberg.org/jaganmn/Matrix) after
+  [`library(pladdrr)`](https://github.com/humlab-speech/pladdrr) masks
+  the constructor.
+
+### Build and vendored-source fixes
+
+- The ‘Praat’ sources no longer trigger GCC 14 install warnings
+  (`-Wtemplate-id-cdtor`, `-Wclass-memaccess`, `-Wuninitialized`,
+  `-Warray-bounds`). Two were real: GSVD handed LAPACK a one-element
+  `iwork` where it writes N, and `Label_to_TextGrid` dereferenced a
+  moved-from pointer.
+- [`discriminant_from_matrix()`](https://humlab-speech.github.io/pladdrr/reference/discriminant_from_matrix.md)
+  now accepts multiple predictor columns. The GSVD stack corruption
+  above made `ncol > 1` fail; a multi-column regression test covers
+  construction, eigenvalues and group centroids.
+- `FormantGrid$as_data_frame()`/[`as.data.frame()`](https://rdrr.io/r/base/as.data.frame.html)
+  now put the time grid in `time` and the 1-based formant index in
+  `formant_number`; the two columns were swapped.
+  [`autoplot()`](https://ggplot2.tidyverse.org/reference/autoplot.html)
+  time filtering on a FormantGrid follows.
+- `DESCRIPTION` quotes software names and sets `Language: en-US`.
+
 ### Numbers that change
 
 - Pitch units follow Praat’s `kPitch_unit` enum at every door. Four R
