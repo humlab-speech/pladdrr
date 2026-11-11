@@ -72,7 +72,7 @@ static inline int dgeev_(const char* jobvl, const char* jobvr, integer* n, doubl
                         double* wr, double* wi, double* vl, integer* ldvl,
                         double* vr, integer* ldvr, double* work, integer* lwork, integer* info) {
     int n_int = (int)*n, lda_int = (int)*lda, ldvl_int = (int)*ldvl;
-    int ldvr_int = (int)*ldvr, lwork_int = (int)*lwork, info_int = (int)*info;
+    int ldvr_int = (int)*ldvr, lwork_int = (int)*lwork, info_int = 0;
     int result = dgeev_wrap_int(jobvl, jobvr, &n_int, a, &lda_int, wr, wi, vl, &ldvl_int,
                                 vr, &ldvr_int, work, &lwork_int, &info_int);
     *info = (integer)info_int;
@@ -83,7 +83,7 @@ static inline int dgesvd_(const char* jobu, const char* jobvt, integer* m, integ
                          integer* lda, double* s, double* u, integer* ldu,
                          double* vt, integer* ldvt, double* work, integer* lwork, integer* info) {
     int m_int = (int)*m, n_int = (int)*n, lda_int = (int)*lda;
-    int ldu_int = (int)*ldu, ldvt_int = (int)*ldvt, lwork_int = (int)*lwork, info_int = (int)*info;
+    int ldu_int = (int)*ldu, ldvt_int = (int)*ldvt, lwork_int = (int)*lwork, info_int = 0;
     int result = dgesvd_wrap_int(jobu, jobvt, &m_int, &n_int, a, &lda_int, s, u, &ldu_int,
                                  vt, &ldvt_int, work, &lwork_int, &info_int);
     *info = (integer)info_int;
@@ -96,15 +96,15 @@ static inline int dggsvd_(const char* jobu, const char* jobv, const char* jobq, 
                          double* v, integer* ldv, double* q, integer* ldq,
                          double* work, integer* iwork, integer* info) {
     int m_int = (int)*m, n_int = (int)*n, p_int = (int)*p;
-    int k_int = (int)*k, l_int = (int)*l, lda_int = (int)*lda, ldb_int = (int)*ldb;
-    int ldu_int = (int)*ldu, ldv_int = (int)*ldv, ldq_int = (int)*ldq, info_int = (int)*info;
-    int iwork_int;
+    int k_int = 0, l_int = 0, lda_int = (int)*lda, ldb_int = (int)*ldb;
+    int ldu_int = (int)*ldu, ldv_int = (int)*ldv, ldq_int = (int)*ldq, info_int = 0;
+    int iwork_int [n_int > 0 ? n_int : 1];   // LAPACK writes N entries (was a single int: stack overflow)
     int result = dggsvd_wrap_int(jobu, jobv, jobq, &m_int, &n_int, &p_int, &k_int, &l_int,
                                  a, &lda_int, b, &ldb_int, alpha, beta, u, &ldu_int,
-                                 v, &ldv_int, q, &ldq_int, work, &iwork_int, &info_int);
+                                 v, &ldv_int, q, &ldq_int, work, iwork_int, &info_int);
     *k = (integer)k_int;
     *l = (integer)l_int;
-    *iwork = (integer)iwork_int;
+    for (int i = 0; i < n_int; ++i) iwork [i] = (integer)iwork_int [i];
     *info = (integer)info_int;
     return result;
 }
@@ -113,7 +113,7 @@ static inline int dhseqr_(const char* job, const char* compz, integer* n, intege
                          double* h, integer* ldh, double* wr, double* wi,
                          double* z, integer* ldz, double* work, integer* lwork, integer* info) {
     int n_int = (int)*n, ilo_int = (int)*ilo, ihi_int = (int)*ihi;
-    int ldh_int = (int)*ldh, ldz_int = (int)*ldz, lwork_int = (int)*lwork, info_int = (int)*info;
+    int ldh_int = (int)*ldh, ldz_int = (int)*ldz, lwork_int = (int)*lwork, info_int = 0;
     int result = dhseqr_wrap_int(job, compz, &n_int, &ilo_int, &ihi_int,
                                  h, &ldh_int, wr, wi, z, &ldz_int, work, &lwork_int, &info_int);
     *info = (integer)info_int;
@@ -122,14 +122,14 @@ static inline int dhseqr_(const char* job, const char* compz, integer* n, intege
 
 static inline int dsyev_(const char* jobz, const char* uplo, integer* n, double* a, integer* lda,
                         double* w, double* work, integer* lwork, integer* info) {
-    int n_int = (int)*n, lda_int = (int)*lda, lwork_int = (int)*lwork, info_int = (int)*info;
+    int n_int = (int)*n, lda_int = (int)*lda, lwork_int = (int)*lwork, info_int = 0;
     int result = dsyev_wrap_int(jobz, uplo, &n_int, a, &lda_int, w, work, &lwork_int, &info_int);
     *info = (integer)info_int;
     return result;
 }
 
 static inline int dtrtri_(const char* uplo, const char* diag, integer* n, double* a, integer* lda, integer* info) {
-    int n_int = (int)*n, lda_int = (int)*lda, info_int = (int)*info;
+    int n_int = (int)*n, lda_int = (int)*lda, info_int = 0;
     int result = dtrtri_wrap_int(uplo, diag, &n_int, a, &lda_int, &info_int);
     *info = (integer)info_int;
     return result;
@@ -139,7 +139,7 @@ static inline int dtrti2_(const char* uplo, const char* diag, integer* n,
                           double* a, integer* lda, integer* info) {
     int n_int = (int)*n;
     int lda_int = (int)*lda;
-    int info_int = (int)*info;
+    int info_int = 0;
     int result = dtrti2_wrap_int(uplo, diag, &n_int, a, &lda_int, &info_int);
     *info = (integer)info_int;
     return result;
@@ -150,7 +150,7 @@ static inline int dsytrf_(const char* uplo, integer* n, double* a, integer* lda,
     int n_int = (int)*n;
     int lda_int = (int)*lda;
     int lwork_int = (int)*lwork;
-    int info_int = (int)*info;
+    int info_int = 0;
     int ipiv_int[*n];
     for (int i = 0; i < *n; ++i) ipiv_int[i] = (int)ipiv[i];
     
@@ -163,7 +163,7 @@ static inline int dsytrf_(const char* uplo, integer* n, double* a, integer* lda,
 
 static inline int dsytri_(const char* uplo, integer* n, double* a, integer* lda, integer* ipiv,
                           double* work, integer* info) {
-    int n_int = (int)*n, lda_int = (int)*lda, info_int = (int)*info;
+    int n_int = (int)*n, lda_int = (int)*lda, info_int = 0;
     int ipiv_int[*n];
     for (int i = 0; i < *n; ++i) ipiv_int[i] = (int)ipiv[i];
     
@@ -176,7 +176,7 @@ static inline int dsytri_(const char* uplo, integer* n, double* a, integer* lda,
 static inline int dpotf2_(const char* uplo, integer* n, double* a, integer* lda, integer* info) {
     int n_int = (int)*n;
     int lda_int = (int)*lda;
-    int info_int = (int)*info;
+    int info_int = 0;
     int result = dpotf2_wrap_int(uplo, &n_int, a, &lda_int, &info_int);
     *info = (integer)info_int;
     return result;

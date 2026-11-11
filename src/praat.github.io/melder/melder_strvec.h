@@ -78,8 +78,8 @@ class _autostringvectorview {
 public:
 	_autostring <T> *elements = nullptr;
 	integer size = 0;
-	_autostringvectorview<T> () = default;
-	_autostringvectorview<T> (_autostring <T> * givenElements, integer givenSize): elements (givenElements), size (givenSize) { }
+	_autostringvectorview () = default;
+	_autostringvectorview (_autostring <T> * givenElements, integer givenSize): elements (givenElements), size (givenSize) { }
 	_autostring <T> & operator[] (integer i) const {
 		return our elements [i - 1];
 	}
@@ -128,7 +128,7 @@ public:
 		our size = 0;
 		our _capacity = 0;
 	}
-	~ _autostringautovector<T> () {
+	~ _autostringautovector () {
 		our reset ();
 	}
 	_stringvector<T> get () const {
