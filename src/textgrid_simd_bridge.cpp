@@ -44,7 +44,6 @@ namespace textgrid_simd {
 extern "C" {
     void set_textgrid_simd_enabled(bool enabled);
     bool should_use_simd_for_textgrid();
-    void calculate_durations_simd(const double* start, const double* end, double* dur, integer n);
     void calculate_durations_simd_0based(const double* start, const double* end, double* dur, size_t n);
     double sum_durations_simd(const double* durations, size_t n);
     void duration_statistics_simd(const double* durations, size_t n, double* mean, double* stdev);
