@@ -46,7 +46,6 @@ public:
     double get_frequency_range() { VALIDATE_PTR(ptr, Ltas); return ptr->xmax - ptr->xmin; }
     int get_n_bins() { VALIDATE_PTR(ptr, Ltas); return static_cast<int>(ptr->nx); }
     double get_df() { VALIDATE_PTR(ptr, Ltas); return ptr->dx; }
-    double get_f1() { VALIDATE_PTR(ptr, Ltas); return ptr->x1; }
 
     // Aliases
     int get_number_of_bins() { return get_n_bins(); }
@@ -258,30 +257,6 @@ public:
     }
 
     // Transform
-    XPtr<structLtas> compute_trend_line_ptr(double fmin, double fmax) {
-        VALIDATE_PTR(ptr, Ltas);
-        try {
-            autoLtas result = Ltas_computeTrendLine(ptr.get(), fmin, fmax);
-            Ltas raw = result.releaseToAmbiguousOwner();
-            return make_praat_xptr(raw);
-        } catch (MelderError) {
-            Melder_clearError();
-            Rcpp::stop("Failed to compute trend line");
-        }
-    }
-
-    XPtr<structLtas> subtract_trend_line_ptr(double fmin, double fmax) {
-        VALIDATE_PTR(ptr, Ltas);
-        try {
-            autoLtas result = Ltas_subtractTrendLine(ptr.get(), fmin, fmax);
-            Ltas raw = result.releaseToAmbiguousOwner();
-            return make_praat_xptr(raw);
-        } catch (MelderError) {
-            Melder_clearError();
-            Rcpp::stop("Failed to subtract trend line");
-        }
-    }
-
     XPtr<structMatrix> to_matrix_ptr() {
         VALIDATE_PTR(ptr, Ltas);
         try {
@@ -345,7 +320,6 @@ RCPP_MODULE(ltas_module) {
         .method("get_frequency_range", &RLtas::get_frequency_range)
         .method("get_n_bins", &RLtas::get_n_bins)
         .method("get_df", &RLtas::get_df)
-        .method("get_f1", &RLtas::get_f1)
         .method("get_number_of_bins", &RLtas::get_number_of_bins)
         .method("get_bandwidth", &RLtas::get_bandwidth)
         .method("get_frequency_from_bin", &RLtas::get_frequency_from_bin)
@@ -365,8 +339,6 @@ RCPP_MODULE(ltas_module) {
         .method("get_minima_batch", &RLtas::get_minima_batch)
         .method("get_values_at_frequencies", &RLtas::get_values_at_frequencies)
         .method("get_means_batch", &RLtas::get_means_batch)
-        .method("compute_trend_line_ptr", &RLtas::compute_trend_line_ptr)
-        .method("subtract_trend_line_ptr", &RLtas::subtract_trend_line_ptr)
         .method("to_matrix_ptr", &RLtas::to_matrix_ptr)
         .method("as_data_frame", &RLtas::as_data_frame)
         .method("as_matrix", &RLtas::as_matrix)

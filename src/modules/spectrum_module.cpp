@@ -61,64 +61,13 @@ public:
     }
 
     // Query methods
-    double get_real_value_at_bin(int bin) {
-        VALIDATE_PTR(ptr, Spectrum);
-        if (bin < 1 || bin > ptr->nx) Rcpp::stop("Bin out of range");
-        return ptr->z[1][bin];
-    }
-    double get_imaginary_value_at_bin(int bin) {
-        VALIDATE_PTR(ptr, Spectrum);
-        if (bin < 1 || bin > ptr->nx) Rcpp::stop("Bin out of range");
-        return ptr->z[2][bin];
-    }
-
-    double get_power_at_bin(int bin) {
-        VALIDATE_PTR(ptr, Spectrum);
-        if (bin < 1 || bin > ptr->nx) Rcpp::stop("Bin out of range");
-        double re = ptr->z[1][bin];
-        double im = ptr->z[2][bin];
-        return re*re + im*im;
-    }
-
-    double get_band_energy(double fmin, double fmax) {
-        VALIDATE_PTR(ptr, Spectrum);
-        return Spectrum_getBandEnergy(ptr.get(), fmin, fmax);
-    }
-
-    double get_band_density(double fmin, double fmax) {
-        VALIDATE_PTR(ptr, Spectrum);
-        return Spectrum_getBandDensity(ptr.get(), fmin, fmax);
-    }
-
-    double get_band_energy_difference(double flow1, double fhigh1, double flow2, double fhigh2) {
-        VALIDATE_PTR(ptr, Spectrum);
-        return Spectrum_getBandEnergyDifference(ptr.get(), flow1, fhigh1, flow2, fhigh2);
-    }
-
-    double get_centre_of_gravity(double power) {
-        VALIDATE_PTR(ptr, Spectrum);
-        return Spectrum_getCentreOfGravity(ptr.get(), power);
-    }
-
     double get_standard_deviation(double power) {
         VALIDATE_PTR(ptr, Spectrum);
         return Spectrum_getStandardDeviation(ptr.get(), power);
     }
 
-    double get_skewness(double power) {
-        VALIDATE_PTR(ptr, Spectrum);
-        return Spectrum_getSkewness(ptr.get(), power);
-    }
 
-    double get_kurtosis(double power) {
-        VALIDATE_PTR(ptr, Spectrum);
-        return Spectrum_getKurtosis(ptr.get(), power);
-    }
 
-    double get_central_moment(double moment, double power) {
-        VALIDATE_PTR(ptr, Spectrum);
-        return Spectrum_getCentralMoment(ptr.get(), moment, power);
-    }
 
     // =========================================================================
     // Batch/Vectorized Operations (Phase 6: Pharyngeal - 150x speedup)
@@ -345,17 +294,7 @@ RCPP_MODULE(spectrum_module) {
         .method("get_f1", &RSpectrum::get_f1)
         .method("get_frequency_from_bin", &RSpectrum::get_frequency_from_bin)
         .method("get_bin_from_frequency", &RSpectrum::get_bin_from_frequency)
-        .method("get_real_value_at_bin", &RSpectrum::get_real_value_at_bin)
-        .method("get_imaginary_value_at_bin", &RSpectrum::get_imaginary_value_at_bin)
-        .method("get_power_at_bin", &RSpectrum::get_power_at_bin)
-        .method("get_band_energy", &RSpectrum::get_band_energy)
-        .method("get_band_density", &RSpectrum::get_band_density)
-        .method("get_band_energy_difference", &RSpectrum::get_band_energy_difference)
-        .method("get_centre_of_gravity", &RSpectrum::get_centre_of_gravity)
         .method("get_standard_deviation", &RSpectrum::get_standard_deviation)
-        .method("get_skewness", &RSpectrum::get_skewness)
-        .method("get_kurtosis", &RSpectrum::get_kurtosis)
-        .method("get_central_moment", &RSpectrum::get_central_moment)
 
         // Batch/Vectorized operations (150x speedup for Pharyngeal analysis)
         .method("get_frequencies_vector", &RSpectrum::get_frequencies_vector, "Get all frequencies as vector")
