@@ -448,7 +448,7 @@ mean_f0 <- pitch$get_mean()  # NA values excluded
 ``` r
 # Package version
 packageVersion("pladdrr")
-#> [1] '5.2.0'
+#> [1] '5.1.1'
 
 # Citation information
 citation("pladdrr")
@@ -456,7 +456,7 @@ citation("pladdrr")
 #> 
 #>   Nylén, Fredrik, Skotare, Tomas & von Boer, Johan (2026). pladdrr:
 #>   Direct Access to the Core Algorithms of Praat. R package version
-#>   5.2.0. https://doi.org/10.5281/zenodo.21884217
+#>   5.1.1. https://doi.org/10.5281/zenodo.21884217
 #> 
 #>   Boersma, Paul & Weenink, David (2024). Praat: doing phonetics by
 #>   computer [Computer program]. Version 6.4.47, retrieved from

@@ -125,11 +125,11 @@ simd_time <- microbenchmark(sound$to_pitch(), times = 50)
 print(scalar_time)
 #> Unit: milliseconds
 #>              expr      min       lq     mean   median       uq      max neval
-#>  sound$to_pitch() 3.741458 3.970686 6.857362 4.039525 4.107403 144.8784    50
+#>  sound$to_pitch() 2.465286 2.528049 4.461683 2.563473 2.595341 97.23861    50
 print(simd_time)
 #> Unit: milliseconds
 #>              expr      min       lq     mean   median       uq      max neval
-#>  sound$to_pitch() 3.649927 3.868329 3.989672 4.036738 4.064977 4.332033    50
+#>  sound$to_pitch() 2.484885 2.537063 2.580401 2.567198 2.593738 3.157639    50
 ```
 
 Gains vary by routine, CPU, compiler, and vector length — there is no
@@ -699,7 +699,7 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] RcppXPtrUtils_0.1.3  microbenchmark_1.5.0 pladdrr_5.2.0       
+#> [1] RcppXPtrUtils_0.1.3  microbenchmark_1.5.0 pladdrr_5.1.1       
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] gtable_0.3.6        jsonlite_2.0.0      dplyr_1.2.1        

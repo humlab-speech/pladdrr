@@ -494,7 +494,7 @@ use:
 
 > Nylén, Fredrik, Skotare, Tomas & von Boer, Johan (2026). *pladdrr:
 > Direct Access to the Core Algorithms of Praat*. R package version
-> 5.2.0. <https://doi.org/10.5281/zenodo.21884217>
+> 5.1.1. <https://doi.org/10.5281/zenodo.21884217>
 
 Please also cite Praat itself:
 

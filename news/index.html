@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">pladdrr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -67,26 +67,26 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="5.2.0" id="pladdrr-520">pladdrr 5.2.0<a class="anchor" aria-label="anchor" href="#pladdrr-520"></a></h2>
-<p>5.2.0 corrects pitch units and Intensity interpolation, which 5.1.0 still got wrong (the audit’s open items F-api-01, F-api-02). Numbers that moved are listed first.</p>
+<h2 class="pkg-version" data-toc-text="5.1.1" id="pladdrr-511">pladdrr 5.1.1<a class="anchor" aria-label="anchor" href="#pladdrr-511"></a></h2>
+<p>5.1.1 corrects pitch units and Intensity interpolation, which 5.1.0 still got wrong (the audit’s open items F-api-01, F-api-02), and closes input doors the 5.1.0 guards missed. Numbers that moved are listed first.</p>
 <div class="section level3">
-<h3 id="numbers-that-change-5-2-0">Numbers that change<a class="anchor" aria-label="anchor" href="#numbers-that-change-5-2-0"></a></h3>
-<ul><li>Pitch units follow Praat’s <code>kPitch_unit</code> enum at every door. Four R tables (<code>Pitch$</code> methods, <code>PitchTier$</code>, the batch queries, <code>praat-direct.R</code>) disagreed with it, so on 5.1.x <code>Pitch$get_value_at_time(t, unit = "semitones")</code> and <code>unit = "erb"</code> both returned log10(Hz) (2.176 at 150 Hz), and the direct getters answered <code>unit = "loghertz"</code> in semitones re 1 Hz (86.746). Now <code>"semitones"</code> is semitones re 100 Hz (7.0195 at 150 Hz, Praat’s default), <code>"erb"</code> is the ERB value (4.2530), <code>"loghertz"</code> is log10(Hz) at every door. <code>"hertz"</code> and <code>"mel"</code> were already right and do not move. New unit strings: <code>"hertz_logarithmic"</code>, <code>"semitones_re_1hz"</code>, <code>"semitones_re_100hz"</code>, <code>"semitones_re_200hz"</code>, <code>"semitones_re_440hz"</code>, <code>"st"</code>.</li>
+<h3 id="numbers-that-change-5-1-1">Numbers that change<a class="anchor" aria-label="anchor" href="#numbers-that-change-5-1-1"></a></h3>
+<ul><li>Pitch units follow Praat’s <code>kPitch_unit</code> enum at every door. Four R tables (<code>Pitch$</code> methods, <code>PitchTier$</code>, the batch queries, <code>praat-direct.R</code>) disagreed with it, so on 5.1.0 <code>Pitch$get_value_at_time(t, unit = "semitones")</code> and <code>unit = "erb"</code> both returned log10(Hz) (2.176 at 150 Hz), and the direct getters answered <code>unit = "loghertz"</code> in semitones re 1 Hz (86.746). Now <code>"semitones"</code> is semitones re 100 Hz (7.0195 at 150 Hz, Praat’s default), <code>"erb"</code> is the ERB value (4.2530), <code>"loghertz"</code> is log10(Hz) at every door. <code>"hertz"</code> and <code>"mel"</code> were already right and do not move. New unit strings: <code>"hertz_logarithmic"</code>, <code>"semitones_re_1hz"</code>, <code>"semitones_re_100hz"</code>, <code>"semitones_re_200hz"</code>, <code>"semitones_re_440hz"</code>, <code>"st"</code>.</li>
 <li>
-<code>PitchTier$shift_frequencies()</code> and <code>$shift_frequencies_in_range()</code> shift in every unit Praat supports. On 5.1.x <code>unit = "semitones"</code> was a silent no-op (150.0017 stayed 150.0017; Praat gives 158.9212) and <code>unit = "erb"</code> shifted in logHertz, multiplying the contour by 10 (1500.017 where Praat gives 194.797). A shift is relative, so every semitones reference gives the same result. <code>unit = "hertz_logarithmic"</code>, which Praat cannot shift in, raises <code>pladdrr_input_error</code> instead of leaving the contour unchanged; the module door refuses the same codes.</li>
+<code>PitchTier$shift_frequencies()</code> and <code>$shift_frequencies_in_range()</code> shift in every unit Praat supports. On 5.1.0 <code>unit = "semitones"</code> was a silent no-op (150.0017 stayed 150.0017; Praat gives 158.9212) and <code>unit = "erb"</code> shifted in logHertz, multiplying the contour by 10 (1500.017 where Praat gives 194.797). A shift is relative, so every semitones reference gives the same result. <code>unit = "hertz_logarithmic"</code>, which Praat cannot shift in, raises <code>pladdrr_input_error</code> instead of leaving the contour unchanged; the module door refuses the same codes.</li>
 <li>
-<code>Intensity$get_value_at_time()</code> and <code>$get_values_at_times()</code> interpolate as asked. The default, <code>interpolation = "cubic"</code>, returned the linear value on 5.1.x (87.41128870 where Praat gives 87.41129728 in the fingerprint fixture; up to ~1.4e-4 dB elsewhere), because the module passed the method code to <code>Sampled_getValueAtX</code>, whose last parameter is a <code>bool</code>. <code>"nearest"</code>, <code>"sinc70"</code> and <code>"sinc700"</code> were also answered linearly. <code>Harmonicity</code>, <code>Ltas</code> and <code>Sound</code> already used the right call.</li>
+<code>Intensity$get_value_at_time()</code> and <code>$get_values_at_times()</code> interpolate as asked. The default, <code>interpolation = "cubic"</code>, returned the linear value on 5.1.0 (87.41128870 where Praat gives 87.41129728 in the fingerprint fixture; up to ~1.4e-4 dB elsewhere), because the module passed the method code to <code>Sampled_getValueAtX</code>, whose last parameter is a <code>bool</code>. <code>"nearest"</code>, <code>"sinc70"</code> and <code>"sinc700"</code> were also answered linearly. <code>Harmonicity</code>, <code>Ltas</code> and <code>Sound</code> already used the right call.</li>
 <li>An interpolation method is a name (<code>"nearest"</code>, <code>"linear"</code>, <code>"cubic"</code>, <code>"sinc70"</code>, <code>"sinc700"</code>) or its code 0 to 4, and anything else raises <code>pladdrr_input_error</code>. An unknown name (<code>"banana"</code>) or a code the lookup did not know (<code>0</code>) used to answer as cubic, and <code>get_intensity_value_direct(x, t, 2)</code> selected the second name by position, which is linear. The peak interpolation of <code>get_maximum()</code> and friends (<code>"none"</code>, <code>"parabolic"</code>, …) follows the same rule.</li>
 <li>The deprecated <code>get_intensity_at_time(interpolate = FALSE)</code>, which is the default, now returns the nearest frame. It passed <code>"none"</code>, an unknown value interpolation that silently became cubic, so the argument had no effect.</li>
 <li>An unknown pitch unit (<code>"banana"</code>, <code>"semitone"</code>) now raises <code>pladdrr_input_error</code> at the direct getters and the batch queries. They used to answer in hertz.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="error-messages-5-2-0">Error messages<a class="anchor" aria-label="anchor" href="#error-messages-5-2-0"></a></h3>
-<ul><li>The <code>*_direct</code> getters and conversions (<code><a href="../reference/get_pitch_mean_direct.html">get_pitch_mean_direct()</a></code>, <code><a href="../reference/to_pitch_direct.html">to_pitch_direct()</a></code>, …) and <code><a href="../reference/apply_window_xptr.html">apply_window_xptr()</a></code> / <code><a href="../reference/apply_transform_xptr.html">apply_transform_xptr()</a></code> raise a classed <code>pladdrr_input_error</code> for a wrong-class pointer. 5.1.1 made them refuse it; the condition was an untagged <code>Rcpp::exception</code> carrying the tag in its message.</li>
+<h3 id="error-messages-5-1-1">Error messages<a class="anchor" aria-label="anchor" href="#error-messages-5-1-1"></a></h3>
+<ul><li>The <code>*_direct</code> getters and conversions (<code><a href="../reference/get_pitch_mean_direct.html">get_pitch_mean_direct()</a></code>, <code><a href="../reference/to_pitch_direct.html">to_pitch_direct()</a></code>, …) and <code><a href="../reference/apply_window_xptr.html">apply_window_xptr()</a></code> / <code><a href="../reference/apply_transform_xptr.html">apply_transform_xptr()</a></code> raise a classed <code>pladdrr_input_error</code> for a wrong-class pointer (see “Input guards” below). The condition is a classed error rather than an untagged <code>Rcpp::exception</code> carrying the tag in its message.</li>
 <li>“Not a AmplitudeTier”, “Not a Excitation”, “Not a Intensity” and the other vowel-initial class names now read “Not an …”.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="other-behaviour-changes-5-2-0">Other behaviour changes<a class="anchor" aria-label="anchor" href="#other-behaviour-changes-5-2-0"></a></h3>
+<h3 id="other-behaviour-changes-5-1-1">Other behaviour changes<a class="anchor" aria-label="anchor" href="#other-behaviour-changes-5-1-1"></a></h3>
 <ul><li><p><code>Sound$from_values()</code> / <code><a href="../reference/sound_from_values.html">sound_from_values()</a></code> now reject non-numeric input (including complex, whose imaginary part used to be dropped with a warning) and any NA, NaN or Inf sample, with a <code>pladdrr_input_error</code> that says how many samples were bad. Praat has no missing-value representation for samples, so a non-finite sample used to flow silently through every analysis.</p></li>
 <li><p>Error and warning messages that were word-for-word identical in different functions now begin with the function name (<code>autoplot.Pitch(): Package 'ggplot2' is required...</code>), so each message identifies its origin. Code that matches on the full old text needs the new prefix; matching on the condition class is unaffected.</p></li>
 <li><p>The <code><a href="https://rdrr.io/r/base/save.html" class="external-link">save()</a></code> methods of the Praat-object classes (and <code>Sound$save()</code>, <code>LongSound$save_part()</code>/<code>save_channel()</code>) append the format’s conventional suffix when the path has no extension: <code>pitch$save("out/p")</code> writes <code>out/p.Pitch</code>, <code>sound$save("a", format = "AIFF")</code> writes <code>a.aiff</code>. A path that already has an extension is used as given, and <code>~</code> is expanded.</p></li>
@@ -98,14 +98,8 @@
 <li><p>The never-triggered <code><a href="https://ggplot2.tidyverse.org" class="external-link">requireNamespace("ggplot2")</a></code> guards were removed (ggplot2 is in Imports). <code>@return</code> now states the class for the scalar getters and data-frame helpers; <code><a href="../reference/generate_noise.html">generate_noise()</a></code> and <code><a href="../reference/generate_sine_wave.html">generate_sine_wave()</a></code> return a <code>Sound</code>, not a <code>praat_sound</code>.</p></li>
 </ul></div>
 <div class="section level3">
-<h3 id="testing-5-2-0">Testing<a class="anchor" aria-label="anchor" href="#testing-5-2-0"></a></h3>
-<ul><li>New tests for parameter recovery, machine-precision noise susceptibility and a degenerate-input matrix; random test data is now seeded.</li>
-<li>Timing, large-fixture and compile-at-test-time tests moved behind <code>PLADDRR_EXTENDED_TESTS=true</code> (see <code>.github/CONTRIBUTING.md</code>).</li>
-</ul></div>
-</div>
-    <div class="section level2">
-<h2 class="pkg-version" data-toc-text="5.1.1" id="pladdrr-511">pladdrr 5.1.1<a class="anchor" aria-label="anchor" href="#pladdrr-511"></a></h2>
-<p>5.1.1 closes input doors the 5.1.0 guards missed. No result a valid call returned before changes; calls that used to crash R, read the wrong object or allocate without bound now raise a <code>pladdrr_input_error</code>.</p>
+<h3 id="input-guards-5-1-1">Input guards<a class="anchor" aria-label="anchor" href="#input-guards-5-1-1"></a></h3>
+<p>No result a valid call returned before changes in this section; calls that used to crash R, read the wrong object or allocate without bound now raise a <code>pladdrr_input_error</code>.</p>
 <ul><li>
 <code>Sound$to_formant()</code>, <code>$to_formant_burg()</code> and <code>$to_formant_robust()</code> refuse a <code>max_formants</code> that is not a finite number between 1 and 1000. <code>max_formants = -1</code> used to segfault R. <code>.check_positive_count()</code> (also behind <code>Matrix</code>, <code>Excitation$to_formant</code> and the Willems/split-Levinson formant methods) now rejects <code>Inf</code>, which 5.1.0 NEWS already claimed it did.</li>
 <li>The exported <code>*_direct</code> getters (<code><a href="../reference/get_pitch_mean_direct.html">get_pitch_mean_direct()</a></code>, <code><a href="../reference/get_pitch_value_direct.html">get_pitch_value_direct()</a></code>, <code><a href="../reference/get_formants_direct.html">get_formants_direct()</a></code>, <code><a href="../reference/get_intensity_value_direct.html">get_intensity_value_direct()</a></code> and the rest of <code>src/praat_direct.cpp</code>) check the class of the pointer they are given. A pointer of another class used to be reinterpreted: <code>get_pitch_mean_direct(&lt;TextGrid&gt;)</code> aborted R and <code>sound_get_duration_direct(&lt;TextGrid&gt;)</code> returned 3. They now stop with <code>Not a Pitch (found TextGrid)</code> and the usual <code>pladdrr_input_error</code> tag.</li>
@@ -113,6 +107,12 @@
 <code><a href="../reference/sound_create_pure_tone.html">sound_create_pure_tone()</a></code> counts <code>channels</code> in its cell budget and validates it, so a request that fits per channel but not in total (64 channels of 1e7 samples) is refused instead of allocated.</li>
 <li>CI: the skip gate accepts the “no cgroup CPU quota” skip of <code>test-affinity-thread-count.R</code>, so a runner without a CPU quota no longer fails a green test run.</li>
 </ul></div>
+<div class="section level3">
+<h3 id="testing-5-1-1">Testing<a class="anchor" aria-label="anchor" href="#testing-5-1-1"></a></h3>
+<ul><li>New tests for parameter recovery, machine-precision noise susceptibility and a degenerate-input matrix; random test data is now seeded.</li>
+<li>Timing, large-fixture and compile-at-test-time tests moved behind <code>PLADDRR_EXTENDED_TESTS=true</code> (see <code>.github/CONTRIBUTING.md</code>).</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="5.1.0" id="pladdrr-510">pladdrr 5.1.0<a class="anchor" aria-label="anchor" href="#pladdrr-510"></a></h2>
 <p>5.1.0 collects the 2026-11 audit round: safety and robustness fixes (sessions that died, memory read or requested out of bounds, errors that named neither the file nor the cause), plus corrections that change numbers a user can see or make a call that used to succeed raise. Each of the latter moves toward what the Praat application returns, and each states by how much. The safety and robustness items are listed after “Behaviour changes”.</p>
