@@ -97,21 +97,24 @@ test_that(
 
 test_that(
   "FormantPath autoplot/autolayer respect from_time/to_time (non-empty result)", {
-  # FormantGrid's own as_data_frame() has a separate, more severe defect
-  # (its "time" and "formant_number" columns are swapped -- verified
-  # interactively: `time` holds small integers 1..3 and `formant_number`
-  # holds the real 0..1 s time grid) that makes any realistic from_time/
-  # to_time window filter to 0 rows and hit the .prep_formant_df crash
-  # documented above, so FormantGrid isn't exercised here with a
-  # "successfully narrows the range" expectation -- that would require
-  # picking filter bounds that coincidentally land in the mislabeled
-  # column's tiny 1..3 range, which would be a confusing, bug-dependent test.
+  # FormantGrid$as_data_frame() used to swap its time and formant_number
+  # columns (the C++ side returns time, formant, frequency, bandwidth and the
+  # R wrapper relabelled them positionally). Fixed in R/formantgrid-wrapper.R;
+  # both classes are exercised with a real time window below.
   sound <- sound_fixture()
   fp <- sound$to_formant_path()
   p2 <- ggplot2::autoplot(fp, from_time = 0.02, to_time = 0.1)
   expect_s3_class(p2, "ggplot")
   layer2 <- ggplot2::autolayer(fp, from_time = 0.02, to_time = 0.1)
   expect_type(layer2, "list")
+
+  grid <- FormantGrid(0, 1, number_of_formants = 3)
+  for (formant in 1:3) {
+    grid$add_formant_point(formant, 0.5, 500 + (formant - 1) * 1000)
+  }
+  grid_plot <- ggplot2::autoplot(grid, from_time = 0.2, to_time = 0.6)
+  expect_s3_class(grid_plot, "ggplot")
+  expect_gte(length(grid_plot$layers), 1)
 })
 
 test_that(

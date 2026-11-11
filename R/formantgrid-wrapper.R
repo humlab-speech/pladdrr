@@ -115,8 +115,14 @@ NULL
 # Export
 .formantgrid_methods$as_data_frame <- function(.self) {
   df <- .self$.cpp$as_data_frame(0.005)
-  names(df) <- c("formant_number", "time", "frequency", "bandwidth")
-  df
+  # The C++ column order is time, formant, frequency, bandwidth; expose the
+  # formant index as formant_number, matching the rest of the R API.
+  data.frame(
+    formant_number = df$formant,
+    time = df$time,
+    frequency = df$frequency,
+    bandwidth = df$bandwidth
+  )
 }
 .formantgrid_methods$save <- function(.self, path) {
   .self$.cpp$save(.ensure_suffix(path, "FormantGrid"))

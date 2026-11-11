@@ -21,3 +21,19 @@ src/uiform_stubs.cpp
 # validate_*_object for the long-removed praat_sound/praat_pitch S3 classes
 # (0 external callers). Whole-file exclusion is the only working mechanism.
 src/utils.cpp
+
+# Link-time shims for functionality that is not compiled into the library
+# build (GUI areas, audio playback, GLPK, FLAC, speech synthesis, Praat editor
+# init/manual no-ops). They satisfy the linker; R cannot exercise them, so
+# counting them measures the build configuration, not the package.
+src/area_stubs.cpp
+src/flac_stubs.cpp
+src/formant_stubs.cpp
+src/formantmodeler_drawing_stubs.cpp
+src/glpk_stubs.cpp
+src/praat_app_stubs.cpp
+src/praat_stubs.cpp
+src/sound_audio_stubs.cpp
+src/speechsynthesizer_stubs.cpp
+# Rcpp-generated header (same category as R/RcppExports.R).
+inst/include/pladdrr_RcppExports.h

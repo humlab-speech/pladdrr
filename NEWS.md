@@ -20,6 +20,12 @@ missed. Numbers that moved are listed first.
   (`-Wtemplate-id-cdtor`, `-Wclass-memaccess`, `-Wuninitialized`,
   `-Warray-bounds`). Two were real: GSVD handed LAPACK a one-element `iwork`
   where it writes N, and `Label_to_TextGrid` dereferenced a moved-from pointer.
+* `discriminant_from_matrix()` now accepts multiple predictor columns. The
+  GSVD stack corruption above made `ncol > 1` fail; a multi-column regression
+  test covers construction, eigenvalues and group centroids.
+* `FormantGrid$as_data_frame()`/`as.data.frame()` now put the time grid in
+  `time` and the 1-based formant index in `formant_number`; the two columns
+  were swapped. `autoplot()` time filtering on a FormantGrid follows.
 * `DESCRIPTION` quotes software names and sets `Language: en-US`.
 
 ## Numbers that change
