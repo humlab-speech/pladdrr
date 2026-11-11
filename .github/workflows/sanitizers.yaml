@@ -1,0 +1,63 @@
+# Manual-only sanitizer run for the memory-safety fixes that line coverage
+# cannot see: the GSVD iwork overflow and the TextGrid moved-from dereference.
+#
+# Kept out of push/PR CI because an ASan-instrumented package needs a
+# preloaded libasan and R's own runtime is not instrumented. Run it before
+# touching vendored LAPACK or move-heavy Praat code.
+on:
+  workflow_dispatch:
+
+name: sanitizers
+
+permissions:
+  contents: read
+
+jobs:
+  asan:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      NOT_CRAN: "true"
+      ASAN_OPTIONS: detect_leaks=0:halt_on_error=1:strict_string_checks=1
+      UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-r@v2.14.0
+        with:
+          use-public-rspm: true
+
+      - name: Install system dependencies
+        run: sudo apt-get install -y libgsl-dev
+
+      - uses: r-lib/actions/setup-r-dependencies@v2.14.0
+        with:
+          extra-packages: |
+            any::Rcpp
+            any::RcppXsimd
+            any::R6
+            any::rlang
+            any::data.table
+            any::ggplot2
+            any::testthat
+          needs: coverage
+
+      - name: Instrument the package Makevars
+        run: |
+          for f in src/Makevars src/Makevars.in; do
+            sed -i \
+              's|^PKG_CXXFLAGS = |PKG_CXXFLAGS = -fsanitize=address,undefined -fno-omit-frame-pointer |' \
+              "$f"
+            sed -i 's|^PKG_LIBS = |PKG_LIBS = -fsanitize=address,undefined |' "$f"
+          done
+
+      - name: Preload libasan
+        run: echo "LD_PRELOAD=$(gcc -print-file-name=libasan.so)" >> "$GITHUB_ENV"
+
+      - name: Build with ASan/UBSan
+        run: R CMD INSTALL --no-docs .
+
+      - name: GSVD and Discriminant regression under sanitizers
+        run: |
+          Rscript -e 'library(pladdrr); testthat::test_file("tests/testthat/test-discriminant-multicolumn.R", reporter = "summary")'
