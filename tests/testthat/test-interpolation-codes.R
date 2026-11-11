@@ -1,6 +1,6 @@
 ## Value interpolation (kVector_valueInterpolation: 0 nearest, 1 linear, 2 cubic,
 ## 3 sinc70, 4 sinc700).
-## 5.1.x: Intensity$get_value_at_time(t, "cubic") -- the default -- returned the
+## 5.1.0: Intensity$get_value_at_time(t, "cubic") -- the default -- returned the
 ## linear value, because the module passed the code to Sampled_getValueAtX, whose
 ## last parameter is a bool; get_intensity_value_direct() selected a numeric code
 ## by position (2 -> linear); and any unknown name ("banana", or 0) silently
