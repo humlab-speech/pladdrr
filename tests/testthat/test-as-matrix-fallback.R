@@ -92,13 +92,13 @@ test_that("as.matrix() on a class without $as_matrix() raises a typed error", {
   }
 })
 
-test_that("as.matrix.Matrix and as.matrix.Polygon keep their own methods", {
+test_that("as.matrix.PraatMatrix and as.matrix.Polygon keep their own methods", {
   matrix_object <- Matrix(numberOfRows = 3, numberOfColumns = 4)
   polygon_object <- Polygon(x = c(0, 1, 1, 0), y = c(0, 0, 1, 1))
 
   expect_identical(
-    utils::getS3method("as.matrix", "Matrix", envir = asNamespace("pladdrr")),
-    pladdrr:::as.matrix.Matrix)
+    utils::getS3method("as.matrix", "PraatMatrix", envir = asNamespace("pladdrr")),
+    pladdrr:::as.matrix.PraatMatrix)
   expect_identical(
     utils::getS3method("as.matrix", "Polygon", envir = asNamespace("pladdrr")),
     pladdrr:::as.matrix.Polygon)
@@ -109,4 +109,20 @@ test_that("as.matrix.Matrix and as.matrix.Polygon keep their own methods", {
   expect_true(is.matrix(as.matrix(polygon_object)))
   expect_false(inherits(as.matrix(matrix_object), "Matrix"))
   expect_false(inherits(as.matrix(polygon_object), "Polygon"))
+})
+
+test_that("as.matrix on a pladdrr Matrix never reaches the 'Matrix' package method", {
+  skip_if_not_installed("Matrix")
+  matrix_object <- Matrix(numberOfRows = 2, numberOfColumns = 3)
+  matrix_object$set_value(1, 2, 7)
+
+  expect_identical(class(matrix_object)[1], "PraatMatrix")
+  expect_s3_class(matrix_object, "Matrix")
+  # pladdrr must not own the S3 slot the Matrix package registers
+  expect_false("as.matrix.Matrix" %in% ls(asNamespace("pladdrr")))
+
+  loadNamespace("Matrix")
+  out <- as.matrix(matrix_object)
+  expect_true(is.matrix(out))
+  expect_equal(out[1, 2], 7)
 })
