@@ -1,6 +1,6 @@
 Package: pladdrr
 Type: Package
-Title: Direct Access to the Core Algorithms of Praat
+Title: Direct Access to the Core Algorithms of 'Praat'
 Version: 5.1.1
 Authors@R: c(
     person("Fredrik", "Nylén", , "fredrik.nylen@umu.se", role = c("aut", "cre"),
@@ -19,20 +19,21 @@ Authors@R: c(
     person("Free Software Foundation", role = "cph",
            comment = "Copyright holder of the GNU Scientific Library, linked but not bundled")
     )
-Description: Provides direct access to Praat C implemented
+Description: Provides direct access to 'Praat' C++ implemented
     functionality from R. This package allows R users to leverage
-    Praat's powerful phonetic analysis capabilities directly from R. The package exposes
-    39 Praat modules with 500+ methods for sound manipulation, robust formant
-    tracking (FormantPath, FormantModeler), speech synthesis (KlattGrid), pitch
-    analysis, intensity measurements, spectral analysis (ComplexSpectrogram),
-    cepstral coefficients (MFCC, LFCC), statistical analysis (PCA, Discriminant),
-    auditory modeling (Cochleagram, Excitation), TextGrid annotation, voice
-    quality assessment, geometric operations (Polygon), and a persistent Praat
+    the powerful phonetic analysis capabilities of 'Praat' directly from R. The package exposes
+    39 'Praat' modules with 500+ methods for sound manipulation, robust formant
+    tracking ('FormantPath', 'FormantModeler'), speech synthesis ('KlattGrid'), pitch
+    analysis, intensity measurements, spectral analysis ('ComplexSpectrogram'),
+    cepstral coefficients ('MFCC', 'LFCC'), statistical analysis (PCA, Discriminant),
+    auditory modeling ('Cochleagram', 'Excitation'), 'TextGrid' annotation, voice
+    quality assessment, geometric operations (Polygon), and a persistent 'Praat'
     script interpreter with bidirectional R-Praat object transfer.
 License: GPL-3 + file LICENSE
 URL: https://github.com/humlab-speech/pladdrr, https://humlab-speech.github.io/pladdrr/
 BugReports: https://github.com/humlab-speech/pladdrr/issues
 Encoding: UTF-8
+Language: en-US
 Depends:
     R (>= 4.0.0)
 Imports:
@@ -49,6 +50,7 @@ Imports:
     stats
 LinkingTo: Rcpp, RcppXsimd
 Suggests:
+    Matrix,
     testthat (>= 3.0.0),
     roxygen2 (>= 7.0.0),
     covr,

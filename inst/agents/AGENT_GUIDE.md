@@ -172,6 +172,8 @@ magnitudes are in `NEWS.md`.
 - **Pitch units follow `kPitch_unit` at every door.** `unit = "semitones"` is semitones re 100 Hz and `"erb"` is ERB (both used to return log10(Hz)); `"loghertz"` is log10(Hz). See "Frequency Units" for the table. Unknown units raise `pladdrr_input_error` instead of answering in hertz.
 - **`PitchTier$shift_frequencies()`** works in semitones (was a silent no-op) and ERB (was a logHertz shift, x10); `"hertz_logarithmic"` is refused.
 - **`Intensity$get_value_at_time()`** interpolates as asked: the default `"cubic"` returned the linear value. An interpolation is a name or the code 0 to 4; anything else raises (it used to become cubic). `get_intensity_at_time(interpolate = FALSE)` is nearest.
+- **`Matrix` class vector is now `c("PraatMatrix", "Matrix", "PraatObject")`.** The CRAN package 'Matrix' registers `as.matrix.Matrix`; pladdrr registering the same method made `R CMD check` warn ("Registered S3 method from a standard package overwritten") and let the later-loaded package win. The method now lives on `PraatMatrix`. Code that checks `class(m)[1]` must change; `inherits(m, "Matrix")`, `as.matrix(m)`, `print()`, `plot()` and `as.data.frame()` do not. See "Matrix and the 'Matrix' package".
+- **Vendored-Praat defects fixed (win-builder GCC 14 warnings).** `dggsvd_` (GSVD) passed LAPACK a one-int `iwork` where it needs N, so it wrote past a stack variable; `_Label_to_TextGrid` dereferenced an `intervalTier` that `.move()` had nulled. Both, and the C++20 `-Wtemplate-id-cdtor` / `-Wclass-memaccess` / `-Wuninitialized` sites, are listed in `PRAAT_MODIFICATIONS.md`. Check with `g++ -O2 -Wall`; clang stays silent on these.
 - **Input guards:** `max_formants` outside 1 to 1000 and a wrong-class pointer at the `*_direct` getters raise instead of crashing; `sound_create_pure_tone()` counts `channels` in its size budget.
 
 ## What's New in v5.1.0 (2026-11 audit round: numbers that change)
@@ -382,6 +384,7 @@ See [Full Changelog](#full-changelog-recent-changes) at end of file.
 - [Object Types](#object-types)
 - [Unit Code Reference](#unit-code-reference)
 - [Common Patterns](#common-patterns)
+- [Matrix and the 'Matrix' package](#matrix-and-the-matrix-package)
 - [**Re-implementing a Praat Procedure**](#re-implementing-a-praat-procedure) ← start here for new ports
 - [Utility Functions](#utility-functions)
 - [Method Signatures](#method-signatures)
@@ -405,13 +408,14 @@ This guide provides the **complete API reference** for pladdrr, an R package tha
 1. **Object Creation**: Use function constructors (not R6 classes): `Sound()`, `Pitch()`, etc.
 2. **Method Calls**: Use `$` syntax: `sound$to_pitch()`, `pitch$get_mean()`
 3. **Units**: Specify as strings: `"hertz"`, `"bark"`, `"db"` (converted internally to codes)
-4. **Class Names**: Use clean names for `inherits()` checks: `Formant`, `Pitch`, `Intensity` (not internal `*_constructor` names)
+4. **Class Names**: Use clean names for `inherits()` checks: `Formant`, `Pitch`, `Intensity` (not internal `*_constructor` names) (a `Matrix` object is `c("PraatMatrix", "Matrix", "PraatObject")`; see [Matrix and the 'Matrix' package](#matrix-and-the-matrix-package))
 5. **Batch Operations**: Use batch query functions when extracting multiple values
 6. **Vectorized Methods**: Use `$get_*_windows()`, `$get_*_vector()`, `$get_spectral_moments_batch()` for 14-150x speedups (Patterns 2i, 2p)
 7. **Properties**: Fast access via `.cpp$property` or backward-compatible `get_property()` methods
 8. **Pipeline Operations**: Use `two_pass_adaptive_pitch()` and `get_jitter_shimmer_batch()` for voice quality (Pattern 2k)
 9. **Tier 4 Ultra API**: Use `get_durations_batch()`, `calculate_f0_stats_ultra()`, `calculate_minimum_intensity_ultra()`, `get_voice_quality_ultra()` for DSI workflows, plus `calculate_cpps_ultra()`, `extract_voiced_segments_ultra()`, `calculate_multiband_hnr_ultra()` for simple AVQI/VQ workflows. For repeated intervals on the same sound, build once with `build_multiband_harmonicity()` and query with `multiband_hnr_stats()` (Pattern 2l)
 10. **Fidelity target**: Every re-implemented Praat procedure must achieve r > 0.95 vs Praat on ≥50 real files before shipping. Use the in-repo Praat faithfulness registry and audit benchmark runner (see [Re-implementing a Praat Procedure](#re-implementing-a-praat-procedure)).
+11. **Praat `Matrix` objects**: call `pladdrr::Matrix()` when the CRAN package 'Matrix' is attached, and read the numbers with `as.matrix(m)` or `m$as_matrix()`. Do not test `class(m)[1] == "Matrix"` (it is `"PraatMatrix"`); `inherits(m, "Matrix")` still works. See [Matrix and the 'Matrix' package](#matrix-and-the-matrix-package).
 
 ---
 
@@ -644,7 +648,7 @@ some modules like Electroglottogram/DTW/Polygon aren't broken out as separate ro
 |------|-----------------|
 | `TextGrid` | `TextGrid("file.TextGrid")` |
 | `Table` | `formant$down_to_table()` |
-| `Matrix` | `Matrix(xmin, xmax, nx, dx, ...)` |
+| `Matrix` | `Matrix(numberOfRows, numberOfColumns, ...)`; class `PraatMatrix`; call `pladdrr::Matrix()` when the 'Matrix' package is attached |
 | `LongSound` | `LongSound$open("large_file.wav")` |
 
 ### Interpreter (NEW in v2.1.0)
@@ -2924,6 +2928,29 @@ concatenated <- sound_concatenate_all(voiced_sounds)
 **AVQI threshold:** `zcr_threshold = 3000` rejects unvoiced segments (fricatives, aspiration).
 
 ---
+
+## Matrix and the 'Matrix' package
+
+Praat's `Matrix` and the CRAN package 'Matrix' share a name, and a port of a Praat script that handles
+Praat `Matrix` objects (`Matrix: Get value in cell...`, `To Matrix` results from Ltas, DTW, MFCC, LPC and
+others) has to take care of three things.
+
+| Situation | Do this | Why |
+|-----------|---------|-----|
+| Calling the constructor with 'Matrix' attached | `pladdrr::Matrix(numberOfRows = 3, numberOfColumns = 4)` | `library(Matrix)` after `library(pladdrr)` masks pladdrr's `Matrix()`; the other order masks the other way. A script that is silent about this gets 'Matrix' `Matrix()` and a wrong-argument error. |
+| Testing the type | `inherits(m, "Matrix")` or, better, `inherits(m, "PraatMatrix")` | The class vector is `c("PraatMatrix", "Matrix", "PraatObject")`. `class(m)[1]` and `identical(class(m), c("Matrix", "PraatObject"))` (the pre-5.1.1 shape) fail. |
+| Getting the numbers out | `as.matrix(m)` or `m$as_matrix()` | Both return a base R numeric matrix whether or not 'Matrix' is loaded. |
+
+Why the leading class: `as.matrix.Matrix` is registered by the 'Matrix' package. S3 dispatch takes the
+first class with a method, so `as.matrix.PraatMatrix` (R/matrix-wrapper.R) is found before 'Matrix''s and
+pladdrr registers nothing under the name `Matrix`. This is the pattern for any future wrapper whose class
+name is also an S3 or S4 class in a popular package. The symptom is `R CMD check`'s "checking use of S3
+registration" WARNING ("Registered S3 method from a standard package overwritten by 'pladdrr'"). Pladdrr's own
+`print`, `plot`, `autoplot`, `autolayer` and `as.data.frame` methods stay on `Matrix` because 'Matrix'
+registers none of them. The regression test is the last block of `tests/testthat/test-as-matrix-fallback.R`.
+
+Faithfulness is unaffected: the class vector changes dispatch, not values, and a Praat `Matrix` read back
+through the interpreter (`praat_class` attribute `"Matrix"`) is still wrapped by `Matrix(.xptr = )`.
 
 ## Re-implementing a Praat Procedure
 

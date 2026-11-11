@@ -109,3 +109,4 @@ manual_.*\.cpp$
 
 # testthat failure snapshots
 ^tests/testthat/_problems$
+^pladdrr-.*-message$
