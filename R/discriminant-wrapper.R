@@ -178,11 +178,10 @@ Discriminant <- function(.xptr = NULL) {
 #' @param labels Character vector of group labels (one per row in data)
 #' @return A Discriminant object
 #' @examples
-#' # NOTE: only a single predictor column is used here; multi-column
-#' # matrices are currently unreliable (see Discriminant class docs).
+#' # Two predictor columns: the GSVD path supports any number of predictors.
 #' set.seed(1)
-#' data <- matrix(c(rnorm(10, 500), rnorm(10, 700)), ncol = 1,
-#'                 dimnames = list(NULL, "f1"))
+#' data <- cbind(f1 = c(rnorm(10, 500), rnorm(10, 700)),
+#'               f2 = c(rnorm(10, 800), rnorm(10, 1200)))
 #' labels <- rep(c("a", "i"), each = 10)
 #' disc <- discriminant_from_matrix(data, labels)
 #' disc$get_number_of_groups()

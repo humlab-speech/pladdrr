@@ -56,6 +56,7 @@ Triple class `c("Electroglottogram", "Sound", "PraatObject")` + `.pointer` compa
 
 ### Special Cases
 
+- **Matrix:** class `c("PraatMatrix", "Matrix", "PraatObject")`. The leading `PraatMatrix` carries `as.matrix.PraatMatrix` so pladdrr never registers `as.matrix.Matrix`, which the CRAN 'Matrix' package owns (R CMD check: "Registered S3 method from a standard package overwritten"). Any new wrapper whose class name collides with another package's S3 class gets the same treatment: a pladdrr-only leading class for the colliding generics. See `AGENT_GUIDE.md` "Matrix and the 'Matrix' package".
 - **AmplitudeTier:** `.pointer` compat alias in `$` dispatch (used by factory functions)
 - **PitchTier, FormantTier, LongSound, VocalTier:** static `$.{type}_constructor` for class methods
 - **FormantPath, KlattGrid, ComplexSpectrogram:** no `.xptr` — only `.cpp` stored
@@ -270,3 +271,23 @@ with RSS before/after `dyn.load` when touching `structPraatObjects` or `_autostr
 `tools/check_callentries.sh` is wired into `configure` to self-heal the `static→extern` patch on `RcppExports.cpp`. `Rcpp::compileAttributes()` generates `static` by default, but `src/module_init.cpp` declares `extern const R_CallMethodDef CallEntries[]` to build a combined registration table. The patch converts `static` to `extern` in `RcppExports.cpp`.
 
 **Do NOT remove this patch.** The combined registration table in `module_init.cpp` merges `CallEntries` + `ModuleEntries` into one `R_registerRoutines` call. `R_registerRoutines` REPLACES previous registrations, so both must be in a single call.
+
+---
+
+## Manuscript alignment (`paper/paper.md`)
+
+The JOSS manuscript carries figures that drift. Last reconciled 2026-11-11 against version 5.1.1: the manuscript now carries
+the package-side figures below, except the concordance statistic, which this repository cannot recompute. Re-check
+before each submission.
+
+| Manuscript says | Package says | Source of truth |
+|-----------------|--------------|-----------------|
+| 38 Praat modules | 39 (`DESCRIPTION` Description; 39 files in `src/modules/`) | `ls src/modules/*.cpp \| wc -l` |
+| "version 5.0.5" (twice) | 5.1.1 | `DESCRIPTION` |
+| 1401 tests | 1556 `test_that()` blocks | count lines matching `^\s*test_that\(` in `tests/testthat/*.R` (the manuscript's counting unit is not stated; use one unit) |
+| 82% coverage | 93.7% (covr, macOS aarch64, 2026-11-11; `pkgcheck.log` is from 5.0.5 and stale) | rerun `covr` (see the covr FLIBS note in project memory) |
+| CCC 0.9959 and 1.00 | `FAITHFULNESS_REPORT.md` is the live registry: 19 routines, all pass, tolerances per row | regenerate with the registry runner |
+
+Statements in the manuscript that hold and that these documents depend on: wrapper objects are plain lists with
+an external pointer and a shared per-class method environment; the interpreter is the only R6 class; SIMD and
+threading are gated on output identical to the scalar reference; parity with Praat outranks speed.

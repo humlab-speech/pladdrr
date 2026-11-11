@@ -161,23 +161,28 @@ Notes are:
   macOS, which predates HTML5 (`<main>` unrecognized); not reproducible with a
   current Tidy.
 
-win-builder R-devel previously finished with **0 errors, 4 warnings, 1 note**:
+win-builder R-release (R 4.6.2, mingw GCC 14.3) on the previous tarball finished with
+**0 errors, 2 warnings, 2 notes**. All four findings are addressed in this release:
 
-- Install-time significant-warnings WARNING: cosmetic vendored-Praat noise
-  under mingw/gcc 14 (C++20 template-id-cdtor, class-memaccess,
-  uninitialized-var, array-bounds, return-type) — not package code, does not
-  block install or affect correctness.
-- S3-registration WARNING: `as.matrix.Matrix` intentionally overridden.
-- Makevars-flags WARNING: `-ffp-contract=off` — resolved in this release
-  (source-level pragma, see "Compiler flags" above).
-- Compiled-code WARNING: residual vendored `exit` symbol — resolved in this
-  release (see "Compiled-code diagnostics" above).
-- CRAN-incoming-feasibility NOTE: new submission + possibly-misspelled
-  DESCRIPTION words that are real domain/product terms (Cochleagram,
-  FormantModeler, KlattGrid, Praat, Rcpp, TextGrid, etc.).
+- Install-time significant-warnings WARNING (C++20 `-Wtemplate-id-cdtor`,
+  `-Wclass-memaccess`, `-Wuninitialized`, `-Warray-bounds` in vendored Praat
+  headers): fixed at source, 12 sites in 7 vendored files (details in
+  `inst/agents/PRAAT_MODIFICATIONS.md`). Two of them were real defects: a null
+  `intervalTier` dereference in `_Label_to_TextGrid`, and a one-int `iwork`
+  buffer passed to LAPACK `dggsvd`, which writes N ints. Reproduced and
+  verified silent with `g++ -O2 -Wall` on the affected translation units.
+- S3-registration WARNING (`as.matrix.Matrix` overwrote the 'Matrix' package's
+  registration): pladdrr objects of Praat class Matrix now carry the leading
+  class `PraatMatrix`, which owns the method; pladdrr registers nothing under
+  `as.matrix.Matrix`.
+- Top-level-files NOTE (`pladdrr-5.1.0-message`): stray file from the build
+  directory; the tarball is now built from a clean checkout and the pattern is
+  in `.Rbuildignore`.
+- CRAN-incoming-feasibility NOTE: new submission. Software names in
+  `DESCRIPTION` are quoted; the remaining flagged words (cepstral, formant,
+  MFCC, LFCC) are standard phonetics terms.
 
-win-builder runs for this release are pending; the two source-level fixes
-above apply on all platforms (the pragma is GCC/Clang-guarded, MSVC unaffected).
+A fresh win-builder run on the final tarball is pending.
 
 ## Accepted goodpractice lint findings (pkgcheck)
 

@@ -393,8 +393,8 @@ public:
 		a destructor would be called at some point for both pitch and pitch2,
 		twice deleting the same object, which is a run-time error.
 	*/
-	autoSomeThing<T> (const autoSomeThing<T>&) = delete;   // disable copy constructor from an l-value of class T*
-	template <class Y> autoSomeThing<T> (const autoSomeThing<Y>&) = delete;   // disable copy constructor from an l-value of a descendant class of T*
+	autoSomeThing (const autoSomeThing<T>&) = delete;   // disable copy constructor from an l-value of class T*
+	template <class Y> autoSomeThing (const autoSomeThing<Y>&) = delete;   // disable copy constructor from an l-value of a descendant class of T*
 	autoSomeThing<T>& operator= (const autoSomeThing<T>&) = delete;   // disable copy assignment from an l-value of class T*
 	template <class Y> autoSomeThing<T>& operator= (const autoSomeThing<Y>&) = delete;   // disable copy assignment from an l-value of a descendant class of T*
 	/*
@@ -403,7 +403,7 @@ public:
 			autoPitch pitch = Pitch_create (...);
 		as move constructors.
 	*/
-	autoSomeThing<T> (autoSomeThing<T>&& other) noexcept : ptr (other. ptr) {
+	autoSomeThing (autoSomeThing<T>&& other) noexcept : ptr (other. ptr) {
 		#if _Thing_auto_DEBUG
 			if (our ptr)
 				fprintf (Melder_stderr, "move constructor %p from same class %s\n",
@@ -411,7 +411,7 @@ public:
 		#endif
 		other. ptr = nullptr;
 	}
-	template <class Y> autoSomeThing<T> (autoSomeThing<Y>&& other) noexcept : ptr (other.get()) {
+	template <class Y> autoSomeThing (autoSomeThing<Y>&& other) noexcept : ptr (other.get()) {
 		#if _Thing_auto_DEBUG
 			if (our ptr)
 				fprintf (Melder_stderr, "move constructor %p from other class %s\n",

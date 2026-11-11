@@ -563,8 +563,9 @@ static autoTextGrid _Label_to_TextGrid (Label me, double tmin, double tmax) {
 	for (integer itier = 1; itier <= my size; itier ++) {
 		Tier tier = my at [itier];
 		autoIntervalTier intervalTier = IntervalTier_create (tmin, tmax);
+		IntervalTier newTier = intervalTier.get();   // pladdrr: intervalTier is null after move() (null dereference in upstream)
 		thy tiers -> addItem_move (intervalTier.move());
-		intervalTier -> intervals. removeItem (1);
+		newTier -> intervals. removeItem (1);
 		for (integer iinterval = 1; iinterval <= tier->size; iinterval ++) {
 			Autosegment autosegment = tier->at [iinterval];
 			autoTextInterval textInterval = TextInterval_create (
@@ -572,7 +573,7 @@ static autoTextGrid _Label_to_TextGrid (Label me, double tmin, double tmax) {
 				iinterval == tier->size ? tmax : autosegment -> xmax,
 				autosegment -> name.get()
 			);
-			intervalTier -> intervals. addItem_move (textInterval.move());
+			newTier -> intervals. addItem_move (textInterval.move());
 		}
 	}
 	return thee;

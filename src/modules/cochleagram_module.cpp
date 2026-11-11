@@ -88,15 +88,7 @@ public:
         return ptr->y1 + (row - 1) * ptr->dy;
     }
 
-    int get_column_from_time(double time) {
-        VALIDATE_PTR(ptr, Cochleagram);
-        return Melder_iround((time - ptr->x1) / ptr->dx + 1);
-    }
 
-    int get_row_from_frequency(double freq_bark) {
-        VALIDATE_PTR(ptr, Cochleagram);
-        return Melder_iround((freq_bark - ptr->y1) / ptr->dy + 1);
-    }
 
     // Comparison
     double get_difference(XPtr<structCochleagram> other, double tmin, double tmax) {
@@ -110,54 +102,7 @@ public:
         }
     }
 
-    // Conversion to Excitation
-    XPtr<structExcitation> to_excitation_ptr(double time) {
-        VALIDATE_PTR(ptr, Cochleagram);
-        try {
-            autoExcitation result = Cochleagram_to_Excitation(ptr.get(), time);
-            structExcitation* raw = result.releaseToAmbiguousOwner();
-            return make_praat_xptr(raw);
-        } catch (MelderError) {
-            Melder_clearError();
-            Rcpp::stop("Failed to create Excitation from Cochleagram");
-        }
-    }
-
     // Export
-    List as_list() {
-        VALIDATE_PTR(ptr, Cochleagram);
-        int nrow = ptr->ny;
-        int ncol = ptr->nx;
-
-        NumericMatrix mat(nrow, ncol);
-        NumericVector times(ncol);
-        NumericVector freqs(nrow);
-
-        for (int i = 1; i <= nrow; i++) {
-            for (int j = 1; j <= ncol; j++) {
-                mat(i-1, j-1) = ptr->z[i][j];
-            }
-        }
-
-        for (int j = 1; j <= ncol; j++) {
-            times(j-1) = ptr->x1 + (j - 1) * ptr->dx;
-        }
-
-        for (int i = 1; i <= nrow; i++) {
-            freqs(i-1) = ptr->y1 + (i - 1) * ptr->dy;
-        }
-
-        return List::create(
-            Named("values") = mat,
-            Named("times") = times,
-            Named("frequencies_bark") = freqs,
-            Named("tmin") = ptr->xmin,
-            Named("tmax") = ptr->xmax,
-            Named("fmin_bark") = ptr->ymin,
-            Named("fmax_bark") = ptr->ymax
-        );
-    }
-
     NumericMatrix as_matrix() {
         VALIDATE_PTR(ptr, Cochleagram);
         NumericMatrix mat(ptr->ny, ptr->nx);
@@ -169,21 +114,6 @@ public:
         return mat;
     }
 
-    List get_info() {
-        VALIDATE_PTR(ptr, Cochleagram);
-        return List::create(
-            Named("xmin") = ptr->xmin,
-            Named("xmax") = ptr->xmax,
-            Named("nx") = ptr->nx,
-            Named("dx") = ptr->dx,
-            Named("x1") = ptr->x1,
-            Named("ymin") = ptr->ymin,
-            Named("ymax") = ptr->ymax,
-            Named("ny") = ptr->ny,
-            Named("dy") = ptr->dy,
-            Named("y1") = ptr->y1
-        );
-    }
 
     void save(std::string path) {
         VALIDATE_PTR(ptr, Cochleagram);
@@ -276,16 +206,10 @@ RCPP_MODULE(cochleagram_module) {
         .method("get_value_at_time_and_frequency", &RCochleagram::get_value_at_time_and_frequency)
         .method("get_time_from_column", &RCochleagram::get_time_from_column)
         .method("get_frequency_from_row", &RCochleagram::get_frequency_from_row)
-        .method("get_column_from_time", &RCochleagram::get_column_from_time)
-        .method("get_row_from_frequency", &RCochleagram::get_row_from_frequency)
         // Comparison
         .method("get_difference", &RCochleagram::get_difference)
-        // Conversion
-        .method("to_excitation_ptr", &RCochleagram::to_excitation_ptr)
         // Export
-        .method("as_list", &RCochleagram::as_list)
         .method("as_matrix", &RCochleagram::as_matrix)
-        .method("get_info", &RCochleagram::get_info)
         .method("save", &RCochleagram::save)
     ;
 

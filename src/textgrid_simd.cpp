@@ -61,49 +61,6 @@ bool should_use_simd_for_textgrid() {
 }
 
 // ============================================================================
-// SIMD Duration Calculation
-// ============================================================================
-
-/**
- * Calculate durations from start/end times using SIMD
- *
- * Computes: durations[i] = end_times[i] - start_times[i]
- *
- * @param start_times Array of start times (1-based indexing)
- * @param end_times Array of end times (1-based indexing)
- * @param durations Output array of durations (1-based indexing)
- * @param n Number of intervals
- */
-void calculate_durations_simd(
-    const double* start_times,
-    const double* end_times,
-    double* durations,
-    integer n
-) {
-#ifdef HAVE_XSIMD
-    using batch = XSIMD_BATCH(double);
-    constexpr size_t simd_size = batch::size;
-
-    // Process SIMD-width chunks (1-based indexing)
-    integer i = 1;
-    for (; i + static_cast<integer>(simd_size) <= n + 1; i += simd_size) {
-        batch end_batch = xsimd::load_unaligned(&end_times[i]);
-        batch start_batch = xsimd::load_unaligned(&start_times[i]);
-        batch result = end_batch - start_batch;
-        result.store_unaligned(&durations[i]);
-    }
-
-    // Scalar remainder
-    for (; i <= n; i++) {
-        durations[i] = end_times[i] - start_times[i];
-    }
-#else
-    // Scalar fallback
-    for (integer i = 1; i <= n; i++) {
-        durations[i] = end_times[i] - start_times[i];
-    }
-#endif
-}
 
 /**
  * Calculate durations with 0-based indexing

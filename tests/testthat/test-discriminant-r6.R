@@ -1,11 +1,10 @@
 # test-discriminant-r6.R - Tests for R/discriminant-wrapper.R (Discriminant
 #  object)
 #
-# NOTE: discriminant_from_matrix() with more than one predictor column is
-# currently unreliable (documented in R/discriminant-wrapper.R and confirmed
-# here: multi-column input reproducibly fails to build a Discriminant, or
-# fails inside LAPACK with a BLAS/LAPACK error). All tests below therefore
-# use single-column (ncol = 1) input, matching the package's own example.
+# NOTE: this file keeps the single-predictor (ncol = 1) cases for the basic
+# API. Multi-predictor construction exercises the GSVD path and is covered
+# separately in test-discriminant-multicolumn.R (the GSVD iwork stack-overflow
+# fix is what made ncol > 1 reliable).
 
 test_that(
   "Discriminant constructs from a matrix and reports basic properties", {

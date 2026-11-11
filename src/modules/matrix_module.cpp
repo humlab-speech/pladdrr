@@ -118,27 +118,6 @@ public:
         return max;
     }
 
-    // Coordinate conversion
-    double column_to_x(int col) {
-        VALIDATE_PTR(ptr, Matrix);
-        return Matrix_columnToX(ptr.get(), col);
-    }
-
-    double row_to_y(int row) {
-        VALIDATE_PTR(ptr, Matrix);
-        return Matrix_rowToY(ptr.get(), row);
-    }
-
-    int x_to_nearest_column(double x) {
-        VALIDATE_PTR(ptr, Matrix);
-        return static_cast<int>(Matrix_xToNearestColumn(ptr.get(), x));
-    }
-
-    int y_to_nearest_row(double y) {
-        VALIDATE_PTR(ptr, Matrix);
-        return static_cast<int>(Matrix_yToNearestRow(ptr.get(), y));
-    }
-
     // Export
     NumericMatrix as_matrix() {
         VALIDATE_PTR(ptr, Matrix);
@@ -256,10 +235,6 @@ RCPP_MODULE(matrix_module) {
         .method("get_minimum", &RMatrix::get_minimum)
         .method("get_maximum", &RMatrix::get_maximum)
         // Coordinate conversion
-        .method("column_to_x", &RMatrix::column_to_x)
-        .method("row_to_y", &RMatrix::row_to_y)
-        .method("x_to_nearest_column", &RMatrix::x_to_nearest_column)
-        .method("y_to_nearest_row", &RMatrix::y_to_nearest_row)
         // Export
         .method("as_matrix", &RMatrix::as_matrix)
         .method("as_data_frame", &RMatrix::as_data_frame)

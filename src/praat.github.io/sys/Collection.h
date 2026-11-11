@@ -100,7 +100,7 @@ struct CollectionOf : structDaata {
 	//}
 	CollectionOf<T>& operator= (const CollectionOf<T>&) = delete;   // disable copy assignment from an l-value of class T*
 	template <class Y> CollectionOf<T>& operator= (const CollectionOf<Y>&) = delete;   // disable copy assignment from an l-value of a descendant class of T*
-	CollectionOf<T> (CollectionOf<T>&& other) noexcept :
+	CollectionOf (CollectionOf<T>&& other) noexcept :
 		at (other.at),
 		size (other.size),
 		_capacity (other. _capacity),
@@ -113,7 +113,7 @@ struct CollectionOf : structDaata {
 		other. _ownItems = false;
 		other. _ownershipInitialized = false;
 	}
-	template <class Y> CollectionOf<T> (CollectionOf<Y>&& other) noexcept :
+	template <class Y> CollectionOf (CollectionOf<Y>&& other) noexcept :
 		at (other.at),
 		size (other.size),
 		_capacity (other. _capacity),

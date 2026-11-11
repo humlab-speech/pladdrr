@@ -158,11 +158,17 @@ Matrix <- function(xmin = NULL, xmax = NULL, nx = NULL, dx = NULL, x1 = NULL,
   structure(list(
     .cpp = cpp_obj,
     .xptr = ptr
-  ), class = c("Matrix", "PraatObject"))
+  ), class = c("PraatMatrix", "Matrix", "PraatObject"))
 }
 
+# The leading "PraatMatrix" class exists only so as.matrix() dispatches to this
+# package's method even when the 'Matrix' package is loaded: 'Matrix' registers
+# as.matrix.Matrix itself, and registering a second one here made R CMD check
+# warn ("Registered S3 method from a standard package overwritten") and let
+# whichever package loaded last win. "Matrix" stays in the class vector so
+# inherits(x, "Matrix") and the print/plot/autoplot methods keep working.
 #' @export
-as.matrix.Matrix <- function(x, ...) x$as_matrix()
+as.matrix.PraatMatrix <- function(x, ...) x$as_matrix()
 
 # Factory functions for backward compatibility
 

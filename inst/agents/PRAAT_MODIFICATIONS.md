@@ -1,6 +1,6 @@
 # Praat Source Modifications for pladdrr
 
-**Last Updated:** 2026-11-05
+**Last Updated:** 2026-11-11
 **Package Version:** 5.1.1
 **Praat Base Version:** 6.4.x (vendored, tracked directly in this repo at src/praat.github.io as of 2026-09-05; previously a submodule pinned to fork `humlab-speech/praat.github.io`)
 **Upstream merge-base:** `b1b3199a3` (praat/praat.github.io master, 2025-11-22) — the submodule's own git history is no longer checked out locally, so per-commit divergence against upstream must be reconstructed by cloning `humlab-speech/praat.github.io` separately and diffing against the commit SHAs recorded in this document
@@ -15,6 +15,24 @@ This document details all modifications made to the Praat source code to enable 
 4. **API Compatibility** - Function declarations for FormantPath
 
 ---
+
+### Unreleased (5.1.1) — GCC 14 install warnings removed at source (2026-11-11)
+
+win-builder (mingw GCC 14.3, R 4.6.2) reported the install-time "significant warnings" WARNING on 5.2.0.
+Every site below was reproduced with `g++-15 -O2 -Wall` on `fon/TextGrid.cpp` and `dwsys/SVD.cpp` before the
+edit and is silent after it. None changes a computed value except the two bugs marked **real**.
+
+| File | Warning | Edit |
+|------|---------|------|
+| `melder/melder_strvec.h` (`_autostringvectorview`, `~_autostringautovector`), `sys/Thing.h` (`autoSomeThing`: 4 deleted/move constructors), `sys/Collection.h` (`CollectionOf`: 2 move constructors) | `-Wtemplate-id-cdtor` (2688 hits, 12 sites) | Constructor and destructor names lose their `<T>`: `autoSomeThing<T> (...)` is `autoSomeThing (...)`. Legal in C++17 and C++20; the injected class name is the same type. |
+| `sys/Formula.h` (`structStackel` ctor and move assignment), `sys/praat_script.cpp:132` | `-Wclass-memaccess` | `memset`/`memmove` take `(void *)` casts. The bit-copy is deliberate (union-safe), so the cast states intent. |
+| `dwsys/NUMlapack.h` (10 `*_` wrappers) | `-Wuninitialized` | LAPACK `info` (and `k`, `l` of `dggsvd_`) are output-only; the wrapper read the caller's uninitialised variable to seed its `int` copy. It now starts at 0. |
+| `dwsys/NUMlapack.h` `dggsvd_` | none; found while reading the above | **Real.** `iwork` is an array of N integers but was passed to LAPACK as a single `int`, so GSVD wrote N-1 ints past a stack variable. It is now an N-element array copied back. Regression: `tests/testthat/test-discriminant-multicolumn.R` (multi-column Discriminant, N > 1). |
+| `fon/TextGrid.cpp` `_Label_to_TextGrid` | `-Warray-bounds` (21 hits) | **Real.** `intervalTier` is null after `.move()` and was dereferenced on the next line (`intervals. removeItem (1)`, then `addItem_move`). A raw `newTier` pointer is taken before the move. Reached by `Label_to_TextGrid` (legacy Label files). |
+
+Check after any vendored update: `g++-15 -std=gnu++17 -O2 -Wall` (flags from the `R CMD INSTALL` log) on
+`fon/TextGrid.cpp`, `dwsys/SVD.cpp`, `sys/praat_script.cpp` and grep for the four warning classes above. clang does
+not emit `-Wtemplate-id-cdtor`, so a green macOS install proves nothing here.
 
 ### v5.1.0 — automatic thread count follows the CPUs the process may use (2026-11-05, audit F-power-01/F-power-04)
 

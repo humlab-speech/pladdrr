@@ -39,7 +39,7 @@ C++ and are normally reachable only through Praat's own GUI or its scripting
 language, which makes the incorporation of the phonetic analyses inside a
 reproducible statistical workflow fragile and inefficient.
 
-Th R package `pladdrr` exposes 38 of Praat's core analysis 
+The R package `pladdrr` exposes 39 of Praat's core analysis 
 object classes ( in particular, the `Sound`, `Pitch`,
 `Formant`, `FormantPath`, `Spectrum`, `Spectrogram`, `Harmonicity`,
 `PowerCepstrogram`, `MFCC`, `TextGrid`, `KlattGrid`, `DTW`, `PCA`,
@@ -97,7 +97,7 @@ independently implemented algorithms that overlap in part with Praat's DSP proce
 but are very likely to produce results that are different from those of Praat. In Python, `parselmouth`
 [@jadoul2018parselmouth] takes the approach closest to `pladdrr`, embedding
 Praat's C++ code directly. The new R package  `pladdrr` cannot fully take the same approach due to
-bundle size expectations of the CRAN public repository for R packages, 
+bundle size expectations of the CRAN public repository for R packages.
 
 # Implementation
 
@@ -133,7 +133,7 @@ was observed to introduce a considerable bottleneck in performance when the impl
 performance and analysis output. The performance penalty and cumbersome development of the 
 chosen strategy resulted in a strategy shift in early 2026 to the use of Rcpp modules to expose 
 Praat classes, with S3 method dispatch. The strategy shift resulted in a 
-rapid expansion to 38 Praat modules that are currently in the package in version 5.0.5, with the 
+rapid expansion to 39 Praat modules that are currently in the package in version 5.1.1, with the 
 only remaining R6 class being the exposure of the Praat interpreter that requires a persistent state across 
 method calls.
 
@@ -164,7 +164,7 @@ adding narrower tiers rather than by compromising a single interface.
 
 # Quality control
 
-Version 5.0.5 of the package has 1401 tests and currently has 82% test coverage. Continuous integration 
+Version 5.1.1 of the package has 1556 test blocks and currently has 94% test coverage (covr, line coverage of R and C++ code, measured 2026-11-11). Continuous integration 
 ensures successful package checks, including testing on Linux, macOS, and Windows, 
 and the package is also checked using a linter (`lintr`) and the rOpenSci `pkgcheck` on each commit.
 Core principles guiding package development include faithfulness tests of reimplementations of Praat code 

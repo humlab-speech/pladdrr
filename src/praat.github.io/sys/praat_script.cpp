@@ -129,7 +129,7 @@ static int parseCommaSeparatedArguments (Interpreter interpreter, char32 *argume
 			*/
 			args [narg]. reset();
 			#if STACKEL_VARIANTS_ARE_PACKED_IN_A_UNION
-				memset (& args [narg], 0, sizeof (structStackel));
+				memset ((void *) & args [narg], 0, sizeof (structStackel));
 			#endif
 			/*
 				Then copy in the new contents.
