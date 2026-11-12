@@ -1195,6 +1195,40 @@ lockEnvironment(.sound_methods, bindings = TRUE)
 # ============================================================================
 
 
+#' av (libav) fallback for formats Praat's reader cannot open; `err` is the
+#' native reader's error condition. Warns `pladdrr_decoder_fallback`.
+#' @noRd
+.sound_read_via_av <- function(path, err) {
+  # A warning, not a console message: "you asked for a sound file and got
+  # it through another decoder" is exactly what a caller must be able to
+  # catch (house convention: warning = not what you asked for, see
+  # R/validators.R). Once per load, classed so it can be filtered.
+  warning(pladdrr_warning_cond("pladdrr_decoder_fallback", "Sound",
+    NA_character_,
+    paste0("'", path, "' decoded with the av (libav) fallback reader;",
+      " amplitudes are the file's own, channels and length come from",
+      " the container. Native reader said: ", err$message)))
+  # shortcut: AAC/MP4 encoder delay is left in (Praat has no reader for
+  # these, so there is no oracle behaviour to reproduce); the upgrade path
+  # is av's start_pts, dropping that many samples.
+  audio_info <- av::av_media_info(path)
+  channels <- audio_info$audio$channels
+  # NULL or NA (av reports NA when the container does not say): without this
+  # the NA reached matrix() and surfaced as "invalid 'dim'".
+  if (length(channels) != 1L || is.na(channels)) channels <- 1L
+  # av::read_audio_bin() returns one interleaved integer vector of raw
+  # S32LE samples (full scale 2^31), not a channels x samples matrix in
+  # +-1: scale by full scale, then de-interleave column-major (av fills
+  # L,R,L,R) so row 1 is channel 1 — same object as matrix(x, nrow =
+  # channels) but without copying the samples. Scaling by the file's own
+  # peak would destroy the absolute level, and one row would fold every
+  # multichannel file into a track of twice the length.
+  audio_data <- av::read_audio_bin(path) / 2147483648
+  dim(audio_data) <- c(channels, length(audio_data) / channels)
+  sampling_rate <- audio_info$audio$sample_rate
+  .sound_create_from_values(audio_data, sampling_rate)
+}
+
 # Read a sound file: native Praat reader first, av fallback for exotic formats.
 #' Read an audio file into a Sound pointer: Praat's own reader first, then the `av`
 #' fallback (with a `pladdrr_decoder_fallback` warning) for formats Praat cannot read.
@@ -1217,34 +1251,7 @@ lockEnvironment(.sound_methods, bindings = TRUE)
              "Install av: install.packages('av')\n",
              "Native error: ", e$message)
       }
-      # A warning, not a console message: "you asked for a sound file and got
-      # it through another decoder" is exactly what a caller must be able to
-      # catch (house convention: warning = not what you asked for, see
-      # R/validators.R). Once per load, classed so it can be filtered.
-      warning(pladdrr_warning_cond("pladdrr_decoder_fallback", "Sound",
-        NA_character_,
-        paste0("'", path, "' decoded with the av (libav) fallback reader;",
-          " amplitudes are the file's own, channels and length come from",
-          " the container. Native reader said: ", e$message)))
-      # shortcut: AAC/MP4 encoder delay is left in (Praat has no reader for
-      # these, so there is no oracle behaviour to reproduce); the upgrade path
-      # is av's start_pts, dropping that many samples.
-      audio_info <- av::av_media_info(path)
-      channels <- audio_info$audio$channels
-      # NULL or NA (av reports NA when the container does not say): without this
-      # the NA reached matrix() and surfaced as "invalid 'dim'".
-      if (length(channels) != 1L || is.na(channels)) channels <- 1L
-      # av::read_audio_bin() returns one interleaved integer vector of raw
-      # S32LE samples (full scale 2^31), not a channels x samples matrix in
-      # +-1: scale by full scale, then de-interleave column-major (av fills
-      # L,R,L,R) so row 1 is channel 1 — same object as matrix(x, nrow =
-      # channels) but without copying the samples. Scaling by the file's own
-      # peak would destroy the absolute level, and one row would fold every
-      # multichannel file into a track of twice the length.
-      audio_data <- av::read_audio_bin(path) / 2147483648
-      dim(audio_data) <- c(channels, length(audio_data) / channels)
-      sampling_rate <- audio_info$audio$sample_rate
-      .sound_create_from_values(audio_data, sampling_rate)
+      .sound_read_via_av(path, e)
     }
   )
   # Report a file that was shorter than its own header claims (see

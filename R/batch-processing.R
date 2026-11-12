@@ -535,43 +535,28 @@ pair_files <- function(sound_dir,
   .check_string(textgrid_pattern, "textgrid_pattern", "pair_files")
   .check_flag(require_both, "require_both", "pair_files")
   
-  # Get file lists
+  if (by != "basename") {
+    stop("Only 'basename' matching is currently supported")
+  }
+
   sound_files <- list.files(sound_dir, pattern = sound_pattern,
     full.names = TRUE)
   textgrid_files <- list.files(textgrid_dir, pattern = textgrid_pattern,
     full.names = TRUE)
-  
-  # Extract basenames
-  sound_basenames <- tools::file_path_sans_ext(basename(sound_files))
-  tg_basenames <- tools::file_path_sans_ext(basename(textgrid_files))
-  
-  # Match files
-  if (by == "basename") {
-    # Use vectorized data.table join instead of loop
-    sound_dt <- data.table::data.table(
-      sound_file = sound_files,
-      basename = sound_basenames
-    )
-    tg_dt <- data.table::data.table(
-      textgrid_file = textgrid_files,
-      basename = tg_basenames
-    )
-    
-    if (require_both) {
-      # Inner join - only matched pairs
-      pairs <- data.table::merge.data.table(sound_dt, tg_dt, by = "basename",
-        all = FALSE)
-    } else {
-      # Full outer join - all files
-      pairs <- data.table::merge.data.table(sound_dt, tg_dt, by = "basename",
-        all = TRUE)
-    }
-    
-    data.table::setkey(pairs, basename)
-  } else {
-    stop("Only 'basename' matching is currently supported")
-  }
-  
+
+  sound_dt <- data.table::data.table(
+    sound_file = sound_files,
+    basename = tools::file_path_sans_ext(basename(sound_files))
+  )
+  tg_dt <- data.table::data.table(
+    textgrid_file = textgrid_files,
+    basename = tools::file_path_sans_ext(basename(textgrid_files))
+  )
+  # Inner join keeps matched pairs only; outer join keeps every file.
+  pairs <- data.table::merge.data.table(sound_dt, tg_dt, by = "basename",
+    all = !require_both)
+  data.table::setkey(pairs, basename)
+
   if (nrow(pairs) == 0) {
     warning("No matching pairs found")
   } else {
