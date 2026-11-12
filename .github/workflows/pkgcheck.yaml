@@ -75,6 +75,13 @@ jobs:
             sleep 600
           fi
 
+      # Clear the first attempt's output: a retry into a populated .pkgcheck/
+      # dies with "[EEXIST] Failed to copy ... pkgstats*.html" and masks the
+      # first attempt's real error.
+      - name: Clear failed first attempt
+        if: steps.report.outputs.missing == 'true'
+        run: sudo rm -rf .pkgcheck
+
       - uses: ropensci-review-tools/pkgcheck-action@main
         if: steps.report.outputs.missing == 'true'
         continue-on-error: true
