@@ -1,3 +1,9 @@
+#' @srrstats {TS5.1} Time-domain `autoplot()` methods label the horizontal axis "Time (s)" (37 plot constructors; tested for Sound, Pitch, Formant, Intensity, Spectrogram, Harmonicity and PointProcess in `tests/testthat/test-plot-axes.R`).
+#' @srrstats {TS5.2} Time is on the horizontal axis by default in those methods (`test-plot-axes.R`).
+#' @srrstats {TS5.3} The unit (seconds, hertz, dB) is part of every axis label (`test-plot-axes.R`).
+#' @srrstats {TS5.4} Frequency axes show non-negative hertz ("Frequency (Hz)"); no axis spans [-pi, pi] (`test-plot-axes.R`).
+#' @srrstats {TS5.5} `autoplot.Pitch(connect_gaps = FALSE)` breaks the line at unvoiced frames; the default (`TRUE`) joins across them. Tested in `test-plot-axes.R`.
+
 # TS5.1-TS5.3: time-domain plots put time on the horizontal axis, labelled
 # "Time (s)"; frequency axes carry hertz.
 

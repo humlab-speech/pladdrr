@@ -1,3 +1,8 @@
+#' @srrstats {G5.6} `tests/testthat/test-parameter-recovery.R`: F0 of pure tones (80-440 Hz), formants of Klatt-synthesised vowels, intensity of sines at known amplitude, and harmonicity against injected SNR.
+#' @srrstats {G5.6a} Tolerances are stated in the file header with the measured worst-case error they were set from.
+#' @srrstats {G5.6b} The noise-driven recovery test runs under three seeds.
+#' @srrstats {G5.7} Accuracy as a function of data size: `tests/testthat/test-parameter-recovery.R` shows the F0 error of a noisy tone falling with recording length (3 s versus 0.3 s, 8 seeds), and harmonicity tracking the injected SNR over 0-30 dB. Timing scaling is in the extended tier.
+
 # G5.6: parameter-recovery tests. Signals with known properties go in, the
 # analysis has to give the known value back within a stated tolerance
 # (G5.6a). Noise is drawn under several fixed seeds (G5.5, G5.6b).

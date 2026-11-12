@@ -1,3 +1,5 @@
+#' @srrstats {G5.2a} Every literal condition message in `R/` is unique, enforced by `tests/testthat/test-message-uniqueness.R` (parser-based audit in `dev/audit-messages.R`).
+
 # G5.2a: every condition message literal in R/ is unique.
 # G5.2b ratchet: the set of messages with no matching fragment in the tests may
 # shrink but never grow. Regenerate dev/message-baseline.txt with

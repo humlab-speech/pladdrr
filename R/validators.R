@@ -334,3 +334,17 @@
   }
   invisible(TRUE)
 }
+
+#' @srrstats {G2.3} Character parameters that select an option are matched with `match.arg()` or an explicit `switch()` (see `R/validators.R`, `.pitch_unit_code`, `.window_shape_code`, `.ltas_unit_code`).
+#' @srrstats {G2.3a} `match.arg()` is used 87 times in `R/`; option lookups that map to Praat integer codes use `switch()` with an explicit error or documented default.
+#' @srrstats {G2.3b} Unit, window-shape, averaging-method and format names are lower-cased before lookup (`.pitch_unit_code`, `.window_shape_code`, `.ltas_unit_code`, `.intensity_avg_code`, `Sound$save(format=)`); parameters that list their choices as a vector use `match.arg()` and are case-sensitive. `vignettes/terminology.Rmd`, section 'Option strings', states both.
+#' @srrstats {G4.0} All 27 `save()`/`write` methods route the path through `.ensure_suffix()` (`R/validators.R`): the format's suffix is appended when none is given. Tested in `tests/testthat/test-output-suffix.R`, including a static check that no `.cpp$save` call bypasses the helper.
+#' @srrstats {G2.13} Input samples are checked in `Sound$from_values()` (`.check_finite_samples()` in `R/validators.R`): NA, NaN and Inf are a `pladdrr_input_error`. Tested in `tests/testthat/test-edge-conditions.R`.
+#' @srrstats {G2.14} The package's policy is documented in `vignettes/terminology.Rmd` ('Missing and undefined values'): input NA is an error, undefined output is NaN, imputation is left to the caller.
+#' @srrstats {G2.14a} Error on missing input: `.check_finite_samples()`; `tests/testthat/test-edge-conditions.R`.
+#' @srrstats {G2.16} Inf and -Inf input are rejected (`.check_finite_samples()`); undefined output values are NaN, documented in `vignettes/terminology.Rmd`; aggregates skip undefined frames.
+#' @srrstats {TS2.1} See G2.14: input missing values are an error.
+#' @srrstats {TS2.1a} Error on missing data (`.check_finite_samples()`).
+#'
+#' @noRd
+NULL

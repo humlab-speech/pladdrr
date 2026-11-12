@@ -1,3 +1,8 @@
+#' @srrstats {G5.0} Tests compare against Praat itself on fixed signals (`tests/testthat/test-praat-faithfulness.R`, `tests/testthat/test-fidelity-fingerprint.R`) and against synthetic signals with known properties (`tests/testthat/test-parameter-recovery.R`).
+#' @srrstats {G5.3} For a clean voiced vowel the sample values, intensity, spectrum, MFCC and spectrogram data frames, pitch (voiced frames), the first three formants, harmonicity and the jitter/shimmer batch contain no NA, NaN or Inf (`tests/testthat/test-return-values-defined.R`); undefined output for unvoiced or silent input is intentional and documented (`vignettes/terminology.Rmd`).
+#' @srrstats {G5.4} Correctness is tested against Praat 6.4.x as oracle in `tests/testthat/test-praat-faithfulness.R` (19 routines, per-routine tolerances recorded in `inst/agents/FAITHFULNESS_REPORT.md`) and against stored fingerprints in `tests/testthat/test-fidelity-fingerprint.R`.
+#' @srrstats {G5.4b} pladdrr is a new implementation of existing Praat methods; the previous implementation (the Praat application) is the oracle, with oracle versions recorded in `inst/agents/FAITHFULNESS_REPORT.md`.
+
 # Per-routine faithfulness audit: pladdrr DSP output vs Praat-native output.
 #
 # Design principle 1 (faithfulness) is the first-ranked goal. This file runs an

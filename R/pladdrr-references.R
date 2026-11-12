@@ -97,3 +97,8 @@
 #' @seealso \code{\link{pladdrr-package}}
 #' @keywords documentation
 NULL
+
+#' @srrstats {G1.0} Primary references for each algorithm family, with DOIs checked against Crossref, are in `R/pladdrr-references.R` (`?pladdrr-references`), linked from `?pladdrr`.
+#'
+#' @noRd
+NULL

@@ -1040,3 +1040,8 @@ plot.TextGrid <- function(x, tier = NULL, from_time = NULL, to_time = NULL,
     p
   }
 }
+
+#' @srrstats {TS5.0} `plot()` and `autoplot()` methods exist for the time-sampled classes (`R/plotting-methods.R`, `R/autoplot-methods.R`).
+#'
+#' @noRd
+NULL

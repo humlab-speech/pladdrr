@@ -107,3 +107,8 @@ generate_noise <- function(duration, sampling_rate = 44100,
 
   return(sound)
 }
+
+#' @srrstats {G5.1} Test signals are either synthesised by exported generators (`generate_sine_wave()`, `generate_noise()`, `sound_create_pure_tone()`, `klattgrid_create_from_vowel()`) or ship in `inst/`; `?pladdrr-test-data` lists the files and how the tests use them.
+#'
+#' @noRd
+NULL

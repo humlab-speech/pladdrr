@@ -1,3 +1,10 @@
+#' @srrstats {TS1.4} A `ts` argument's start and frequency are carried into `start_time` and `sampling_rate` (`tests/testthat/test-edge-conditions.R`).
+#' @srrstats {G5.8} `tests/testthat/test-edge-conditions.R`: a matrix of degenerate inputs against five core analyses.
+#' @srrstats {G5.8a} Zero-length input is rejected at construction (`test-edge-conditions.R`).
+#' @srrstats {G5.8b} Character and complex input are rejected (`test-edge-conditions.R`).
+#' @srrstats {G5.8c} All-NA, NaN, Inf (rejected), silent, constant (DC) and clipped signals (`test-edge-conditions.R`).
+#' @srrstats {G5.8d} Signals shorter than the analysis window, non-finite and out-of-range parameters (`test-edge-conditions.R`).
+
 # G5.8: edge-condition matrix. Every core analysis is run on degenerate input
 # and must either return an object of the right class or fail with an
 # informative R error. It must never crash the session or return silently

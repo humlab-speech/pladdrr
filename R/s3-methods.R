@@ -789,3 +789,9 @@ print.VocalTract <- function(x, ...) {
   x$print()
   invisible(x)
 }
+
+#' @srrstats {TS4.0} Return values are unique, class-defined objects (`Pitch`, `Formant`, `Intensity`, `Harmonicity`, ...), each with `as.data.frame()` methods.
+#' @srrstats {TS4.0b} As TS4.0: results are in dedicated classes, not in the input's class.
+#'
+#' @noRd
+NULL

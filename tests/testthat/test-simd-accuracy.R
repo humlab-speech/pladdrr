@@ -1,3 +1,5 @@
+#' @srrstats {G5.4a} Scalar-versus-SIMD and R-versus-C++ paths are compared in `tests/testthat/test-simd-accuracy.R` and related `*-simd-*` test files.
+
 # Fixed seed for reproducible random test data (rOpenSci G5.5).
 withr::local_seed(20261109L)
 

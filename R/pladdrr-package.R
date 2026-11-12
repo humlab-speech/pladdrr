@@ -524,3 +524,14 @@ pladdrr_shared_autoplot_object <- function(object = NULL) invisible(NULL)
 pladdrr_shared_praat_sound_obj <- function(x = NULL, object = NULL,
     sound = NULL) invisible(NULL)
 # nocov end
+
+#' @srrstats {G1.1} README section 'Other similar packages' states that pladdrr is, to the authors' knowledge, the first R package to compile Praat's algorithms in-process, that it reproduces rather than improves Praat's methods, and lists Praat scripting, parselmouth, speakr, rPraat, PraatR and wrassp.
+#' @srrstats {G1.2} Life-cycle statement in `.github/CONTRIBUTING.md`, section 'Life cycle'.
+#' @srrstats {G1.3} `vignettes/terminology.Rmd` defines each measure the package returns (F0, HNR, intensity, formants, jitter, shimmer, CPP/CPPS, AVQI) and the missing/undefined-value conventions. pladdrr performs no statistical inference, so there are no hypothesis-test or interval terms to define.
+#' @srrstats {G1.4} All exported functions and classes are documented with roxygen2 (`Config/roxygen2/version: 8.1.0`, 328 Rd files).
+#' @srrstats {G1.4a} All 149 hand-written internal functions of the form `.name <- function` carry roxygen blocks with `@noRd` (listed by `Rscript dev/internal-docs.R`); generated `R/RcppExports.R` is exempt, and the R6 method tables are documented through their class pages.
+#' @srrstats {TS2.2} The stationarity assumption within an analysis window is documented in `vignettes/terminology.Rmd` ('Signals and time').
+#' @srrstats {TS2.3} As TS2.2.
+#'
+#' @noRd
+NULL

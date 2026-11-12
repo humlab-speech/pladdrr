@@ -1,3 +1,7 @@
+#' @srrstats {G5.9} `tests/testthat/test-noise-susceptibility.R`.
+#' @srrstats {G5.9a} Machine-epsilon-scale noise leaves pitch, intensity, formants and HNR unchanged within tolerance.
+#' @srrstats {G5.9b} Deterministic analyses are identical under different RNG seeds (`test-noise-susceptibility.R`); Praat's own `fit_method = "robust slow"` CPPS fit is non-deterministic upstream and documented as such (`vignettes/terminology.Rmd`, `inst/agents/FAITHFULNESS_REPORT.md`).
+
 # G5.9a: adding noise at the scale of machine precision must not meaningfully
 # change any deterministic analysis result. G5.9b: results do not depend on the
 # RNG state, because none of these paths draw random numbers (Praat's

@@ -166,3 +166,9 @@ sound_statistics <- function(sound) {
 
   return(stats)
 }
+
+#' @srrstats {G2.15} The base statistics calls in `R/` (`mean`, `sd`, `median`, `quantile` in `R/s3-methods.R`, `R/sound-stats.R`) run on vectors that are either filtered for undefined values first (`voiced_freqs`, `valid_freqs`, `valid_intensities`) or are sample values that `Sound$from_values()` has already checked to be finite. Praat-side aggregates (`get_mean()` and friends) skip undefined frames themselves (`vignettes/terminology.Rmd`).
+#' @srrstats {G3.0} Exact floating-point comparisons are limited to (a) sentinel and boundary values typed by the caller (`0` = default / whole range, `-1` balance, `1` multiplier) and (b) division-by-zero guards, where a tolerance would change the result. Each site in the package's own C++ is annotated `// G3.0: exact - ...` (`rg "G3.0: exact" src`), R-level sentinels use `identical(x, 0)`, and the vendored Praat sources, which compare exactly in many places, are left untouched on purpose (`inst/agents/PRAAT_MODIFICATIONS.md`).
+#'
+#' @noRd
+NULL

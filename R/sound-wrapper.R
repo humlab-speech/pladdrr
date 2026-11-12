@@ -1466,3 +1466,18 @@ sound_create_tone_complex <- function(frequency_step = 100.0, duration = 1.0,
 
 # Assign class to enable $ operator
 class(Sound) <- c("sound_constructor", "function")
+
+#' @srrstats {G2.4} Values crossing into C++ are converted explicitly (`as.integer()`, `as.numeric()`, `as.character()`) at the R6 wrapper boundary, for example in `R/sound-wrapper.R`, `R/pitch-wrapper.R`.
+#' @srrstats {G2.4a} Integer arguments are passed through `as.integer()` in the wrappers (e.g. channel and tier numbers).
+#' @srrstats {G2.4b} Continuous arguments are passed through `as.numeric()` (e.g. times in `LongSound$save_part()`).
+#' @srrstats {G2.4c} Paths and names are converted with `as.character()`, not `paste()`.
+#' @srrstats {G2.6} `Sound$from_values()` accepts integer, `units` and `ts` vectors (classed vectors keep their numbers; a `ts` supplies `sampling_rate` and `start_time`). Tested in `tests/testthat/test-edge-conditions.R`.
+#' @srrstats {TS1.0} Analyses take `Sound`, `Pitch`, `Formant`, ... objects that carry their time axis; `Sound$from_values()` requires an explicit `sampling_rate` (and `start_time`) for vector input.
+#' @srrstats {TS1.1} Accepted input classes for sample data are documented in `?sound_from_values`, which covers numeric, integer, `units` and `ts` input.
+#' @srrstats {TS1.3} Vector input enters through `sound_from_values()`, which validates and converts it to the single internal representation (a Sound pointer).
+#' @srrstats {TS1.5} A Sound's time axis is regular by construction (`xmin + (i - 1) * dx`).
+#' @srrstats {TS1.7} `units` vectors are accepted; their values are used as given and the units are not interpreted (`?sound_from_values`).
+#' @srrstats {TS2.0} Sample data are regular and explicit: NaN/NA samples are rejected at input (G2.13).
+#'
+#' @noRd
+NULL

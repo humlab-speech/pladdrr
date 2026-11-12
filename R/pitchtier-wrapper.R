@@ -416,3 +416,8 @@ class(PitchTier) <- c("pitchtier_constructor", "function")
 # ============================================================================
 # S3 Methods
 # ============================================================================
+
+#' @srrstats {TS1.6} Irregularly spaced objects (PitchTier and the other tiers, PointProcess) keep their points in time order on insertion, because Praat inserts in sorted order. Tested in `tests/testthat/test-edge-conditions.R` (`PitchTier` filled out of order).
+#'
+#' @noRd
+NULL
