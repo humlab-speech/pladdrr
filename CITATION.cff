@@ -32,6 +32,7 @@ authors:
   - name-particle: "von"
     family-names: "Boer"
     given-names: "Johan"
+    orcid: "https://orcid.org/0000-0003-4188-5872"
 references:
   - type: software
     title: "Praat: doing phonetics by computer"

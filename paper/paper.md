@@ -18,6 +18,7 @@ authors:
     affiliation: 2
   - name: Johan von Boer
     affiliation: 2
+    orcid: 0000-0003-4188-5872
 affiliations:
   - name: Speech and Language Therapy, Department of Clinical Sciences, Faculty of Medicine, Umeå University, Sweden
     index: 1
