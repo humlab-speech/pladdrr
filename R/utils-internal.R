@@ -84,7 +84,7 @@ extract_xptr <- function(obj, class_name) {
   if (is.na(code)) {
     .stop_input("pitch_unit", "unit",
       paste0("Unknown unit: ", deparse(unit), ". Use one of: ",
-        paste(names(.pitch_unit_codes), collapse = ", ")))
+        toString(names(.pitch_unit_codes))))
   }
   unname(code)
 }

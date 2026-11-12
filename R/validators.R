@@ -11,7 +11,7 @@
 # vector returns several strings, which would make the condition message a
 # vector.
 .short_deparse <- function(x, width = 60L) {
-  txt <- paste(base::deparse(x), collapse = " ")
+  txt <- base::deparse1(x)
   if (nchar(txt) > width) paste0(substr(txt, 1L, width - 3L), "...") else txt
 }
 

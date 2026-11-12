@@ -352,7 +352,7 @@ is_praat_intensity <- function(x) {
   if (is.na(code)) {
     .stop_input(what, "interpolation",
       paste0("Unknown interpolation: ", deparse(method), ". Use one of: ",
-        paste(unique(names(names)), collapse = ", ")))
+        toString(unique(names(names)))))
   }
   code
 }
