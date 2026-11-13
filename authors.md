@@ -29,7 +29,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/humlab-speech/pladdrr/blob/main/inst/CITATION)
+[`inst/CITATION`](https://github.com/humlab-speech/pladdrr/blob/v5.1.1/inst/CITATION)
 
 Nylén, Fredrik, Skotare, Tomas & von Boer, Johan (2026). pladdrr: Direct
 Access to the Core Algorithms of Praat. R package version 5.1.1.
