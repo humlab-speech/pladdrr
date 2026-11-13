@@ -297,7 +297,7 @@ The package includes 38 Rcpp modules covering 20+ Praat object types with 500+ m
 ### Annotation & Data
 - **TextGrid** (~34 methods) - Annotation and segmentation
 - **PointProcess** (~20 methods) - Time points (e.g., glottal pulses)
-- **Matrix** (~18 methods) - 2D numerical arrays
+- **PraatMatrix** (~18 methods) - 2D numerical arrays
 - **Table** (~20 methods) - Tabular data structures
 
 See `vignette("integrated-phonetic-analysis")` for complete workflow examples.

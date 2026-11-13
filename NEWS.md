@@ -1,3 +1,29 @@
+# pladdrr (development version)
+
+## BREAKING CHANGE: `Matrix()` is now `PraatMatrix()`
+
+* The exported constructor `Matrix()` is renamed `PraatMatrix()`, and the S3
+  class of the object it returns is now `c("PraatMatrix", "PraatObject")`
+  (5.1.1: `c("PraatMatrix", "Matrix", "PraatObject")`). The name `Matrix` is
+  owned by the CRAN package 'Matrix'; `pkgcheck` flagged the duplicate function
+  name, and masking made `library(Matrix)` and `library(pladdrr)` order-dependent.
+  There is no deprecated `Matrix()` alias, because an alias would keep the
+  duplicate name.
+* Migration: replace `Matrix(...)` with `PraatMatrix(...)`, and
+  `inherits(m, "Matrix")` / `expect_s3_class(m, "Matrix")` with
+  `inherits(m, "PraatMatrix")`. `as.matrix(m)`, `m$as_matrix()` and every
+  method on the object (`$get_value()`, `$save()`, ...) are unchanged, as are
+  `matrix_create()`, `matrix_create_simple()` and `matrix_read()`.
+* S3 methods that were registered on class `Matrix` (`$`, `as.data.frame`,
+  `print`, `plot`, `autoplot`, `autolayer`) are now registered on `PraatMatrix`;
+  call them through the generics as before. Direct calls such as
+  `pladdrr:::plot.Matrix()` become `pladdrr:::plot.PraatMatrix()`.
+* Objects returned by `Ltas$to_matrix()`, `MFCC$to_matrix()`, `LPC$to_matrix()`,
+  `DTW$to_matrix_*()`, `PowerCepstrogram$to_matrix()` and similar methods are
+  `PraatMatrix` objects. The Praat type name `"Matrix"` in the script
+  interpreter (`praat_class` attribute, `To Matrix` actions) and the `.Matrix`
+  file extension are unchanged.
+
 # pladdrr 5.1.1
 
 5.1.1 corrects pitch units and Intensity interpolation, which 5.1.0 still got wrong

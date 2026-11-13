@@ -328,7 +328,7 @@ reference:
   - DurationTier
   - Electroglottogram
   - electroglottogram_create
-  - Matrix
+  - PraatMatrix
   - matrix_create
   - matrix_create_simple
   - matrix_read

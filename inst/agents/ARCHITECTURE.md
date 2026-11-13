@@ -40,7 +40,7 @@ Pitch <- function(.xptr = NULL) {
 - Wrapper dispatch (v4.9.18) replaces Rcpp Module's 3-layer R→Module→C++ path with direct 2-layer R→C++ `.Call()` for frequent query methods, reducing per-call overhead ~30-40%.
 - All wrappers inherit dispatch from this pattern via `$.PraatObject`.
 
-**List of types using this pattern:** AmplitudeTier, BarkSpectrogram, Cepstrum, Cochleagram, ComplexSpectrogram, DTW, Discriminant, DurationTier, Excitation, Formant, FormantGrid, FormantModeler, FormantPath, FormantTier, Harmonicity, Intensity, IntensityTier, KlattGrid, LFCC, LPC, LongSound, Ltas, MFCC, Manipulation, Matrix, MelSpectrogram, PCA, Pitch, PitchModule, PitchTier, PointProcess, Polygon, Sound, Spectrogram, Spectrum, SpectrumTier, Table, TextGrid, VocalTract.
+**List of types using this pattern:** AmplitudeTier, BarkSpectrogram, Cepstrum, Cochleagram, ComplexSpectrogram, DTW, Discriminant, DurationTier, Excitation, Formant, FormantGrid, FormantModeler, FormantPath, FormantTier, Harmonicity, Intensity, IntensityTier, KlattGrid, LFCC, LPC, LongSound, Ltas, MFCC, Manipulation, PraatMatrix, MelSpectrogram, PCA, Pitch, PitchModule, PitchTier, PointProcess, Polygon, Sound, Spectrogram, Spectrum, SpectrumTier, Table, TextGrid, VocalTract.
 
 ### 2. Pure XPtr (PowerCepstrogram)
 
@@ -56,7 +56,7 @@ Triple class `c("Electroglottogram", "Sound", "PraatObject")` + `.pointer` compa
 
 ### Special Cases
 
-- **Matrix:** class `c("PraatMatrix", "Matrix", "PraatObject")`. The leading `PraatMatrix` carries `as.matrix.PraatMatrix` so pladdrr never registers `as.matrix.Matrix`, which the CRAN 'Matrix' package owns (R CMD check: "Registered S3 method from a standard package overwritten"). Any new wrapper whose class name collides with another package's S3 class gets the same treatment: a pladdrr-only leading class for the colliding generics. See `AGENT_GUIDE.md` "Matrix and the 'Matrix' package".
+- **PraatMatrix:** the Praat `Matrix` wrapper is exported as `PraatMatrix()` with class `c("PraatMatrix", "PraatObject")`; the old name `Matrix` collided with the CRAN 'Matrix' package (duplicate function name in `pkgcheck`, S3 `as.matrix.Matrix` overwrite in `R CMD check`) and was removed without an alias. pladdrr registers no S3 method on a class named like another package's class. See `AGENT_GUIDE.md` "PraatMatrix and the 'Matrix' package".
 - **AmplitudeTier:** `.pointer` compat alias in `$` dispatch (used by factory functions)
 - **PitchTier, FormantTier, LongSound, VocalTier:** static `$.{type}_constructor` for class methods
 - **FormantPath, KlattGrid, ComplexSpectrogram:** no `.xptr` — only `.cpp` stored
@@ -152,7 +152,7 @@ needs both halves; `tests/testthat/test-xptr-all-constructors.R` lists the types
 Cochleagram at 2^29 cells and an Excitation at 10 000 bands; the guards sit in the
 vendored `Sound_to_Cochleagram.cpp` / `Spectrum_to_Excitation.cpp` (all three call
 doors reach them; logged in `PRAAT_MODIFICATIONS.md`). R-level factories
-(`sound_create_tone()` and siblings, `Matrix()`, the cochleagram methods) check
+(`sound_create_tone()` and siblings, `PraatMatrix()`, the cochleagram methods) check
 positive, finite and at most 2^29 cells with `.check_positive_finite()` /
 `.check_cell_count()` in `R/validators.R`. The reason is platform behaviour: asking
 for a 2.5 TB tensor makes Linux's allocator fail with a Praat error, but macOS

@@ -172,7 +172,7 @@ magnitudes are in `NEWS.md`.
 - **Pitch units follow `kPitch_unit` at every door.** `unit = "semitones"` is semitones re 100 Hz and `"erb"` is ERB (both used to return log10(Hz)); `"loghertz"` is log10(Hz). See "Frequency Units" for the table. Unknown units raise `pladdrr_input_error` instead of answering in hertz.
 - **`PitchTier$shift_frequencies()`** works in semitones (was a silent no-op) and ERB (was a logHertz shift, x10); `"hertz_logarithmic"` is refused.
 - **`Intensity$get_value_at_time()`** interpolates as asked: the default `"cubic"` returned the linear value. An interpolation is a name or the code 0 to 4; anything else raises (it used to become cubic). `get_intensity_at_time(interpolate = FALSE)` is nearest.
-- **`Matrix` class vector is now `c("PraatMatrix", "Matrix", "PraatObject")`.** The CRAN package 'Matrix' registers `as.matrix.Matrix`; pladdrr registering the same method made `R CMD check` warn ("Registered S3 method from a standard package overwritten") and let the later-loaded package win. The method now lives on `PraatMatrix`. Code that checks `class(m)[1]` must change; `inherits(m, "Matrix")`, `as.matrix(m)`, `print()`, `plot()` and `as.data.frame()` do not. See "Matrix and the 'Matrix' package".
+- **`Matrix()` is renamed `PraatMatrix()`; class vector is `c("PraatMatrix", "PraatObject")` (BREAKING, no alias).** The CRAN package 'Matrix' owns the name `Matrix` and registers `as.matrix.Matrix`; 5.1.1 worked around the S3 clash with a leading `PraatMatrix` class, and `pkgcheck` still flagged the duplicate function name. All S3 methods (`$`, `as.data.frame`, `print`, `plot`, `autoplot`, `autolayer`, `as.matrix`) are on `PraatMatrix`. `as.matrix(m)` is unchanged. See "PraatMatrix and the 'Matrix' package".
 - **Vendored-Praat defects fixed (win-builder GCC 14 warnings).** `dggsvd_` (GSVD) passed LAPACK a one-int `iwork` where it needs N, so it wrote past a stack variable; `_Label_to_TextGrid` dereferenced an `intervalTier` that `.move()` had nulled. Both, and the C++20 `-Wtemplate-id-cdtor` / `-Wclass-memaccess` / `-Wuninitialized` sites, are listed in `PRAAT_MODIFICATIONS.md`. Check with `g++ -O2 -Wall`; clang stays silent on these.
 - **Input guards:** `max_formants` outside 1 to 1000 and a wrong-class pointer at the `*_direct` getters raise instead of crashing; `sound_create_pure_tone()` counts `channels` in its size budget.
 
@@ -190,7 +190,7 @@ under the old behaviour; the magnitudes are in `NEWS.md`.
 ## What's New in v5.1.0 (2026-11 audit round: safety and robustness)
 
 - **Sessions that used to die now raise.** A foreign-class `.xptr` handed to *any* wrapper constructor (`Sound(.xptr = <TextGrid>)` etc.; 10 of them segfaulted); a file whose `Object class` line names another class (`matrix_read()`, `PitchTier$from_file()`); an out-of-range `channel` (returned heap garbage, `channel = 1000` segfaulted); `to_cochleagram()` on a Sound sampled at 66 Hz or less (aborted R with exit 134; it now refuses anything below 200 Hz at the default window); step sizes that request an impossible tensor (`df = 1e-9` is 2.5 TB: Linux errors, macOS SIGKILLs R). All raise catchable `pladdrr_input_error`/Praat errors now.
-- **Input validation.** `sound_create_tone()`/`_pure_tone()`/`_tone_complex()`, `Matrix()`, `Excitation$to_formant()` and the cochleagram steps check positive, finite and at most 2^29 cells (`R/validators.R`: `.check_positive_finite()`, `.check_cell_count()`, `.check_cochleagram_steps()`).
+- **Input validation.** `sound_create_tone()`/`_pure_tone()`/`_tone_complex()`, `PraatMatrix()`, `Excitation$to_formant()` and the cochleagram steps check positive, finite and at most 2^29 cells (`R/validators.R`: `.check_positive_finite()`, `.check_cell_count()`, `.check_cochleagram_steps()`).
 - **WAV sized from its `data` chunk.** A 46-byte file claiming 2^29 samples used to allocate 4.3 GB; the load now returns the samples that exist and reports the shortfall as `pladdrr_data_loss`.
 - **`as.matrix()`** returns the object's matrix or a typed error naming a conversion that class has (it returned a 2-element wrapper for 39 of 41 classes).
 - **Batch.** One unreadable file is one row (`error`, `error_class` columns), not a lost run. Conditions raised on a worker become rows, so `tryCatch(pladdrr_data_loss = )` around `batch_process()` cannot see them: filter on `error_class`. `.default_n_cores()` keeps a spare CPU only above 2 CPUs.
@@ -214,7 +214,7 @@ under the old behaviour; the magnitudes are in `NEWS.md`.
 
 - **v5.0.4 — 8 Spectrogram/PowerCepstrogram/PowerCepstrum plotting bugs fixed; all 5 affected functions had zero prior test coverage (2026-08-19).**
   - **Root cause, shared by all 5 functions:** each independently hand-rolled matrix-to-dataframe conversion instead of delegating to the object's own already-correct `as_data_frame()`/`as.data.frame()` accessor. `expand.grid(time =, frequency =)` (or `quefrency =`) varies its first-listed argument fastest; `as.vector(matrix)` varies the matrix's **row** fastest (column-major storage) — the two orderings only agree when the matrix happens to be square. Fix pattern throughout: delegate to the correct accessor, then apply `10 * log10(pmax(power, 1e-20))` explicitly where the source is raw linear power.
-  - **`autoplot.Spectrogram()` / `autolayer.Spectrogram()` / `plot.Spectrogram()`** (`R/autoplot-methods.R`, `R/plotting-methods.R`): frequency axis scrambled (measured: a 220 Hz tone peaked at 2201.3 Hz before the fix, 218.75 Hz after) — `nrow(mat)` is frequency, but `time` was listed first in `expand.grid()`. Also plotted raw linear power (measured range for a typical fixture: `4.8e-17` to `15.0`) directly as `"Power (dB)"`, so `dynamic_range` clipping (`power_db < max - dynamic_range`) never triggered — linear power is always numerically greater than a negative threshold. Fixed by delegating to `.spectrogram_methods$as_data_frame` (`R/spectrogram-wrapper.R`), which was already correct and already used elsewhere, plus explicit dB conversion. `plot.Matrix` (`R/plotting-methods.R`) was checked and confirmed **not** to share this bug — it builds its data frame with `rep(each=)/rep(times=)`, not `expand.grid()`, and the two orderings do agree there.
+  - **`autoplot.Spectrogram()` / `autolayer.Spectrogram()` / `plot.Spectrogram()`** (`R/autoplot-methods.R`, `R/plotting-methods.R`): frequency axis scrambled (measured: a 220 Hz tone peaked at 2201.3 Hz before the fix, 218.75 Hz after) — `nrow(mat)` is frequency, but `time` was listed first in `expand.grid()`. Also plotted raw linear power (measured range for a typical fixture: `4.8e-17` to `15.0`) directly as `"Power (dB)"`, so `dynamic_range` clipping (`power_db < max - dynamic_range`) never triggered — linear power is always numerically greater than a negative threshold. Fixed by delegating to `.spectrogram_methods$as_data_frame` (`R/spectrogram-wrapper.R`), which was already correct and already used elsewhere, plus explicit dB conversion. `plot.PraatMatrix` (`R/plotting-methods.R`) was checked and confirmed **not** to share this bug — it builds its data frame with `rep(each=)/rep(times=)`, not `expand.grid()`, and the two orderings do agree there.
   - **`plot_powercepstrogram()`** (`R/cepstrum_plots.R`): same transposition bug (time/quefrency), plus `max_time <- 5.0  # Placeholder` instead of the cepstrogram's real duration (measured: 0.249s for a 0.3s fixture — a 20x error), plus the same missing-dB-conversion bug (measured raw range `6.9e-6` to `2.8e11`; `-51.6` to `114.5` dB after fixing). Fixed by delegating to `as.data.frame.PowerCepstrogram` (`R/as-data-frame-missing.R`), already correct.
   - **`plot_cpp_timeseries()`** (`R/cepstrum_plots.R`): same `max_time <- 5.0` placeholder, plus an unrelated `tryCatch()` scoping bug — the error handler did `cpp_values[i] <- NA`, which assigns to a copy of `cpp_values` local to the handler closure (R closures over `for` loops don't get automatic `<<-` promotion), so a failed `get_cpp_at_time()` call silently left that sample at its `numeric(n_samples)` default of `0` instead of becoming `NA` and being dropped by the downstream `!is.na()` filter. One-character fix: `<-` → `<<-`.
   - **`plot_powercepstrum()`** (`R/cepstrum_plots.R`): `max_quefrency <- 0.05  # Reasonable default max quefrency` instead of the cepstrum's real range (measured: 0.256 for the planning fixture — a >5x error), plus the same missing-dB-conversion bug with a twist: `cepstrum$as_data_frame()`'s second column is named `power_dB` (capital B) but is raw linear power (see `POWERCEPSTRUM_DB_MISLABEL.md` — this is the same defect that doc already tracked at other call sites, just not this one). Confirmed by comparing against `cepstrum$get_value_at_quefrency(q, unit = "dB")`, a *different* accessor on the same object that does return real dB — before the fix, the line trace and its own peak-prominence marker were plotted on incompatible scales (one linear, one log). Fixed by reading from the misleadingly-named `power_dB` source column and writing the converted value to a new, honestly-named `power_db` (lowercase) column — the capitalization difference is intentional, not a typo.
@@ -230,7 +230,7 @@ under the old behaviour; the magnitudes are in `NEWS.md`.
 ## What's New in v5.0.3
 
 - **v5.0.3 — Ltas full Praat-parity query coverage, new SpectrumTier peak-picking class (2026-08-14).**
-  - **6 Ltas methods that already existed in the `RLtas` Rcpp module but were never reachable from R:** `get_value_in_bin(bin)`, `get_local_peak_height(environment_min, environment_max, peak_min, peak_max, unit)`, `get_standard_deviation(fmin, fmax, unit)`, `get_frequency_range()`, `to_matrix()` (returns a real `Matrix` object via the module's `to_matrix_ptr`, distinct from the existing `as_matrix()` which returns a plain R matrix), and `save(path)`. All were mechanical R-side wiring, matching Praat's Ltas "Query" and "Hack" menus — no new C++ needed.
+  - **6 Ltas methods that already existed in the `RLtas` Rcpp module but were never reachable from R:** `get_value_in_bin(bin)`, `get_local_peak_height(environment_min, environment_max, peak_min, peak_max, unit)`, `get_standard_deviation(fmin, fmax, unit)`, `get_frequency_range()`, `to_matrix()` (returns a real `PraatMatrix` object via the module's `to_matrix_ptr`, distinct from the existing `as_matrix()` which returns a plain R matrix), and `save(path)`. All were mechanical R-side wiring, matching Praat's Ltas "Query" and "Hack" menus — no new C++ needed.
   - **New `SpectrumTier` class** (`R/spectrumtier-wrapper.R`, `src/modules/spectrumtier_module.cpp`), wrapping Praat's `Ltas_to_SpectrumTier_peaks` (`fon/Ltas_to_SpectrumTier.cpp`), previously unwrapped anywhere in pladdrr. Read-only: it's peak-picking analysis output, not something a user constructs by hand. `ltas$to_spectrum_tier_peaks()` returns one; query methods (`get_number_of_points()`, `get_frequency_from_index()`, `get_value_at_index()`) and export (`as_data_frame()`, `as_matrix()`, `save()`) mirror the existing tier-wrapper pattern (e.g. `IntensityTier`). Corresponds to Praat's Ltas "Analyse > To SpectrumTier (peaks)".
   - **Build fix surfaced along the way:** `RcppExports.cpp` needs every Praat struct type used in an exported function signature forward-declared in `inst/include/pladdrr_types.h` (that's how the other ~30 wrapper types already do it) — `structSpectrumTier` was missing, which failed the compile with a real (not just the usual `-Wdelete-incomplete` warning noise) error until added.
   - **Deliberately not wrapped:** Praat's Ltas `Formula...` (R already gives full vector access via `as_data_frame()`/`as_matrix()`, which is strictly more capable than Praat's scripting mini-language) and `Combine > Merge` (`Ltases_merge`, not requested; `ltas_average()` already covers the "Combine" case that exists today). `Draw...` was already covered by `plot.Ltas()`/`autoplot.Ltas()`/`autolayer.Ltas()`.
@@ -384,7 +384,7 @@ See [Full Changelog](#full-changelog-recent-changes) at end of file.
 - [Object Types](#object-types)
 - [Unit Code Reference](#unit-code-reference)
 - [Common Patterns](#common-patterns)
-- [Matrix and the 'Matrix' package](#matrix-and-the-matrix-package)
+- [PraatMatrix and the 'Matrix' package](#praatmatrix-and-the-matrix-package)
 - [**Re-implementing a Praat Procedure**](#re-implementing-a-praat-procedure) ← start here for new ports
 - [Utility Functions](#utility-functions)
 - [Method Signatures](#method-signatures)
@@ -408,14 +408,14 @@ This guide provides the **complete API reference** for pladdrr, an R package tha
 1. **Object Creation**: Use function constructors (not R6 classes): `Sound()`, `Pitch()`, etc.
 2. **Method Calls**: Use `$` syntax: `sound$to_pitch()`, `pitch$get_mean()`
 3. **Units**: Specify as strings: `"hertz"`, `"bark"`, `"db"` (converted internally to codes)
-4. **Class Names**: Use clean names for `inherits()` checks: `Formant`, `Pitch`, `Intensity` (not internal `*_constructor` names) (a `Matrix` object is `c("PraatMatrix", "Matrix", "PraatObject")`; see [Matrix and the 'Matrix' package](#matrix-and-the-matrix-package))
+4. **Class Names**: Use clean names for `inherits()` checks: `Formant`, `Pitch`, `Intensity` (not internal `*_constructor` names) (a Praat Matrix is a `PraatMatrix`, class vector `c("PraatMatrix", "PraatObject")`; see [PraatMatrix and the 'Matrix' package](#praatmatrix-and-the-matrix-package))
 5. **Batch Operations**: Use batch query functions when extracting multiple values
 6. **Vectorized Methods**: Use `$get_*_windows()`, `$get_*_vector()`, `$get_spectral_moments_batch()` for 14-150x speedups (Patterns 2i, 2p)
 7. **Properties**: Fast access via `.cpp$property` or backward-compatible `get_property()` methods
 8. **Pipeline Operations**: Use `two_pass_adaptive_pitch()` and `get_jitter_shimmer_batch()` for voice quality (Pattern 2k)
 9. **Tier 4 Ultra API**: Use `get_durations_batch()`, `calculate_f0_stats_ultra()`, `calculate_minimum_intensity_ultra()`, `get_voice_quality_ultra()` for DSI workflows, plus `calculate_cpps_ultra()`, `extract_voiced_segments_ultra()`, `calculate_multiband_hnr_ultra()` for simple AVQI/VQ workflows. For repeated intervals on the same sound, build once with `build_multiband_harmonicity()` and query with `multiband_hnr_stats()` (Pattern 2l)
 10. **Fidelity target**: Every re-implemented Praat procedure must achieve r > 0.95 vs Praat on ≥50 real files before shipping. Use the in-repo Praat faithfulness registry and audit benchmark runner (see [Re-implementing a Praat Procedure](#re-implementing-a-praat-procedure)).
-11. **Praat `Matrix` objects**: call `pladdrr::Matrix()` when the CRAN package 'Matrix' is attached, and read the numbers with `as.matrix(m)` or `m$as_matrix()`. Do not test `class(m)[1] == "Matrix"` (it is `"PraatMatrix"`); `inherits(m, "Matrix")` still works. See [Matrix and the 'Matrix' package](#matrix-and-the-matrix-package).
+11. **Praat `Matrix` objects**: construct with `PraatMatrix()` and test with `inherits(m, "PraatMatrix")`; read the numbers with `as.matrix(m)` or `m$as_matrix()`. `Matrix()` and `inherits(m, "Matrix")` no longer exist/hold. See [PraatMatrix and the 'Matrix' package](#praatmatrix-and-the-matrix-package).
 
 ---
 
@@ -648,7 +648,7 @@ some modules like Electroglottogram/DTW/Polygon aren't broken out as separate ro
 |------|-----------------|
 | `TextGrid` | `TextGrid("file.TextGrid")` |
 | `Table` | `formant$down_to_table()` |
-| `Matrix` | `Matrix(numberOfRows, numberOfColumns, ...)`; class `PraatMatrix`; call `pladdrr::Matrix()` when the 'Matrix' package is attached |
+| `Matrix` (Praat type) | `PraatMatrix(numberOfRows, numberOfColumns, ...)`; class `PraatMatrix` |
 | `LongSound` | `LongSound$open("large_file.wav")` |
 
 ### Interpreter (NEW in v2.1.0)
@@ -2929,28 +2929,26 @@ concatenated <- sound_concatenate_all(voiced_sounds)
 
 ---
 
-## Matrix and the 'Matrix' package
+## PraatMatrix and the 'Matrix' package
 
-Praat's `Matrix` and the CRAN package 'Matrix' share a name, and a port of a Praat script that handles
-Praat `Matrix` objects (`Matrix: Get value in cell...`, `To Matrix` results from Ltas, DTW, MFCC, LPC and
-others) has to take care of three things.
+Praat's `Matrix` and the CRAN package 'Matrix' share a name. After 5.1.1 pladdrr's constructor and S3 class
+are `PraatMatrix` (the exported `Matrix()` was removed with no alias; an alias would have kept the
+duplicate-name finding from `pkgcheck`). Praat `Matrix` objects (`Matrix: Get value in cell...`, `To Matrix`
+results from Ltas, DTW, MFCC, LPC and others) are `PraatMatrix` objects in R.
 
 | Situation | Do this | Why |
 |-----------|---------|-----|
-| Calling the constructor with 'Matrix' attached | `pladdrr::Matrix(numberOfRows = 3, numberOfColumns = 4)` | `library(Matrix)` after `library(pladdrr)` masks pladdrr's `Matrix()`; the other order masks the other way. A script that is silent about this gets 'Matrix' `Matrix()` and a wrong-argument error. |
-| Testing the type | `inherits(m, "Matrix")` or, better, `inherits(m, "PraatMatrix")` | The class vector is `c("PraatMatrix", "Matrix", "PraatObject")`. `class(m)[1]` and `identical(class(m), c("Matrix", "PraatObject"))` (the pre-5.1.1 shape) fail. |
+| Constructing | `PraatMatrix(numberOfRows = 3, numberOfColumns = 4)` | No clash with `Matrix::Matrix()` whichever package is attached first. |
+| Testing the type | `inherits(m, "PraatMatrix")` | The class vector is `c("PraatMatrix", "PraatObject")`. `inherits(m, "Matrix")` is FALSE and `class(m)[1] == "Matrix"` fails (5.1.1 had `c("PraatMatrix", "Matrix", "PraatObject")`; earlier `c("Matrix", "PraatObject")`). |
 | Getting the numbers out | `as.matrix(m)` or `m$as_matrix()` | Both return a base R numeric matrix whether or not 'Matrix' is loaded. |
 
-Why the leading class: `as.matrix.Matrix` is registered by the 'Matrix' package. S3 dispatch takes the
-first class with a method, so `as.matrix.PraatMatrix` (R/matrix-wrapper.R) is found before 'Matrix''s and
-pladdrr registers nothing under the name `Matrix`. This is the pattern for any future wrapper whose class
-name is also an S3 or S4 class in a popular package. The symptom is `R CMD check`'s "checking use of S3
-registration" WARNING ("Registered S3 method from a standard package overwritten by 'pladdrr'"). Pladdrr's own
-`print`, `plot`, `autoplot`, `autolayer` and `as.data.frame` methods stay on `Matrix` because 'Matrix'
-registers none of them. The regression test is the last block of `tests/testthat/test-as-matrix-fallback.R`.
+pladdrr registers no S3 method on class `Matrix`: `$`, `as.matrix`, `as.data.frame`, `print`, `plot`,
+`autoplot` and `autolayer` are all on `PraatMatrix`. This is the pattern for any future wrapper whose class
+name is also an S3 or S4 class in a popular package. The regression test is the last block of
+`tests/testthat/test-as-matrix-fallback.R`.
 
-Faithfulness is unaffected: the class vector changes dispatch, not values, and a Praat `Matrix` read back
-through the interpreter (`praat_class` attribute `"Matrix"`) is still wrapped by `Matrix(.xptr = )`.
+Faithfulness is unaffected: only dispatch names changed, not values. A Praat `Matrix` read back through the
+interpreter (`praat_class` attribute `"Matrix"`, the Praat type name) is wrapped by `PraatMatrix(.xptr = )`.
 
 ## Re-implementing a Praat Procedure
 
