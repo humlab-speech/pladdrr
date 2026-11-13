@@ -142,7 +142,7 @@ The former custom thread pool in `batch_queries.cpp` (`parallel_for_range` templ
 in an Rcpp module constructor (`src/modules/*_module.cpp`) that reinterprets the
 external pointer as its C++ struct. Each of those constructors calls
 `require_praat_class()` (`src/praat_xptr_utils.h`: Praat's `Thing_isa` *subclass*
-test, so a `Sound` pointer is still accepted as a `Matrix`), and the R side wraps the
+test, so a `Sound` pointer is still accepted where Praat's `Matrix` is expected, e.g. by `PraatMatrix(.xptr = )`), and the R side wraps the
 construction in `with_pladdrr_errors()` so the refusal arrives as a classed
 `pladdrr_input_error` ("Not a Sound (found TextGrid)"). Without the check the first
 field read is out of bounds and the R session dies uncatchably. A new wrapper type
@@ -285,7 +285,7 @@ before each submission.
 | 38 Praat modules | 39 (`DESCRIPTION` Description; 39 files in `src/modules/`) | `ls src/modules/*.cpp \| wc -l` |
 | "version 5.0.5" (twice) | 5.1.1 | `DESCRIPTION` |
 | 1401 tests | 1556 `test_that()` blocks | count lines matching `^\s*test_that\(` in `tests/testthat/*.R` (the manuscript's counting unit is not stated; use one unit) |
-| 82% coverage | 93.7% (covr, macOS aarch64, 2026-11-11; `pkgcheck.log` is from 5.0.5 and stale) | rerun `covr` (see the covr FLIBS note in project memory) |
+| 82% coverage | 93.8% (pkgcheck's covr run, macOS aarch64, 2026-11-12; `pkgcheck.log` is from 5.0.5 and stale) | rerun `covr` (see the covr FLIBS note in project memory) |
 | CCC 0.9959 and 1.00 | `FAITHFULNESS_REPORT.md` is the live registry: 19 routines, all pass, tolerances per row | regenerate with the registry runner |
 
 Statements in the manuscript that hold and that these documents depend on: wrapper objects are plain lists with

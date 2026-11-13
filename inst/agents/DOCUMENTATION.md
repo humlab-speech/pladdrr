@@ -120,3 +120,27 @@ leave it to the example. A `unit` or `averaging_method` string that an unknown v
 used to fall back from now errors, and the Rd must name the accepted spellings
 (`?Ltas` and `?Intensity` are the model). Where a bound exists (2^29 cells), state it.
 
+## srr tags
+
+`@srrstats {ID}` marks a standard as addressed and must sit beside the code, test or
+document that addresses it (a roxygen block ending in `@noRd` and `NULL` in an `R/` file,
+or a `#'` header comment in a test file). pkgcheck runs `srr:::check_standards_in_files()`
+and fails with "standards ... mostly only documented in one file" when one file holds more
+than half of the addressed tags, and with "only present in one directory" when `R/` is the
+only place. `@srrstatsTODO` (open or partial) and `@srrstatsNA` (not applicable, with a
+reason) stay in `R/srr-stats-standards.R`. When a TODO is closed, move it to the file that
+closes it and change the tag. Check with
+`srr:::check_standards_in_files(srr:::get_stds_from_code(normalizePath(".")))`, which returns
+`""` when the spread is fine. `roxygen2::roxygenise()` prints the remaining TODO list.
+
+## Vignette code fences
+
+goodpractice (`extract_vignette_code`) counts a chunk start as a line matching
+`^```\s*\{\s*r\b` and a chunk end as any line matching `^```\s*$`. A display-only block
+fenced with backticks (python, praat, bash, or no language) therefore adds an end with no
+start, and pkgcheck prints "Chunk start/end indices failed sanity checks in vignette."
+Fence display-only blocks with `~~~` instead (leave a blank line before the opener, or
+pandoc will not read it as a fence). Rendering is the same. Executed code is unchanged:
+only `{r}` chunks run. Starts and ends must be equal in every vignette; a ten-line script
+in `inst/` or `dev/` that counts both is enough to check.
+

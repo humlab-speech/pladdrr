@@ -164,6 +164,17 @@ When porting a new Praat routine into pladdrr, add a registry row. Default
 tolerance is `0` for exact-arithmetic routines; looser tolerances require a
 written rationale in the row. Failing rows are first-class regressions.
 
+## What's New in the development version (after 5.1.1, 2026-11-13)
+
+Unreleased; `NEWS.md` has the user-facing entry. Version in `DESCRIPTION` is still 5.1.1.
+
+- **`Matrix()` is renamed `PraatMatrix()`; class vector is `c("PraatMatrix", "PraatObject")` (BREAKING, no alias).** The CRAN package 'Matrix' owns the name `Matrix` and registers `as.matrix.Matrix`; 5.1.1 worked around the S3 clash with a leading `PraatMatrix` class, and `pkgcheck` still flagged the duplicate function name. All S3 methods (`$`, `as.data.frame`, `print`, `plot`, `autoplot`, `autolayer`, `as.matrix`) are on `PraatMatrix`. `as.matrix(m)` is unchanged. See "PraatMatrix and the 'Matrix' package".
+- **Internals, behaviour unchanged.** `pair_files()` validates `by` first and does one `merge(all = !require_both)`; the `av` fallback of `.sound_ptr_from_path()` lives in `.sound_read_via_av()` (`R/sound-wrapper.R`). Both were split to get under goodpractice's 50-line limit.
+- **srr tags live next to the code or test that addresses them.** `@srrstats` tags are no longer all in `R/srr-stats-standards.R`: pkgcheck fails ("standards mostly documented in one file") when one file holds more than half of them. Only `@srrstatsTODO` and `@srrstatsNA` stay in that file. See `DOCUMENTATION.md` "srr tags".
+- **Vignette code fences.** Display-only blocks (python, praat, plain) use `~~~`, not backticks, because goodpractice counts every bare closing fence as a chunk end. See `DOCUMENTATION.md` "Vignette code fences".
+- **CI skip gate.** `.github/workflows/R-CMD-check.yaml` fails the run on any testthat skip reason that is not on its `permanent` or `debt` list; `fork-based parallelism` (Windows) is on the permanent list. A new skip message needs a list entry, or the job goes red with 0 test failures.
+- **Dead internal functions: audited, none deleted.** pkgcheck's 119 "defined but never called" findings are 110 false positives (`$.<Class>` S3 methods, roxygen-only `pladdrr_shared_*` anchors, Rcpp bindings used from R) and 9 unused Rcpp bindings left for a build-verified change. Table: `dev/dead-code-audit-2026-11.md`. Do not bulk-delete from the goodpractice list: R-dead bindings have been alive from C++ before.
+
 ## What's New in v5.1.1 (pitch units, Intensity interpolation, input guards)
 
 Recompute anything you saved with a non-hertz pitch unit or a non-linear Intensity lookup; the
@@ -172,7 +183,6 @@ magnitudes are in `NEWS.md`.
 - **Pitch units follow `kPitch_unit` at every door.** `unit = "semitones"` is semitones re 100 Hz and `"erb"` is ERB (both used to return log10(Hz)); `"loghertz"` is log10(Hz). See "Frequency Units" for the table. Unknown units raise `pladdrr_input_error` instead of answering in hertz.
 - **`PitchTier$shift_frequencies()`** works in semitones (was a silent no-op) and ERB (was a logHertz shift, x10); `"hertz_logarithmic"` is refused.
 - **`Intensity$get_value_at_time()`** interpolates as asked: the default `"cubic"` returned the linear value. An interpolation is a name or the code 0 to 4; anything else raises (it used to become cubic). `get_intensity_at_time(interpolate = FALSE)` is nearest.
-- **`Matrix()` is renamed `PraatMatrix()`; class vector is `c("PraatMatrix", "PraatObject")` (BREAKING, no alias).** The CRAN package 'Matrix' owns the name `Matrix` and registers `as.matrix.Matrix`; 5.1.1 worked around the S3 clash with a leading `PraatMatrix` class, and `pkgcheck` still flagged the duplicate function name. All S3 methods (`$`, `as.data.frame`, `print`, `plot`, `autoplot`, `autolayer`, `as.matrix`) are on `PraatMatrix`. `as.matrix(m)` is unchanged. See "PraatMatrix and the 'Matrix' package".
 - **Vendored-Praat defects fixed (win-builder GCC 14 warnings).** `dggsvd_` (GSVD) passed LAPACK a one-int `iwork` where it needs N, so it wrote past a stack variable; `_Label_to_TextGrid` dereferenced an `intervalTier` that `.move()` had nulled. Both, and the C++20 `-Wtemplate-id-cdtor` / `-Wclass-memaccess` / `-Wuninitialized` sites, are listed in `PRAAT_MODIFICATIONS.md`. Check with `g++ -O2 -Wall`; clang stays silent on these.
 - **Input guards:** `max_formants` outside 1 to 1000 and a wrong-class pointer at the `*_direct` getters raise instead of crashing; `sound_create_pure_tone()` counts `channels` in its size budget.
 
@@ -3525,7 +3535,7 @@ if (inherits(formant, "formant_constructor")) {  # Old, don't use
 }
 ```
 
-**Available class names:** `Sound`, `Pitch`, `Formant`, `Intensity`, `Spectrum`, `Spectrogram`, `TextGrid`, `PointProcess`, `Harmonicity`, `Ltas`, `Cepstrum`, `PowerCepstrum`, `LPC`, `Cochleagram`, `Excitation`, `Matrix`, `Table`, `PitchTier`, `FormantTier`, `IntensityTier`, `AmplitudeTier`, `DurationTier`, `FormantGrid`, `Manipulation`, `KlattGrid`, `FormantPath`, `ComplexSpectrogram`, `Polygon`, `VocalTract`, `LongSound`, `Electroglottogram`, `MFCC`, `LFCC`, `FormantModeler`, `PCA`, `Discriminant`
+**Available class names:** `Sound`, `Pitch`, `Formant`, `Intensity`, `Spectrum`, `Spectrogram`, `TextGrid`, `PointProcess`, `Harmonicity`, `Ltas`, `Cepstrum`, `PowerCepstrum`, `LPC`, `Cochleagram`, `Excitation`, `PraatMatrix`, `Table`, `PitchTier`, `FormantTier`, `IntensityTier`, `AmplitudeTier`, `DurationTier`, `FormantGrid`, `Manipulation`, `KlattGrid`, `FormantPath`, `ComplexSpectrogram`, `Polygon`, `VocalTract`, `LongSound`, `Electroglottogram`, `MFCC`, `LFCC`, `FormantModeler`, `PCA`, `Discriminant`
 
 ### 2. Unit Code Mismatch
 
