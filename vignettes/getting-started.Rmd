@@ -306,12 +306,13 @@ print(vowel_data)
 The package follows Praat's conventions, making it easy to translate Praat scripts:
 
 ### Praat Script
-```
+
+~~~
 # Praat
 sound = Read from file: "sound.wav"
 pitch = To Pitch: 0.01, 75, 600
 f0 = Get mean: 0, 0, "Hertz"
-```
+~~~
 
 ### pladdrr Equivalent
 ```{r}

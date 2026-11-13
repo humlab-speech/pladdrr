@@ -23,7 +23,7 @@ This guide explains the **3-tier performance API** in pladdrr and how to choose 
 pladdrr provides three API tiers, each trading interface simplicity for lower
 per-call overhead:
 
-```
+~~~
 ┌─────────────────────────────────────────────────────────┐
 │ TIER 1: High-Level API (Sound, Pitch, Formant, etc.)   │
 │ - Full object-oriented interface                        │
@@ -44,7 +44,7 @@ per-call overhead:
 │ - Best for: Large datasets, production workflows        │
 │ - Replaces many R->C crossings with one per call        │
 └─────────────────────────────────────────────────────────┘
-```
+~~~
 
 ---
 
@@ -340,7 +340,7 @@ system.time({
 
 ## Decision Tree: Which Tier Should I Use?
 
-```
+~~~
 Are you processing < 10 files?
 ├─ YES → Use Tier 1 (standard API)
 └─ NO ↓
@@ -352,7 +352,7 @@ Are you processing < 100 files?
 Are you processing > 100 files?
 ├─ Single machine → Use Tier 3 batch + parallel
 └─ Cluster → Use Tier 2 direct + your cluster manager
-```
+~~~
 
 ---
 

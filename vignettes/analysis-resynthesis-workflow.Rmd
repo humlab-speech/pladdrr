@@ -41,11 +41,11 @@ library(ggplot2)
 
 The analysis-resynthesis cycle closes the loop between acoustic analysis and perceptual reality:
 
-```
+~~~
 Real Speech → FormantPath Analysis → Formant Parameters
       ↑                                        ↓
 Perceptual Validation ← KlattGrid Synthesis ← Modified Parameters
-```
+~~~
 
 **Benefits**:
 

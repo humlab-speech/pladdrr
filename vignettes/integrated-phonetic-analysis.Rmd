@@ -378,7 +378,7 @@ write.csv(
 
 Analyze vowel variation across speakers, dialects, or social groups:
 
-```r
+~~~r
 # Load multiple speakers
 speakers <- c("speaker1.wav", "speaker2.wav", "speaker3.wav")
 textgrids <- c("speaker1.TextGrid", "speaker2.TextGrid", "speaker3.TextGrid")
@@ -394,25 +394,25 @@ for (i in seq_along(speakers)) {
 
 # Statistical analysis
 model <- lm(f1 ~ vowel * speaker, data = all_data)
-```
+~~~
 
 ### 2. L2 Acquisition Studies
 
 Track vowel development in second language learners:
 
-```r
+~~~r
 # Longitudinal data (same speaker, multiple sessions)
 sessions <- c("session1.wav", "session2.wav", "session3.wav")
 
 # Measure vowel space area over time
 # ... (see Example 9 for vowel space calculations) ...
-```
+~~~
 
 ### 3. Clinical Voice Assessment
 
 Multi-dimensional voice profiling:
 
-```r
+~~~r
 # Extract voice quality metrics
 pointprocess <- sound$to_point_process_periodic_cc(pitch_floor = 75,
   pitch_ceiling = 300)
@@ -438,7 +438,7 @@ voice_profile$cpps <- cepstrogram$get_cpps(
   pitch_floor = 60,
   pitch_ceiling = 330
 )
-```
+~~~
 
 **Note:** CPPS values are sensitive to parameters. See `system.file(
   "examples", "10_cpps_analysis.R", package = "pladdrr")` for parameter effects and clinical interpretation.
@@ -449,16 +449,16 @@ voice_profile$cpps <- cepstrogram$get_cpps(
 
 Always pre-emphasize before formant analysis:
 
-```r
+~~~r
 sound_preemph <- sound$pre_emphasize(from_frequency = 50)
 formant <- sound_preemph$to_formant_burg(...)
-```
+~~~
 
 ### 2. Appropriate Analysis Parameters
 
 Choose parameters based on speaker characteristics:
 
-```r
+~~~r
 # Adult male
 pitch <- sound$to_pitch(pitch_floor = 75, pitch_ceiling = 300)
 formant <- sound$to_formant_burg(max_frequency = 5000)
@@ -470,30 +470,30 @@ formant <- sound$to_formant_burg(max_frequency = 5500)
 # Child
 pitch <- sound$to_pitch(pitch_floor = 200, pitch_ceiling = 700)
 formant <- sound$to_formant_burg(max_frequency = 8000)
-```
+~~~
 
 ### 3. Handle Missing Values
 
 Acoustic measurements may fail:
 
-```r
+~~~r
 f0 <- pitch$get_value_at_time(time, "hertz", interpolate = TRUE)
 if (is.na(f0)) {
   # Handle voiceless segments or tracking failures
   cat("Warning: No F0 at time", time, "\n")
 }
-```
+~~~
 
 ### 4. Efficient Batch Processing
 
 For large corpora, use vectorization and sampling:
 
-```r
+~~~r
 # Sample large datasets
 if (nrow(data) > 10000) {
   data <- data[sample(nrow(data), 1000), ]  # Random sample
 }
-```
+~~~
 
 ## Summary
 

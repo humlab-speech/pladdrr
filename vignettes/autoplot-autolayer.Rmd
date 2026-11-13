@@ -31,11 +31,11 @@ pladdrr provides `autoplot(
 
 This pattern allows combining multiple objects in one plot:
 
-```r
+~~~r
 autoplot(spec) +
   autolayer(pitch) +
   autolayer(formant)
-```
+~~~
 
 ## Basic Usage: Single Object Plots
 

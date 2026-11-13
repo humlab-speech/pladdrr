@@ -48,11 +48,12 @@ This guide helps Python users familiar with Parselmouth transition to pladdrr fo
 ### Loading Sound Files
 
 **Parselmouth:**
-```python
+
+~~~python
 import parselmouth as pm
 
 sound = pm.Sound("audio.wav")
-```
+~~~
 
 **pladdrr:**
 ```{r}
@@ -64,13 +65,14 @@ sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
 ### Pitch Extraction
 
 **Parselmouth:**
-```python
+
+~~~python
 import parselmouth as pm
 
 sound = pm.Sound("audio.wav")
 pitch = pm.praat.call(sound, "To Pitch", 0.01, 75, 600)
 mean_f0 = pm.praat.call(pitch, "Get mean", 0, 0, "Hertz")
-```
+~~~
 
 **pladdrr:**
 ```{r}
@@ -82,12 +84,13 @@ mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
 ### Formant Analysis
 
 **Parselmouth:**
-```python
+
+~~~python
 sound = pm.Sound("vowel.wav")
 formant = pm.praat.call(sound, "To Formant (burg)", 0.01, 5, 5500, 0.025, 50)
 f1 = pm.praat.call(formant, "Get value at time", 1, 0.5, "Hertz", "Linear")
 f2 = pm.praat.call(formant, "Get value at time", 2, 0.5, "Hertz", "Linear")
-```
+~~~
 
 **pladdrr:**
 ```{r}
@@ -106,11 +109,12 @@ f2 <- formant$get_value_at_time(formant_number = 2, time = 0.5, unit = "hertz")
 ### Intensity Measurements
 
 **Parselmouth:**
-```python
+
+~~~python
 sound = pm.Sound("audio.wav")
 intensity = pm.praat.call(sound, "To Intensity", 100, 0.01, True)
 mean_int = pm.praat.call(intensity, "Get mean", 0, 0, "energy")
-```
+~~~
 
 **pladdrr:**
 ```{r}
@@ -124,11 +128,12 @@ mean_int <- intensity$get_mean(from_time = 0, to_time = 0,
 ### Spectral Analysis
 
 **Parselmouth:**
-```python
+
+~~~python
 sound = pm.Sound("audio.wav")
 spectrum = pm.praat.call(sound, "To Spectrum", True)
 cog = pm.praat.call(spectrum, "Get centre of gravity", 2.0)
-```
+~~~
 
 **pladdrr:**
 ```{r}
@@ -141,7 +146,7 @@ cog <- spectrum$get_centre_of_gravity(power = 2.0)
 
 ### Parselmouth Approach
 
-```python
+~~~python
 import parselmouth as pm
 import os
 import pandas as pd
@@ -160,7 +165,7 @@ for filename in os.listdir('.'):
 
 df = pd.DataFrame(results)
 df.to_csv('results.csv', index=False)
-```
+~~~
 
 ### pladdrr Approach
 
@@ -191,7 +196,8 @@ write.csv(results_df, file.path(tempdir(), "results.csv"), row.names = FALSE)
 ### Extracting Time Series Data
 
 **Parselmouth:**
-```python
+
+~~~python
 sound = pm.Sound("audio.wav")
 pitch = pm.praat.call(sound, "To Pitch", 0.01, 75, 600)
 
@@ -205,7 +211,7 @@ for i in range(pitch.n_frames):
     frequencies.append(f0)
 
 df = pd.DataFrame({'time': times, 'frequency': frequencies})
-```
+~~~
 
 **pladdrr:**
 ```{r}
@@ -221,7 +227,7 @@ pitch_data <- pitch$as_data_frame()
 
 ### Parselmouth with matplotlib
 
-```python
+~~~python
 import matplotlib.pyplot as plt
 
 sound = pm.Sound("audio.wav")
@@ -238,7 +244,7 @@ plt.xlabel('Time (s)')
 plt.ylabel('Frequency (Hz)')
 plt.title('Pitch Contour')
 plt.show()
-```
+~~~
 
 ### pladdrr with ggplot2
 
@@ -261,7 +267,8 @@ ggplot(pitch_data, aes(x = time, y = frequency)) +
 ### Voice Analysis Pipeline
 
 **Parselmouth:**
-```python
+
+~~~python
 def analyze_voice(filename):
     sound = pm.Sound(filename)
     
@@ -282,7 +289,7 @@ def analyze_voice(filename):
         'mean_hnr': mean_hnr,
         'jitter': jitter
     }
-```
+~~~
 
 **pladdrr:**
 ```{r}
@@ -315,7 +322,7 @@ analyze_voice <- function(filename) {
 
 ### Parselmouth + pandas/numpy
 
-```python
+~~~python
 import numpy as np
 import pandas as pd
 
@@ -323,7 +330,7 @@ files = ['file1.wav', 'file2.wav', 'file3.wav']
 results = [analyze_voice(f) for f in files]
 df = pd.DataFrame(results)
 df['speaker'] = ['A', 'B', 'C']
-```
+~~~
 
 ### pladdrr + tidyverse
 

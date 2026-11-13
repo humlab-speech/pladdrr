@@ -38,18 +38,20 @@ SIMD allows modern CPUs to process multiple data points simultaneously using a s
 ### Example: Adding Two Vectors
 
 **Scalar (traditional)**:
-```
+
+~~~
 for (i in 1:1000) {
   result[i] = a[i] + b[i]  # Process one element
 }
-```
+~~~
 
 **SIMD (vectorized)**:
-```
+
+~~~
 for (i in 1:1000 step 4) {
   result[i:i+3] = a[i:i+3] + b[i:i+3]  # Process four elements
 }
-```
+~~~
 
 SIMD is particularly effective for:
 - DSP algorithms (filtering, FFT, convolution)
@@ -424,13 +426,13 @@ To reach instruction sets beyond what a stock CRAN binary targets (e.g. AVX2
 on x86_64, subject to CRAN's `-march=native` restriction still applying to
 CRAN's own build), compile from source with your own `~/.R/Makevars`:
 
-```r
+~~~r
 # Install from source
 install.packages("pladdrr", type = "source")
 
 # Or from GitHub
 remotes::install_github("humlab-speech/pladdrr")
-```
+~~~
 
 ### Binary Packages
 
