@@ -3,7 +3,7 @@
 # value access, and statistics.
 
 mat_fixture <- function() {
-  Matrix(numberOfRows = 3, numberOfColumns = 4)
+  PraatMatrix(numberOfRows = 3, numberOfColumns = 4)
 }
 
 test_that("Matrix geometry getters", {

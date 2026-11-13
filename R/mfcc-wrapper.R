@@ -121,7 +121,7 @@ NULL
 # --- Conversion ---
 .mfcc_methods$to_matrix <- function(.self) {
   matrix_ptr <- .self$.cpp$to_matrix_ptr()
-  Matrix(.xptr = matrix_ptr)
+  PraatMatrix(.xptr = matrix_ptr)
 }
 .mfcc_methods$to_mel_spectrogram <- function(.self, first_coefficient = 1,
   last_coefficient = 0,
@@ -287,7 +287,7 @@ NULL
 }
 .lfcc_methods$to_matrix <- function(.self) {
   matrix_ptr <- .self$.cpp$to_matrix_ptr()
-  Matrix(.xptr = matrix_ptr)
+  PraatMatrix(.xptr = matrix_ptr)
 }
 
 # --- Export ---

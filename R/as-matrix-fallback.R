@@ -4,7 +4,7 @@
 # (.xptr, .cpp) and kept the S3 class, so is.matrix() said TRUE, no error was
 # raised, and printing the result died inside the class's own print(). Every
 # object carries class(x) = c("<Class>", "PraatObject"), so one method here
-# covers them all; classes with their own method (Matrix, Polygon) still win,
+# covers them all; classes with their own method (PraatMatrix, Polygon) still win,
 # because S3 dispatches on the first class element.
 
 #' Convert a pladdrr object to a matrix
@@ -16,7 +16,7 @@
 #' objects, `channel` x `sample` for Sound). Classes without `$as_matrix()`
 #' (Formant, PointProcess, TextGrid, Table, ...) raise a `pladdrr_input_error`
 #' naming the class and the accessor to use instead; they never silently return
-#' a matrix-shaped wrapper. `Matrix` and `Polygon` keep their own methods.
+#' a matrix-shaped wrapper. `PraatMatrix` and `Polygon` keep their own methods.
 #'
 #' @param x A pladdrr object (any class inheriting from \code{PraatObject}).
 #' @param ... Passed on to the object's \code{$as_matrix()} method; used by
@@ -26,7 +26,7 @@
 #'   of class \code{pladdrr_input_error} instead, naming whichever of
 #'   \code{as.data.frame(x)} and \code{x$as_vector()} that class really offers
 #'   (\code{Manipulation} offers neither and is pointed at its own accessors).
-#' @seealso \code{\link{Matrix}}, \code{\link{Pitch}},
+#' @seealso \code{\link{PraatMatrix}}, \code{\link{Pitch}},
 #'   \code{\link{as.data.frame.Sound}}
 #' @examples
 #' sound <- Sound$create_tone(frequency = 440, duration = 0.2,

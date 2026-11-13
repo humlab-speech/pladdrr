@@ -5,7 +5,7 @@
 
 test_that(".wrap_praat_object handles NULL and missing attributes", {
   expect_null(pladdrr:::.wrap_praat_object(NULL))
-  ptr <- Matrix(numberOfRows = 2, numberOfColumns = 2)$.xptr
+  ptr <- PraatMatrix(numberOfRows = 2, numberOfColumns = 2)$.xptr
   expect_warning(
     out <- pladdrr:::.wrap_praat_object(ptr),
     "no praat_class attribute"
@@ -14,10 +14,10 @@ test_that(".wrap_praat_object handles NULL and missing attributes", {
 })
 
 test_that(".wrap_praat_object maps known classes", {
-  m_ptr <- Matrix(numberOfRows = 2, numberOfColumns = 2)$.xptr
+  m_ptr <- PraatMatrix(numberOfRows = 2, numberOfColumns = 2)$.xptr
   attr(m_ptr, "praat_class") <- "Matrix"
   m <- pladdrr:::.wrap_praat_object(m_ptr)
-  expect_s3_class(m, "Matrix")
+  expect_s3_class(m, "PraatMatrix")
 
   lt_ptr <- Sound$create_tone(frequency = 220, duration = 0.3,
     sampling_rate = 16000)$
@@ -28,7 +28,7 @@ test_that(".wrap_praat_object maps known classes", {
 })
 
 test_that(".wrap_praat_object warns on unknown classes", {
-  ptr <- Matrix(numberOfRows = 2, numberOfColumns = 2)$.xptr
+  ptr <- PraatMatrix(numberOfRows = 2, numberOfColumns = 2)$.xptr
   attr(ptr, "praat_class") <- "BogusClass"
   expect_warning(out <- pladdrr:::.wrap_praat_object(ptr),
     "Unknown Praat class")

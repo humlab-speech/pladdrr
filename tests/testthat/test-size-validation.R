@@ -1,7 +1,7 @@
 ## Sizes that become allocations are validated before they reach Praat
 ## (F-cochleagram-input-validation, "negative-size doors"). Before:
 ##   sound_create_tone(duration = -2, sampling_rate = 8000)  -> a Sound, nx = -16000
-##   Matrix(numberOfRows = -3, numberOfColumns = -4)         -> a corrupt Matrix
+##   PraatMatrix(numberOfRows = -3, numberOfColumns = -4)         -> a corrupt Matrix
 ##   Excitation$to_formant(max_formants = -1)                -> a corrupt Formant
 ## and a huge request asked the allocator for terabytes (macOS: session killed).
 
@@ -41,12 +41,12 @@ test_that("Sound factories still build ordinary sounds", {
 })
 
 test_that("Matrix refuses non-positive and absurd dimensions", {
-  expect_input_error(Matrix(numberOfRows = -3, numberOfColumns = -4), "numberOfRows")
-  expect_input_error(Matrix(numberOfRows = 3, numberOfColumns = 0), "numberOfColumns")
-  expect_input_error(Matrix(numberOfRows = NA_real_, numberOfColumns = 3), "numberOfRows")
-  expect_input_error(Matrix(numberOfRows = 1e6, numberOfColumns = 1e6), "numberOfRows")
+  expect_input_error(PraatMatrix(numberOfRows = -3, numberOfColumns = -4), "numberOfRows")
+  expect_input_error(PraatMatrix(numberOfRows = 3, numberOfColumns = 0), "numberOfColumns")
+  expect_input_error(PraatMatrix(numberOfRows = NA_real_, numberOfColumns = 3), "numberOfRows")
+  expect_input_error(PraatMatrix(numberOfRows = 1e6, numberOfColumns = 1e6), "numberOfRows")
   expect_input_error(
-    Matrix(xmin = 0, xmax = 1, nx = -5, dx = 0.1, x1 = 0, ymin = 0, ymax = 1,
+    PraatMatrix(xmin = 0, xmax = 1, nx = -5, dx = 0.1, x1 = 0, ymin = 0, ymax = 1,
       ny = 3, dy = 0.1, y1 = 0), "nx")
   expect_input_error(matrix_create_simple(-1, 2), "numberOfRows")
   m <- matrix_create_simple(3, 4)

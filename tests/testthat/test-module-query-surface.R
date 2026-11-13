@@ -86,7 +86,7 @@ test_that("FormantGrid as_data_frame reports every point", {
 })
 
 test_that("Matrix setter/getter and export agree", {
-  matrix <- Matrix(numberOfRows = 2, numberOfColumns = 2)
+  matrix <- PraatMatrix(numberOfRows = 2, numberOfColumns = 2)
   matrix$set_value(1, 1, 10)
   matrix$set_value(1, 2, 20)
   matrix$set_value(2, 1, 30)

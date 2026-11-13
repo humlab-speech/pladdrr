@@ -680,7 +680,7 @@ print.Manipulation <- function(x, ...) {
   invisible(x)
 }
 #' @export
-print.Matrix <- function(x, ...) {
+print.PraatMatrix <- function(x, ...) {
   x$print()
   invisible(x)
 }

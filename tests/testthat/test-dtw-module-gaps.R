@@ -87,7 +87,7 @@ test_that("DTW to_matrix_cumulative works and produces a valid Matrix", {
 
   # Matrix is an S3-wrapped Praat object here, not a base R matrix, so
   # base nrow()/ncol() don't apply -- use its own get_nx()/get_ny().
-  expect_s3_class(mat, "Matrix")
+  expect_s3_class(mat, "PraatMatrix")
   expect_equal(mat$get_ny(), dtw$get_ny(),
     tolerance = sqrt(.Machine$double.eps))
   expect_equal(mat$get_nx(), dtw$get_nx(),

@@ -46,7 +46,7 @@ test_that("LPC conversions: to_spectrum, to_matrix, to_spectrogram, to_lfcc", {
   expect_s3_class(spec, "Spectrum")
 
   mat <- lpc$to_matrix()
-  expect_s3_class(mat, "Matrix")
+  expect_s3_class(mat, "PraatMatrix")
 
   sgram <- lpc$to_spectrogram()
   expect_s3_class(sgram, "Spectrogram")

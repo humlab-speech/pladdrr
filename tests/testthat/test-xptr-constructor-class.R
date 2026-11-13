@@ -3,7 +3,7 @@
 # filed). fix/001 made matrix_read() and pitchtier_from_file() refuse a text file
 # whose "Object class" line names another class, but the R6 constructors take an
 # external pointer from R without asking where it came from:
-#   Matrix(.xptr = <TextGrid pointer>)$get_minimum()
+#   PraatMatrix(.xptr = <TextGrid pointer>)$get_minimum()
 #   PitchTier(.xptr = <Matrix pointer>)$get_minimum()
 # re-interpreted the foreign object as their own type, so the first field read
 # was out-of-bounds and killed the R session (SIGSEGV, exit status 139) -- no
@@ -15,12 +15,12 @@
 .xptr_textgrid <- function()
   TextGrid(path = system.file("extdata/test.TextGrid", package = "pladdrr"))
 
-test_that("Matrix(.xptr = ) refuses an external pointer that is not a Matrix", {
+test_that("PraatMatrix(.xptr = ) refuses an external pointer that is not a Matrix", {
   # Construction alone never used to crash (nothing dereferences the pointer
   # yet), which is exactly why the guard belongs here rather than in a method.
-  expect_error(Matrix(.xptr = .xptr_textgrid()$.xptr),
+  expect_error(PraatMatrix(.xptr = .xptr_textgrid()$.xptr),
     class = "pladdrr_input_error")
-  cond <- tryCatch(Matrix(.xptr = .xptr_textgrid()$.xptr), error = function(e) e)
+  cond <- tryCatch(PraatMatrix(.xptr = .xptr_textgrid()$.xptr), error = function(e) e)
   expect_s3_class(cond, "pladdrr_input_error")
   expect_match(conditionMessage(cond), "Not a Matrix")
   expect_match(conditionMessage(cond), "found TextGrid")
@@ -28,7 +28,7 @@ test_that("Matrix(.xptr = ) refuses an external pointer that is not a Matrix", {
   expect_identical(cond$param, ".xptr")
   # Explicit with_pladdrr_errors() must stay idempotent on an already classed
   # condition (R/error-classes.R rethrows untagged conditions untouched).
-  expect_error(with_pladdrr_errors(Matrix(.xptr = .xptr_textgrid()$.xptr)),
+  expect_error(with_pladdrr_errors(PraatMatrix(.xptr = .xptr_textgrid()$.xptr)),
     class = "pladdrr_input_error")
 })
 
@@ -48,7 +48,7 @@ test_that("querying a wrong-class object no longer kills the session (subprocess
   # child dies with signal 11 (system2 status 139) and prints nothing, which no
   # in-suite expectation could report.
   doors <- list(
-    matrix_from_textgrid = "obj <- Matrix(.xptr = tg$.xptr)",
+    matrix_from_textgrid = "obj <- PraatMatrix(.xptr = tg$.xptr)",
     pitchtier_from_matrix = "obj <- PitchTier(.xptr = mx$.xptr)"
   )
   for (probe in names(doors)) {
@@ -81,7 +81,7 @@ test_that("querying a wrong-class object no longer kills the session (subprocess
 test_that("a right-class pointer still builds, with its values", {
   mx <- .xptr_matrix()
   mx$set_value(2, 3, 7)
-  same <- Matrix(.xptr = mx$.xptr)
+  same <- PraatMatrix(.xptr = mx$.xptr)
   expect_equal(same$get_sum(), 7)
   expect_identical(same$get_number_of_rows(), 3L)
 
@@ -102,9 +102,9 @@ test_that("subclasses are still accepted (Thing_isa, not class equality)", {
   # is the subclass-tolerance hole fix/001 documented, and this test must not be
   # read as blessing the values.
   ltas <- Sound$create_tone(220, 0.2, 16000)$to_ltas()
-  expect_no_error(Matrix(.xptr = ltas$.xptr))
+  expect_no_error(PraatMatrix(.xptr = ltas$.xptr))
   snd <- Sound$create_tone(220, 0.2, 16000)
-  expect_no_error(Matrix(.xptr = snd$.xptr))
+  expect_no_error(PraatMatrix(.xptr = snd$.xptr))
 })
 
 test_that("Sound/Ltas-named text files still load as Matrix (reader tolerance)", {

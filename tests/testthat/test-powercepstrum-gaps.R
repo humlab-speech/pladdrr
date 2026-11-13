@@ -142,7 +142,7 @@ windows_probe_test(
 windows_probe_test("PowerCepstrum$to_matrix and $as_matrix export data", {
   pc <- sound_fixture()$to_spectrum()$to_power_cepstrum()
   m <- pc$to_matrix()
-  expect_s3_class(m, "Matrix")
+  expect_s3_class(m, "PraatMatrix")
   am <- pc$as_matrix()
   expect_true(is.matrix(am))
   expect_gt(ncol(am), 0)
@@ -182,7 +182,7 @@ windows_probe_test(
 windows_probe_test("PowerCepstrogram$to_matrix returns a Matrix object", {
   pcg <- sound_fixture()$to_powercepstrogram(pitch_floor = 60, time_step = 0.01)
   m <- pcg$to_matrix()
-  expect_s3_class(m, "Matrix")
+  expect_s3_class(m, "PraatMatrix")
 })
 
 windows_probe_test("PowerCepstrogram$smooth returns a new PowerCepstrogram", {

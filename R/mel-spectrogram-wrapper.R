@@ -37,7 +37,7 @@ MelSpectrogram <- function(.xptr = NULL) {
 
     to_matrix = function(to_db = TRUE) {
       mat_ptr <- .band_filter_spectrogram_to_matrix(ptr, to_db)
-      Matrix(.xptr = mat_ptr)
+      PraatMatrix(.xptr = mat_ptr)
     },
 
     to_intensity = function() {

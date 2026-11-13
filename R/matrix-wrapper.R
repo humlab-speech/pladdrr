@@ -1,4 +1,4 @@
-#' @title Praat Matrix Object
+#' @title Praat Matrix Object (PraatMatrix)
 #' @description
 #' Praat Matrix object with direct C++ module binding for matrix operations.
 #'
@@ -10,11 +10,11 @@
 #' because reading a foreign object's fields is layout confusion (the same check
 #' \code{\link{matrix_read}} performs on the class a file names).
 #'
-#' @return A \code{Matrix} object with methods for two-dimensional sampled data
+#' @return A \code{PraatMatrix} object with methods for two-dimensional sampled data
 #'  access.
 #'
 #' @examples
-#' m <- Matrix(numberOfRows = 3, numberOfColumns = 4)
+#' m <- PraatMatrix(numberOfRows = 3, numberOfColumns = 4)
 #' m$set_value(1, 1, 5.0)
 #' m$get_value(1, 1)
 #' m$get_number_of_rows()
@@ -26,7 +26,7 @@
 #' m2 <- matrix_read(mat_file)
 #' m2$get_value(1, 1)
 #'
-#' @name Matrix
+#' @name PraatMatrix
 NULL
 
 # ============================================================================
@@ -100,9 +100,9 @@ lockEnvironment(.matrix_methods, bindings = TRUE)
 # S3 Dispatch
 # ============================================================================
 
-#' @method $ Matrix
+#' @method $ PraatMatrix
 #' @export
-`$.Matrix` <- function(x, name) {
+`$.PraatMatrix` <- function(x, name) {
   val <- .subset2(x, name)
   if (!is.null(val)) return(val)
   method <- .matrix_methods[[name]]
@@ -125,7 +125,7 @@ lockEnvironment(.matrix_methods, bindings = TRUE)
 }
 
 #' @export
-Matrix <- function(xmin = NULL, xmax = NULL, nx = NULL, dx = NULL, x1 = NULL,
+PraatMatrix <- function(xmin = NULL, xmax = NULL, nx = NULL, dx = NULL, x1 = NULL,
                    ymin = NULL, ymax = NULL, ny = NULL, dy = NULL, y1 = NULL,
                    numberOfRows = NULL, numberOfColumns = NULL,
                    .xptr = NULL) {
@@ -136,13 +136,13 @@ Matrix <- function(xmin = NULL, xmax = NULL, nx = NULL, dx = NULL, x1 = NULL,
     .check_positive_count(numberOfRows, "numberOfRows")
     .check_positive_count(numberOfColumns, "numberOfColumns")
     .check_cell_count(as.numeric(numberOfRows) * as.numeric(numberOfColumns),
-      "Matrix", numberOfRows = numberOfRows)
+      "PraatMatrix", numberOfRows = numberOfRows)
     ptr <- .matrix_create_simple(numberOfRows, numberOfColumns)
   } else if (
     .matrix_has_full_params(xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1)) {
     .check_positive_count(nx, "nx")
     .check_positive_count(ny, "ny")
-    .check_cell_count(as.numeric(nx) * as.numeric(ny), "Matrix", nx = nx)
+    .check_cell_count(as.numeric(nx) * as.numeric(ny), "PraatMatrix", nx = nx)
     ptr <- .matrix_create(xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1)
   } else {
     stop(
@@ -158,15 +158,12 @@ Matrix <- function(xmin = NULL, xmax = NULL, nx = NULL, dx = NULL, x1 = NULL,
   structure(list(
     .cpp = cpp_obj,
     .xptr = ptr
-  ), class = c("PraatMatrix", "Matrix", "PraatObject"))
+  ), class = c("PraatMatrix", "PraatObject"))
 }
 
-# The leading "PraatMatrix" class exists only so as.matrix() dispatches to this
-# package's method even when the 'Matrix' package is loaded: 'Matrix' registers
-# as.matrix.Matrix itself, and registering a second one here made R CMD check
-# warn ("Registered S3 method from a standard package overwritten") and let
-# whichever package loaded last win. "Matrix" stays in the class vector so
-# inherits(x, "Matrix") and the print/plot/autoplot methods keep working.
+# The class is "PraatMatrix" (not "Matrix") so that as.matrix(), print(), plot()
+# and friends never collide with the CRAN package 'Matrix', which registers
+# as.matrix.Matrix and owns the "Matrix" constructor name.
 #' @export
 as.matrix.PraatMatrix <- function(x, ...) x$as_matrix()
 
@@ -186,9 +183,9 @@ as.matrix.PraatMatrix <- function(x, ...) x$as_matrix()
 #' @inheritParams pladdrr_shared_analysis ny
 #' @param dy Y sampling period (step between rows)
 #' @param y1 Y value of first row
-#' @return A Matrix object
+#' @return A PraatMatrix object
 #' @seealso \code{\link{matrix_create_simple}} for simpler creation,
-#'  \code{\link{Matrix}} for object methods
+#'  \code{\link{PraatMatrix}} for object methods
 #' @examples
 #' m <- matrix_create(xmin = 0, xmax = 2, nx = 2, dx = 1, x1 = 0.5,
 #'                     ymin = 0, ymax = 1, ny = 1, dy = 1, y1 = 0.5)
@@ -196,7 +193,7 @@ as.matrix.PraatMatrix <- function(x, ...) x$as_matrix()
 #' m$get_number_of_columns()
 #' @export
 matrix_create <- function(xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1) {
-  Matrix(xmin = xmin, xmax = xmax, nx = nx, dx = dx, x1 = x1,
+  PraatMatrix(xmin = xmin, xmax = xmax, nx = nx, dx = dx, x1 = x1,
          ymin = ymin, ymax = ymax, ny = ny, dy = dy, y1 = y1)
 }
 
@@ -207,16 +204,16 @@ matrix_create <- function(xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1) {
 #'
 #' @inheritParams pladdrr_shared_analysis numberOfRows
 #' @param numberOfColumns Number of columns
-#' @return A Matrix object
+#' @return A PraatMatrix object
 #' @seealso \code{\link{matrix_create}} for full parameter control,
-#'  \code{\link{Matrix}} for object methods
+#'  \code{\link{PraatMatrix}} for object methods
 #' @examples
 #' m <- matrix_create_simple(3, 4)
 #' m$set_value(1, 1, 5.0)
 #' m$get_value(1, 1)
 #' @export
 matrix_create_simple <- function(numberOfRows, numberOfColumns) {
-  Matrix(numberOfRows = numberOfRows, numberOfColumns = numberOfColumns)
+  PraatMatrix(numberOfRows = numberOfRows, numberOfColumns = numberOfColumns)
 }
 
 #' Read a Matrix from file
@@ -228,7 +225,7 @@ matrix_create_simple <- function(numberOfRows, numberOfColumns) {
 #' or an uncatchable segfault).
 #'
 #' @param path Path to the Matrix file
-#' @return A Matrix object
+#' @return A PraatMatrix object
 #' @seealso \code{\link{matrix_create}}, \code{\link{matrix_create_simple}}
 #' @examples
 #' mat_file <- tempfile(fileext = ".Matrix")
@@ -243,5 +240,5 @@ matrix_create_simple <- function(numberOfRows, numberOfColumns) {
 #' @export
 matrix_read <- function(path) {
   xptr <- .matrix_read(path)
-  Matrix(.xptr = xptr)
+  PraatMatrix(.xptr = xptr)
 }

@@ -112,7 +112,7 @@
 #' \itemize{
 #'   \item \code{as_data_frame()} - frequency and power as a data frame
 #'   \item \code{as_matrix()} - frequency and power as a plain matrix
-#' \item \code{to_matrix()} - the Ltas converted to a full \link{Matrix} object
+#' \item \code{to_matrix()} - the Ltas converted to a full \link{PraatMatrix} object
 #'   \item \code{save(path)} - write to a Praat text file
 #' }
 #'
@@ -319,7 +319,7 @@ NULL
 }
 .ltas_methods$to_matrix <- function(.self) {
   ptr <- .self$.cpp$to_matrix_ptr()
-  Matrix(.xptr = ptr)
+  PraatMatrix(.xptr = ptr)
 }
 .ltas_methods$save <- function(.self, path) {
   .self$.cpp$save(.ensure_suffix(path.expand(path), "Ltas"))

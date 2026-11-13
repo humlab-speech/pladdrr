@@ -705,7 +705,7 @@ plot.PointProcess <- function(x, from_time = NULL, to_time = NULL,
 #'  Matrix-derived
 #' objects including generic matrices, spectrograms, etc.
 #'
-#' @param x Matrix object
+#' @param x PraatMatrix object
 #' @param from_x Start value for x-axis (NULL = from beginning)
 #' @param to_x End value for x-axis (NULL = to end)
 #' @param from_y Start value for y-axis (NULL = from beginning)
@@ -731,13 +731,13 @@ plot.PointProcess <- function(x, from_time = NULL, to_time = NULL,
 #'
 #' @export
 #' @inheritParams pladdrr_shared_dots_plot
-plot.Matrix <- function(x, from_x = NULL, to_x = NULL,
+plot.PraatMatrix <- function(x, from_x = NULL, to_x = NULL,
                         from_y = NULL, to_y = NULL,
                         garnish = TRUE, title = "Matrix",
                         x_label = "X", y_label = "Y",
                         color_scale = "viridis", ...) {
-  if (!inherits(x, "Matrix")) {
-    stop("x must be a Matrix object")
+  if (!inherits(x, "PraatMatrix")) {
+    stop("x must be a PraatMatrix object")
   }
 
   df <- .matrix_plot_data(x, from_x, to_x, from_y, to_y)
@@ -756,7 +756,7 @@ plot.Matrix <- function(x, from_x = NULL, to_x = NULL,
   p
 }
 
-# Resolve data-frame column names used by plot.Matrix, tolerating the
+# Resolve data-frame column names used by plot.PraatMatrix, tolerating the
 # different conventions of Matrix subclasses (time/x, frequency/y,
 # value/amplitude).
 #' Choose the x, y and fill column names of a Matrix plot data frame, with fallbacks.

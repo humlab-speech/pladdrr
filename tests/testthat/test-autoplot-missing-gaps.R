@@ -278,7 +278,7 @@ test_that("BarkSpectrogram and MelSpectrogram autolayer render", {
 
 test_that(
   "Matrix autolayer renders using the same col/row/value auto-detected columns as autoplot", {
-  mat <- Matrix(xmin = 0, xmax = 1, nx = 10, dx = 0.1, x1 = 0.05,
+  mat <- PraatMatrix(xmin = 0, xmax = 1, nx = 10, dx = 0.1, x1 = 0.05,
                 ymin = 0, ymax = 2, ny = 20, dy = 0.1, y1 = 0.05)
   p <- ggplot2::ggplot() + ggplot2::autolayer(mat)
   expect_s3_class(p, "ggplot")

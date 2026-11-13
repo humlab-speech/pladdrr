@@ -43,7 +43,7 @@
     "LPC" = LPC(.xptr = xptr),
     "Ltas" = Ltas(.xptr = xptr),
     "Manipulation" = Manipulation(.xptr = xptr),
-    "Matrix" = Matrix(.xptr = xptr),
+    "Matrix" = PraatMatrix(.xptr = xptr),
     "Table" = Table(.xptr = xptr),
     "PitchTier" = PitchTier(.xptr = xptr),
     "FormantGrid" = FormantGrid(.xptr = xptr),

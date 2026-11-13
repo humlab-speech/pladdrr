@@ -61,7 +61,7 @@ test_that("Ltas to_matrix returns a Matrix object with matching data", {
   ltas <- sound$to_ltas(bandwidth = 100)
 
   mat_obj <- ltas$to_matrix()
-  expect_s3_class(mat_obj, "Matrix")
+  expect_s3_class(mat_obj, "PraatMatrix")
 
   ltas_df <- ltas$as_data_frame()
   expect_equal(mat_obj$get_number_of_columns(), nrow(ltas_df),

@@ -30,7 +30,7 @@ test_that("VocalTract to_spectrum/to_matrix conversions", {
   sp <- vt$to_spectrum()
   expect_s3_class(sp, "Spectrum")
   m <- vt$to_matrix()
-  expect_s3_class(m, "Matrix")
+  expect_s3_class(m, "PraatMatrix")
 })
 
 test_that("vocaltract_create_from_phone", {

@@ -6,7 +6,7 @@
 # as a list). These lock in the Matrix/KlattGrid/VocalTract behaviors so a
 # future index-shape or axis bug is caught here.
 
-test_that("as.data.frame.Matrix returns long-format with real axis values", {
+test_that("as.data.frame.PraatMatrix returns long-format with real axis values", {
   # Ltas$to_matrix() returns a real Matrix object (per ltas-wrapper.R).
   sound <- Sound$create_tone(frequency = 220, duration = 0.3,
     sampling_rate = 16000)
@@ -46,7 +46,7 @@ test_that("as.data.frame.KlattGrid returns one row per (time, formant)", {
   expect_gt(length(unique(df$time)), 50)
 })
 
-test_that("as.data.frame.Matrix handles a 1-row edge case", {
+test_that("as.data.frame.PraatMatrix handles a 1-row edge case", {
   # A single-row matrix (e.g. an Ltas is 1 x nbins) must still produce
   # one row per cell without the expand.grid/as.vector ordering diverging.
   sound <- Sound$create_tone(frequency = 220, duration = 0.3,

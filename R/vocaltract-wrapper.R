@@ -48,7 +48,7 @@
 #'
 #' spectrum <- vt$to_spectrum()
 #'
-#' @seealso [Spectrum], [Matrix]
+#' @seealso [Spectrum], [PraatMatrix]
 #' @name VocalTract
 NULL
 
@@ -97,7 +97,7 @@ NULL
 
 .vocaltract_methods$to_matrix <- function(.self) {
   result_ptr <- .self$.cpp$to_matrix_ptr()
-  Matrix(.xptr = result_ptr)
+  PraatMatrix(.xptr = result_ptr)
 }
 
 # Compatibility

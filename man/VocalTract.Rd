@@ -68,5 +68,5 @@ spectrum <- vt$to_spectrum()
 
 }
 \seealso{
-[Spectrum], [Matrix]
+[Spectrum], [PraatMatrix]
 }

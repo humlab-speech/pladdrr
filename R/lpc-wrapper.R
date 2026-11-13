@@ -131,7 +131,7 @@ NULL
 
 .lpc_methods$to_matrix <- function(.self) {
   matrix_ptr <- .lpc_to_matrix(.self$.xptr)
-  Matrix(.xptr = matrix_ptr)
+  PraatMatrix(.xptr = matrix_ptr)
 }
 
 .lpc_methods$to_spectrogram <- function(.self, df_min = 20.0,

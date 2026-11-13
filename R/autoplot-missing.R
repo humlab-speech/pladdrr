@@ -959,7 +959,7 @@ autolayer.MelSpectrogram <- function(object, ...) {
 #' @param y_col Column name for y-axis (default: auto-detect).
 #' @param fill_col Column name for fill (default: auto-detect).
 #' @export
-autoplot.Matrix <- function(object, x_col = NULL, y_col = NULL,
+autoplot.PraatMatrix <- function(object, x_col = NULL, y_col = NULL,
     fill_col = NULL, garnish = TRUE, ...) {
   df <- as.data.frame(object)
   if (nrow(df) == 0) {
@@ -984,7 +984,7 @@ autoplot.Matrix <- function(object, x_col = NULL, y_col = NULL,
 
 #' @rdname autoplot-methods
 #' @export
-autolayer.Matrix <- function(object, x_col = NULL, y_col = NULL,
+autolayer.PraatMatrix <- function(object, x_col = NULL, y_col = NULL,
     fill_col = NULL, ...) {
   df <- as.data.frame(object)
   if (nrow(df) == 0) return(NULL)

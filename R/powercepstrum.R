@@ -241,7 +241,7 @@ NULL
 }
 .powercepstrum_methods$to_matrix <- function(.self) {
   xptr <- .self$.cpp$to_matrix_ptr()
-  Matrix(.xptr = xptr)
+  PraatMatrix(.xptr = xptr)
 }
 .powercepstrum_methods$to_spectrum <- function(.self, random_phases = FALSE) {
   xptr <- .self$.cpp$to_spectrum_ptr(as.logical(random_phases))
@@ -398,7 +398,7 @@ NULL
 
 .powercepstrogram_methods$to_matrix <- function(.self) {
   ptr <- .powercepstrogram_to_matrix(.self$.xptr)
-  Matrix(.xptr = ptr)
+  PraatMatrix(.xptr = ptr)
 }
 
 .powercepstrogram_methods$as_matrix <- function(.self) {

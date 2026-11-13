@@ -54,14 +54,14 @@
   to_matrix_distances = function(cpp_obj, .xptr) {
     function() {
       mat_ptr <- cpp_obj$to_matrix_distances_ptr()
-      Matrix(.xptr = mat_ptr)
+      PraatMatrix(.xptr = mat_ptr)
     }
   },
   to_matrix_cumulative = function(cpp_obj, .xptr) {
     function(band = 0.0, slope = 1) {
       mat_ptr <- cpp_obj$to_matrix_cumulative_distances_ptr(
         as.numeric(band), as.integer(slope))
-      Matrix(.xptr = mat_ptr)
+      PraatMatrix(.xptr = mat_ptr)
     }
   },
   to_duration_tier = function(cpp_obj, .xptr) {

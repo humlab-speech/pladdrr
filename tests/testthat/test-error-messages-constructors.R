@@ -33,7 +33,7 @@ test_that("constructors that take either bounds, a path or a pointer say what is
   expect_error(PitchTier(), "PitchTier(): Must provide either (tmin, tmax) or .xptr", fixed = TRUE)
   expect_error(Sound(), "Sound(): Must provide either path or .xptr", fixed = TRUE)
   expect_error(TextGrid(), "TextGrid(): Must provide either path or .xptr", fixed = TRUE)
-  expect_error(Matrix(), "Either provide (numberOfRows, numberOfColumns)", fixed = TRUE)
+  expect_error(PraatMatrix(), "Either provide (numberOfRows, numberOfColumns)", fixed = TRUE)
 })
 
 test_that("pointer-wrapping constructors require an external pointer", {

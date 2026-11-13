@@ -36,7 +36,7 @@ test_that("VocalTract to_spectrum and to_matrix produce objects", {
   expect_s3_class(spec, "Spectrum")
 
   mat <- vt$to_matrix()
-  expect_true(is.matrix(mat) || is(mat, "Matrix"))
+  expect_true(is.matrix(mat) || is(mat, "PraatMatrix"))
 })
 
 test_that("VocalTract print works", {

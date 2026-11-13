@@ -43,7 +43,7 @@ test_that("a genuine pointer is still accepted, and so is a subclass", {
   snd <- Sound$create_tone(frequency = 440, duration = 0.1, sampling_rate = 8000)
   expect_s3_class(Sound(.xptr = snd$.xptr), "Sound")
   # Sound is a Matrix: Thing_isa is the subclass test, as in Praat's own readers.
-  expect_s3_class(Matrix(.xptr = snd$.xptr), "Matrix")
+  expect_s3_class(PraatMatrix(.xptr = snd$.xptr), "PraatMatrix")
 })
 
 test_that("the fatal constructors no longer kill the session (subprocess)", {

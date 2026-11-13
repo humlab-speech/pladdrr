@@ -10,7 +10,7 @@
 #' @param x A pladdrr R6 object (Discriminant, Electroglottogram,
 #'  FormantModeler,
 #'   PCA, PowerCepstrogram, BarkSpectrogram, Cepstrum, Cochleagram, DTW,
-#'   KlattGrid, LPC, LongSound, Matrix, MelSpectrogram, or VocalTract).
+#'   KlattGrid, LPC, LongSound, PraatMatrix, MelSpectrogram, or VocalTract).
 #' @param ... Passed to methods; currently unused except `power` on `Cepstrum`.
 #' @return A data.frame. Column names vary by class; see each class's
 #'   \code{$as_data_frame()} method or the corresponding `autoplot.*` method
@@ -172,7 +172,7 @@ as.data.frame.LongSound <- function(x, ...) {
 
 #' @rdname as-data-frame-missing
 #' @export
-as.data.frame.Matrix <- function(x, ...) {
+as.data.frame.PraatMatrix <- function(x, ...) {
   mat <- x$as_matrix()
   n_row <- x$get_ny(); n_col <- x$get_nx()
   y1 <- x$get_y1()

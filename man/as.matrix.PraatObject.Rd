@@ -26,7 +26,7 @@ and the tiers, `frequency` x `time` for Spectrogram and the other 2-D
 objects, `channel` x `sample` for Sound). Classes without `$as_matrix()`
 (Formant, PointProcess, TextGrid, Table, ...) raise a `pladdrr_input_error`
 naming the class and the accessor to use instead; they never silently return
-a matrix-shaped wrapper. `Matrix` and `Polygon` keep their own methods.
+a matrix-shaped wrapper. `PraatMatrix` and `Polygon` keep their own methods.
 }
 \examples{
 sound <- Sound$create_tone(frequency = 440, duration = 0.2,
@@ -37,6 +37,6 @@ tryCatch(as.matrix(sound$to_point_process_periodic_cc()),
   pladdrr_input_error = function(e) conditionMessage(e))
 }
 \seealso{
-\code{\link{Matrix}}, \code{\link{Pitch}},
+\code{\link{PraatMatrix}}, \code{\link{Pitch}},
   \code{\link{as.data.frame.Sound}}
 }

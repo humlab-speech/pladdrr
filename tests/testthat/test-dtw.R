@@ -131,7 +131,7 @@ test_that("DTW to_matrix_distances works", {
 
   mat <- dtw$to_matrix_distances()
 
-  expect_s3_class(mat, "Matrix")
+  expect_s3_class(mat, "PraatMatrix")
 })
 
 test_that("Sound$to_dtw method works", {

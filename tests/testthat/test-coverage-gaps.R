@@ -52,8 +52,8 @@ test_that("extract_part warns when the window runs past the signal", {
   options(old)
 })
 
-test_that("plot.Matrix supports all color scales", {
-  mat <- Matrix(xmin = 0, xmax = 1, nx = 10, dx = 0.1, x1 = 0.05,
+test_that("plot.PraatMatrix supports all color scales", {
+  mat <- PraatMatrix(xmin = 0, xmax = 1, nx = 10, dx = 0.1, x1 = 0.05,
     ymin = 0, ymax = 2, ny = 20, dy = 0.1, y1 = 0.05)
   for (cs in c("magma", "plasma", "inferno", "cividis", "greyscale")) {
     expect_no_error(plot(mat, color_scale = cs))

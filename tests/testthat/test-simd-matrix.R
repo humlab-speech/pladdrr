@@ -8,7 +8,7 @@ withr::local_seed(20261109L)
 # helper was removed; the conversion now lives in the internal
 # .matrix_from_r_matrix()).
 praat_matrix_from_matrix <- function(mat) {
-  Matrix(.xptr = pladdrr:::.matrix_from_r_matrix(mat))
+  PraatMatrix(.xptr = pladdrr:::.matrix_from_r_matrix(mat))
 }
 
 test_that("SIMD matrix sum matches scalar result", {

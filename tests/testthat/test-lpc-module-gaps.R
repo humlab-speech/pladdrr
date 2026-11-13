@@ -108,8 +108,8 @@ test_that(
 
   mat_ptr <- lpc$.cpp$to_matrix_ptr()
   expect_type(mat_ptr, "externalptr")
-  mat <- Matrix(.xptr = mat_ptr)
-  expect_s3_class(mat, "Matrix")
+  mat <- PraatMatrix(.xptr = mat_ptr)
+  expect_s3_class(mat, "PraatMatrix")
 })
 
 test_that(

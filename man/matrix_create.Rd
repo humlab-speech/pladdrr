@@ -28,7 +28,7 @@ matrix_create(xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1)
 \item{y1}{Y value of first row}
 }
 \value{
-A Matrix object
+A PraatMatrix object
 }
 \description{
 Creates a new Matrix object with explicit domain and sampling parameters.
@@ -41,5 +41,5 @@ m$get_number_of_columns()
 }
 \seealso{
 \code{\link{matrix_create_simple}} for simpler creation,
- \code{\link{Matrix}} for object methods
+ \code{\link{PraatMatrix}} for object methods
 }

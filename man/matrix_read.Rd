@@ -10,7 +10,7 @@ matrix_read(path)
 \item{path}{Path to the Matrix file}
 }
 \value{
-A Matrix object
+A PraatMatrix object
 }
 \description{
 Reads a Praat Matrix object from a matrix text file (Praat's binary object

@@ -14,7 +14,7 @@
 \alias{as.data.frame.KlattGrid}
 \alias{as.data.frame.LPC}
 \alias{as.data.frame.LongSound}
-\alias{as.data.frame.Matrix}
+\alias{as.data.frame.PraatMatrix}
 \alias{as.data.frame.MelSpectrogram}
 \alias{as.data.frame.VocalTract}
 \title{as.data.frame Methods for pladdrr Objects}
@@ -43,7 +43,7 @@
 
 \method{as.data.frame}{LongSound}(x, ...)
 
-\method{as.data.frame}{Matrix}(x, ...)
+\method{as.data.frame}{PraatMatrix}(x, ...)
 
 \method{as.data.frame}{MelSpectrogram}(x, ...)
 
@@ -53,7 +53,7 @@
 \item{x}{A pladdrr R6 object (Discriminant, Electroglottogram,
 FormantModeler,
  PCA, PowerCepstrogram, BarkSpectrogram, Cepstrum, Cochleagram, DTW,
- KlattGrid, LPC, LongSound, Matrix, MelSpectrogram, or VocalTract).}
+ KlattGrid, LPC, LongSound, PraatMatrix, MelSpectrogram, or VocalTract).}
 
 \item{...}{Passed to methods; currently unused except `power` on `Cepstrum`.}
 

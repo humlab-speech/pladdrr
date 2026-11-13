@@ -4,7 +4,7 @@ library(pladdrr)
 
 test_that(
   "Matrix as.data.frame uses real xmin/dx/ymin/dy axis values (Task 6 regression guard)", {
-  mat <- Matrix(xmin = 0, xmax = 1, nx = 10, dx = 0.1, x1 = 0.05,
+  mat <- PraatMatrix(xmin = 0, xmax = 1, nx = 10, dx = 0.1, x1 = 0.05,
                 ymin = 0, ymax = 2, ny = 20, dy = 0.1, y1 = 0.05)
   df <- as.data.frame(mat)
   expect_lte(max(df$col), 1.0)

@@ -175,7 +175,7 @@ test_that("MFCC$lifter applies cepstral weighting in place and returns self", {
 test_that("MFCC$to_matrix converts to a Matrix object", {
   mfcc <- make_test_mfcc(12)
   mat <- mfcc$to_matrix()
-  expect_s3_class(mat, "Matrix")
+  expect_s3_class(mat, "PraatMatrix")
 })
 
 test_that("MFCC$as_data_frame includes/excludes c0 as requested", {
@@ -316,7 +316,7 @@ test_that("LFCC$to_lpc and $to_matrix convert correctly", {
   expect_s3_class(lpc, "LPC")
 
   mat <- lfcc$to_matrix()
-  expect_s3_class(mat, "Matrix")
+  expect_s3_class(mat, "PraatMatrix")
 })
 
 test_that("LFCC$as_data_frame includes/excludes c0 as requested", {

@@ -56,8 +56,8 @@
 \alias{autolayer.BarkSpectrogram}
 \alias{autoplot.MelSpectrogram}
 \alias{autolayer.MelSpectrogram}
-\alias{autoplot.Matrix}
-\alias{autolayer.Matrix}
+\alias{autoplot.PraatMatrix}
+\alias{autolayer.PraatMatrix}
 \alias{autoplot.PCA}
 \alias{autolayer.PCA}
 \alias{autoplot.Discriminant}
@@ -386,7 +386,7 @@
 
 \method{autolayer}{MelSpectrogram}(object, ...)
 
-\method{autoplot}{Matrix}(
+\method{autoplot}{PraatMatrix}(
   object,
   x_col = NULL,
   y_col = NULL,
@@ -395,7 +395,7 @@
   ...
 )
 
-\method{autolayer}{Matrix}(object, x_col = NULL, y_col = NULL, fill_col = NULL, ...)
+\method{autolayer}{PraatMatrix}(object, x_col = NULL, y_col = NULL, fill_col = NULL, ...)
 
 \method{autoplot}{PCA}(object, type = c("scree", "scores", "both"), garnish = TRUE, ...)
 

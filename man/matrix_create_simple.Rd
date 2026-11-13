@@ -12,7 +12,7 @@ matrix_create_simple(numberOfRows, numberOfColumns)
 \item{numberOfColumns}{Number of columns}
 }
 \value{
-A Matrix object
+A PraatMatrix object
 }
 \description{
 Creates a new Matrix object with given dimensions. Domain defaults to [0,1]
@@ -25,5 +25,5 @@ m$get_value(1, 1)
 }
 \seealso{
 \code{\link{matrix_create}} for full parameter control,
- \code{\link{Matrix}} for object methods
+ \code{\link{PraatMatrix}} for object methods
 }

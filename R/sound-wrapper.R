@@ -434,7 +434,7 @@ NULL
   gne_ptr <- .sound_to_harmonicity_gne(
     .self$.xptr, as.numeric(
       fmin), as.numeric(fmax), as.numeric(bandwidth), as.numeric(step))
-  Matrix(.xptr = gne_ptr)
+  PraatMatrix(.xptr = gne_ptr)
 }
 
 .sound_methods$extract_electroglottogram <- function(.self, channel = 1L,

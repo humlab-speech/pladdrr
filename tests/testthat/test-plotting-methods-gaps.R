@@ -5,7 +5,7 @@
 # stop()s on every plot.* S3 method (called directly via `pladdrr:::`,
 # since the S3 generic itself would never dispatch to the wrong method),
 # from_time/to_time/from_freq/to_freq/from_quefrency/to_quefrency filters
-# not otherwise exercised, plot.Matrix (entirely untested elsewhere) and
+# not otherwise exercised, plot.PraatMatrix (entirely untested elsewhere) and
 # its color_scale switch, plot.TextGrid's tier-selection branches, and the
 # various empty-data warning branches.
 
@@ -30,7 +30,7 @@ test_that(
     "x must be a Harmonicity object")
   expect_error(pladdrr:::plot.PointProcess("nope"),
     "x must be a PointProcess object")
-  expect_error(pladdrr:::plot.Matrix("nope"), "x must be a Matrix object")
+  expect_error(pladdrr:::plot.PraatMatrix("nope"), "x must be a PraatMatrix object")
   expect_error(pladdrr:::plot.PowerCepstrum("nope"),
     "x must be a PowerCepstrum object")
   expect_error(pladdrr:::plot.TextGrid("nope"), "x must be a TextGrid object")
@@ -101,8 +101,8 @@ test_that(
 })
 
 test_that(
-  "plot.Matrix renders, respects from_x/to_x/from_y/to_y, and covers every color_scale branch", {
-  mat <- Matrix(xmin = 0, xmax = 1, nx = 10, dx = 0.1, x1 = 0.05,
+  "plot.PraatMatrix renders, respects from_x/to_x/from_y/to_y, and covers every color_scale branch", {
+  mat <- PraatMatrix(xmin = 0, xmax = 1, nx = 10, dx = 0.1, x1 = 0.05,
                 ymin = 0, ymax = 2, ny = 20, dy = 0.1, y1 = 0.05)
   p <- plot(mat)
   expect_s3_class(p, "ggplot")

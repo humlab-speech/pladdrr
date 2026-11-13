@@ -80,7 +80,7 @@ test_that(
   interp <- interp_fixture("matrix")
   interp$run("To Spectrogram: 0.005, 5000, 0.002, 20, \"Gaussian\"")
   interp$run("To Matrix")
-  expect_s3_class(last_object(interp), "Matrix")
+  expect_s3_class(last_object(interp), "PraatMatrix")
 })
 
 test_that(
