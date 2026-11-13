@@ -9,6 +9,7 @@
   [](https://orcid.org/0000-0001-8445-0559)
 
 - **Johan von Boer**. Contributor.
+  [](https://orcid.org/0000-0003-4188-5872)
 
 - **Paul Boersma**. Copyright holder.  
   Author of the bundled Praat sources in src/praat.github.io

@@ -58,7 +58,7 @@ Used for articulatory synthesis (convert to a Spectrum), vowel modeling
 
 ## See also
 
-\[Spectrum\], \[Matrix\]
+\[Spectrum\], \[PraatMatrix\]
 
 ## Examples
 

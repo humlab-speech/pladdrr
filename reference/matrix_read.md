@@ -20,7 +20,7 @@ matrix_read(path)
 
 ## Value
 
-A Matrix object
+A PraatMatrix object
 
 ## See also
 

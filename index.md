@@ -357,7 +357,7 @@ with 500+ methods:
 
 - **TextGrid** (~34 methods) - Annotation and segmentation
 - **PointProcess** (~20 methods) - Time points (e.g., glottal pulses)
-- **Matrix** (~18 methods) - 2D numerical arrays
+- **PraatMatrix** (~18 methods) - 2D numerical arrays
 - **Table** (~20 methods) - Tabular data structures
 
 See

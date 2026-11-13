@@ -1,5 +1,40 @@
 # Changelog
 
+## pladdrr (development version)
+
+### BREAKING CHANGE: `Matrix()` is now `PraatMatrix()`
+
+- The exported constructor `Matrix()` is renamed
+  [`PraatMatrix()`](https://humlab-speech.github.io/pladdrr/reference/PraatMatrix.md),
+  and the S3 class of the object it returns is now
+  `c("PraatMatrix", "PraatObject")` (5.1.1:
+  `c("PraatMatrix", "Matrix", "PraatObject")`). The name `Matrix` is
+  owned by the CRAN package ‘Matrix’; `pkgcheck` flagged the duplicate
+  function name, and masking made
+  [`library(Matrix)`](https://codeberg.org/jaganmn/Matrix) and
+  [`library(pladdrr)`](https://github.com/humlab-speech/pladdrr)
+  order-dependent. There is no deprecated `Matrix()` alias, because an
+  alias would keep the duplicate name.
+- Migration: replace `Matrix(...)` with `PraatMatrix(...)`, and
+  `inherits(m, "Matrix")` / `expect_s3_class(m, "Matrix")` with
+  `inherits(m, "PraatMatrix")`. `as.matrix(m)`, `m$as_matrix()` and
+  every method on the object (`$get_value()`, `$save()`, …) are
+  unchanged, as are
+  [`matrix_create()`](https://humlab-speech.github.io/pladdrr/reference/matrix_create.md),
+  [`matrix_create_simple()`](https://humlab-speech.github.io/pladdrr/reference/matrix_create_simple.md)
+  and
+  [`matrix_read()`](https://humlab-speech.github.io/pladdrr/reference/matrix_read.md).
+- S3 methods that were registered on class `Matrix` (`$`,
+  `as.data.frame`, `print`, `plot`, `autoplot`, `autolayer`) are now
+  registered on `PraatMatrix`; call them through the generics as before.
+  Direct calls such as `pladdrr:::plot.Matrix()` become
+  `pladdrr:::plot.PraatMatrix()`.
+- Objects returned by `Ltas$to_matrix()`, `MFCC$to_matrix()`,
+  `LPC$to_matrix()`, `DTW$to_matrix_*()`, `PowerCepstrogram$to_matrix()`
+  and similar methods are `PraatMatrix` objects. The Praat type name
+  `"Matrix"` in the script interpreter (`praat_class` attribute,
+  `To Matrix` actions) and the `.Matrix` file extension are unchanged.
+
 ## pladdrr 5.1.1
 
 5.1.1 corrects pitch units and Intensity interpolation, which 5.1.0
@@ -14,8 +49,7 @@ first.
   `as.matrix.Matrix`, which the ‘Matrix’ package owns; `R CMD check`
   flagged the overwrite and the package loaded last won.
   `inherits(m, "Matrix")` and `as.matrix(m)` behave as before; code that
-  reads `class(m)[1]` now sees `"PraatMatrix"`. Call
-  [`pladdrr::Matrix()`](https://humlab-speech.github.io/pladdrr/reference/Matrix.md)
+  reads `class(m)[1]` now sees `"PraatMatrix"`. Call `pladdrr::Matrix()`
   when ‘Matrix’ is attached, since
   [`library(Matrix)`](https://codeberg.org/jaganmn/Matrix) after
   [`library(pladdrr)`](https://github.com/humlab-speech/pladdrr) masks
@@ -370,9 +404,7 @@ states by how much. The safety and robustness items are listed after
   [`sound_create_tone_complex()`](https://humlab-speech.github.io/pladdrr/reference/sound_create_tone_complex.md)
   refuse a non-positive, non-finite or absurd `duration` /
   `sampling_rate` (a negative duration used to return a Sound with
-  `nx = -16000`; 1e9 s asked for 4.4e13 samples),
-  [`Matrix()`](https://humlab-speech.github.io/pladdrr/reference/Matrix.md)
-  /
+  `nx = -16000`; 1e9 s asked for 4.4e13 samples), `Matrix()` /
   [`matrix_create_simple()`](https://humlab-speech.github.io/pladdrr/reference/matrix_create_simple.md)
   refuse non-positive or oversized dimensions (a negative count built a
   corrupt object), and `Excitation$to_formant()` needs

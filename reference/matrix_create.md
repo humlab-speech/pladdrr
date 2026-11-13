@@ -53,13 +53,13 @@ matrix_create(xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1)
 
 ## Value
 
-A Matrix object
+A PraatMatrix object
 
 ## See also
 
 [`matrix_create_simple`](https://humlab-speech.github.io/pladdrr/reference/matrix_create_simple.md)
 for simpler creation,
-[`Matrix`](https://humlab-speech.github.io/pladdrr/reference/Matrix.md)
+[`PraatMatrix`](https://humlab-speech.github.io/pladdrr/reference/PraatMatrix.md)
 for object methods
 
 ## Examples

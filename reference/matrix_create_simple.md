@@ -21,13 +21,13 @@ matrix_create_simple(numberOfRows, numberOfColumns)
 
 ## Value
 
-A Matrix object
+A PraatMatrix object
 
 ## See also
 
 [`matrix_create`](https://humlab-speech.github.io/pladdrr/reference/matrix_create.md)
 for full parameter control,
-[`Matrix`](https://humlab-speech.github.io/pladdrr/reference/Matrix.md)
+[`PraatMatrix`](https://humlab-speech.github.io/pladdrr/reference/PraatMatrix.md)
 for object methods
 
 ## Examples

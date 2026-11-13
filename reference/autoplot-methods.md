@@ -367,7 +367,7 @@ autoplot(object, garnish = TRUE, ...)
 # S3 method for class 'MelSpectrogram'
 autolayer(object, ...)
 
-# S3 method for class 'Matrix'
+# S3 method for class 'PraatMatrix'
 autoplot(
   object,
   x_col = NULL,
@@ -377,7 +377,7 @@ autoplot(
   ...
 )
 
-# S3 method for class 'Matrix'
+# S3 method for class 'PraatMatrix'
 autolayer(object, x_col = NULL, y_col = NULL, fill_col = NULL, ...)
 
 # S3 method for class 'PCA'

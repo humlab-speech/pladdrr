@@ -509,8 +509,8 @@ Containers and tiers that the analysers return.
   : Electroglottogram
 - [`electroglottogram_create()`](https://humlab-speech.github.io/pladdrr/reference/electroglottogram_create.md)
   : Create an Electroglottogram object
-- [`Matrix`](https://humlab-speech.github.io/pladdrr/reference/Matrix.md)
-  : Praat Matrix Object
+- [`PraatMatrix`](https://humlab-speech.github.io/pladdrr/reference/PraatMatrix.md)
+  : Praat Matrix Object (PraatMatrix)
 - [`matrix_create()`](https://humlab-speech.github.io/pladdrr/reference/matrix_create.md)
   : Create a Praat Matrix with full parameters
 - [`matrix_create_simple()`](https://humlab-speech.github.io/pladdrr/reference/matrix_create_simple.md)
@@ -613,8 +613,8 @@ ggplot2 autoplot/autolayer and the base-graphics plot functions.
   [`autolayer(`*`<BarkSpectrogram>`*`)`](https://humlab-speech.github.io/pladdrr/reference/autoplot-methods.md)
   [`autoplot(`*`<MelSpectrogram>`*`)`](https://humlab-speech.github.io/pladdrr/reference/autoplot-methods.md)
   [`autolayer(`*`<MelSpectrogram>`*`)`](https://humlab-speech.github.io/pladdrr/reference/autoplot-methods.md)
-  [`autoplot(`*`<Matrix>`*`)`](https://humlab-speech.github.io/pladdrr/reference/autoplot-methods.md)
-  [`autolayer(`*`<Matrix>`*`)`](https://humlab-speech.github.io/pladdrr/reference/autoplot-methods.md)
+  [`autoplot(`*`<PraatMatrix>`*`)`](https://humlab-speech.github.io/pladdrr/reference/autoplot-methods.md)
+  [`autolayer(`*`<PraatMatrix>`*`)`](https://humlab-speech.github.io/pladdrr/reference/autoplot-methods.md)
   [`autoplot(`*`<PCA>`*`)`](https://humlab-speech.github.io/pladdrr/reference/autoplot-methods.md)
   [`autolayer(`*`<PCA>`*`)`](https://humlab-speech.github.io/pladdrr/reference/autoplot-methods.md)
   [`autoplot(`*`<Discriminant>`*`)`](https://humlab-speech.github.io/pladdrr/reference/autoplot-methods.md)
@@ -648,14 +648,14 @@ ggplot2 autoplot/autolayer and the base-graphics plot functions.
   : Plot Intensity Contour
 - [`plot(`*`<Ltas>`*`)`](https://humlab-speech.github.io/pladdrr/reference/plot.Ltas.md)
   : Plot Long-Term Average Spectrum
-- [`plot(`*`<Matrix>`*`)`](https://humlab-speech.github.io/pladdrr/reference/plot.Matrix.md)
-  : Plot Matrix as Heatmap
 - [`plot(`*`<Pitch>`*`)`](https://humlab-speech.github.io/pladdrr/reference/plot.Pitch.md)
   : Plot Pitch Contour
 - [`plot(`*`<PointProcess>`*`)`](https://humlab-speech.github.io/pladdrr/reference/plot.PointProcess.md)
   : Plot PointProcess Events
 - [`plot(`*`<PowerCepstrum>`*`)`](https://humlab-speech.github.io/pladdrr/reference/plot.PowerCepstrum.md)
   : Plot PowerCepstrum
+- [`plot(`*`<PraatMatrix>`*`)`](https://humlab-speech.github.io/pladdrr/reference/plot.PraatMatrix.md)
+  : Plot Matrix as Heatmap
 - [`plot(`*`<Sound>`*`)`](https://humlab-speech.github.io/pladdrr/reference/plot.Sound.md)
   : Plot Sound Waveform
 - [`plot(`*`<Spectrogram>`*`)`](https://humlab-speech.github.io/pladdrr/reference/plot.Spectrogram.md)
@@ -703,7 +703,7 @@ as.data.frame, as.matrix, print and summary methods for pladdrr objects.
   [`as.data.frame(`*`<KlattGrid>`*`)`](https://humlab-speech.github.io/pladdrr/reference/as-data-frame-missing.md)
   [`as.data.frame(`*`<LPC>`*`)`](https://humlab-speech.github.io/pladdrr/reference/as-data-frame-missing.md)
   [`as.data.frame(`*`<LongSound>`*`)`](https://humlab-speech.github.io/pladdrr/reference/as-data-frame-missing.md)
-  [`as.data.frame(`*`<Matrix>`*`)`](https://humlab-speech.github.io/pladdrr/reference/as-data-frame-missing.md)
+  [`as.data.frame(`*`<PraatMatrix>`*`)`](https://humlab-speech.github.io/pladdrr/reference/as-data-frame-missing.md)
   [`as.data.frame(`*`<MelSpectrogram>`*`)`](https://humlab-speech.github.io/pladdrr/reference/as-data-frame-missing.md)
   [`as.data.frame(`*`<VocalTract>`*`)`](https://humlab-speech.github.io/pladdrr/reference/as-data-frame-missing.md)
   : as.data.frame Methods for pladdrr Objects

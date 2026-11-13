@@ -7,7 +7,7 @@ Spectrogram and the other 2-D objects, \`channel\` x \`sample\` for
 Sound). Classes without \`\$as_matrix()\` (Formant, PointProcess,
 TextGrid, Table, ...) raise a \`pladdrr_input_error\` naming the class
 and the accessor to use instead; they never silently return a
-matrix-shaped wrapper. \`Matrix\` and \`Polygon\` keep their own
+matrix-shaped wrapper. \`PraatMatrix\` and \`Polygon\` keep their own
 methods.
 
 ## Usage
@@ -37,7 +37,7 @@ neither and is pointed at its own accessors).
 
 ## See also
 
-[`Matrix`](https://humlab-speech.github.io/pladdrr/reference/Matrix.md),
+[`PraatMatrix`](https://humlab-speech.github.io/pladdrr/reference/PraatMatrix.md),
 [`Pitch`](https://humlab-speech.github.io/pladdrr/reference/Pitch.md),
 [`as.data.frame.Sound`](https://humlab-speech.github.io/pladdrr/reference/as.data.frame.Sound.md)
 

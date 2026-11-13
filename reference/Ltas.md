@@ -140,7 +140,7 @@ crosses into C++ once for the whole set of frequencies or ranges.
 - `as_matrix()` - frequency and power as a plain matrix
 
 - `to_matrix()` - the Ltas converted to a full
-  [Matrix](https://humlab-speech.github.io/pladdrr/reference/Matrix.md)
+  [PraatMatrix](https://humlab-speech.github.io/pladdrr/reference/PraatMatrix.md)
   object
 
 - `save(path)` - write to a Praat text file

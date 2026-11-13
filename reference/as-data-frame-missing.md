@@ -43,7 +43,7 @@ as.data.frame(x, ...)
 # S3 method for class 'LongSound'
 as.data.frame(x, ...)
 
-# S3 method for class 'Matrix'
+# S3 method for class 'PraatMatrix'
 as.data.frame(x, ...)
 
 # S3 method for class 'MelSpectrogram'
@@ -59,7 +59,8 @@ as.data.frame(x, ...)
 
   A pladdrr R6 object (Discriminant, Electroglottogram, FormantModeler,
   PCA, PowerCepstrogram, BarkSpectrogram, Cepstrum, Cochleagram, DTW,
-  KlattGrid, LPC, LongSound, Matrix, MelSpectrogram, or VocalTract).
+  KlattGrid, LPC, LongSound, PraatMatrix, MelSpectrogram, or
+  VocalTract).
 
 - ...:
 

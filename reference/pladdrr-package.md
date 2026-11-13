@@ -146,7 +146,8 @@ Other contributors:
 - Tomas Skotare ([ORCID](https://orcid.org/0000-0001-8445-0559))
   \[contributor\]
 
-- Johan von Boer \[contributor\]
+- Johan von Boer ([ORCID](https://orcid.org/0000-0003-4188-5872))
+  \[contributor\]
 
 - Paul Boersma (Author of the bundled Praat sources in
   src/praat.github.io) \[copyright holder\]

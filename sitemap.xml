@@ -55,7 +55,6 @@
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/Ltas.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/MFCC.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/Manipulation.html</loc></url>
-<url><loc>https://humlab-speech.github.io/pladdrr/reference/Matrix.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/MelSpectrogram.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/PCA.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/Pitch.html</loc></url>
@@ -66,6 +65,7 @@
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/PowerCepstrogram.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/PowerCepstrum.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/PraatInterpreter.html</loc></url>
+<url><loc>https://humlab-speech.github.io/pladdrr/reference/PraatMatrix.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/Sound.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/Spectrogram.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/Spectrum.html</loc></url>
@@ -239,10 +239,10 @@
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/plot.Harmonicity.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/plot.Intensity.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/plot.Ltas.html</loc></url>
-<url><loc>https://humlab-speech.github.io/pladdrr/reference/plot.Matrix.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/plot.Pitch.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/plot.PointProcess.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/plot.PowerCepstrum.html</loc></url>
+<url><loc>https://humlab-speech.github.io/pladdrr/reference/plot.PraatMatrix.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/plot.Sound.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/plot.Spectrogram.html</loc></url>
 <url><loc>https://humlab-speech.github.io/pladdrr/reference/plot.Spectrum.html</loc></url>
