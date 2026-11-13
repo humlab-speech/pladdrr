@@ -34,6 +34,6 @@ test_that("a failed batch row records the class of the condition", {
 test_that("channels = NA from av falls back to mono instead of 'invalid dim'", {
   # The line under test is inside the av fallback: assert it textually, since the
   # branch only runs for formats Praat cannot read natively.
-  src <- deparse(body(pladdrr:::.sound_ptr_from_path))
+  src <- deparse(body(pladdrr:::.sound_read_via_av))
   expect_true(any(grepl("is.na(channels)", src, fixed = TRUE)))
 })
