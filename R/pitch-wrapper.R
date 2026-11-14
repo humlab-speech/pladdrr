@@ -59,6 +59,21 @@
 #'  contour)
 #' }
 #'
+#' @section Detrending:
+#' \itemize{
+#' \item \code{subtract_linear_fit(unit)} - new Pitch with the linear trend
+#'  removed, as Praat's \emph{Subtract linear fit}
+#' \item \code{get_values_detrended(unit)} - the same contour as a numeric
+#'  vector (\code{NA} for unvoiced frames)
+#' }
+#' Slope removed, mean preserved: the result is centred on the original mean
+#' F0, not on zero, so it is not the same as \code{residuals(lm(f0 ~ time))}
+#' (add \code{mean(f0, na.rm = TRUE)} to compare). The line is fitted on the
+#' contour after linear interpolation of unvoiced gaps, between the first and
+#' last voiced frame; frames that were originally unvoiced stay unvoiced. For a
+#' relative contour, \code{(x - mean(x, na.rm = TRUE)) / mean(x, na.rm = TRUE)}
+#' is a separate step.
+#'
 #' @section Units:
 #' F0 unit codes: \code{"hertz"} (0), \code{"semitones re 1 Hz"} (1),
 #' \code{"semitones re 100 Hz"} (2), \code{"semitones re 200 Hz"} (3),

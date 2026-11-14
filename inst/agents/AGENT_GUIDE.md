@@ -1422,22 +1422,25 @@ values <- ltas$get_values_at_frequencies(freqs, interpolation = "cubic")
 means <- ltas$get_means_batch(fmins, fmaxs, unit = "energy")
 ```
 
-#### Pitch Detrending (Tremor: 10x → 4x)
+#### Pitch Detrending (native Praat "Subtract linear fit")
 
 ```r
 pitch <- sound$to_pitch(pitch_floor = 75, pitch_ceiling = 600)
 
-# SLOW: R-side detrending with lm() + predict() (~40ms)
-values <- pitch$get_values_vector()
-times <- pitch$get_times_vector()
-model <- lm(values ~ times, na.action = na.exclude)
-detrended <- residuals(model)
-
-# FAST: Native Praat detrending (~4ms = 10x speedup)
-detrended <- pitch$get_values_detrended(unit = "hertz")  # Returns NumericVector
+# Native Praat detrending: slope removed, MEAN PRESERVED (centred on mean F0, not 0)
+detrended <- pitch$get_values_detrended(unit = "hertz")  # Returns NumericVector, NA = unvoiced
 
 # Or get a new detrended Pitch object
 detrended_pitch <- pitch$subtract_linear_fit(unit = "hertz")  # Returns Pitch object
+
+# NOT equivalent to residuals(lm(values ~ times)):
+#  - lm residuals are zero-mean; native keeps the mean
+#  - native fits the contour after linear interpolation of unvoiced gaps
+#    (first..last voiced frame); lm with na.exclude fits voiced frames only
+#  - originally unvoiced frames stay unvoiced (NA) in the native result
+# With no gaps, native == residuals(lm(...)) + mean(values, na.rm = TRUE).
+# Relative contour (e.g. tremor %): separate step
+#   rel <- (detrended - mean(detrended, na.rm = TRUE)) / mean(detrended, na.rm = TRUE)
 
 # Additional pitch processing methods (v4.0.14)
 interpolated <- pitch$interpolate()      # Fill unvoiced gaps
@@ -1535,8 +1538,8 @@ powers <- spectrum$get_power_at_frequencies(freqs)
 | LTAS | `get_minima_batch()` | 18x | Spectral valley detection |
 | LTAS | `get_values_at_frequencies()` | 10x | Targeted frequency sampling |
 | LTAS | `get_means_batch()` | 10x | Multi-band energy analysis |
-| Pitch | `subtract_linear_fit()` | 10x | Tremor F0 detrending |
-| Pitch | `get_values_detrended()` | 10x | Direct detrended values |
+| Pitch | `subtract_linear_fit()` | native | Slope removed, mean kept (Praat) |
+| Pitch | `get_values_detrended()` | native | Same, as vector; not `lm` residuals |
 | Pitch | `interpolate()`, `smooth()` | 5x | Pitch post-processing |
 | Sound | `extract_windows_filtered()` | 10x | AVQI voiced extraction |
 | Sound | `get_windows_passing_filter()` | 5x | Filter mask inspection |
@@ -3995,7 +3998,7 @@ labels <- tg$get_labels_at_times(tier = 1, times)
 peaks <- ltas$get_peaks_batch(fmins, fmaxs)     # data.frame(fmin, fmax, peak_value, peak_frequency)
 minima <- ltas$get_minima_batch(fmins, fmaxs)   # data.frame(fmin, fmax, min_value, min_frequency)
 
-# Pitch detrending (Tremor: 10x speedup)
+# Pitch detrending (slope removed, mean preserved; not lm residuals)
 detrended <- pitch$get_values_detrended(unit = "hertz")  # NumericVector
 detrended_pitch <- pitch$subtract_linear_fit(unit = "hertz")  # Pitch object
 

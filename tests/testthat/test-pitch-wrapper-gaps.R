@@ -70,3 +70,11 @@ test_that("Pitch as_data_frame/down_to_pitch_tier", {
   tier <- p$down_to_pitch_tier()
   expect_s3_class(tier, "PitchTier")
 })
+
+test_that("get_values_detrended preserves mean (not zero-mean lm residuals)", {
+  sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+  pitch <- sound$to_pitch(pitch_floor = 75, pitch_ceiling = 600)
+  v <- pitch$get_values_vector()
+  d <- pitch$get_values_detrended("hertz")
+  expect_equal(mean(d, na.rm = TRUE), mean(v, na.rm = TRUE), tolerance = 1e-6)
+})
