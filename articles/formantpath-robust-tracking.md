@@ -486,10 +486,10 @@ requested. Measure on your own data:
 ``` r
 system.time(frm_result <- sound$to_formant_burg())
 #>    user  system elapsed 
-#>   0.017   0.000   0.007
+#>   0.010   0.002   0.005
 system.time(fp <- sound$to_formant_path(num_steps_up_down = 2L))
 #>    user  system elapsed 
-#>   0.069   0.000   0.028
+#>   0.049   0.000   0.021
 ```
 
 ## Best Practices
@@ -640,7 +640,7 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] ggplot2_4.0.3 pladdrr_5.1.1
+#> [1] ggplot2_4.0.4 pladdrr_5.1.1
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] gtable_0.3.6        jsonlite_2.0.0      dplyr_1.2.1        

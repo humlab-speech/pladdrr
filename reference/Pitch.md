@@ -75,6 +75,23 @@ Computed over a time range.
 - `down_to_pitch_tier()` - convert to a PitchTier (editable pitch
   contour)
 
+## Detrending
+
+- `subtract_linear_fit(unit)` - new Pitch with the linear trend removed,
+  as Praat's *Subtract linear fit*
+
+- `get_values_detrended(unit)` - the same contour as a numeric vector
+  (`NA` for unvoiced frames)
+
+Slope removed, mean preserved: the result is centred on the original
+mean F0, not on zero, so it is not the same as
+`residuals(lm(f0 ~ time))` (add `mean(f0, na.rm = TRUE)` to compare).
+The line is fitted on the contour after linear interpolation of unvoiced
+gaps, between the first and last voiced frame; frames that were
+originally unvoiced stay unvoiced. For a relative contour,
+`(x - mean(x, na.rm = TRUE)) / mean(x, na.rm = TRUE)` is a separate
+step.
+
 ## Units
 
 F0 unit codes: `"hertz"` (0), `"semitones re 1 Hz"` (1),

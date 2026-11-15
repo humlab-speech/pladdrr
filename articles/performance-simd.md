@@ -124,12 +124,12 @@ simd_time <- microbenchmark(sound$to_pitch(), times = 50)
 
 print(scalar_time)
 #> Unit: milliseconds
-#>              expr      min       lq     mean   median       uq      max neval
-#>  sound$to_pitch() 3.895317 4.022976 7.671729 4.071832 4.160151 182.5529    50
+#>              expr     min       lq     mean   median      uq     max neval
+#>  sound$to_pitch() 3.02325 3.100806 5.424929 3.151026 3.16782 117.474    50
 print(simd_time)
 #> Unit: milliseconds
-#>              expr      min       lq    mean   median       uq      max neval
-#>  sound$to_pitch() 3.827982 3.976088 4.05881 4.025666 4.075143 5.310207    50
+#>              expr      min       lq     mean   median       uq      max neval
+#>  sound$to_pitch() 2.917585 3.092782 3.114688 3.123404 3.161628 3.534177    50
 ```
 
 Gains vary by routine, CPU, compiler, and vector length — there is no
@@ -706,7 +706,7 @@ sessionInfo()
 #>  [4] compiler_4.6.2      tidyselect_1.2.1    Rcpp_1.1.2         
 #>  [7] jquerylib_0.1.4     systemfonts_1.3.2   scales_1.4.0       
 #> [10] textshaping_1.0.5   yaml_2.3.12         fastmap_1.2.0      
-#> [13] ggplot2_4.0.3       R6_2.6.1            generics_0.1.4     
+#> [13] ggplot2_4.0.4       R6_2.6.1            generics_0.1.4     
 #> [16] knitr_1.52          tibble_3.3.1        desc_1.4.3         
 #> [19] bslib_0.12.0        pillar_1.11.1       RColorBrewer_1.1-3 
 #> [22] rlang_1.3.0         cachem_1.1.0        xfun_0.62          

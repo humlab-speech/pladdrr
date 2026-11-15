@@ -63,7 +63,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Pitch</h1>
-      <small class="dont-index">Source: <a href="https://github.com/humlab-speech/pladdrr/blob/v5.1.1/R/pitch-wrapper.R" class="external-link"><code>R/pitch-wrapper.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/humlab-speech/pladdrr/blob/main/R/pitch-wrapper.R" class="external-link"><code>R/pitch-wrapper.R</code></a></small>
       <div class="d-none name"><code>Pitch.Rd</code></div>
     </div>
 
@@ -145,6 +145,22 @@ set of codes.</p>
 <li><p><code>down_to_pitch_tier()</code> - convert to a PitchTier (editable pitch
  contour)</p></li>
 </ul></div>
+    <div class="section level2">
+    <h2 id="detrending">Detrending<a class="anchor" aria-label="anchor" href="#detrending"></a></h2>
+
+
+<ul><li><p><code>subtract_linear_fit(unit)</code> - new Pitch with the linear trend
+ removed, as Praat's <em>Subtract linear fit</em></p></li>
+<li><p><code>get_values_detrended(unit)</code> - the same contour as a numeric
+ vector (<code>NA</code> for unvoiced frames)</p></li>
+</ul><p>Slope removed, mean preserved: the result is centred on the original mean
+F0, not on zero, so it is not the same as <code>residuals(lm(f0 ~ time))</code>
+(add <code>mean(f0, na.rm = TRUE)</code> to compare). The line is fitted on the
+contour after linear interpolation of unvoiced gaps, between the first and
+last voiced frame; frames that were originally unvoiced stay unvoiced. For a
+relative contour, <code>(x - mean(x, na.rm = TRUE)) / mean(x, na.rm = TRUE)</code>
+is a separate step.</p>
+    </div>
     <div class="section level2">
     <h2 id="units">Units<a class="anchor" aria-label="anchor" href="#units"></a></h2>
 
