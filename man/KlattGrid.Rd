@@ -4,9 +4,13 @@
 \alias{KlattGrid}
 \title{Create a KlattGrid object}
 \usage{
-KlattGrid(numberOfFormants, numberOfNasalFormants, numberOfNasalAntiFormants, numberOfTrachealFormants, numberOfTrachealAntiFormants, numberOfFricationFormants, numberOfDeltaFormants)
+KlattGrid(tmin, tmax, numberOfFormants, numberOfNasalFormants, numberOfNasalAntiFormants, numberOfTrachealFormants, numberOfTrachealAntiFormants, numberOfFricationFormants, numberOfDeltaFormants)
 }
 \arguments{
+\item{tmin}{Start time in seconds}
+
+\item{tmax}{End time in seconds}
+
 \item{numberOfFormants}{Number of oral formants (typically 6)}
 
 \item{numberOfNasalFormants}{Number of nasal formants (typically 1)}
