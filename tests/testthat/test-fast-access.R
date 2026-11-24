@@ -133,11 +133,11 @@ test_that("fast access performance is faster than regular", {
 
   # Benchmark
   library(microbenchmark)
-  result <- microbenchmark(
+  result <- suppressWarnings(microbenchmark(
     regular = sound$get_values(1),
     fast = get_sound_values_fast(sound, 1),
     times = 50
-  )
+  ))
 
   # Fast should be faster
   median_regular <- median(result$time[result$expr == "regular"])

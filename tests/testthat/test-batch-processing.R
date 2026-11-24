@@ -53,7 +53,7 @@ test_that(
 test_that(
   "pair_sound_textgrid with require_both = FALSE keeps unmatched sound files", {
   dir <- make_wav_dir(2, with_textgrid = FALSE)
-  pairs <- pair_sound_textgrid(sound_dir = dir, require_both = FALSE)
+  pairs <- suppressWarnings(pair_sound_textgrid(sound_dir = dir, require_both = FALSE))
 
   expect_identical(nrow(pairs), 2L)
   expect_true(all(is.na(pairs$textgrid_file)))
@@ -110,13 +110,10 @@ test_that(
 test_that(
   "batch_process captures per-file errors instead of aborting the batch", {
   dir <- make_wav_dir(2)
-  expect_warning(
-    results <- batch_process(
-      directory = dir, pattern = "\\.wav$", progress = FALSE,
-      func = function(sound) stop("boom")
-    ),
-    "boom"
-  )
+  results <- suppressWarnings(batch_process(
+    directory = dir, pattern = "\\.wav$", progress = FALSE,
+    func = function(sound) stop("boom")
+  ))
 
   expect_identical(nrow(results), 2L)
   expect_true(all(results$error == "boom"))

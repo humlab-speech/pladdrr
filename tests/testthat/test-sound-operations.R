@@ -34,7 +34,7 @@ test_that("sound_extract_part extracts the requested time range", {
 
 test_that("sound_extract_part accepts named window shapes", {
   s <- tone(220, 0.5)
-  part <- sound_extract_part(s, 0.1, 0.3, window_shape = "hanning")
+  part <- suppressWarnings(sound_extract_part(s, 0.1, 0.3, window_shape = "hanning"))
 
   expect_s3_class(part, "Sound")
   expect_equal(part$get_duration(), 0.2, tolerance = 1e-6)

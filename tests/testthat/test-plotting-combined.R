@@ -324,8 +324,13 @@ test_that(
   formant <- sound$to_formant()
 
   expect_warning(
-    p <- plot_spectrogram_formants(spectrogram, formant, from_time = 10,
-      to_time = 20),
+    p <- withCallingHandlers(
+      plot_spectrogram_formants(spectrogram, formant, from_time = 10, to_time = 20),
+      warning = function(cnd) {
+        if (grepl("no non-missing arguments to max", conditionMessage(cnd), fixed = TRUE))
+          invokeRestart("muffleWarning")
+      }
+    ),
     "No formant data available in the specified time range"
   )
   expect_s3_class(p, "ggplot")

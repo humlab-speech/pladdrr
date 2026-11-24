@@ -104,7 +104,7 @@ test_that("Pitch strength batch queries work", {
   
   times <- seq(pitch$get_xmin() + 0.1, pitch$get_xmax() - 0.1, length.out = 10)
   
-  result <- get_pitch_strengths_at_times(pitch, times)
+  result <- suppressWarnings(get_pitch_strengths_at_times(pitch, times))
   
   expect_type(result, "double")
   expect_length(result, 10)

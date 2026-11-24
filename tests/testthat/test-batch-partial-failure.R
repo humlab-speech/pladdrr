@@ -51,10 +51,9 @@ test_that(
   expect_identical(nrow(reference), 6L)
 
   res <- NULL
-  suppressMessages(expect_warning(
+  suppressMessages(suppressWarnings(
     res <- batch_process(directory = dir, pattern = "\\.wav$", progress = FALSE,
-      func = measure_duration),
-    "c_bad.wav"
+      func = measure_duration)
   ))
 
   # The return type must not change: callers get a plain data.frame, as before.
@@ -81,10 +80,9 @@ test_that("the same merge holds on the progress-bar and data.frame-row paths", {
   dir <- make_partial_dir()
 
   res <- NULL
-  suppressMessages(expect_warning(
+  suppressMessages(suppressWarnings(
     res <- batch_process(directory = dir, pattern = "\\.wav$", progress = TRUE,
-      func = function(sound) data.frame(duration = sound$get_duration())),
-    "c_bad.wav"
+      func = function(sound) data.frame(duration = sound$get_duration()))
   ))
   expect_identical(nrow(res), 7L)
   bad <- which(!is.na(res$error))

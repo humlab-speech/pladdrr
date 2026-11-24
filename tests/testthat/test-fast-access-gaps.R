@@ -36,7 +36,7 @@ test_that("zerocopy accessors", {
   snd <- sound_fixture()
   v <- suppressWarnings(get_sound_values_zerocopy(snd))
   expect_type(v, "double")
-  expect_true(is_zerocopy_vector(v))
+  expect_true(suppressWarnings(is_zerocopy_vector(v)))
   m <- suppressWarnings(sound_as_matrix_zerocopy(snd))
   expect_type(m, "double")
   expect_true(is.matrix(m))
