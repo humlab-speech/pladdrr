@@ -3,20 +3,14 @@
 # cross-checks fidelity vs the known-good Praat-matching values. See
 # PLADDRR_CPPS_PERF_SPEC.md
 # for the investigation this benchmark supports (target: warm elapsed <= 0.5s,
-# stretch <= 0.35s, vs pre-optimization baseline of ~1.36s on ppq1.wav).
+# stretch <= 0.35s, vs pre-optimization baseline of ~1.36s on mpt1.flac).
 
 cat("\n=== CPPS Ultra Performance Benchmark ===\n\n")
 
 library(pladdrr)
 library(microbenchmark)
 
-wav_path <- system.file(
-  "signalfiles", "DSI", "input", "ppq1.wav",
-  package = "pladdrr"
-)
-if (!nzchar(wav_path)) {
-  wav_path <- file.path("inst", "signalfiles", "DSI", "input", "ppq1.wav")
-}
+wav_path <- file.path("tests", "testthat", "fixtures", "dsi", "mpt1.flac")
 stopifnot(file.exists(wav_path))
 
 s <- Sound$new(wav_path)

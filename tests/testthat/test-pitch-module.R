@@ -31,7 +31,7 @@ test_that("RPitch module loads correctly", {
 
 test_that("RPitch can be constructed from XPtr", {
   skip_if_no_pitch_module()
-  snd <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+  snd <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
   pitch_r6 <- snd$to_pitch()
 
   rpitch <- get_rpitch(pitch_r6)
@@ -40,7 +40,7 @@ test_that("RPitch can be constructed from XPtr", {
 
 test_that("RPitch property methods work", {
   skip_if_no_pitch_module()
-  snd <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+  snd <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
   pitch_r6 <- snd$to_pitch()
   rpitch <- get_rpitch(pitch_r6)
 
@@ -66,7 +66,7 @@ test_that("RPitch property methods work", {
 
 test_that("RPitch frame/time conversion works", {
   skip_if_no_pitch_module()
-  snd <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+  snd <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
   pitch_r6 <- snd$to_pitch()
   rpitch <- get_rpitch(pitch_r6)
 
@@ -83,8 +83,8 @@ test_that("RPitch frame/time conversion works", {
 
 test_that("RPitch query methods return correct values for sine wave", {
   skip_if_no_pitch_module()
-  # test.wav is a 440 Hz sine wave
-  snd <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+  # test.flac is a 440 Hz sine wave
+  snd <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
   pitch_r6 <- snd$to_pitch()
   rpitch <- get_rpitch(pitch_r6)
 
@@ -110,7 +110,7 @@ test_that("RPitch query methods return correct values for sine wave", {
 
 test_that("RPitch get_value_at_time works", {
   skip_if_no_pitch_module()
-  snd <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+  snd <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
   pitch_r6 <- snd$to_pitch()
   rpitch <- get_rpitch(pitch_r6)
 
@@ -129,7 +129,7 @@ test_that("RPitch get_value_at_time works", {
 
 test_that("RPitch strength methods work", {
   skip_if_no_pitch_module()
-  snd <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+  snd <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
   pitch_r6 <- snd$to_pitch()
   rpitch <- get_rpitch(pitch_r6)
 
@@ -143,7 +143,7 @@ test_that("RPitch strength methods work", {
 
 test_that("RPitch as_data_frame exports correctly", {
   skip_if_no_pitch_module()
-  snd <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+  snd <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
   pitch_r6 <- snd$to_pitch()
   rpitch <- get_rpitch(pitch_r6)
 
@@ -163,7 +163,7 @@ test_that("RPitch as_data_frame exports correctly", {
 
 test_that("RPitch as_matrix exports correctly", {
   skip_if_no_pitch_module()
-  snd <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+  snd <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
   pitch_r6 <- snd$to_pitch()
   rpitch <- get_rpitch(pitch_r6)
 
@@ -176,7 +176,7 @@ test_that("RPitch as_matrix exports correctly", {
 
 test_that("RPitch get_all_candidates returns list", {
   skip_if_no_pitch_module()
-  snd <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+  snd <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
   pitch_r6 <- snd$to_pitch()
   rpitch <- get_rpitch(pitch_r6)
 
@@ -191,7 +191,7 @@ test_that("RPitch get_all_candidates returns list", {
 
 test_that("RPitch conversion methods return valid XPtrs", {
   skip_if_no_pitch_module()
-  snd <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+  snd <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
   pitch_r6 <- snd$to_pitch()
   rpitch <- get_rpitch(pitch_r6)
 
@@ -210,7 +210,7 @@ test_that("RPitch conversion methods return valid XPtrs", {
 
 test_that("RPitch matches R6 Pitch values", {
   skip_if_no_pitch_module()
-  snd <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+  snd <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
   pitch_r6 <- snd$to_pitch()
   rpitch <- get_rpitch(pitch_r6)
 
@@ -240,7 +240,7 @@ test_that(
 
 test_that("RPitch debug_candidates returns per-frame candidate detail", {
   skip_if_no_pitch_module()
-  snd <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+  snd <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
   pitch_r6 <- snd$to_pitch()
   rpitch <- get_rpitch(pitch_r6)
 

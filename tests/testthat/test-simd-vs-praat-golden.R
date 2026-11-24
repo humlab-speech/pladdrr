@@ -32,14 +32,14 @@ for (fixture in fixtures) {
 
     test_that(
       paste0("Pitch matches Praat.app golden (", fixture, ", ", label, ")"), {
-      skip_if_not(file.exists(file.path(fixture_dir, paste0(fixture, ".wav"))),
+      skip_if_not(file.exists(file.path(fixture_dir, paste0(fixture, ".flac"))),
                   "golden fixture missing; run data-raw/generate_simd_goldens.R")
 
       old <- pladdrr_simd()$enabled
       on.exit(pladdrr_simd(old))
       pladdrr_simd(simd_enabled)
 
-      snd <- Sound(file.path(fixture_dir, paste0(fixture, ".wav")))
+      snd <- Sound(file.path(fixture_dir, paste0(fixture, ".flac")))
       pitch <- snd$to_pitch(0, 75, 600)
       golden <- read_golden_pitch(fixture)
 
@@ -61,14 +61,14 @@ for (fixture in fixtures) {
     test_that(
       paste0("Intensity matches Praat.app golden (", fixture, ", ", label,
         ")"), {
-      skip_if_not(file.exists(file.path(fixture_dir, paste0(fixture, ".wav"))),
+      skip_if_not(file.exists(file.path(fixture_dir, paste0(fixture, ".flac"))),
                   "golden fixture missing; run data-raw/generate_simd_goldens.R")
 
       old <- pladdrr_simd()$enabled
       on.exit(pladdrr_simd(old))
       pladdrr_simd(simd_enabled)
 
-      snd <- Sound(file.path(fixture_dir, paste0(fixture, ".wav")))
+      snd <- Sound(file.path(fixture_dir, paste0(fixture, ".flac")))
       intensity <- snd$to_intensity(100, 0, TRUE)
       golden <- read_golden_intensity(fixture)
 

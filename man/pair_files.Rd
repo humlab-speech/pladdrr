@@ -7,7 +7,7 @@
 pair_files(
   sound_dir,
   textgrid_dir = sound_dir,
-  sound_pattern = "\\\\.wav$",
+  sound_pattern = "\\\\.(wav|flac)$",
   textgrid_pattern = "\\\\.TextGrid$",
   by = "basename",
   require_both = TRUE

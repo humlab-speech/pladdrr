@@ -1,4 +1,4 @@
-test_wav <- system.file("extdata", "test.wav", package = "pladdrr")
+test_wav <- system.file("extdata", "test.flac", package = "pladdrr")
 
 test_that("Sound$to_textgrid_silences() works with all parameters", {
   skip_if_not(file.exists(test_wav), "Test audio file not found")

@@ -44,7 +44,7 @@ Each Praat object type has an `autoplot(
 
 ```{r load-sound}
 # Load example sound
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 ```
 ### Sound Waveform
 

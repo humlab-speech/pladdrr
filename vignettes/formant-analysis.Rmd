@@ -471,7 +471,7 @@ bandwidth <- formant$get_bandwidth_at_time(2, 0.1, unit = "hertz")
 ```{r vowel-space}
 # Analyze multiple vowel tokens. In practice, pass paths to your own
 # recordings of each vowel; the test file is reused here for illustration.
-wav_path <- system.file("extdata", "test.wav", package = "pladdrr")
+wav_path <- system.file("extdata", "test.flac", package = "pladdrr")
 vowels <- rep(wav_path, 3)
 vowel_labels <- c("token1", "token2", "token3")
 

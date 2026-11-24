@@ -52,7 +52,7 @@ Formant tracking quality depends heavily on choosing the right **formant ceiling
 
 ```{r standard-vs-path, fig.width=8, fig.height=4, error=TRUE}
 # Load example audio
-sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
 
 # Standard method (single ceiling) - with error handling
 formant_standard <- tryCatch({
@@ -93,7 +93,7 @@ if (!is.null(formant_standard) && !is.null(formant_path)) {
       round(max(formant_path$get_all_ceiling_frequencies())), " Hz\n", sep = "")
 } else {
   cat("Note: Formant extraction requires readable audio input.\n")
-  cat("Check that inst/extdata/test.wav is present and readable.\n")
+  cat("Check that inst/extdata/test.flac is present and readable.\n")
 }
 ```
 
@@ -384,7 +384,7 @@ textgrid <- TextGrid(
 intervals <- textgrid$get_all_intervals("phones")
 intervals <- intervals[intervals$text != "", ]
 
-# test.TextGrid spans 3s but test.wav is only 1s - clip segment
+# test.TextGrid spans 3s but test.flac is only 1s - clip segment
 # boundaries to the sound's actual duration before extracting
 intervals$end <- pmin(intervals$end, sound$get_duration())
 intervals <- intervals[intervals$start < intervals$end, ]
@@ -415,7 +415,7 @@ print(phone_formants)
 # Process multiple recordings with unknown speaker characteristics.
 # Replace `files` with your own vector of file paths; here we reuse the
 # bundled example file to show the pattern.
-files <- rep(system.file("extdata", "test.wav", package = "pladdrr"), 3)
+files <- rep(system.file("extdata", "test.flac", package = "pladdrr"), 3)
 
 formants <- lapply(files, function(file) {
   sound <- Sound(file)

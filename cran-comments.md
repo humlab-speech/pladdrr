@@ -55,7 +55,7 @@ We have removed everything not required to build:
 
 - a redundant duplicate Praat tree that was formerly shipped for the Windows
   build (both platforms now compile from a single source directory);
-- all bundled-external-library **sources** (espeak, flac, mp3, portaudio,
+- all bundled-external-library **sources** (libFLAC was later re-vendored, BSD-3-Clause) (espeak, mp3, portaudio,
   vorbis, opusfile, lame, clapack, gsl, glpk) — these are stubbed out at build
   time, so only the referenced **headers** are retained;
 - Praat subtrees that are neither compiled nor on any include path

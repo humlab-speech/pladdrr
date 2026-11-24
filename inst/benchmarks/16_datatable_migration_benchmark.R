@@ -14,7 +14,7 @@ cat("Package version:", as.character(packageVersion("pladdrr")), "\n")
 cat(strrep("=", 80), "\n\n")
 
 # Load test audio file
-test_file <- system.file("extdata", "test.wav", package = "pladdrr")
+test_file <- system.file("extdata", "test.flac", package = "pladdrr")
 if (!file.exists(test_file)) {
   stop("Test file not found. Please ensure package is properly installed.")
 }

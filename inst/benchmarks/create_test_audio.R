@@ -12,11 +12,11 @@ sound <- Sound$create_tone(
 )
 
 # Try to save
-output_file <- "inst/extdata/test.wav"
+output_file <- "inst/extdata/test.flac"
 
 tryCatch(
   {
-    sound$save(output_file)
+    sound$save(output_file, format = "FLAC")
     cat("✓ Created:", output_file, "\n")
     cat("  Duration:", sound$get_duration(), "seconds\n")
     cat("  Sample rate:", sound$get_sampling_frequency(), "Hz\n")

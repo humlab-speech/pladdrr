@@ -67,7 +67,7 @@
 #' hnr_at_05 <- hnr$get_value_at_time(0.5)
 #'
 #' # The same analysis on a recording read from disk
-#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+#' sound <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
 #' hnr <- sound$to_harmonicity_ac(time_step = 0.01, min_pitch = 75)
 #' df <- hnr$as_data_frame()
 #'

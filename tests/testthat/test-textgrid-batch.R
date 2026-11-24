@@ -3,7 +3,7 @@
 
 test_that("extract_textgrid_intervals extracts correct intervals", {
   # Create test data
-  sound_file <- system.file("extdata/test.wav", package = "pladdrr")
+  sound_file <- system.file("extdata/test.flac", package = "pladdrr")
   sound <- Sound(sound_file)
   pitch <- sound$to_pitch()
   pp <- pitch$to_point_process()
@@ -44,7 +44,7 @@ test_that("extract_textgrid_intervals extracts correct intervals", {
 
 
 test_that("extract_textgrid_intervals with sound extraction works", {
-  sound_file <- system.file("extdata/test.wav", package = "pladdrr")
+  sound_file <- system.file("extdata/test.flac", package = "pladdrr")
   sound <- Sound(sound_file)
   pitch <- sound$to_pitch()
   pp <- pitch$to_point_process()
@@ -76,7 +76,7 @@ test_that("extract_textgrid_intervals with sound extraction works", {
 
 
 test_that("extract_textgrid_intervals with text_contains works", {
-  sound_file <- system.file("extdata/test.wav", package = "pladdrr")
+  sound_file <- system.file("extdata/test.flac", package = "pladdrr")
   sound <- Sound(sound_file)
   pitch <- sound$to_pitch()
   pp <- pitch$to_point_process()
@@ -96,7 +96,7 @@ test_that("extract_textgrid_intervals with text_contains works", {
 
 
 test_that("extract_textgrid_intervals validates inputs", {
-  sound_file <- system.file("extdata/test.wav", package = "pladdrr")
+  sound_file <- system.file("extdata/test.flac", package = "pladdrr")
   sound <- Sound(sound_file)
   pitch <- sound$to_pitch()
   pp <- pitch$to_point_process()
@@ -125,7 +125,7 @@ test_that("extract_textgrid_intervals validates inputs", {
 
 
 test_that("get_textgrid_labels_all returns all labels", {
-  sound_file <- system.file("extdata/test.wav", package = "pladdrr")
+  sound_file <- system.file("extdata/test.flac", package = "pladdrr")
   sound <- Sound(sound_file)
   pitch <- sound$to_pitch()
   pp <- pitch$to_point_process()
@@ -149,7 +149,7 @@ test_that("get_textgrid_labels_all returns all labels", {
 
 
 test_that("get_textgrid_interval_stats returns correct stats", {
-  sound_file <- system.file("extdata/test.wav", package = "pladdrr")
+  sound_file <- system.file("extdata/test.flac", package = "pladdrr")
   sound <- Sound(sound_file)
   pitch <- sound$to_pitch()
   pp <- pitch$to_point_process()
@@ -185,7 +185,7 @@ test_that("batch operations are faster than manual loops", {
   skip_if_not_extended()
   skip_on_ci()
 
-  sound_file <- system.file("extdata/test.wav", package = "pladdrr")
+  sound_file <- system.file("extdata/test.flac", package = "pladdrr")
   sound <- Sound(sound_file)
   pitch <- sound$to_pitch()
   pp <- pitch$to_point_process()
@@ -240,7 +240,7 @@ test_that("batch operations are faster than manual loops", {
 
 
 test_that("batch operations return same results as manual", {
-  sound_file <- system.file("extdata/test.wav", package = "pladdrr")
+  sound_file <- system.file("extdata/test.flac", package = "pladdrr")
   sound <- Sound(sound_file)
   pitch <- sound$to_pitch()
   pp <- pitch$to_point_process()
@@ -288,7 +288,7 @@ test_that(
     "Invalid TextGrid pointer"
   )
 
-  sound_file <- system.file("extdata/test.wav", package = "pladdrr")
+  sound_file <- system.file("extdata/test.flac", package = "pladdrr")
   sound <- Sound(sound_file)
   pitch <- sound$to_pitch()
   pp <- pitch$to_point_process()

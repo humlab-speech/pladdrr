@@ -227,7 +227,7 @@ NULL
 #'
 #' @export
 
-batch_process <- function(directory, pattern = "\\.wav$", func,
+batch_process <- function(directory, pattern = "\\.(wav|flac)$", func,
                          recursive = FALSE, parallel = FALSE, 
                          ncores = NULL, progress = TRUE, ...) {
   .check_string(directory, "directory", "batch_process")
@@ -284,7 +284,7 @@ batch_process <- function(directory, pattern = "\\.wav$", func,
 #' @param sound_dir Character path to directory containing audio files
 #' @param textgrid_dir Character path to directory containing TextGrid files
 #'   (default: same as sound_dir)
-#' @param sound_pattern Pattern to match sound files (default: "\\\\.wav$")
+#' @param sound_pattern Pattern to match sound files (default: "\\\\.(wav|flac)$")
 #' @param textgrid_pattern Pattern to match TextGrid files (default:
 #'  "\\\\.TextGrid$")
 #' @param by Matching strategy: "basename" (default), "full", or a custom
@@ -316,7 +316,7 @@ batch_process <- function(directory, pattern = "\\.wav$", func,
 #'
 #' @export
 pair_sound_textgrid <- function(sound_dir, textgrid_dir = sound_dir,
-                               sound_pattern = "\\.wav$",
+                               sound_pattern = "\\.(wav|flac)$",
                                textgrid_pattern = "\\.TextGrid$",
                                by = "basename",
                                require_both = TRUE) {
@@ -525,7 +525,7 @@ create_file_list <- function(directory, pattern = NULL,
 #' @export
 pair_files <- function(sound_dir,
                       textgrid_dir = sound_dir,
-                      sound_pattern = "\\.wav$",
+                      sound_pattern = "\\.(wav|flac)$",
                       textgrid_pattern = "\\.TextGrid$",
                       by = "basename",
                       require_both = TRUE) {

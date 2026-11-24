@@ -2,9 +2,9 @@
 # Tests for DTW (Dynamic Time Warping) module
 
 test_that("sounds_to_dtw creates valid DTW", {
-  skip_if_not(file.exists(test_path("fixtures/speech_sample.wav")))
+  skip_if_not(file.exists(fixture_path("speech_sample.flac")))
 
-  sound <- Sound(test_path("fixtures/speech_sample.wav"))
+  sound <- Sound(fixture_path("speech_sample.flac"))
 
   # Self-alignment should work
   dtw <- sounds_to_dtw(sound, sound)
@@ -15,9 +15,9 @@ test_that("sounds_to_dtw creates valid DTW", {
 })
 
 test_that("DTW self-alignment has near-zero distance", {
-  skip_if_not(file.exists(test_path("fixtures/speech_sample.wav")))
+  skip_if_not(file.exists(fixture_path("speech_sample.flac")))
 
-  sound <- Sound(test_path("fixtures/speech_sample.wav"))
+  sound <- Sound(fixture_path("speech_sample.flac"))
   dtw <- sounds_to_dtw(sound, sound)
 
   # Self-alignment distance should be very small (not exactly 0 due to MFCC
@@ -28,9 +28,9 @@ test_that("DTW self-alignment has near-zero distance", {
 })
 
 test_that("DTW time mapping is consistent for self-alignment", {
-  skip_if_not(file.exists(test_path("fixtures/speech_sample.wav")))
+  skip_if_not(file.exists(fixture_path("speech_sample.flac")))
 
-  sound <- Sound(test_path("fixtures/speech_sample.wav"))
+  sound <- Sound(fixture_path("speech_sample.flac"))
   dtw <- sounds_to_dtw(sound, sound)
 
   # Self-alignment should give near-identity mapping
@@ -43,9 +43,9 @@ test_that("DTW time mapping is consistent for self-alignment", {
 })
 
 test_that("DTW get_path returns valid data.frame", {
-  skip_if_not(file.exists(test_path("fixtures/speech_sample.wav")))
+  skip_if_not(file.exists(fixture_path("speech_sample.flac")))
 
-  sound <- Sound(test_path("fixtures/speech_sample.wav"))
+  sound <- Sound(fixture_path("speech_sample.flac"))
   dtw <- sounds_to_dtw(sound, sound)
 
   path <- dtw$get_path()
@@ -57,9 +57,9 @@ test_that("DTW get_path returns valid data.frame", {
 })
 
 test_that("DTW vectorized time mapping works", {
-  skip_if_not(file.exists(test_path("fixtures/speech_sample.wav")))
+  skip_if_not(file.exists(fixture_path("speech_sample.flac")))
 
-  sound <- Sound(test_path("fixtures/speech_sample.wav"))
+  sound <- Sound(fixture_path("speech_sample.flac"))
   dtw <- sounds_to_dtw(sound, sound)
 
   xmin <- sound$get_xmin()
@@ -72,9 +72,9 @@ test_that("DTW vectorized time mapping works", {
 })
 
 test_that("DTW properties are accessible", {
-  skip_if_not(file.exists(test_path("fixtures/speech_sample.wav")))
+  skip_if_not(file.exists(fixture_path("speech_sample.flac")))
 
-  sound <- Sound(test_path("fixtures/speech_sample.wav"))
+  sound <- Sound(fixture_path("speech_sample.flac"))
   dtw <- sounds_to_dtw(sound, sound)
 
   # Domain properties
@@ -93,9 +93,9 @@ test_that("DTW properties are accessible", {
 })
 
 test_that("DTW get_info returns valid structure", {
-  skip_if_not(file.exists(test_path("fixtures/speech_sample.wav")))
+  skip_if_not(file.exists(fixture_path("speech_sample.flac")))
 
-  sound <- Sound(test_path("fixtures/speech_sample.wav"))
+  sound <- Sound(fixture_path("speech_sample.flac"))
   dtw <- sounds_to_dtw(sound, sound)
 
   info <- dtw$get_info()
@@ -108,9 +108,9 @@ test_that("DTW get_info returns valid structure", {
 })
 
 test_that("DTW swap_axes works", {
-  skip_if_not(file.exists(test_path("fixtures/speech_sample.wav")))
+  skip_if_not(file.exists(fixture_path("speech_sample.flac")))
 
-  sound <- Sound(test_path("fixtures/speech_sample.wav"))
+  sound <- Sound(fixture_path("speech_sample.flac"))
   dtw <- sounds_to_dtw(sound, sound)
 
   swapped <- dtw$swap_axes()
@@ -124,9 +124,9 @@ test_that("DTW swap_axes works", {
 })
 
 test_that("DTW to_matrix_distances works", {
-  skip_if_not(file.exists(test_path("fixtures/speech_sample.wav")))
+  skip_if_not(file.exists(fixture_path("speech_sample.flac")))
 
-  sound <- Sound(test_path("fixtures/speech_sample.wav"))
+  sound <- Sound(fixture_path("speech_sample.flac"))
   dtw <- sounds_to_dtw(sound, sound)
 
   mat <- dtw$to_matrix_distances()
@@ -135,9 +135,9 @@ test_that("DTW to_matrix_distances works", {
 })
 
 test_that("Sound$to_dtw method works", {
-  skip_if_not(file.exists(test_path("fixtures/speech_sample.wav")))
+  skip_if_not(file.exists(fixture_path("speech_sample.flac")))
 
-  sound <- Sound(test_path("fixtures/speech_sample.wav"))
+  sound <- Sound(fixture_path("speech_sample.flac"))
 
   dtw <- sound$to_dtw(sound)
 
@@ -145,18 +145,18 @@ test_that("Sound$to_dtw method works", {
 })
 
 test_that("DTW print method works", {
-  skip_if_not(file.exists(test_path("fixtures/speech_sample.wav")))
+  skip_if_not(file.exists(fixture_path("speech_sample.flac")))
 
-  sound <- Sound(test_path("fixtures/speech_sample.wav"))
+  sound <- Sound(fixture_path("speech_sample.flac"))
   dtw <- sounds_to_dtw(sound, sound)
 
   expect_output(print(dtw), "Praat DTW")
 })
 
 test_that("DTW as_matrix returns numeric matrix", {
-  skip_if_not(file.exists(test_path("fixtures/speech_sample.wav")))
+  skip_if_not(file.exists(fixture_path("speech_sample.flac")))
 
-  sound <- Sound(test_path("fixtures/speech_sample.wav"))
+  sound <- Sound(fixture_path("speech_sample.flac"))
   dtw <- sounds_to_dtw(sound, sound)
 
   mat <- dtw$as_matrix()
@@ -168,9 +168,9 @@ test_that("DTW as_matrix returns numeric matrix", {
 })
 
 test_that("DTW maximum consecutive steps works", {
-  skip_if_not(file.exists(test_path("fixtures/speech_sample.wav")))
+  skip_if_not(file.exists(fixture_path("speech_sample.flac")))
 
-  sound <- Sound(test_path("fixtures/speech_sample.wav"))
+  sound <- Sound(fixture_path("speech_sample.flac"))
   dtw <- sounds_to_dtw(sound, sound)
 
   steps_x <- dtw$get_maximum_consecutive_steps("x")

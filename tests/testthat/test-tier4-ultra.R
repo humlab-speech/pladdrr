@@ -12,8 +12,8 @@ library(pladdrr)
 test_that("get_durations_batch returns correct durations", {
   # Use existing test files
   files <- c(
-    system.file("signalfiles/DSI/input/mpt1.wav", package = "pladdrr"),
-    system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+    fixture_path("dsi/mpt1.flac"),
+    fixture_path("dsi/fh1.flac")
   )
 
   # Skip if files don't exist
@@ -27,7 +27,7 @@ test_that("get_durations_batch returns correct durations", {
 })
 
 test_that("get_durations_batch matches Sound durations", {
-  file <- system.file("signalfiles/DSI/input/mpt1.wav", package = "pladdrr")
+  file <- fixture_path("dsi/mpt1.flac")
   skip_if(!file.exists(file), "Test WAV file not found")
 
   # Get duration via Tier 4 Ultra
@@ -43,7 +43,7 @@ test_that("get_durations_batch matches Sound durations", {
 
 test_that("get_durations_batch handles invalid files gracefully", {
   files <- c(
-    system.file("signalfiles/DSI/input/mpt1.wav", package = "pladdrr"),
+    fixture_path("dsi/mpt1.flac"),
     "/nonexistent/file.wav"
   )
 
@@ -57,7 +57,7 @@ test_that("get_durations_batch handles invalid files gracefully", {
 })
 
 test_that("get_durations_batch handles single file", {
-  file <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+  file <- fixture_path("dsi/fh1.flac")
   skip_if(!file.exists(file), "Test WAV file not found")
 
   duration <- get_durations_batch(file)
@@ -162,10 +162,9 @@ test_that("get_durations_batch is faster than LongSound loop", {
   skip_if_not_installed("bench")
 
   # Get all DSI input files
-  dsi_dir <- system.file("signalfiles/DSI/input", package = "pladdrr")
-  skip_if(!dir.exists(dsi_dir), "DSI directory not found")
+  dsi_dir <- fixture_path("dsi")
 
-  files <- list.files(dsi_dir, pattern = "\\.wav$", full.names = TRUE)
+  files <- list.files(dsi_dir, pattern = "\\.flac$", full.names = TRUE)
   skip_if(length(files) < 2, "Need at least 2 WAV files for benchmark")
 
   # LongSound$open() has a known, unresolved path-handling issue on some
@@ -210,8 +209,7 @@ test_that("get_durations_batch is faster than LongSound loop", {
 # =============================================================================
 
 test_that("calculate_f0_stats_ultra returns correct max F0", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/fh1.flac")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
 
   sound <- Sound(sound_path)
@@ -226,8 +224,7 @@ test_that("calculate_f0_stats_ultra returns correct max F0", {
 })
 
 test_that("calculate_f0_stats_ultra matches existing pitch methods", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/fh1.flac")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
 
   sound <- Sound(sound_path)
@@ -249,8 +246,7 @@ test_that("calculate_f0_stats_ultra matches existing pitch methods", {
 })
 
 test_that("calculate_f0_stats_ultra supports all stat types", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/fh1.flac")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
 
   sound <- Sound(sound_path)
@@ -265,8 +261,7 @@ test_that("calculate_f0_stats_ultra supports all stat types", {
 })
 
 test_that("calculate_f0_stats_ultra validates input", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/fh1.flac")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
 
   sound <- Sound(sound_path)
@@ -296,8 +291,7 @@ test_that("calculate_f0_stats_ultra validates input", {
 # =============================================================================
 
 test_that("calculate_minimum_intensity_ultra returns valid intensity", {
-  sound_path <- system.file("signalfiles/DSI/input/im1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/fh1.flac")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
 
   sound <- Sound(sound_path)
@@ -312,8 +306,7 @@ test_that("calculate_minimum_intensity_ultra returns valid intensity", {
 test_that("calculate_minimum_intensity_ultra matches DSI reference value", {
   # Bug fix verification: must match DSI algorithm result (~66.21 dB)
   # Previously returned ~43 dB due to incorrect algorithm
-  sound_path <- system.file("signalfiles/DSI/input/im1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/fh1.flac")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
 
   sound <- Sound(sound_path)
@@ -376,8 +369,7 @@ test_that(
 # =============================================================================
 
 test_that("get_voice_quality_ultra returns all metrics with 'all'", {
-  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/mpt1.flac")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
 
   sound <- Sound(sound_path)
@@ -400,8 +392,7 @@ test_that("get_voice_quality_ultra returns all metrics with 'all'", {
 
 test_that(
   "get_voice_quality_ultra defaults match the CC + very accurate pipeline", {
-  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/mpt1.flac")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
 
   sound <- Sound(sound_path)
@@ -420,8 +411,7 @@ test_that(
 })
 
 test_that("get_voice_quality_ultra can match Praat plain To Pitch for jitter", {
-  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/mpt1.flac")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
 
   sound <- Sound(sound_path)
@@ -442,8 +432,7 @@ test_that("get_voice_quality_ultra can match Praat plain To Pitch for jitter", {
 })
 
 test_that("get_voice_quality_ultra supports selective metrics", {
-  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/mpt1.flac")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
 
   sound <- Sound(sound_path)
@@ -465,8 +454,7 @@ test_that("get_voice_quality_ultra supports selective metrics", {
 
 test_that("get_voice_quality_ultra validates input", {
   expect_error(get_voice_quality_ultra("not_a_sound"))
-  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/mpt1.flac")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
   expect_error(get_voice_quality_ultra(Sound(sound_path), pitch_method = "bad"))
 
@@ -489,8 +477,7 @@ test_that("get_voice_quality_ultra validates input", {
 
 test_that(
   "get_voice_quality_ultra HNR output does not depend on pitch settings", {
-  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/mpt1.flac")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
 
   sound <- Sound(sound_path)
@@ -517,13 +504,10 @@ test_that("Tier 4 Ultra provides significant DSI speedup", {
   skip_if_not_installed("bench")
 
   # Get DSI input files
-  dsi_dir <- system.file("signalfiles/DSI/input", package = "pladdrr")
-  skip_if(!dir.exists(dsi_dir), "DSI directory not found")
-
-  mpt_file <- file.path(dsi_dir, "mpt1.wav")
-  fh_file <- file.path(dsi_dir, "fh1.wav")
-  im_file <- file.path(dsi_dir, "im1.wav")
-  ppq_file <- file.path(dsi_dir, "ppq1.wav")
+  mpt_file <- fixture_path("dsi/mpt1.flac")
+  fh_file <- fixture_path("dsi/fh1.flac")
+  im_file <- fh_file # fixtures keep one copy per distinct DSI signal
+  ppq_file <- mpt_file
 
   skip_if(!all(file.exists(c(mpt_file, fh_file, im_file, ppq_file))),
           "DSI test files not found")
@@ -562,11 +546,7 @@ test_that("Tier 4 Ultra provides significant DSI speedup", {
 
 test_that("to_pitch_cc_direct works with concatenated sounds", {
   # Bug #2 regression test: ensure no segfault with concatenated sounds
-  dsi_dir <- system.file("signalfiles/DSI/input", package = "pladdrr")
-  skip_if(!dir.exists(dsi_dir), "DSI directory not found")
-
-  im_files <- list.files(dsi_dir, pattern = "^im.*[.]wav$", full.names = TRUE)
-  skip_if(length(im_files) < 2, "Need at least 2 im files for test")
+  im_files <- rep(fixture_path("dsi/fh1.flac"), 2)
 
   # Load and concatenate multiple sounds
   sounds <- lapply(im_files[1:2], Sound)
@@ -591,8 +571,7 @@ test_that("to_pitch_cc_direct works with concatenated sounds", {
 })
 
 test_that("Tier 4 functions work with extracted and concatenated parts", {
-  sound_path <- system.file("signalfiles/DSI/input/im1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/fh1.flac")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
 
   sound <- Sound(sound_path)
@@ -622,8 +601,7 @@ test_that("Tier 4 functions work with extracted and concatenated parts", {
 # =============================================================================
 
 test_that("build_multiband_harmonicity returns named Harmonicity objects", {
-  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/mpt1.flac")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
 
   sound <- Sound(sound_path)
@@ -634,8 +612,7 @@ test_that("build_multiband_harmonicity returns named Harmonicity objects", {
 })
 
 test_that("multiband_hnr_stats matches the one-shot API", {
-  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/mpt1.flac")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
 
   sound <- Sound(sound_path)
@@ -648,8 +625,7 @@ test_that("multiband_hnr_stats matches the one-shot API", {
 })
 
 test_that("reusable multiband HNR objects work across intervals", {
-  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/mpt1.flac")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
 
   sound <- Sound(sound_path)
@@ -673,8 +649,7 @@ test_that("reusable multiband HNR objects work across intervals", {
 })
 
 test_that("reusable multiband HNR helpers validate input", {
-  sound_path <- system.file("signalfiles/DSI/input/ppq1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/mpt1.flac")
   skip_if(!file.exists(sound_path), "Test WAV file not found")
 
   sound <- Sound(sound_path)

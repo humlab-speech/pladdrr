@@ -7,7 +7,7 @@
 pair_sound_textgrid(
   sound_dir,
   textgrid_dir = sound_dir,
-  sound_pattern = "\\\\.wav$",
+  sound_pattern = "\\\\.(wav|flac)$",
   textgrid_pattern = "\\\\.TextGrid$",
   by = "basename",
   require_both = TRUE
@@ -19,7 +19,7 @@ pair_sound_textgrid(
 \item{textgrid_dir}{Character path to directory containing TextGrid files
 (default: same as sound_dir)}
 
-\item{sound_pattern}{Pattern to match sound files (default: "\\\\.wav$")}
+\item{sound_pattern}{Pattern to match sound files (default: "\\\\.(wav|flac)$")}
 
 \item{textgrid_pattern}{Pattern to match TextGrid files (default:
 "\\\\.TextGrid$")}

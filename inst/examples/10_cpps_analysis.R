@@ -16,7 +16,7 @@ library(pladdrr)
 
 # Load test sound (should be voiced speech, ideally 3+ seconds)
 # For this example, we'll use the package test file
-sound_file <- system.file("extdata", "test.wav", package = "pladdrr")
+sound_file <- system.file("extdata", "test.flac", package = "pladdrr")
 
 if (!file.exists(sound_file)) {
   stop("Test file not found. Please use your own audio file.")

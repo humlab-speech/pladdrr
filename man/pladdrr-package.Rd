@@ -17,7 +17,7 @@ multivariate statistics.
 
 
 \itemize{
-  \item \strong{Sound}: read/write WAV, AIFF and NIST (FLAC and MP3 are read
+  \item \strong{Sound}: read/write WAV, AIFF, NIST and FLAC (MP3 is read
         through the \code{av} fallback, see \code{\link{Sound}}); generate
         tones and noise; \code{LongSound} for streaming files too large to
         hold in memory

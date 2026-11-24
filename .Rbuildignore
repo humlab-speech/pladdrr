@@ -92,7 +92,7 @@
 manual_.*\.cpp$
 
 # Bundled external libraries: keep the referenced headers, drop the (stubbed) sources
-^src/praat\.github\.io/external/.*\.(c|cc|cpp)$
+^src/praat\.github\.io/external/(?!flac/).*\.(c|cc|cpp)$
 
 # pocketfft: only pocketfft_hdronly.h is used (by dwsys/NUMFourier.cpp);
 # the demo and build files are not. LICENSE.md and README.md are kept.
@@ -112,3 +112,4 @@ manual_.*\.cpp$
 ^tests/testthat/Rplots\.pdf$
 ^tests/testthat/testthat-problems\.rds$
 ^pladdrr-.*-message$
+^tests/testthat/fixtures/.*\.flac$

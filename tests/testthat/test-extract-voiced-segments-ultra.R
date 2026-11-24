@@ -270,7 +270,7 @@ test_that(
   # Sounds_concatenate() multi-region branch that the synthetic
   # continuous-tone fixtures used elsewhere in this file never reach (those
   # are always a single unbroken sounding interval).
-  wav <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+  wav <- fixture_path("dsi/fh1.flac")
   skip_if(!file.exists(wav), "Test WAV file not found")
   sound <- Sound(wav)
 

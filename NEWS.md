@@ -1,4 +1,18 @@
-# pladdrr (development version)
+# pladdrr 5.2.0
+
+## FLAC is decoded and encoded natively; shipped audio slimmed
+
+* libFLAC (BSD-3-Clause, vendored from Praat under
+  `src/praat.github.io/external/flac/`) is compiled in again. `Sound()`,
+  `longsound_open()`, `sound_load_window()` and `Sound$save(format = "FLAC")`
+  handle FLAC without the `av` package and without the
+  `pladdrr_decoder_fallback` warning; `get_durations_batch()` reads FLAC
+  STREAMINFO. MP3 is still read through `av`.
+* The shipped example sound is now `inst/extdata/test.flac` (was `test.wav`,
+  sample-identical). `inst/signalfiles/` (12 WAVs holding 2 distinct signals)
+  is gone; the 2 signals live as FLAC test fixtures, excluded from the built
+  tarball, so tests that need them skip when run from an installed copy.
+* `batch_process()` and friends now match `.wav` and `.flac` by default.
 
 ## BREAKING CHANGE: `Matrix()` is now `PraatMatrix()`
 

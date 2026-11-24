@@ -346,8 +346,8 @@ test_that("FormantPath: Works with real audio", {
   
   # Try to find a test audio file
   test_files <- c(
-    system.file("extdata", "test.wav", package = "pladdrr"),
-    system.file("sounds", "test.wav", package = "pladdrr")
+    system.file("extdata", "test.flac", package = "pladdrr"),
+    system.file("sounds", "test.flac", package = "pladdrr")
   )
   
   test_file <- NULL

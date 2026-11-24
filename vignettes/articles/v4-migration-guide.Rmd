@@ -34,7 +34,7 @@ All 26 Rcpp modules that previously returned `data.frame` now return `data.table
 library(pladdrr)
 
 # Example: Pitch extraction
-snd <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+snd <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 pitch <- snd$to_pitch()
 df <- pitch$as_data_frame()
 
@@ -261,7 +261,7 @@ library(pladdrr)
 library(data.table)
 
 # Extract formants
-snd <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+snd <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 formant <- snd$to_formant_burg()
 df <- formant$as_data_frame(max_formants = 4)
 

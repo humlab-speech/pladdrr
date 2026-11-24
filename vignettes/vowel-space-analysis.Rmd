@@ -79,7 +79,7 @@ For this demonstration we synthesize each vowel token with `klattgrid_create_fro
 using typical American English formant targets, rather than loading a recording. In real
 research, load an actual recording with `Sound$new("path/to/recording.wav")` and its
 annotation with `TextGrid$new("path/to/recording.TextGrid")`. The package ships one example
-pair for experimentation: `system.file("extdata", "test.wav", package = "pladdrr")` and
+pair for experimentation: `system.file("extdata", "test.flac", package = "pladdrr")` and
 `system.file("extdata", "test.TextGrid", package = "pladdrr")`.
 
 ```{r load_data}

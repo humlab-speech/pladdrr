@@ -44,7 +44,7 @@ if (!parselmouth_available) {
   cat("Running speaker-only benchmarks instead...\n\n")
 
   # Run speaker-only benchmarks as fallback
-  test_file <- system.file("extdata", "test.wav", package = "speaker")
+  test_file <- system.file("extdata", "test.flac", package = "speaker")
   if (file.exists(test_file)) {
     cat("Speaker Performance (without comparison):\n")
     cat("────────────────────────────────────────\n")
@@ -84,10 +84,10 @@ if (!parselmouth_available) {
 cat("Running parselmouth comparison benchmarks...\n\n")
 
 # Load test audio - handle missing gracefully
-test_file <- system.file("extdata", "test.wav", package = "speaker")
+test_file <- system.file("extdata", "test.flac", package = "speaker")
 if (!file.exists(test_file) || test_file == "") {
   cat("✗ Test audio file not found\n")
-  cat("  Expected location: inst/extdata/test.wav\n")
+  cat("  Expected location: inst/extdata/test.flac\n")
   cat("  Using synthetic audio for speaker-only benchmarks...\n\n")
 
   cat("Speaker Performance (synthetic 440Hz tone):\n")
@@ -132,7 +132,7 @@ if (!file.exists(test_file) || test_file == "") {
     time_intensity["elapsed"], time_intensity["elapsed"] * 100
   ))
 
-  cat("\nNote: Parselmouth comparison requires test.wav file\n")
+  cat("\nNote: Parselmouth comparison requires test.flac file\n")
   cat("      Install real audio file to enable full comparisons.\n\n")
 
   quit(save = "no", status = 0)

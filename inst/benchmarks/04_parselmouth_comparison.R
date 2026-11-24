@@ -74,9 +74,9 @@ tryCatch(
 )
 
 # Load test audio file - handle missing gracefully
-test_file <- system.file("extdata", "test.wav", package = "pladdrr")
+test_file <- system.file("extdata", "test.flac", package = "pladdrr")
 if (!file.exists(test_file) || test_file == "") {
-  cat("✗ Test audio file not found at inst/extdata/test.wav\n")
+  cat("✗ Test audio file not found at inst/extdata/test.flac\n")
   cat("  Using synthetic audio for pladdrr-only benchmarks...\n\n")
 
   cat("Running pladdrr benchmarks (synthetic audio):\n\n")
@@ -122,7 +122,7 @@ if (!file.exists(test_file) || test_file == "") {
     time_intensity["elapsed"], time_intensity["elapsed"] * 100
   ))
 
-  cat("\nNote: Parselmouth comparison requires test.wav file\n")
+  cat("\nNote: Parselmouth comparison requires test.flac file\n")
   cat("      Showing pladdrr-only results instead.\n\n")
 
   quit(save = "no", status = 0)

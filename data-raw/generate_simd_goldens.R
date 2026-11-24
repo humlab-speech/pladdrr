@@ -60,8 +60,8 @@ mono_fixtures <- list(
 
 for (name in names(mono_fixtures)) {
   snd <- mono_fixtures[[name]]()
-  wav_path <- file.path(fixture_dir, paste0(name, ".wav"))
-  snd$save(wav_path)
+  wav_path <- file.path(fixture_dir, paste0(name, ".flac"))
+  snd$save(wav_path, format = "FLAC")
   praat_run(mono_script, wav_path, fixture_dir, name)
   cat("mono golden generated:", name, "\n")
 }
@@ -75,8 +75,10 @@ if (requireNamespace("tuneR", quietly = TRUE)) {
   w <- tuneR::Wave(left = as.integer(left * 32767),
     right = as.integer(right * 32767),
                     samp.rate = sr, bit = 16)
-  stereo_wav <- file.path(fixture_dir, "stereo_test.wav")
-  tuneR::writeWave(w, stereo_wav)
+  stereo_wav <- file.path(fixture_dir, "stereo_test.flac")
+  tmp_wav <- tempfile(fileext = ".wav")
+  tuneR::writeWave(w, tmp_wav)
+  Sound(tmp_wav)$save(stereo_wav, format = "FLAC")
 
   praat_run(mono_conversion_script, stereo_wav,
             file.path(fixture_dir, "stereo_test_mono_conversion_golden.csv"))

@@ -30,7 +30,7 @@ test_that(".wrap_praat_object maps every remaining class", {
   wrap_expect_class(snd()$to_spectrum()$to_excitation(), "Excitation")
   wrap_expect_class(snd()$to_spectrum()$to_cepstrum(), "Cepstrum")
   wrap_expect_class(VocalTract(nx = 17L, dx = 0.01), "VocalTract")
-  wav <- testthat::test_path("fixtures/sine_440hz.wav")
+  wav <- fixture_path("sine_440hz.flac")
   skip_if_not(file.exists(wav))
   wrap_expect_class(longsound_open(wav), "LongSound")
   wrap_expect_class(FormantTier$from_formant(snd()$to_formant_burg()),

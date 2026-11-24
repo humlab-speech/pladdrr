@@ -3,8 +3,8 @@ library(testthat)
 library(pladdrr)
 
 test_that("Electroglottogram autoplot/autolayer/as.data.frame work", {
-  skip_if_not(file.exists(test_path("fixtures/speech_sample.wav")))
-  sound <- Sound(test_path("fixtures/speech_sample.wav"))
+  skip_if_not(file.exists(fixture_path("speech_sample.flac")))
+  sound <- Sound(fixture_path("speech_sample.flac"))
   # Electroglottogram has no direct sound$to_electroglottogram(); the R6
   # constructor itself points to the real factory
   #  (R/electroglottogram-wrapper.R:152).
@@ -18,18 +18,18 @@ test_that("Electroglottogram autoplot/autolayer/as.data.frame work", {
 
 test_that(
   "LongSound as.data.frame errors with actionable guidance, does not silently return wrong data", {
-  skip_if_not(file.exists(test_path("fixtures/speech_sample.wav")))
+  skip_if_not(file.exists(fixture_path("speech_sample.flac")))
   # LongSound is opened via longsound_open(path), not LongSound(path) directly
   # (R/longsound-wrapper.R:162; LongSound(.xptr=NULL) itself just errors
   # "Use LongSound$open() to create a LongSound from a file").
-  ls_obj <- longsound_open(test_path("fixtures/speech_sample.wav"))
+  ls_obj <- longsound_open(fixture_path("speech_sample.flac"))
   expect_error(as.data.frame(ls_obj), "extract_part")
 })
 
 test_that(
   "LongSound autoplot streams a windowed extract rather than erroring outright", {
-  skip_if_not(file.exists(test_path("fixtures/speech_sample.wav")))
-  ls_obj <- longsound_open(test_path("fixtures/speech_sample.wav"))
+  skip_if_not(file.exists(fixture_path("speech_sample.flac")))
+  ls_obj <- longsound_open(fixture_path("speech_sample.flac"))
   p <- ggplot2::autoplot(ls_obj, from_time = 0, to_time = 0.1)
   expect_s3_class(p, "ggplot")
 })

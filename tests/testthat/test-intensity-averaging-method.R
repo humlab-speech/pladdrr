@@ -6,7 +6,7 @@
 #
 # The fixture is level-stepped (0.2 -> 1.0 at t = 1.5 s) on purpose: on steady
 # material all four averages coincide to ~1e-9 dB, which is why the stationary
-# inst/extdata/test.wav row in faithfulness/routines.R never caught the shift.
+# inst/extdata/test.flac row in faithfulness/routines.R never caught the shift.
 
 intensity_stepped_fixture <- function() {
   samplingRate <- 16000L

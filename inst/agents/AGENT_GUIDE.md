@@ -787,7 +787,7 @@ ltas$get_mean(0, 0, unit = "dB")       # -22.832719   mean of the bins
 ltas$get_mean(0, 0, unit = "energy")   #  41.513718   mean of 10^(dB/10), back in dB
 ltas$get_mean(0, 0, unit = "sones")    #  -1.519995   mean of 2^(dB/10), back in dB
 
-# Spectral tilt in dB — the default spelling now works (values: inst/extdata/test.wav):
+# Spectral tilt in dB — the default spelling now works (values: inst/extdata/test.flac):
 ltas$get_slope(0, 1000, 1000, 4000, unit = "dB")        # -31.906946
 ltas$get_slope(0, 1000, 1000, 4000, unit = "energy")    # -52.513078
 ```

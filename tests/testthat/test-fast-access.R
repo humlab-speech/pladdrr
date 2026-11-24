@@ -1,7 +1,7 @@
 # Tests for Fast Data Access (renamed from zerocopy)
 
 test_that("sound_values_fast returns correct data", {
-  sound_file <- system.file("extdata", "test.wav", package = "pladdrr")
+  sound_file <- system.file("extdata", "test.flac", package = "pladdrr")
   sound <- Sound(sound_file)
 
   # Get values using both methods
@@ -15,7 +15,7 @@ test_that("sound_values_fast returns correct data", {
 
 
 test_that("fast_vector has correct attributes", {
-  sound_file <- system.file("extdata", "test.wav", package = "pladdrr")
+  sound_file <- system.file("extdata", "test.flac", package = "pladdrr")
   sound <- Sound(sound_file)
 
   fast <- get_sound_values_fast(sound, channel = 1)
@@ -32,7 +32,7 @@ test_that("fast_vector has correct attributes", {
 
 
 test_that("fast access validates channel number", {
-  sound_file <- system.file("extdata", "test.wav", package = "pladdrr")
+  sound_file <- system.file("extdata", "test.flac", package = "pladdrr")
   sound <- Sound(sound_file)
 
   # Invalid channel
@@ -48,7 +48,7 @@ test_that("fast access validates Sound object", {
 
 
 test_that("sound_times_fast returns correct times", {
-  sound_file <- system.file("extdata", "test.wav", package = "pladdrr")
+  sound_file <- system.file("extdata", "test.flac", package = "pladdrr")
   sound <- Sound(sound_file)
 
   times_fast <- get_sound_times_fast(sound)
@@ -60,7 +60,7 @@ test_that("sound_times_fast returns correct times", {
 
 
 test_that("fast data remains valid while Sound exists", {
-  sound_file <- system.file("extdata", "test.wav", package = "pladdrr")
+  sound_file <- system.file("extdata", "test.flac", package = "pladdrr")
   sound <- Sound(sound_file)
 
   fast <- get_sound_values_fast(sound, channel = 1)
@@ -85,7 +85,7 @@ test_that("fast data remains valid while Sound exists", {
 
 
 test_that("sound_as_matrix_fast works for mono", {
-  sound_file <- system.file("extdata", "test.wav", package = "pladdrr")
+  sound_file <- system.file("extdata", "test.flac", package = "pladdrr")
   sound <- Sound(sound_file)
 
   # Regular matrix
@@ -98,7 +98,7 @@ test_that("sound_as_matrix_fast works for mono", {
 
 
 test_that("deprecated aliases still work with warning", {
-  sound_file <- system.file("extdata", "test.wav", package = "pladdrr")
+  sound_file <- system.file("extdata", "test.flac", package = "pladdrr")
   sound <- Sound(sound_file)
 
   # get_sound_values_zerocopy -> get_sound_values_fast
@@ -128,7 +128,7 @@ test_that("deprecated aliases still work with warning", {
 test_that("fast access performance is faster than regular", {
   skip_if_not_installed("microbenchmark")
 
-  sound_file <- system.file("extdata", "test.wav", package = "pladdrr")
+  sound_file <- system.file("extdata", "test.flac", package = "pladdrr")
   sound <- Sound(sound_file)
 
   # Benchmark

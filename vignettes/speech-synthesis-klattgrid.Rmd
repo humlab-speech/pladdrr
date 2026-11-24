@@ -394,7 +394,7 @@ autoplot(spec) +
 
 ```{r compare-real-synthetic, fig.width=8, fig.height=6}
 # Load real speech
-sound_real <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+sound_real <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
 
 # Extract mean formants from real speech
 formant_real <- sound_real$to_formant_burg()
@@ -468,7 +468,7 @@ cat("  Uses multiple pitch points, formant tiers, and amplitude control\n")
 
 ```{r analysis-synthesis-workflow}
 # 1. Load real speech
-sound_orig <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+sound_orig <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
 
 # 2. Extract formants (using FormantPath for robustness)
 fp <- sound_orig$to_formant_path(num_steps_up_down = 2L)

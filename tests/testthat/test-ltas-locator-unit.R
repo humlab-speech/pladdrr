@@ -2,7 +2,7 @@
 ## ignored, so unit = "energy" or "sones" silently returned dB (fix/009 review).
 ## They now accept only "dB", like Praat's own dialogs, which have no unit.
 
-lt <- Sound$new(system.file("extdata/test.wav", package = "pladdrr"))$to_ltas(100)
+lt <- Sound$new(system.file("extdata/test.flac", package = "pladdrr"))$to_ltas(100)
 
 test_that("the locators refuse a unit they would silently ignore", {
   for (bad in list("energy", "sones", "Hz", NA_character_, 3, c("dB", "dB"))) {

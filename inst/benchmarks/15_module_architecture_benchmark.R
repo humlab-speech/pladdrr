@@ -14,7 +14,7 @@ cat("Status: 27/28 objects use Rcpp Modules (96%)\n")
 cat(divider, "\n\n", sep = "")
 
 # Test audio file
-test_file <- system.file("extdata", "test.wav", package = "pladdrr")
+test_file <- system.file("extdata", "test.flac", package = "pladdrr")
 if (!file.exists(test_file) || test_file == "") {
   cat("Creating synthetic test audio...\n\n")
   test_sound <- Sound$create_tone(1.0, 440, 16000, 0.5)

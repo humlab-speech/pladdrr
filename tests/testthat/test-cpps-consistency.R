@@ -1,7 +1,7 @@
 test_that(
   "calculate_cpps_fast and calculate_cpps_ultra produce matching results", {
 
-  wav <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+  wav <- fixture_path("dsi/fh1.flac")
   skip_if(!file.exists(wav), "Test audio not found")
   sound <- Sound(wav)
 
@@ -37,7 +37,7 @@ test_that(
 
 test_that(
   "PowerCepstrum get_peak_prominence accepts Praat-style trend fit without warning", {
-  wav <- system.file("signalfiles/DSI/input/ppq1.wav", package = "pladdrr")
+  wav <- fixture_path("dsi/mpt1.flac")
   skip_if(!file.exists(wav), "Test audio not found")
 
   sound <- Sound(wav)
@@ -61,7 +61,7 @@ test_that(
   # time_step = 0.002 -> floor(0.5) = 0), which never takes that branch. The
   # historical AVQI/get_cpps_fast() default (0.01) with the same time_step
   # gives floor(5) = 5, actually exercising the threaded smoothing pass.
-  wav <- system.file("signalfiles/DSI/input/fh1.wav", package = "pladdrr")
+  wav <- fixture_path("dsi/fh1.flac")
   skip_if(!file.exists(wav), "Test audio not found")
   sound <- Sound(wav)
 
@@ -78,7 +78,7 @@ test_that(
 })
 
 test_that("PowerCepstrum get_peak_prominence validates trend fit", {
-  wav <- system.file("signalfiles/DSI/input/ppq1.wav", package = "pladdrr")
+  wav <- fixture_path("dsi/mpt1.flac")
   skip_if(!file.exists(wav), "Test audio not found")
 
   sound <- Sound(wav)

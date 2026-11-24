@@ -348,8 +348,8 @@ test_that(
 
 test_that(
   "Electroglottogram autoplot/autolayer respect from_time/to_time and warn when empty", {
-  skip_if_not(file.exists(test_path("fixtures/speech_sample.wav")))
-  sound <- Sound(test_path("fixtures/speech_sample.wav"))
+  skip_if_not(file.exists(fixture_path("speech_sample.flac")))
+  sound <- Sound(fixture_path("speech_sample.flac"))
   egg <- sound$extract_electroglottogram()
   full <- as.data.frame(egg)
   skip_if(nrow(full) < 2, "not enough points to test filtering")
@@ -372,8 +372,8 @@ test_that(
 
 test_that(
   "LongSound autoplot/autolayer require non-NULL from_time/to_time and autolayer renders a layer", {
-  skip_if_not(file.exists(test_path("fixtures/speech_sample.wav")))
-  ls_obj <- longsound_open(test_path("fixtures/speech_sample.wav"))
+  skip_if_not(file.exists(fixture_path("speech_sample.flac")))
+  ls_obj <- longsound_open(fixture_path("speech_sample.flac"))
 
   expect_error(ggplot2::autoplot(ls_obj, from_time = NULL, to_time = 0.1),
                "from_time and to_time are required")

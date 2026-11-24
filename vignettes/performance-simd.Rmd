@@ -109,7 +109,7 @@ your own workload:
 ```{r simd-toggle, eval = FALSE}
 library(microbenchmark)
 
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 
 pladdrr_simd(FALSE)
 scalar_time <- microbenchmark(sound$to_pitch(), times = 50)
@@ -180,7 +180,7 @@ hardware rather than relying on a quoted figure.
 ### Formant Extraction Performance
 
 ```{r formant-benchmark, eval=FALSE}
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 
 result <- microbenchmark(
   burg = sound$to_formant_burg(),
@@ -221,7 +221,7 @@ the ratio on your own hardware if it matters for your pipeline.
 Higher sample rates mean more samples to process:
 
 ```{r sample-rate}
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 
 # For speech analysis, 16-22 kHz is often sufficient
 sound_22k <- sound$resample(22050)
@@ -274,7 +274,7 @@ f1_f2 <- do.call(rbind, lapply(formants, function(f) {
 ### 4. Reuse Objects When Possible
 
 ```{r reuse-objects}
-wav_path <- system.file("extdata", "test.wav", package = "pladdrr")
+wav_path <- system.file("extdata", "test.flac", package = "pladdrr")
 
 # Good: Reuse sound object
 sound <- Sound$new(wav_path)
@@ -347,7 +347,7 @@ library(profvis)
 
 profvis({
   # Load sound
-  sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+  sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 
   # Perform analysis
   pitch <- sound$to_pitch()
@@ -366,7 +366,7 @@ profvis({
 ```{r benchmark-methods, eval=FALSE}
 library(microbenchmark)
 
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 
 # Compare formant extraction methods
 result <- microbenchmark(
@@ -493,7 +493,7 @@ When calculating statistics over multiple time intervals, use batch functions in
 
 ```{r batch-statistics}
 # Create pitch object
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 pitch <- sound$to_pitch_cc()
 
 # Define 100 time intervals covering the file's duration

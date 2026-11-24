@@ -7,8 +7,7 @@ library(pladdrr)
 
 # Test Formant batch queries
 test_that("Formant batch queries work correctly", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/fh1.flac")
   sound <- Sound(sound_path)
   formant <- sound$to_formant_burg()
   
@@ -35,8 +34,7 @@ test_that("Formant batch queries work correctly", {
 })
 
 test_that("Formant bandwidth batch queries work", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/fh1.flac")
   sound <- Sound(sound_path)
   formant <- sound$to_formant_burg()
   
@@ -56,8 +54,7 @@ test_that("Formant bandwidth batch queries work", {
 })
 
 test_that("Formant batch queries handle edge cases", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/fh1.flac")
   sound <- Sound(sound_path)
   formant <- sound$to_formant_burg()
   
@@ -77,8 +74,7 @@ test_that("Formant batch queries handle edge cases", {
 
 # Test Pitch batch queries
 test_that("Pitch batch queries work correctly", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/fh1.flac")
   sound <- Sound(sound_path)
   pitch <- sound$to_pitch_cc()
   
@@ -97,8 +93,7 @@ test_that("Pitch batch queries work correctly", {
 })
 
 test_that("Pitch strength batch queries work", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/fh1.flac")
   sound <- Sound(sound_path)
   pitch <- sound$to_pitch_cc()
   
@@ -115,8 +110,7 @@ test_that("Pitch strength batch queries work", {
 })
 
 test_that("Pitch batch queries handle interpolation", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/fh1.flac")
   sound <- Sound(sound_path)
   pitch <- sound$to_pitch_cc()
   
@@ -135,8 +129,7 @@ test_that("Pitch batch queries handle interpolation", {
 
 # Test Intensity batch queries
 test_that("Intensity batch queries work correctly", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/fh1.flac")
   sound <- Sound(sound_path)
   intensity <- sound$to_intensity()
   
@@ -157,8 +150,7 @@ test_that("Intensity batch queries work correctly", {
 })
 
 test_that("Intensity batch queries support interpolation methods", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/fh1.flac")
   sound <- Sound(sound_path)
   intensity <- sound$to_intensity()
   
@@ -179,8 +171,7 @@ test_that("Intensity batch queries support interpolation methods", {
 
 # Test PointProcess batch operations
 test_that("PointProcess get all times works", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/fh1.flac")
   sound <- Sound(sound_path)
   pitch <- sound$to_pitch_cc()
   pp <- pitch$to_point_process()
@@ -200,8 +191,7 @@ test_that("PointProcess get all times works", {
 })
 
 test_that("PointProcess intervals work correctly", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/fh1.flac")
   sound <- Sound(sound_path)
   pitch <- sound$to_pitch_cc()
   pp <- pitch$to_point_process()
@@ -221,8 +211,7 @@ test_that("PointProcess intervals work correctly", {
 })
 
 test_that("PointProcess nearest indices query works", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/fh1.flac")
   sound <- Sound(sound_path)
   pitch <- sound$to_pitch_cc()
   pp <- pitch$to_point_process()
@@ -255,8 +244,7 @@ test_that("PointProcess batch operations handle empty objects", {
 
 test_that(
   "formant/bandwidth/pitch-strength batch queries return NA for non-finite query times", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/fh1.flac")
   sound <- Sound(sound_path)
   formant <- sound$to_formant_burg()
   pitch <- sound$to_pitch_cc()
@@ -295,8 +283,7 @@ test_that(
 
 test_that(
   "internal formant batch functions reject an out-of-range formant index directly", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/fh1.flac")
   sound <- Sound(sound_path)
   formant <- sound$to_formant_burg()
 
@@ -327,8 +314,7 @@ test_that(
 
 test_that(
   "get_pitch_quantiles_batch() computes named quantiles over default and explicit ranges", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/fh1.flac")
   sound <- Sound(sound_path)
   pitch <- sound$to_pitch_cc()
 
@@ -372,8 +358,7 @@ test_that("internal batch-query C++ exports reject a null external pointer", {
 
   # get_jitter_shimmer_batch_cpp() validates its two pointers (PointProcess,
   # Sound) independently -- exercise both guards, not just "both null".
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/fh1.flac")
   sound <- Sound(sound_path)
   pp <- sound$to_point_process_periodic_cc(75, 600)
   expect_error(
@@ -388,8 +373,7 @@ test_that("internal batch-query C++ exports reject a null external pointer", {
 
 test_that(
   "pitch_get_statistics_batch supports median/count_voiced metrics and validates inputs", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/fh1.flac")
   sound <- Sound(sound_path)
   pitch <- sound$to_pitch_cc()
 
@@ -422,8 +406,7 @@ test_that(
 
 test_that(
   "intensity_get_minimum_with_time() returns a minimum value and time", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/fh1.flac")
   sound <- Sound(sound_path)
   intensity <- sound$to_intensity()
 
@@ -444,8 +427,7 @@ test_that(
 
 test_that(
   "intensity_get_statistics_batch supports q25/q75 metrics and validates inputs", {
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/fh1.flac")
   sound <- Sound(sound_path)
   intensity <- sound$to_intensity()
 
@@ -486,8 +468,7 @@ test_that("Batch queries are faster than loops", {
   skip_if_not_extended()
   skip_if_not_installed("microbenchmark")
   
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/fh1.flac")
   sound <- Sound(sound_path)
   formant <- sound$to_formant()
   
@@ -523,8 +504,7 @@ test_that("PointProcess batch operations are faster than loops", {
   skip_if_not_extended()
   skip_if_not_installed("microbenchmark")
   
-  sound_path <- system.file("signalfiles/DSI/input/fh1.wav",
-    package = "pladdrr")
+  sound_path <- fixture_path("dsi/fh1.flac")
   sound <- Sound(sound_path)
   pitch <- sound$to_pitch_cc()
   pp <- pitch$to_point_process()

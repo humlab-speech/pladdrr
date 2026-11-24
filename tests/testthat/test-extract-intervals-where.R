@@ -1,6 +1,6 @@
 test_that("Sound$extract_intervals_where works with matching intervals", {
   
-  s <- Sound$new(test_path("fixtures/speech_sample.wav"))
+  s <- Sound$new(fixture_path("speech_sample.flac"))
   p <- s$to_pitch()
   tg <- p$to_textgrid_vuv()
   
@@ -13,7 +13,7 @@ test_that("Sound$extract_intervals_where works with matching intervals", {
 
 test_that("Sound$extract_intervals_where handles no matches without crashing", {
   
-  s <- Sound$new(test_path("fixtures/speech_sample.wav"))
+  s <- Sound$new(fixture_path("speech_sample.flac"))
   p <- s$to_pitch()
   tg <- p$to_textgrid_vuv()
   
@@ -28,7 +28,7 @@ test_that("Sound$extract_intervals_where handles no matches without crashing", {
 
 test_that("Sound$extract_intervals_where works with different criteria", {
   
-  s <- Sound$new(test_path("fixtures/speech_sample.wav"))
+  s <- Sound$new(fixture_path("speech_sample.flac"))
   p <- s$to_pitch()
   tg <- p$to_textgrid_vuv()
   

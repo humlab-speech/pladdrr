@@ -121,7 +121,7 @@ argument.
 }
 
 \examples{
-sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
 
 # Full-file CPPS calls on the 60 s demo file are CPU-heavy (> 5 s under
 # R CMD check), so they live in \donttest{} (still run under

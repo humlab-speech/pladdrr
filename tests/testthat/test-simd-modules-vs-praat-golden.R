@@ -37,7 +37,7 @@ with_simd <- function(enabled, code) {
 }
 
 for (fixture in mono_fixtures) {
-  wav_path <- file.path(fixture_dir, paste0(fixture, ".wav"))
+  wav_path <- file.path(fixture_dir, paste0(fixture, ".flac"))
 
   for (simd_enabled in c(FALSE, TRUE)) {
     label <- if (simd_enabled) "SIMD" else "scalar"
@@ -209,7 +209,7 @@ for (simd_enabled in c(FALSE, TRUE)) {
   test_that(
     paste0("Stereo-to-mono conversion matches Praat.app golden (", label,
       ")"), {
-    stereo_wav <- file.path(fixture_dir, "stereo_test.wav")
+    stereo_wav <- file.path(fixture_dir, "stereo_test.flac")
     skip_if_not(file.exists(stereo_wav),
       "golden fixture missing; run data-raw/generate_simd_goldens.R")
     with_simd(simd_enabled, {

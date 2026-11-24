@@ -72,7 +72,7 @@ test_that("Pitch as_data_frame/down_to_pitch_tier", {
 })
 
 test_that("get_values_detrended preserves mean (not zero-mean lm residuals)", {
-  sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+  sound <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
   pitch <- sound$to_pitch(pitch_floor = 75, pitch_ceiling = 600)
   v <- pitch$get_values_vector()
   d <- pitch$get_values_detrended("hertz")

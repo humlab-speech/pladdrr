@@ -51,7 +51,7 @@ Visualize a single power cepstrum with peak detection:
 
 ```{r cepstrum-basic}
 # Create a PowerCepstrum object (Sound -> Spectrum -> PowerCepstrum)
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 cepstrum <- sound$to_spectrum()$to_power_cepstrum()
 
 # Plot with peak annotation
@@ -148,7 +148,7 @@ bundled `test.TextGrid` has phone labels, not exclusively vowels):
 
 ```{r vowel-space}
 # Extract formants at the midpoint of each labeled interval on the "phones" tier
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 textgrid <- TextGrid$new(
   system.file("extdata", "test.TextGrid", package = "pladdrr"))
 
@@ -243,7 +243,7 @@ trajectory plot without manual reshaping.
 
 ```{r pitch-contour}
 # Extract pitch
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 pitch <- sound$to_pitch()
 
 # Convert to data frame
@@ -374,7 +374,7 @@ ggplot(tier_data_labeled, aes(x = duration, fill = text)) +
 
 ```{r spectrogram}
 # Create spectrogram
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 spectrogram <- sound$to_spectrogram(
   window_length = 0.005,
   max_frequency = 5000,

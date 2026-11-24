@@ -4,7 +4,7 @@
 # analyze_files_parallel (the loadNamespace+attachNamespace worker init)
 # and the mclapply path of process_sounds_parallel.
 
-test_wav <- function() system.file("extdata", "test.wav", package = "pladdrr")
+test_wav <- function() system.file("extdata", "test.flac", package = "pladdrr")
 snd_fixture <- function() Sound$create_tone(frequency = 220, duration = 0.2,
   sampling_rate = 16000)
 

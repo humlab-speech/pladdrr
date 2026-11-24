@@ -69,7 +69,7 @@
 #' energy <- spectrum$get_band_energy(fmin = 400, fmax = 500)
 #'
 #' # Create a spectrum from a recording read from disk
-#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+#' sound <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
 #' spectrum <- sound$to_spectrum(fast = TRUE)
 #' spec_df <- spectrum$as_data_frame()
 #'

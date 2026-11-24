@@ -62,7 +62,7 @@ print(noise)
 
 ```{r}
 # Load a WAV file using the object-oriented interface
-speech <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+speech <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 speech
 
 # For a stereo file, select a channel (1-indexed):
@@ -273,7 +273,7 @@ Here's a complete analysis workflow:
 
 ```{r}
 # 1. Load sound
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 
 # 2. Extract all analyses
 pitch <- sound$to_pitch(pitch_floor = 75, pitch_ceiling = 600)
@@ -317,7 +317,7 @@ f0 = Get mean: 0, 0, "Hertz"
 ### pladdrr Equivalent
 ```{r}
 # R with pladdrr
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 pitch <- sound$to_pitch(time_step = 0.01,
                        pitch_floor = 75, pitch_ceiling = 600)
 f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")

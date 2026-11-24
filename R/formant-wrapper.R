@@ -92,7 +92,7 @@
 #'  "hertz")
 #'
 #' # The same analysis on a recording read from disk
-#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+#' sound <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
 #' formant <- sound$to_formant_burg(
 #'   time_step = 0.01, max_number_of_formants = 5,
 #'   maximum_formant = 5500, window_length = 0.025, pre_emphasis_from = 50

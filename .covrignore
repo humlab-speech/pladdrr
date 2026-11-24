@@ -27,7 +27,7 @@ src/utils.cpp
 # init/manual no-ops). They satisfy the linker; R cannot exercise them, so
 # counting them measures the build configuration, not the package.
 src/area_stubs.cpp
-src/flac_stubs.cpp
+src/mp3_stubs.cpp
 src/formant_stubs.cpp
 src/formantmodeler_drawing_stubs.cpp
 src/glpk_stubs.cpp

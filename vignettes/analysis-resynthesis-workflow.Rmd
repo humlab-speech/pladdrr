@@ -67,7 +67,7 @@ Perceptual Validation ← KlattGrid Synthesis ← Modified Parameters
 
 ```{r load-analyze}
 # Load audio file
-sound_orig <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+sound_orig <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
 
 cat("Original audio:\n")
 cat("  Duration:", sound_orig$get_duration(), "s\n")

@@ -12,7 +12,7 @@
 #                    Default — silent drift fails loudly.
 #        - small   : DSP routines with well-understood FP noise (≤1e-6 typical).
 #        - documented: anything looser MUST carry a rationale comment.
-#   4. Reference a fixture by basename in `inst/extdata/`, `inst/signalfiles/`,
+#   4. Reference a fixture by basename in `inst/extdata/`, `tests/testthat/fixtures/dsi/` (as `signalfiles/DSI/input/<name>`),
 #      or `inst/testdata/`.
 #
 # Routines are intentionally Praat-script-heredoc rather than .praat files so
@@ -22,7 +22,7 @@ FAITHFULNESS_ROUTINES <- list(
 
   list(
     name        = "Sound$get_total_duration",
-    fixture     = "extdata/test.wav",
+    fixture     = "extdata/test.flac",
     tolerance   = 0,
     rationale   = "Pure metadata read; must match Praat to the last bit.",
     praat_script = '
@@ -36,7 +36,7 @@ FAITHFULNESS_ROUTINES <- list(
 
   list(
     name        = "Sound$get_number_of_samples",
-    fixture     = "extdata/test.wav",
+    fixture     = "extdata/test.flac",
     tolerance   = 0,
     rationale   = "Frame count; integer equality required.",
     praat_script = '
@@ -50,7 +50,7 @@ FAITHFULNESS_ROUTINES <- list(
 
   list(
     name        = "Sound -> Pitch (cc) -> mean F0 (Hz)",
-    fixture     = "extdata/test.wav",
+    fixture     = "extdata/test.flac",
     tolerance   = 1e-4,
     rationale   = "Pitch CC pipeline; FP noise from FFT + interpolation. 0.0001 Hz is below any phonetic threshold.",
     praat_script = '
@@ -78,7 +78,7 @@ FAITHFULNESS_ROUTINES <- list(
 
   list(
     name        = "Sound -> Intensity -> mean (dB)",
-    fixture     = "extdata/test.wav",
+    fixture     = "extdata/test.flac",
     tolerance   = 1e-6,
     rationale   = "RMS-based intensity; FP noise from log + windowing.",
     praat_script = '
@@ -98,7 +98,7 @@ FAITHFULNESS_ROUTINES <- list(
 
   list(
     name        = "Sound -> Formant (burg) -> F1@0.5s (Hz)",
-    fixture     = "extdata/test.wav",
+    fixture     = "extdata/test.flac",
     tolerance   = 1e-3,
     rationale   = "Burg LPC; well-conditioned for vowel-like input. Hz-level tolerance is below within-speaker variability.",
     praat_script = '
@@ -127,7 +127,7 @@ FAITHFULNESS_ROUTINES <- list(
   # CPPS via calculate_cpps_ultra
   list(
     name        = "CPPS (calculate_cpps_ultra)",
-    fixture     = "extdata/test.wav",
+    fixture     = "extdata/test.flac",
     tolerance   = 5e-3,
     rationale   = paste(
       "CPPS dB. 0.005 dB covers the ~0.003 dB drift traced to the",
@@ -150,7 +150,7 @@ FAITHFULNESS_ROUTINES <- list(
   # Pitch AC algorithm
   list(
     name        = "Pitch (AC) -> mean F0 (Hz)",
-    fixture     = "extdata/test.wav",
+    fixture     = "extdata/test.flac",
     tolerance   = 1e-4,
     rationale   = "Pitch AC pipeline; FP noise from autocorrelation + interpolation.",
     praat_script = '
@@ -179,7 +179,7 @@ FAITHFULNESS_ROUTINES <- list(
   # Pitch SHS algorithm
   list(
     name        = "Pitch (SHS) -> mean F0 (Hz)",
-    fixture     = "extdata/test.wav",
+    fixture     = "extdata/test.flac",
     tolerance   = 1e-4,
     rationale   = paste("Pitch SHS pipeline; subharmonic summation FP noise.",
                         "Time step must be > 0: Praat rejects 0 for To Pitch (shs)."),
@@ -208,7 +208,7 @@ FAITHFULNESS_ROUTINES <- list(
   # Intensity
   list(
     name        = "Intensity -> mean (energy-averaged, dB)",
-    fixture     = "extdata/test.wav",
+    fixture     = "extdata/test.flac",
     tolerance   = 1e-5,
     rationale   = paste(
       "Energy averaging converts to the linear domain and back",
@@ -233,7 +233,7 @@ FAITHFULNESS_ROUTINES <- list(
   # Formant (KeepAll) at time point
   list(
     name        = "Formant (keepAll) -> F1@0.5s (Hz)",
-    fixture     = "extdata/test.wav",
+    fixture     = "extdata/test.flac",
     tolerance   = 1e-3,
     rationale   = paste(
       "KeepAll LPC variant; same precision expectation as Burg.",
@@ -267,7 +267,7 @@ FAITHFULNESS_ROUTINES <- list(
   # Harmonicity (cc)
   list(
     name        = "Harmonicity (cc) -> mean (dB)",
-    fixture     = "extdata/test.wav",
+    fixture     = "extdata/test.flac",
     tolerance   = 1e-4,
     rationale   = paste(
       "HNR runs through the pitch autocorrelation machinery, so it",
@@ -298,7 +298,7 @@ FAITHFULNESS_ROUTINES <- list(
   # is the finding, not a reason to widen it.
   list(
     name        = "Spectrogram -> power at (0.5 s, 1000 Hz)",
-    fixture     = "extdata/test.wav",
+    fixture     = "extdata/test.flac",
     tolerance   = 1e-9,
     rationale   = paste(
       "Direct cell query on a Gaussian-window spectrogram; no",
@@ -321,7 +321,7 @@ FAITHFULNESS_ROUTINES <- list(
   # PointProcess -> jitter (local)
   list(
     name        = "PointProcess (cc) -> jitter local",
-    fixture     = "extdata/test.wav",
+    fixture     = "extdata/test.flac",
     tolerance   = 1e-9,
     rationale   = paste(
       "Jitter is a ratio of period differences; absolute values are",
@@ -347,7 +347,7 @@ FAITHFULNESS_ROUTINES <- list(
   # (n, window, step, f1_mel, FMAX, DISTANCE). The call below is the mapped one.
   list(
     name        = "MFCC -> number of frames",
-    fixture     = "extdata/test.wav",
+    fixture     = "extdata/test.flac",
     tolerance   = 0,
     rationale   = "Frame-grid arithmetic; integer equality required.",
     praat_script = '
@@ -366,10 +366,10 @@ FAITHFULNESS_ROUTINES <- list(
 
   # MFCC coefficients. The frame-count row above cannot see a wrong mapping of
   # the mel arguments (it passed while they were crossed); the coefficients can.
-  # Measured against Praat 6.4.47 on test.wav; see the tolerance for the margin.
+  # Measured against Praat 6.4.47 on test.flac; see the tolerance for the margin.
   list(
     name        = "MFCC -> coefficients c1..c12, frames 1, 40, 100",
-    fixture     = "extdata/test.wav",
+    fixture     = "extdata/test.flac",
     tolerance   = 1e-6,
     rationale   = paste("Same FFT/mel/DCT chain on the same samples; coefficients",
       "are O(100), so 1e-6 absolute is ~1e-8 relative, far below the 1e-3",
@@ -397,7 +397,7 @@ FAITHFULNESS_ROUTINES <- list(
   # Sound metadata reads (exact; must match Praat to the last bit)
   list(
     name        = "Sound$get_sampling_frequency",
-    fixture     = "extdata/test.wav",
+    fixture     = "extdata/test.flac",
     tolerance   = 0,
     rationale   = "Pure metadata read; must match Praat to the last bit.",
     praat_script = '
@@ -411,7 +411,7 @@ FAITHFULNESS_ROUTINES <- list(
 
   list(
     name        = "Sound$get_number_of_channels",
-    fixture     = "extdata/test.wav",
+    fixture     = "extdata/test.flac",
     tolerance   = 0,
     rationale   = "Pure metadata read; integer equality required.",
     praat_script = '
@@ -426,7 +426,7 @@ FAITHFULNESS_ROUTINES <- list(
   # Sound amplitude statistics (bundled Praat core; near-exact)
   list(
     name        = "Sound$get_mean",
-    fixture     = "extdata/test.wav",
+    fixture     = "extdata/test.flac",
     tolerance   = 1e-12,
     rationale   = "Amplitude mean; simple sum/n, near-exact against Praat.",
     praat_script = '
@@ -440,7 +440,7 @@ FAITHFULNESS_ROUTINES <- list(
 
   list(
     name        = "Sound$get_rms",
-    fixture     = "extdata/test.wav",
+    fixture     = "extdata/test.flac",
     tolerance   = 1e-12,
     rationale   = "Root-mean-square; sqrt(mean of squares), near-exact.",
     praat_script = '
@@ -457,7 +457,7 @@ FAITHFULNESS_ROUTINES <- list(
   # which shifted the chosen path by >1 kHz on this fixture.
   list(
     name        = "Sound -> FormantPath -> Path finder -> mean F1, F2 (Hz)",
-    fixture     = "signalfiles/DSI/input/mpt2.wav",
+    fixture     = "signalfiles/DSI/input/mpt1.flac",
     tolerance   = 1e-6,
     rationale   = "Same Burg candidates and serial Viterbi; FP noise only.",
     praat_script = '

@@ -1,4 +1,4 @@
-test_wav <- system.file("extdata", "test.wav", package = "pladdrr")
+test_wav <- system.file("extdata", "test.flac", package = "pladdrr")
 
 test_that("Spectrogram R6 creation from Sound works", {
   skip_if_not(file.exists(test_wav), "Test audio file not available")

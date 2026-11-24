@@ -713,7 +713,7 @@ textgrid_merge <- function(textgrids, equalize_domains = FALSE) {
 #'  disk.
 #'
 #' @param path Path to sound file in a format Praat's own streaming reader
-#'   accepts (WAV, AIFF, NIST). FLAC and MP3 fail here - see
+#'   accepts (WAV, AIFF, NIST, FLAC). MP3 fails here - see
 #'   \code{\link{longsound_open}}.
 #' @param start Start time of window in seconds
 #' @param end End time of window in seconds

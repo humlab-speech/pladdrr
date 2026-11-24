@@ -212,9 +212,9 @@ It now checks for RcppXsimd and exits with one clear error if absent.
 
 The `FLAC_SRC` / `MP3_SRC` variables were removed in v4.9.19: they named a
 `praat/` prefix deleted in the v4.9.5 slimming and were never referenced by
-`SOURCES`. **FLAC and MP3 are not decoded natively** — only headers survive under
-`praat.github.io/external/{flac,mp3}`, `flac_stubs.cpp` is linked instead, and
-`Sound()` falls back to the suggested `av` package for those formats.
+`SOURCES`. **MP3 is not decoded natively** (`mp3_stubs.cpp`; `Sound()` falls back to the
+suggested `av` package). FLAC was re-vendored from Praat (libFLAC, BSD-3-Clause)
+and is compiled via `FLAC_C_SRC` in the Makevars files.
 
 ### SIMD Configuration
 

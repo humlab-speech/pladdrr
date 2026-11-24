@@ -14,7 +14,7 @@ test_that("FormantPath accessor NULL branch", {
 })
 
 test_that("FormantPath constructor accepts paths and validates", {
-  wav <- testthat::test_path("fixtures/sine_440hz.wav")
+  wav <- fixture_path("sine_440hz.flac")
   skip_if_not(file.exists(wav))
   fp <- FormantPath(wav)
   expect_s3_class(fp, "FormantPath")

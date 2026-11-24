@@ -70,7 +70,7 @@ test_that(
   "get_cpps_fast (avqi profile) and calculate_cpps_fast (r6 profile) diverge", {
   # The two profiles are deliberately different (see file banner); on the
   # same input they should NOT coincidentally agree.
-  sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+  sound <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
 
   r6_value <- calculate_cpps_fast(sound)
   pcg <- to_powercepstrogram_fast(sound)
@@ -159,7 +159,7 @@ test_that("apply_transform_xptr rejects a non-Sound, non-pointer argument", {
 test_that("calculate_cpps_ultra matches calculate_cpps_fast within tolerance", {
   # Both share the "r6" parameter profile; calculate_cpps_ultra just fuses
   # the PowerCepstrogram-creation and CPPS-extraction C++ calls into one.
-  sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+  sound <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
 
   cpps_ultra <- calculate_cpps_ultra(sound)
   cpps_fast <- calculate_cpps_fast(sound)
@@ -186,10 +186,10 @@ test_that(
 
 test_that(
   "extract_voiced_segments_ultra returns a shorter voiced-only Sound (both AVQI versions)", {
-  sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+  sound <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
   full_duration <- sound$get_total_duration()
 
-  # inst/extdata/test.wav's low intensity range triggers Praat's own
+  # inst/extdata/test.flac's low intensity range triggers Praat's own
   # "The loudest and softest part in your sound differ by only ... dB"
   # notice (Melder_warning,
   #  src/praat.github.io/dwtools/Intensity_extensions.cpp).
@@ -227,10 +227,10 @@ test_that(
 })
 
 test_that("build_multiband_harmonicity returns 5 named Harmonicity objects", {
-  sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+  sound <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
   # See the low-dB-range Melder_warning note above
   #  extract_voiced_segments_ultra's
-  # test -- same benign, non-R-condition notice, same test.wav.
+  # test -- same benign, non-R-condition notice, same test.flac.
   built <- suppressWarnings(build_multiband_harmonicity(sound))
 
   expect_type(built, "list")
@@ -251,10 +251,10 @@ test_that(
 
 test_that(
   "multiband_hnr_stats returns mean/sd for each band and matches calculate_multiband_hnr_ultra", {
-  sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+  sound <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
   # See the low-dB-range Melder_warning note above
   #  extract_voiced_segments_ultra's
-  # test -- same benign, non-R-condition notice, same test.wav.
+  # test -- same benign, non-R-condition notice, same test.flac.
   built <- suppressWarnings(build_multiband_harmonicity(sound))
 
   stats_interval <- multiband_hnr_stats(built, 0, 0.5)
@@ -276,7 +276,7 @@ test_that(
   stats_whole <- multiband_hnr_stats(built, 0, 0)
   # See the low-dB-range Melder_warning note above
   #  extract_voiced_segments_ultra's
-  # test -- same benign, non-R-condition notice, same test.wav.
+  # test -- same benign, non-R-condition notice, same test.flac.
   hnr_whole <- suppressWarnings(calculate_multiband_hnr_ultra(sound))
   expect_equal(stats_whole, hnr_whole, tolerance = 1e-6)
 })
@@ -288,10 +288,10 @@ test_that("multiband_hnr_stats rejects a malformed multiband list", {
 
 test_that(
   "calculate_multiband_hnr_ultra returns mean/sd for each band directly from a Sound", {
-  sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+  sound <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
   # See the low-dB-range Melder_warning note above
   #  extract_voiced_segments_ultra's
-  # test -- same benign, non-R-condition notice, same test.wav.
+  # test -- same benign, non-R-condition notice, same test.flac.
   hnr <- suppressWarnings(calculate_multiband_hnr_ultra(sound))
 
   expect_type(hnr, "list")

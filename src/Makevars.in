@@ -231,12 +231,8 @@ LPC_SRC = praat.github.io/LPC/LPC.cpp \
           praat.github.io/LPC/Sound_to_Formant_mt.cpp \
           praat.github.io/LPC/LPC_and_LFCC.cpp
 
-# NOTE: FLAC/MP3 decoding is not compiled in. The upstream implementation
-# sources were dropped in the v4.9.5 CRAN slimming (only headers remain under
-# praat.github.io/external/{flac,mp3}), so flac_stubs.cpp is linked instead and
-# Sound() falls back to the 'av' package for those formats. The former
-# FLAC_SRC/MP3_SRC variables were dead: they named a praat/ prefix that no
-# longer exists and were never referenced by SOURCES.
+# NOTE: FLAC is decoded/encoded natively (vendored libFLAC, FLAC_C_SRC below).
+# MP3 decoding is stubbed (mp3_stubs.cpp); Sound() falls back to 'av' for MP3.
 
 # Action dispatch (library-mode implementation)
 ACTION_SRC = praat_actions_libmode.cpp
@@ -298,7 +294,27 @@ MODULE_SRC = modules/pitch_module.cpp modules/sound_module.cpp modules/formant_m
              modules/interpreter_module.cpp module_init.cpp
 
 # All sources combined (NOTE: FLAC/MP3 libs not available in current Praat source)
-SOURCES = $(KAR_SRC) $(MELDER_SRC) $(SYS_SRC) $(DWSYS_SRC) $(DWTOOLS_SRC) $(STAT_SRC) $(FON_SRC) $(SENSORS_SRC) $(LPC_SRC) $(ACTION_SRC) $(WRAPPER_SRC) $(SIMD_SRC) $(MODULE_SRC) flac_stubs.cpp sound_audio_stubs.cpp sound_pool.cpp
+SOURCES = $(KAR_SRC) $(MELDER_SRC) $(SYS_SRC) $(DWSYS_SRC) $(DWTOOLS_SRC) $(STAT_SRC) $(FON_SRC) $(SENSORS_SRC) $(LPC_SRC) $(ACTION_SRC) $(WRAPPER_SRC) $(SIMD_SRC) $(MODULE_SRC) mp3_stubs.cpp sound_audio_stubs.cpp sound_pool.cpp
+
+# libFLAC (vendored from Praat, BSD-3-Clause); compiled as C
+FLAC_C_SRC = \
+    praat.github.io/external/flac/flac_bitmath.c \
+    praat.github.io/external/flac/flac_bitreader.c \
+    praat.github.io/external/flac/flac_bitwriter.c \
+    praat.github.io/external/flac/flac_cpu.c \
+    praat.github.io/external/flac/flac_crc.c \
+    praat.github.io/external/flac/flac_fixed.c \
+    praat.github.io/external/flac/flac_float.c \
+    praat.github.io/external/flac/flac_format.c \
+    praat.github.io/external/flac/flac_lpc.c \
+    praat.github.io/external/flac/flac_md5.c \
+    praat.github.io/external/flac/flac_memory.c \
+    praat.github.io/external/flac/flac_metadata_iterators.c \
+    praat.github.io/external/flac/flac_metadata_object.c \
+    praat.github.io/external/flac/flac_stream_decoder.c \
+    praat.github.io/external/flac/flac_stream_encoder.c \
+    praat.github.io/external/flac/flac_stream_encoder_framing.c \
+    praat.github.io/external/flac/flac_window.c
 
 # Object files
-OBJECTS = $(SOURCES:.cpp=.o)
+OBJECTS = $(SOURCES:.cpp=.o) $(FLAC_C_SRC:.c=.o)

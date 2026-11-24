@@ -79,7 +79,7 @@
 #' cheaper and is not the same metric.
 #'
 #' @examples
-#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+#' sound <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
 #'
 #' # Full-file CPPS calls on the 60 s demo file are CPU-heavy (> 5 s under
 #' # R CMD check), so they live in \donttest{} (still run under
@@ -191,7 +191,7 @@ calculate_cpps_fast <- function(
 #' - Wrapped in R6 PowerCepstrogram object if needed
 #'
 #' @examples
-#' sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+#' sound <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
 #'
 #' # Fast path: returns an external pointer, no wrapper object built
 #' pcep_ptr <- to_powercepstrogram_fast(sound, 60, 0.002, 5000, 50)

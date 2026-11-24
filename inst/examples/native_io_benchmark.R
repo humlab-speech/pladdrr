@@ -46,7 +46,7 @@ benchmark_native_io <- function(file_path, n_iterations = 100) {
 # Example usage
 if (interactive()) {
   # Benchmark a WAV file
-  wav_file <- system.file("extdata", "test.wav", package = "pladdrr")
+  wav_file <- system.file("extdata", "test.flac", package = "pladdrr")
   if (file.exists(wav_file)) {
     results <- benchmark_native_io(wav_file, n_iterations = 100)
   }

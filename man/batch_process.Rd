@@ -6,7 +6,7 @@
 \usage{
 batch_process(
   directory,
-  pattern = "\\\\.wav$",
+  pattern = "\\\\.(wav|flac)$",
   func,
   recursive = FALSE,
   parallel = FALSE,

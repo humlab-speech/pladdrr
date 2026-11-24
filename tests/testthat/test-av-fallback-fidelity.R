@@ -1,6 +1,6 @@
 # Regression tests for the av fallback in .sound_ptr_from_path() (F-deps-01,
-# merged with F-security-03). Formats whose native reader is stubbed (FLAC,
-# MP3, OGG/Opus/MP4) are decoded with av::read_audio_bin(), which returns a
+# merged with F-security-03). Formats whose native reader is stubbed (MP3,
+# OGG/Opus/MP4; FLAC is decoded natively) are decoded with av::read_audio_bin(), which returns a
 # plain *interleaved* integer vector in raw S32LE (full scale 2^31) — not a
 # channels x samples matrix in +-1. Before the fix the fallback divided by the
 # file's own peak and folded stereo into a double-length mono track, so the
@@ -40,11 +40,9 @@ test_that("native WAV load stays quiet and keeps the file's level", {
   expect_equal(wav_mono$get_nx(), av_n)
 })
 
-test_that("FLAC (lossless, av fallback) reads back at the file's own level", {
+test_that("FLAC (lossless, native decoder) reads back at the file's own level", {
   flac <- av_convert(av_wav_mono, "flac")
-  msgs <- capture_warnings(s <- Sound(flac))
-  expect_length(msgs, 1L) # one notice per load, naming the decoder
-  expect_match(paste(msgs, collapse = " "), "av")
+  expect_no_warning(s <- Sound(flac)) # native path: no av fallback notice
   wav <- Sound(av_wav_mono)
   expect_equal(s$get_number_of_channels(), wav$get_number_of_channels())
   expect_equal(s$get_nx(), wav$get_nx())

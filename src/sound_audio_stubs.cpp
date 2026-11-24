@@ -53,24 +53,6 @@ void SoundList_play (SoundList me, Sound_PlayCallback playCallback, Thing playCl
         U"This is a non-interactive R package for analysis, not playback.");
 }
 
-// ============================================================================
-// FLAC/MP3 Status Strings (referenced by melder_audiofiles.cpp)
-// ============================================================================
-
-extern "C" {
-    const char * const FLAC__StreamDecoderErrorStatusString[] = {
-        "LOST_SYNC", "BAD_HEADER", "FRAME_CRC_MISMATCH", "UNPARSEABLE_STREAM", nullptr
-    };
-
-    const char * const FLAC__StreamDecoderInitStatusString[] = {
-        "OK", "ERROR_OPENING_FILE", nullptr
-    };
-
-    const char * const FLAC__StreamEncoderInitStatusString[] = {
-        "OK", "ENCODER_ERROR", nullptr
-    };
-}
-
 void MelderAudio_play16 (short *, integer, integer, integer, bool (*)(void*, integer), void*) {
     // No-op - audio playback not supported
 }

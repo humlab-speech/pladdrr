@@ -289,7 +289,7 @@ test_that("MFCC frames are consistent across SIMD/scalar", {
 test_that("MFCC SIMD works with real audio (if available)", {
 
   # Try to load a real audio file
-  test_file <- system.file("extdata", "test.wav", package = "pladdrr")
+  test_file <- system.file("extdata", "test.flac", package = "pladdrr")
 
   if (file.exists(test_file) && nchar(test_file) > 0) {
     snd <- Sound$new(test_file)

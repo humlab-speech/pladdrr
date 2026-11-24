@@ -47,7 +47,7 @@ test_that("extract_voiced_segments with ZCR filtering works", {
 })
 
 test_that("textgrid_get_intervals_where works", {
-  test_wav <- system.file("extdata", "test.wav", package = "pladdrr")
+  test_wav <- system.file("extdata", "test.flac", package = "pladdrr")
   skip_if_not(file.exists(test_wav), "Test audio not available")
 
   sound <- Sound$new(test_wav)

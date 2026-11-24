@@ -523,17 +523,17 @@ get_jitter_shimmer_batch <- function(pointprocess, sound,
 #' Get Audio File Durations via WAV Header Reading
 #'
 #' @description
-#' Reads only the 44-byte WAV header to calculate duration, avoiding full file
+#' Reads only the WAV header (or FLAC STREAMINFO block) to calculate duration, avoiding full file
 #' loading via `LongSound$from_file()$get_total_duration()`.
 #'
 #' This is a **Tier 4 "Ultra"** function for batch DSI (Dysphonia Severity
 #' Index) calculations where file duration is the MPT (Maximum Phonation
 #' Time) component.
 #'
-#' @param file_paths Character vector of .wav file paths
+#' @param file_paths Character vector of .wav or .flac file paths
 #'
 #' @return Numeric vector of durations (seconds). Returns `NA` for files that
-#'   cannot be read or are not valid WAV files.
+#'   cannot be read or are not valid WAV or FLAC files.
 #'
 #' @section Performance:
 #' This function avoids the overhead of the standard LongSound approach by:

@@ -40,7 +40,7 @@ and want to minimize R6 overhead. The returned pointer can be:
 - Wrapped in R6 PowerCepstrogram object if needed
 }
 \examples{
-sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
 
 # Fast path: returns an external pointer, no wrapper object built
 pcep_ptr <- to_powercepstrogram_fast(sound, 60, 0.002, 5000, 50)

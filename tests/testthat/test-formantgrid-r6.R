@@ -138,7 +138,7 @@ test_that("Sound FormantGrid filtering works", {
 })
 
 test_that("FormantGrid from Formant works", {
-  test_wav <- system.file("extdata", "test.wav", package = "pladdrr")
+  test_wav <- system.file("extdata", "test.flac", package = "pladdrr")
   skip_if_not(file.exists(test_wav))
   
   # Create sound and extract formants

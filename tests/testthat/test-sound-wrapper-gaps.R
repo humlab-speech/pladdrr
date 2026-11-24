@@ -9,7 +9,7 @@ snd_fixture <- function() {
 }
 
 test_that("Sound file loading and errors", {
-  s <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+  s <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
   expect_s3_class(s, "Sound")
   expect_gt(s$get_duration(), 0)
   expect_error(Sound("nonexistent_file.wav"), "not found")

@@ -509,7 +509,7 @@ tg <- TextGrid$new(system.file("extdata", "test.TextGrid", package = "pladdrr"))
 autoplot(tg)
 
 # One tier as a layer on top of a waveform
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 autoplot(sound) + autolayer(tg, tier = "words")
 ```
 
@@ -593,7 +593,7 @@ Extract F0 contours aligned to intonational phrases:
 
 ```{r prosodic_analysis}
 # Assume the "words" tier has intonational phrase boundaries
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 pitch <- sound$to_pitch()
 tg <- TextGrid$new(system.file("extdata", "test.TextGrid", package = "pladdrr"))
 

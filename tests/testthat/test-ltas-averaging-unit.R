@@ -14,13 +14,13 @@
 #      ratio instead of a dB difference.
 #  (c) the same calls passed interpolate = true where Praat passes false, which
 #      reweights the bins at an incomplete range edge. That moves the *default*
-#      dB mean as well: 0.27 dB for get_mean(500, 2000) on inst/extdata/test.wav
+#      dB mean as well: 0.27 dB for get_mean(500, 2000) on inst/extdata/test.flac
 #      and up to 8.08 dB scanning 50 Hz-wide bands over 0-5500 Hz (review round
 #      measurement), while full-band means are unaffected.
 #
 # Expected values are computed in R from the object's own bins with Praat's own
 # formulas (each step cited to the vendored source) AND frozen against the
-# oracle: Praat 6.4.27 reading the identical inst/extdata/test.wav,
+# oracle: Praat 6.4.27 reading the identical inst/extdata/test.flac,
 # `To Ltas: 100`, then `Ltas: Get mean / Get standard deviation / Get slope /
 # Get local peak height`. Scripts and both outputs:
 # audit/2026-11/evidence/ltas-faith13/{repro_R.R,repro_oracle.praat,
@@ -92,7 +92,7 @@ ltas_expected_sd <- function(z, w, unit) {
 }
 
 ltas_unit_fixture <- function() {
-  ltas <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))$
+  ltas <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))$
     to_ltas(bandwidth = 100)
   list(
     ltas = ltas,

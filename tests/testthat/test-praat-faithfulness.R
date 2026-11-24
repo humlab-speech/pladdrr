@@ -36,6 +36,8 @@ resolve_fixture <- function(rel) {
   # fall back to the in-tree inst/ path.
   candidate <- system.file(rel, package = "pladdrr")
   if (nzchar(candidate) && file.exists(candidate)) return(candidate)
+  fixture <- testthat::test_path("fixtures", "dsi", basename(rel))
+  if (grepl("^signalfiles/", rel) && file.exists(fixture)) return(normalizePath(fixture))
   in_tree <- file.path("..", "..", "inst", rel)
   if (file.exists(in_tree)) return(normalizePath(in_tree))
   NA_character_

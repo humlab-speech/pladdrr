@@ -20,7 +20,7 @@ with_simd <- function(enabled, code) {
 }
 
 for (fixture in mono_fixtures) {
-  wav_path <- file.path(fixture_dir, paste0(fixture, ".wav"))
+  wav_path <- file.path(fixture_dir, paste0(fixture, ".flac"))
 
   for (simd_enabled in c(FALSE, TRUE)) {
     label <- if (simd_enabled) "SIMD" else "scalar"

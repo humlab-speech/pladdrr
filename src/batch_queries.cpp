@@ -946,9 +946,24 @@ NumericVector get_durations_batch_cpp(CharacterVector file_paths) {
             continue;
         }
 
-        // RIFF header validation
+        // FLAC: STREAMINFO holds sample rate (20 bits) and total samples (36 bits)
         char riff_header[4];
         file.read(riff_header, 4);
+        if (std::strncmp(riff_header, "fLaC", 4) == 0) {
+            unsigned char si[38];  // block header (4) + STREAMINFO (first 34 bytes)
+            file.read(reinterpret_cast<char*>(si), sizeof si);
+            if (file.gcount() == static_cast<std::streamsize>(sizeof si) && (si[0] & 0x7f) == 0) {
+                unsigned long rate = (static_cast<unsigned long>(si[14]) << 12) | (si[15] << 4) | (si[16] >> 4);
+                unsigned long long total = (static_cast<unsigned long long>(si[17] & 0x0f) << 32) |
+                    (static_cast<unsigned long long>(si[18]) << 24) | (si[19] << 16) | (si[20] << 8) | si[21];
+                durations[i] = (rate > 0 && total > 0) ? static_cast<double>(total) / rate : NA_REAL;
+            } else {
+                durations[i] = NA_REAL;
+            }
+            continue;
+        }
+
+        // RIFF header validation
         if (std::strncmp(riff_header, "RIFF", 4) != 0) {
             durations[i] = NA_REAL;
             continue;
