@@ -1,7 +1,7 @@
 # Praat Source Modifications for pladdrr
 
-**Last Updated:** 2026-11-11
-**Package Version:** 5.1.1
+**Last Updated:** 2026-11-24
+**Package Version:** 5.2.0
 **Praat Base Version:** 6.4.x (vendored, tracked directly in this repo at src/praat.github.io as of 2026-09-05; previously a submodule pinned to fork `humlab-speech/praat.github.io`)
 **Upstream merge-base:** `b1b3199a3` (praat/praat.github.io master, 2025-11-22) — the submodule's own git history is no longer checked out locally, so per-commit divergence against upstream must be reconstructed by cloning `humlab-speech/praat.github.io` separately and diffing against the commit SHAs recorded in this document
 
@@ -16,7 +16,7 @@ This document details all modifications made to the Praat source code to enable 
 
 ---
 
-### Unreleased (5.1.1) — GCC 14 install warnings removed at source (2026-11-11)
+### 5.1.1, released in 5.2.0 — GCC 14 install warnings removed at source (2026-11-11)
 
 win-builder (mingw GCC 14.3, R 4.6.2) reported the install-time "significant warnings" WARNING on 5.2.0.
 Every site below was reproduced with `g++-15 -O2 -Wall` on `fon/TextGrid.cpp` and `dwsys/SVD.cpp` before the
@@ -1372,7 +1372,8 @@ Note: `melder/MelderThread.cpp` has **zero net diff** vs upstream (the old
 debug-fprintf edit was superseded); pladdrr's real multi-threaded MelderThread
 implementation lives on the package side in `src/melderthread_impl.cpp` (formerly `src/num_stubs.cpp`), not in the
 submodule. Also diverged vs upstream: deleted external-library sources
-(flac/mp3/…, CRAN slimming), `fon/Sound_files.cpp` moved to
+(mp3/…, CRAN slimming; `external/flac/` was restored in 5.2.0 and compiled via
+`FLAC_C_SRC`), `fon/Sound_files.cpp` moved to
 `excluded_sources/Sound_files.cpp` (still compiled — see `SOURCES` in
 `Makevars.in`), added flattened header copies (`fon/Table.h` etc.) and
 `.disabled`/`.backup` files (never compiled).

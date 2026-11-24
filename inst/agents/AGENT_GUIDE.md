@@ -1,8 +1,8 @@
 # pladdrr Agent Guide
 
-**Version:** 5.1.1 guide refresh (2026-09-04; perf/memory audit notes 2026-10-19; 2026-11 audit round 2026-11-06)
+**Version:** 5.2.0 guide refresh (2026-11-24; 5.1.1 refresh 2026-09-04; perf/memory audit notes 2026-10-19; 2026-11 audit round 2026-11-06)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** Current through package 5.1.1 (the 2026-11 audit round and its follow-ups, see `NEWS.md` under 5.1.0 and 5.1.1). Shared-dispatch wrappers + threaded Praat backend + xsimd acceleration (enabled at build time, runtime toggle via `pladdrr_simd()`) + clinical Tier 4 helpers + wrapper dispatch migration (Sound/Formant/Spectrum/Spectrogram queries now use direct `.Call()` instead of Rcpp module dispatch) + current `praat.github.io/` build prefix guidance + current CPPS/CPP usage notes + macOS PSOCK parallelism + unified SIMD bridge header (`simd_bridge.h`) + GitHub Actions CI + code coverage + spectral-moments/data-frame allocation cleanup (v4.9.24) + CRAN pre-submission hygiene and full man/ coverage (v5.0.0) + Ltas full Praat-parity query coverage and new SpectrumTier peak-picking class (v5.0.3) + perf/memory audit: load-time RSS fix, FormantPath parity fix, 8 SIMD files removed (development version, 2026-10).
+**Status:** Current through package 5.2.0 (native FLAC, `PraatMatrix()` rename, CRAN check-time trimming; see `NEWS.md` under 5.2.0, 5.1.1 and 5.1.0). Shared-dispatch wrappers + threaded Praat backend + xsimd acceleration (enabled at build time, runtime toggle via `pladdrr_simd()`) + clinical Tier 4 helpers + wrapper dispatch migration (Sound/Formant/Spectrum/Spectrogram queries now use direct `.Call()` instead of Rcpp module dispatch) + current `praat.github.io/` build prefix guidance + current CPPS/CPP usage notes + macOS PSOCK parallelism + unified SIMD bridge header (`simd_bridge.h`) + GitHub Actions CI + code coverage + spectral-moments/data-frame allocation cleanup (v4.9.24) + CRAN pre-submission hygiene and full man/ coverage (v5.0.0) + Ltas full Praat-parity query coverage and new SpectrumTier peak-picking class (v5.0.3) + perf/memory audit: load-time RSS fix, FormantPath parity fix, 8 SIMD files removed (development version, 2026-10).
 - **v4.9.18 — Performance + docs + CI (2026-08-05 assessment, Phases 1-4):**
   - **PointProcess jitter/shimmer batch cache:** First shimmer call fetches all 11 jitter+shimmer metrics via `get_jitter_shimmer_batch_cpp()`. Subsequent jitter or shimmer calls with matching parameters return from cache — no additional C++ crossing. Backward compatible: jitter methods unchanged (no Sound required); cache activates automatically after first shimmer call.
   - **Formant `get_all_values_at_time` — single C++ call:** Added `formant_get_all_values_at_time()` export; replaces `vapply` loop over N module calls with one direct wrapper call.
@@ -104,7 +104,7 @@ arrive from an arbitrary routine — check before you rely on it.
 | `pladdrr_input_error`       | invalid argument / precondition fail          | R validators + C++ `require_praat_class()` |
 | `pladdrr_praat_error`       | Praat internal failure                        | C++ macros (2 sites only)       |
 | `pladdrr_data_loss`         | output incomplete vs request, or input shorter than its own header | R + C++ (live) |
-| `pladdrr_decoder_fallback`  | native reader refused the file; `av` decoded it | R (`av` fallback in `.sound_ptr_from_path`) |
+| `pladdrr_decoder_fallback`  | native reader refused the file (MP3/OGG, not FLAC since 5.2.0); `av` decoded it | R (`av` fallback in `.sound_ptr_from_path`) |
 
 The error classes inherit from `pladdrr_error` → `error` → `condition`, so one
 `tryCatch(pladdrr_error = ...)` catches them all; `pladdrr_data_loss` as a
@@ -164,9 +164,15 @@ When porting a new Praat routine into pladdrr, add a registry row. Default
 tolerance is `0` for exact-arithmetic routines; looser tolerances require a
 written rationale in the row. Failing rows are first-class regressions.
 
-## What's New in the development version (after 5.1.1, 2026-11-13)
+## What's New in v5.2.0 (2026-11-24)
 
-Unreleased; `NEWS.md` has the user-facing entry. Version in `DESCRIPTION` is still 5.1.1.
+`NEWS.md` has the user-facing entry; `DESCRIPTION` is 5.2.0. Includes the `PraatMatrix()` rename and internals below, first made after 5.1.1 on 2026-11-13.
+
+- **FLAC is native.** libFLAC (BSD-3-Clause, decode and encode) is vendored from Praat under `src/praat.github.io/external/flac/` and compiled via `FLAC_C_SRC` in `Makevars.in`, `Makevars` and `Makevars.win`. `Sound()`, `longsound_open()`, `sound_load_window()` and `Sound$save(format = "FLAC")` no longer need `av` and emit no `pladdrr_decoder_fallback`; `get_durations_batch()` reads FLAC STREAMINFO; `batch_process()` and friends match `.wav` and `.flac` by default. `src/flac_stubs.cpp` and `flac_symbols.cpp` are gone. **MP3 and OGG still go through `av`** (`src/mp3_stubs.cpp`).
+- **Shipped audio slimmed.** The example sound is `inst/extdata/test.flac` (was `test.wav`, sample-identical); examples, vignettes and docs use it. `inst/signalfiles/` (12 WAVs, 2 distinct signals) is deleted. The 2 DSI signals live in `tests/testthat/fixtures/dsi/` as FLAC, excluded from the built tarball (`.Rbuildignore`), so a test that needs one calls `fixture_path()` (`tests/testthat/helper-fixtures.R`), which skips when run from an installed copy. The 3-channel oracle stays WAV (`multichannel-oracle-3ch.wav`). Do not add WAV assets to `inst/`.
+- **CRAN check-time trimming.** Tests and vignettes were shortened to stay under the checktime NOTE. `test-thread-granularity.R`'s bit-identity sweep is `skip_on_cran()` and the `{r parallel}` chunk in `performance-optimization.Rmd` is `eval=FALSE`; both still run in CI (`NOT_CRAN=true`). New skip messages need an entry on the CI skip gate's lists (see below).
+- **Small fixes.** `textgrid_create()` promotes point-tier names missing from `tier_names` (point-tier-only TextGrids work); `to_point_process()` guidance uses `message()` not `warning()`; the CPP peak annotation in `.add_peak_annotation()` renders; KlattGrid usage includes `tmin`/`tmax`; R6 class Rd files carry `\usage`.
+- **Package logo and pkgdown favicons** (`man/figures/logo.svg`, `pkgdown/favicon/`, `pkgdown/extra.css`); regeneration recipe in `CLAUDE.md`.
 
 - **`Matrix()` is renamed `PraatMatrix()`; class vector is `c("PraatMatrix", "PraatObject")` (BREAKING, no alias).** The CRAN package 'Matrix' owns the name `Matrix` and registers `as.matrix.Matrix`; 5.1.1 worked around the S3 clash with a leading `PraatMatrix` class, and `pkgcheck` still flagged the duplicate function name. All S3 methods (`$`, `as.data.frame`, `print`, `plot`, `autoplot`, `autolayer`, `as.matrix`) are on `PraatMatrix`. `as.matrix(m)` is unchanged. See "PraatMatrix and the 'Matrix' package".
 - **Internals, behaviour unchanged.** `pair_files()` validates `by` first and does one `merge(all = !require_both)`; the `av` fallback of `.sound_ptr_from_path()` lives in `.sound_read_via_av()` (`R/sound-wrapper.R`). Both were split to get under goodpractice's 50-line limit.
@@ -195,7 +201,7 @@ under the old behaviour; the magnitudes are in `NEWS.md`.
 - **Ltas units.** `unit = "energy"`/`"sones"` now return the dB number Praat prints (they returned the linear mean); `unit = "dB"` maps to code 3 so `get_slope()`/`get_local_peak_height()` return dB, not a ratio; band averages no longer interpolate (moves default-`dB` bands by up to 8.4 dB at bandwidth 100). Full-band means are unchanged. See "LTAS Units".
 - **Ltas locators accept only `"dB"`.** `get_value_at_frequency()`, `get_minimum()`, `get_maximum()` ignored `unit`; they now raise `pladdrr_input_error` for anything but `"dB"`.
 - **Script option arguments.** In `PraatInterpreter$run()`/`praat_run_script()`, CHOICE/OPTIONMENU arguments selected the wrong option (`base` offset stored unconverted in `src/uiform_libmode.cpp`); a numeric option argument changed meaning, and the first option of an enum (`"hertz"`, `"none"`) no longer errors.
-- **`av`-decoded audio** (FLAC, MP3, OGG): full-scale amplitude (it was 6.02 dB hot) and one row per channel (stereo used to arrive as double-length mono). The substitution is announced with a catchable `pladdrr_decoder_fallback` warning.
+- **`av`-decoded audio** (MP3, OGG; FLAC too until 5.2.0, now native): full-scale amplitude (it was 6.02 dB hot) and one row per channel (stereo used to arrive as double-length mono). The substitution is announced with a catchable `pladdrr_decoder_fallback` warning.
 
 ## What's New in v5.1.0 (2026-11 audit round: safety and robustness)
 
@@ -314,7 +320,7 @@ under the old behaviour; the magnitudes are in `NEWS.md`.
   - **Faithfulness registry: 10 -> 14 routines, all passing.** Four v4.9.18 additions could not run (malformed oracle scripts, a nonexistent method name, an unachievable tolerance); repaired. New coverage: harmonicity, spectrogram, jitter, MFCC. Tests no longer write into the source tree — reports go to `tempdir()` unless `PLADDRR_FAITHFULNESS_OUTDIR` is set.
   - **SIMD batch bridges no longer copy their input** (`src/batch_queries_simd_bridge.cpp`): they pass `values.begin() - 1` to the 1-based kernels. vs base R on 1e6 doubles: mean 0.87x -> **4.1x**, sd 1.10x -> **2.8x**, range 2.33x -> **15.4x**, quantile 0.47x -> **1.8x**. `src/simd_bridge.h` is **dead** — included by no translation unit; do not "fix" bridges there.
   - **Do not try `std::nth_element` in `getSlope_Siegel`.** Measured: bit-exact but **25% slower** than Praat's median-of-ninthers, because Siegel slopes are clustered. See `PRAAT_MODIFICATIONS.md` v4.9.19.
-  - Deleted 6 unreferenced `*_simd.cpp` files (1,174 lines); fixed the platform thread-count formula for Windows/Linux; corrected the FLAC/MP3 documentation (they go through the suggested `av` package, **not** natively).
+  - Deleted 6 unreferenced `*_simd.cpp` files (1,174 lines); fixed the platform thread-count formula for Windows/Linux; corrected the FLAC/MP3 documentation (then: through the suggested `av` package; FLAC became native in 5.2.0, MP3 still uses `av`).
 
 - **v4.9.21 — SlopeSelector SIMD default flipped OFF. This supersedes the v4.9.15 entry below; read it before touching CPPS performance.**
   - **`should_use_simd_for_slopeselector()` now returns `false` by default** (`src/slopeselector_simd.cpp`). The v4.9.15 "~25% faster" claim did not survive re-measurement against the real CPPS workload. M1 Pro, `ppq1.wav`, Praat-script parameter profile, `-O3 -march=native`, clean rebuild: `calculate_cpps_ultra` **4.06s wall / 31.2s CPU with SIMD vs 2.35s / 17.6s scalar**; AVQI v2.03 (R) **6.87s vs 2.84s**. Output bit-identical both ways (CPPS 19.36722538 dB, AVQI 3.471873) — it bought nothing and cost 1.7–2.4x.
