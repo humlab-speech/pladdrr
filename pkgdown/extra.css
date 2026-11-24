@@ -1,0 +1,26 @@
+/* pkgdown sizes img.logo for a tagline-less mark (100px, 120px on home).
+   This logo carries a tagline, so give it more room and grow the header to
+   keep the hexagon tip sitting on the header rule instead of crossing it. */
+img.logo,
+.template-home img.logo {
+  width: 140px;
+}
+
+@media (min-width: 576px) {
+  .page-header,
+  .template-home .page-header {
+    min-height: 124px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  img.logo,
+  .template-home img.logo {
+    width: 100px;
+  }
+
+  .page-header,
+  .template-home .page-header {
+    min-height: 90px;
+  }
+}

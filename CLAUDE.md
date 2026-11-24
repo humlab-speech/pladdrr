@@ -50,6 +50,18 @@ does not enable roxygen markdown, so method lists must use `\itemize`/`\code{}`
 Rd markup, not `` - `x` `` bullets, or they silently render as one run-on
 paragraph.
 
+- Package logo: `man/figures/logo.svg`. pkgdown picks it up automatically for
+  page headers, the Open Graph image and `pkgdown::build_favicons()`. Favicons
+  live in `pkgdown/favicon/`; regenerate with
+  `pkgdown::build_favicons(overwrite = TRUE)` after editing the logo, then
+  re-patch `site.webmanifest`: the API emits root-absolute icon `src` values
+  (`/web-app-manifest-*.png`) which 404 on the `/pladdrr/` project page, so keep
+  them relative, and set `name`/`short_name`/`theme_color` (the API leaves the
+  first two empty). pkgdown aborts builds when a logo exists without favicons.
+  `pkgdown/extra.css` overrides pkgdown's logo slot (140px at >=576px, 100px
+  below) and the matching `.page-header` min-heights, because the mark carries a
+  tagline that the 100/120px defaults render too small to read.
+
 ## Critical API notes
 
 - Sound R6 lazy fields (`duration`, `nx`, `dx`) return empty — use methods (`$get_total_duration()`)

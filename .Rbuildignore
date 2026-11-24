@@ -53,6 +53,7 @@
 # Repository metadata: recognised by GitHub/Zenodo, non-standard at package top level
 ^codemeta\.json$
 ^CITATION\.cff$
+# Inkscape working copy of the logo; the served file is man/figures/logo.svg
 ^pladdrr_logo\.svg$
 
 # Stray dev-scratch scripts/output that occasionally land at top level
