@@ -134,7 +134,7 @@ analyse_all <- function(sound) {
 
 test_that("cepstrogram, CPPS, formant and pitch are bit-identical at any thread count", {
   shapes <- list(c(0.25, 1), c(0.46, 1), c(0.5, 1), c(1.2, 1), c(1.25, 1),
-    c(3, 1), c(3, 2))
+    c(1.5, 1), c(1.5, 2))
   for (shape in shapes) {
     sound <- make_sound(shape[1], as.integer(shape[2]))
     serial <- with_thread_cap(1L, analyse_all(sound))

@@ -106,7 +106,7 @@ long plain vectors — for example the batch statistics bridges (`mean`,
 `pladdrr_simd()` lets you toggle SIMD on and off at runtime so you can A/B
 your own workload:
 
-```{r simd-toggle, eval = requireNamespace("microbenchmark", quietly = TRUE)}
+```{r simd-toggle, eval = FALSE}
 library(microbenchmark)
 
 sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))

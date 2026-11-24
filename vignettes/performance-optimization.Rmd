@@ -291,7 +291,7 @@ system.time({
 # In practice `files` is a vector of paths to distinct recordings, e.g.
 # list.files("audio/", full.names = TRUE)[1:100]; this example repeats the
 # bundled test file to keep the vignette self-contained and fast to build.
-files <- rep(wav_file, 20)
+files <- rep(wav_file, 4)
 
 # Tier 1: Sequential
 system.time({

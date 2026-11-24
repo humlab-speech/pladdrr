@@ -17,7 +17,7 @@
 
 test_that(
   "to_powercepstrogram_fast returns a bare external pointer usable by get_cpps_fast", {
-  sound <- Sound$create_tone(frequency = 150, duration = 0.5,
+  sound <- Sound$create_tone(frequency = 150, duration = 0.25,
     sampling_rate = 16000)
   pcg <- to_powercepstrogram_fast(sound)
 
@@ -38,14 +38,14 @@ test_that("to_powercepstrogram_fast rejects non-Sound, non-pointer input", {
 })
 
 test_that("get_cpps_fast rejects a non-pointer argument", {
-  sound <- Sound$create_tone(frequency = 150, duration = 0.5,
+  sound <- Sound$create_tone(frequency = 150, duration = 0.25,
     sampling_rate = 16000)
   expect_error(get_cpps_fast(sound),
                "powercepstrogram must be an external pointer from to_powercepstrogram_fast\\(\\)")
 })
 
 test_that("calculate_cpps_fast returns a finite scalar for a Sound object", {
-  sound <- Sound$create_tone(frequency = 150, duration = 0.5,
+  sound <- Sound$create_tone(frequency = 150, duration = 0.25,
     sampling_rate = 16000)
   result <- calculate_cpps_fast(sound)
   expect_type(result, "double")
@@ -54,7 +54,7 @@ test_that("calculate_cpps_fast returns a finite scalar for a Sound object", {
 })
 
 test_that("calculate_cpps_fast also accepts a raw Sound external pointer", {
-  sound <- Sound$create_tone(frequency = 150, duration = 0.5,
+  sound <- Sound$create_tone(frequency = 150, duration = 0.25,
     sampling_rate = 16000)
   result_r6 <- calculate_cpps_fast(sound)
   result_ptr <- calculate_cpps_fast(sound$.xptr)
@@ -215,7 +215,7 @@ test_that(
 })
 
 test_that("extract_voiced_segments_ultra rejects an invalid version", {
-  sound <- Sound$create_tone(frequency = 150, duration = 0.5,
+  sound <- Sound$create_tone(frequency = 150, duration = 0.25,
     sampling_rate = 16000)
   expect_error(extract_voiced_segments_ultra(sound, version = "v9.99"))
 })
@@ -243,7 +243,7 @@ test_that("build_multiband_harmonicity returns 5 named Harmonicity objects", {
 
 test_that(
   "build_multiband_harmonicity rejects a bands vector of the wrong length", {
-  sound <- Sound$create_tone(frequency = 150, duration = 0.5,
+  sound <- Sound$create_tone(frequency = 150, duration = 0.25,
     sampling_rate = 16000)
   expect_error(build_multiband_harmonicity(sound, bands = c(0, 500, 1500)),
                "bands parameter must have exactly 5 elements")
@@ -309,7 +309,7 @@ test_that(
 
 test_that(
   "calculate_multiband_hnr_ultra rejects a bands vector of the wrong length", {
-  sound <- Sound$create_tone(frequency = 150, duration = 0.5,
+  sound <- Sound$create_tone(frequency = 150, duration = 0.25,
     sampling_rate = 16000)
   expect_error(calculate_multiband_hnr_ultra(sound, bands = c(0, 500)),
                "bands parameter must have exactly 5 elements")
@@ -321,7 +321,7 @@ test_that(
   # validate length(bands) == 5 in R before ever calling into C++, so the
   # two tests above never exercise validate_multiband_hnr_bands() itself.
   # Call the internal exports directly to close that gap.
-  sound <- Sound$create_tone(frequency = 150, duration = 0.5,
+  sound <- Sound$create_tone(frequency = 150, duration = 0.25,
     sampling_rate = 16000)
   expect_error(
     pladdrr:::.build_multiband_harmonicity_cpp(sound$.xptr, c(0, 500, 1500),
