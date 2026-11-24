@@ -6,6 +6,42 @@ C++ source (from the pinned `praat.github.io` upstream) and compiling it via
 Rcpp. Bundling the source is what lets the package reproduce Praat's numeric
 output faithfully without requiring an external Praat installation.
 
+### 5.1.1 resubmission — CRAN incoming findings
+
+This submission addresses the three NOTEs reported by CRAN incoming on the
+5.1.1 tarball (r-devel-windows-x86_64 and r-devel-linux-x86_64-debian-gcc):
+
+- **Rd contents NOTE** (33 class `.Rd` files without `\usage`): the dispatch-
+  table class pages (`Sound.Rd`, `Formant.Rd`, ...) documented constructor
+  arguments via `\arguments` but carried no `\usage` section. Each of the 33
+  pages now has an explicit `\usage{Class(arg, ...)}` derived from its
+  documented constructor parameters, and the former `@section Usage:` blocks
+  were renamed `@section Construction:` so the manual no longer shows two
+  "Usage" headings on one page.
+
+- **Overall checktime NOTE (12 min > 10 min)**: the bulk of the check time is
+  the unavoidable compilation of the 243 vendored Praat translation units (the
+  cost of bundling the DSP core, documented above), which is independent of
+  the check phases. The reducible phases were profiled per file and trimmed:
+  two PSOCK-cluster tests that spawned a fresh worker cluster on every run are
+  now skipped on CRAN, the thread-granularity bit-identity sweep uses shorter
+  clips (3 s → 1.5 s), the cepstrogram fixtures were halved (0.5 s → 0.25 s),
+  and two vignette benchmark chunks that spawned clusters / ran
+  `microbenchmark` during the CRAN-required rebuild are now `eval = FALSE`.
+
+- **CRAN incoming feasibility NOTE**: new-submission boilerplate (license
+  note, and technical terms such as "cepstral"/"formant" flagged as possibly
+  misspelled); no action required.
+
+The test-warning audit for this release also surfaced and fixed two issues
+that were previously hidden behind the suite's warning count: (1)
+`pitch$to_point_process()` emitted an unconditional guidance warning on every
+call, including through internal callers such as `to_textgrid_vuv()` — it is
+now a `message()`; and (2) the power-cepstrum peak annotation silently failed
+to render because `get_value_at_quefrency()` was invoked with the unsupported
+`qmin`/`qmax` arguments and an invalid `"parabolic"` interpolation — the CPP
+peak marker now draws correctly.
+
 ### Installed/source size
 
 The package compiles 243 Praat translation units (~5.5 MB of `.cpp`) plus the

@@ -54,5 +54,5 @@ test_that("praat-interpreter helpers validate input", {
   expect_error(pladdrr:::.check_character1(""), "single non-empty character")
   expect_invisible(pladdrr:::.check_character1("ok"))
   expect_error(praat_run_script(123), "single non-empty character")
-  expect_invisible(praat_run_script("writeInfoLine: \"hi\""))
+  expect_invisible(praat_run_script("x = 1"))
 })

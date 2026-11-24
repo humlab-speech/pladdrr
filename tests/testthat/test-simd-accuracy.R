@@ -121,8 +121,9 @@ test_that("SIMD dot product is accurate", {
 })
 
 test_that("SIMD operations handle edge cases", {
-  # Test with empty/single element arrays
-  skip("Edge case testing - implementation pending")
+  # The SIMD dot-product helper these edge cases target (.dot_product_simd)
+  # is not exposed in this build, so there is nothing to exercise here.
+  skip("SIMD dot-product edge cases: function not exposed in this build")
   
   # Empty array
   # expect_error(.dot_product_simd(numeric(0), numeric(0)), NA)
