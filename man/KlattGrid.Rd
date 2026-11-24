@@ -4,7 +4,9 @@
 \alias{KlattGrid}
 \title{Create a KlattGrid object}
 \usage{
-KlattGrid(tmin, tmax, numberOfFormants, numberOfNasalFormants, numberOfNasalAntiFormants, numberOfTrachealFormants, numberOfTrachealAntiFormants, numberOfFricationFormants, numberOfDeltaFormants)
+KlattGrid(tmin, tmax, numberOfFormants, numberOfNasalFormants,
+  numberOfNasalAntiFormants, numberOfTrachealFormants,
+  numberOfTrachealAntiFormants, numberOfFricationFormants, numberOfDeltaFormants)
 }
 \arguments{
 \item{tmin}{Start time in seconds}
