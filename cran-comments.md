@@ -24,10 +24,11 @@ This submission addresses the three NOTEs reported by CRAN incoming on the
   cost of bundling the DSP core, documented above), which is independent of
   the check phases. The reducible phases were profiled per file and trimmed:
   two PSOCK-cluster tests that spawned a fresh worker cluster on every run are
-  now skipped on CRAN, the thread-granularity bit-identity sweep uses shorter
-  clips (3 s → 1.5 s), the cepstrogram fixtures were halved (0.5 s → 0.25 s),
-  and two vignette benchmark chunks that spawned clusters / ran
-  `microbenchmark` during the CRAN-required rebuild are now `eval = FALSE`.
+  now skipped on CRAN, the thread-granularity bit-identity sweep (full DSP
+  analyses repeated at several thread counts) is skipped on CRAN and runs only
+  in CI, the cepstrogram fixtures were halved (0.5 s → 0.25 s), and three
+  vignette chunks that spawned PSOCK clusters / ran `microbenchmark` during
+  the CRAN-required rebuild are now `eval = FALSE`.
 
 - **CRAN incoming feasibility NOTE**: new-submission boilerplate (license
   note, and technical terms such as "cepstral"/"formant" flagged as possibly
