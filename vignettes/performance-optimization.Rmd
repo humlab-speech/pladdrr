@@ -225,7 +225,7 @@ f0_values <- get_pitch_at_times(pitch, times)
 
 Distribute file-level work across multiple CPU cores:
 
-```{r parallel}
+```{r parallel, eval=FALSE}
 # Analyze files in parallel. In practice `files` is a vector of paths to
 # distinct recordings, e.g. list.files("audio/", pattern = "\\.wav$",
 # full.names = TRUE); this example repeats the bundled test file.

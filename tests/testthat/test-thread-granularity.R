@@ -133,6 +133,10 @@ analyse_all <- function(sound) {
 }
 
 test_that("cepstrogram, CPPS, formant and pitch are bit-identical at any thread count", {
+  # Full DSP analyses repeated at several thread counts; a threading-internal
+  # regression check that runs in CI (NOT_CRAN=true). Kept off CRAN to stay
+  # under the check-time budget (the vendored Praat compile dominates it).
+  skip_on_cran()
   shapes <- list(c(0.25, 1), c(0.46, 1), c(0.5, 1), c(1.2, 1), c(1.25, 1),
     c(1.5, 1), c(1.5, 2))
   for (shape in shapes) {
