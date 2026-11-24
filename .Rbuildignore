@@ -107,6 +107,8 @@ manual_.*\.cpp$
 ^audit$
 ^pladdrr-audit-.*$
 
-# testthat failure snapshots
+# testthat failure snapshots and stray run artifacts
 ^tests/testthat/_problems$
+^tests/testthat/Rplots\.pdf$
+^tests/testthat/testthat-problems\.rds$
 ^pladdrr-.*-message$

@@ -225,18 +225,12 @@ test_that("TextGrid$get_all_intervals works correctly", {
 test_that("TextGrid$get_all_points works correctly", {
   skip_if_not_installed("pladdrr")
   
-  tg <- tryCatch({
-    tg <- textgrid_create(0, 3, "", "events")
-    tg$insert_point("events", 0.5, "start")
-    tg$insert_point("events", 1.5, "middle")
-    tg$insert_point("events", 2.5, "end")
-    tg
-  }, error = function(e) skip("Could not create test TextGrid"))
-  
-  points <- tryCatch({
-    tg$get_all_points("events")
-  }, error = function(
-    e) skip("get_all_points not available - needs recompilation"))
+  tg <- textgrid_create(0, 3, "", "events")
+  tg$insert_point("events", 0.5, "start")
+  tg$insert_point("events", 1.5, "middle")
+  tg$insert_point("events", 2.5, "end")
+
+  points <- tg$get_all_points("events")
   
   expect_s3_class(points, "data.frame")
   expect_named(points, c("time", "text"))

@@ -256,13 +256,12 @@ NULL
 
 # --- Transformations ---
 .pitch_methods$to_point_process <- function(.self) {
-  warning(
+  message(
     "pitch$to_point_process() creates PointProcess from Pitch ",
     "candidates only.\n",
     "For voice quality analysis (jitter/shimmer), use:\n",
     "  sound$to_point_process_periodic_cc(pitch_floor, pitch_ceiling)\n",
-    "This ensures accurate glottal pulse timing with amplitude information.",
-    call. = FALSE
+    "This ensures accurate glottal pulse timing with amplitude information."
   )
   pp_ptr <- .self$.cpp$to_point_process_ptr()
   PointProcess(.xptr = pp_ptr)

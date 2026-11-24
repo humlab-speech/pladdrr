@@ -53,8 +53,8 @@ NULL
       interpolation = "parabolic", qmin = qmin, qmax = qmax,
       fit_method = fit_method)
     peak_value <- cepstrum$get_value_at_quefrency(
-      quefrency = peak_quefrency, interpolation = "parabolic",
-      qmin = qmin, qmax = qmax, unit = "dB")
+      quefrency = peak_quefrency, interpolation = "cubic",
+      unit = "dB")
     p + ggplot2::geom_point(
       data = data.frame(quefrency = peak_quefrency, power_db = peak_value),
       ggplot2::aes(x = quefrency, y = power_db),

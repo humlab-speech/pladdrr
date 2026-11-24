@@ -531,9 +531,28 @@ TextGrid <- function(path = NULL, .xptr = NULL) {
 #' # Create TextGrid with mixed tier types
 #' tg2 <- textgrid_create(0, 10, "phones tones", "tones")  # tones is PointTier
 textgrid_create <- function(tmin, tmax, tier_names = "", point_tiers = "") {
+  tier_names <- as.character(tier_names)
+  point_tiers <- as.character(point_tiers)
+  # Praat's TextGrid_create() converts a name into a PointTier only when that
+  # name already exists as an IntervalTier, and it refuses to build a TextGrid
+  # with zero tiers. A point-tier name absent from `tier_names` is therefore
+  # silently dropped, and the natural "a TextGrid whose only tier is the point
+  # tier `events`" call -- textgrid_create(0, 1, "", "events") -- errors with
+  # "Cannot create a TextGrid without tiers". Promote any point-tier name that
+  # is missing from the interval-tier list so it gets created and converted.
+  if (nzchar(point_tiers) && !is.na(point_tiers)) {
+    tier_vec <- strsplit(tier_names, "[[:space:]]+")[[1L]]
+    point_vec <- strsplit(point_tiers, "[[:space:]]+")[[1L]]
+    tier_vec <- tier_vec[nzchar(tier_vec)]
+    point_vec <- point_vec[nzchar(point_vec)]
+    missing <- point_vec[!point_vec %in% tier_vec]
+    if (length(missing) > 0L) {
+      tier_names <- paste(c(tier_vec, missing), collapse = " ")
+    }
+  }
   ptr <- .textgrid_create(
     as.numeric(tmin), as.numeric(tmax),
-    as.character(tier_names), as.character(point_tiers)
+    tier_names, point_tiers
   )
   TextGrid(.xptr = ptr)
 }
