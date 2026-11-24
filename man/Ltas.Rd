@@ -3,6 +3,9 @@
 \name{Ltas}
 \alias{Ltas}
 \title{Ltas}
+\usage{
+Ltas(.xptr)
+}
 \arguments{
 \item{.xptr}{Not for direct use. External pointer to the underlying C++
 object; set internally when a method returns a new Ltas.}
@@ -21,7 +24,7 @@ averaged out. It's the standard tool for describing overall spectral
 shape (tilt, resonance pattern, noise floor), useful for comparing voice
 quality across speakers or checking a recording's frequency balance.
 }
-\section{Usage}{
+\section{Construction}{
 
 \preformatted{
 ltas <- sound$to_ltas(bandwidth = 100)

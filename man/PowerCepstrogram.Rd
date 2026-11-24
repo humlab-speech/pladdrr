@@ -3,6 +3,9 @@
 \name{PowerCepstrogram}
 \alias{PowerCepstrogram}
 \title{PowerCepstrogram}
+\usage{
+PowerCepstrogram(.xptr)
+}
 \arguments{
 \item{.xptr}{Not for direct use. External pointer to the underlying C++
 PowerCepstrogram object; set internally when a method returns a new
@@ -23,7 +26,7 @@ with \code{sound$to_powercepstrogram()}, then either read \code{get_cpps()}
 directly or slice out a single frame as a PowerCepstrum for closer
 inspection.
 }
-\section{Usage}{
+\section{Construction}{
 
 \preformatted{
 cepstrogram <- sound$to_powercepstrogram(pitch_floor = 60)

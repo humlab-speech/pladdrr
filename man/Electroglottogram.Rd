@@ -3,6 +3,9 @@
 \name{Electroglottogram}
 \alias{Electroglottogram}
 \title{Electroglottogram}
+\usage{
+Electroglottogram(.xptr)
+}
 \arguments{
 \item{.xptr}{Not for direct use. External pointer to the underlying C++
 Electroglottogram object; set internally when a method returns a new

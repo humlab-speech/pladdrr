@@ -3,6 +3,9 @@
 \name{VocalTract}
 \alias{VocalTract}
 \title{VocalTract}
+\usage{
+VocalTract(nx, dx, .xptr)
+}
 \arguments{
 \item{nx}{Number of sections. Default 17.}
 
@@ -23,7 +26,7 @@ glottis to lips, divided into sections.
 Used for articulatory synthesis (convert to a Spectrum), vowel modeling
 (create from a phone), and acoustic tube modeling.
 }
-\section{Usage}{
+\section{Construction}{
 
 \preformatted{
 VocalTract(nx, dx) # create an empty vocal tract with nx sections

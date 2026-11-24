@@ -6,6 +6,7 @@
 #' PCA is commonly used in phonetics for vowel space analysis, speaker
 #' normalization, acoustic feature extraction, and data visualization.
 #'
+#' @usage PCA(.xptr)
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #'   PCA object; set internally when a method returns a new PCA (for example
 #'   \code{\link{pca_from_matrix}}).

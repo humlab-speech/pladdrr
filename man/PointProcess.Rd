@@ -3,6 +3,9 @@
 \name{PointProcess}
 \alias{PointProcess}
 \title{Praat PointProcess object}
+\usage{
+PointProcess(tmin, tmax, .xptr)
+}
 \arguments{
 \item{tmin, tmax}{When creating an empty PointProcess, the time span of the
 object. Leave \code{NULL} (the default) when supplying \code{.xptr}.}

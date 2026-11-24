@@ -3,6 +3,9 @@
 \name{FormantModeler}
 \alias{FormantModeler}
 \title{FormantModeler}
+\usage{
+FormantModeler(.xptr)
+}
 \arguments{
 \item{.xptr}{Not for direct use. External pointer to the underlying C++
 FormantModeler object; set internally when a method returns a new

@@ -12,7 +12,7 @@
 #' not a PitchTier or a Praat subclass of one, with the package's
 #' \code{pladdrr_input_error}.
 #'
-#' @section Usage:
+#' @section Construction:
 #' \preformatted{
 #' PitchTier$new(path)          # load from file
 #' PitchTier(tmin, tmax)        # create an empty PitchTier
@@ -66,6 +66,7 @@
 #'   \item \code{save(path)} - write to file
 #' }
 #'
+#' @usage PitchTier(tmin, tmax, .xptr)
 #' @param tmin Start time in seconds, for creating an empty PitchTier.
 #' @param tmax End time in seconds, for creating an empty PitchTier.
 #' @param .xptr Not for direct use. External pointer to the underlying C++

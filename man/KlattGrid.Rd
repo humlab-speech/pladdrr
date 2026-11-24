@@ -3,6 +3,9 @@
 \name{KlattGrid}
 \alias{KlattGrid}
 \title{Create a KlattGrid object}
+\usage{
+KlattGrid(numberOfFormants, numberOfNasalFormants, numberOfNasalAntiFormants, numberOfTrachealFormants, numberOfTrachealAntiFormants, numberOfFricationFormants, numberOfDeltaFormants)
+}
 \arguments{
 \item{numberOfFormants}{Number of oral formants (typically 6)}
 

@@ -3,6 +3,9 @@
 \name{Pitch}
 \alias{Pitch}
 \title{Pitch}
+\usage{
+Pitch(.xptr)
+}
 \arguments{
 \item{.xptr}{Not for direct use. External pointer to the underlying C++
 Pitch object; set internally when a method returns a new Pitch.}

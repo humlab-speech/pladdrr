@@ -6,7 +6,7 @@
 #' The interpolated contour can be used to filter sounds for vowel
 #' modification or resynthesis.
 #'
-#' @section Usage:
+#' @section Construction:
 #' \preformatted{
 #' FormantTier(tmin, tmax)              # create an empty FormantTier
 #' FormantTier$from_formant(formant)    # convert from a Formant object
@@ -32,6 +32,7 @@
 #'   \item \code{save(path)} - save to file
 #' }
 #'
+#' @usage FormantTier(tmin, tmax, .xptr)
 #' @param tmin Start time in seconds. Default 0.
 #' @param tmax End time in seconds. Default 1.
 #' @param .xptr Not for direct use. External pointer to the underlying C++

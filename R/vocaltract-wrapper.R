@@ -6,7 +6,7 @@
 #' Used for articulatory synthesis (convert to a Spectrum), vowel modeling
 #' (create from a phone), and acoustic tube modeling.
 #'
-#' @section Usage:
+#' @section Construction:
 #' \preformatted{
 #' VocalTract(nx, dx) # create an empty vocal tract with nx sections
 #' VocalTract$create_from_phone(phone)      # create from a phone name
@@ -33,6 +33,7 @@
 #'   \item \code{to_matrix()} - convert to a Matrix
 #' }
 #'
+#' @usage VocalTract(nx, dx, .xptr)
 #' @param nx Number of sections. Default 17.
 #' @param dx Section length in metres. Default 0.01.
 #' @param .xptr Not for direct use. External pointer to the underlying C++

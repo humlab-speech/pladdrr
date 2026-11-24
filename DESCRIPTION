@@ -75,5 +75,5 @@ SystemRequirements: C++17 compiler (GCC >= 7, Clang >= 5, MSVC >= 2017),
     GNU Scientific Library (GSL >= 1.10)
 VignetteBuilder: knitr
 Roxygen: list(markdown = FALSE, roclets = c("namespace", "rd", "srr::srr_stats_roclet"))
-Config/roxygen2/version: 8.1.0
+Config/roxygen2/version: 8.1.1
 Config/testthat/edition: 3

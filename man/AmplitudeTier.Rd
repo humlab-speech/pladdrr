@@ -3,6 +3,9 @@
 \name{AmplitudeTier}
 \alias{AmplitudeTier}
 \title{AmplitudeTier}
+\usage{
+AmplitudeTier(.xptr)
+}
 \arguments{
 \item{.xptr}{Not for direct use. External pointer to the underlying C++
 AmplitudeTier object; set internally when a method returns a new
@@ -23,7 +26,7 @@ dB instead of Pa), and the two convert into each other. A common use is
 pulling amplitude at glottal pulse times (from a PointProcess) to compute
 shimmer.
 }
-\section{Usage}{
+\section{Construction}{
 
 \preformatted{
 tier <- amplitude_tier_create(0, 1)

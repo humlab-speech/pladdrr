@@ -9,6 +9,7 @@
 #' for a given sound, making it useful for robust formant analysis in noisy
 #'  speech.
 #'
+#' @usage FormantModeler(.xptr)
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #'   FormantModeler object; set internally when a method returns a new
 #'   FormantModeler.

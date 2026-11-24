@@ -3,6 +3,9 @@
 \name{PitchTier}
 \alias{PitchTier}
 \title{PitchTier}
+\usage{
+PitchTier(tmin, tmax, .xptr)
+}
 \arguments{
 \item{tmin}{Start time in seconds, for creating an empty PitchTier.}
 
@@ -29,7 +32,7 @@ class found (as for \code{\link{matrix_read}}). The same check guards the
 not a PitchTier or a Praat subclass of one, with the package's
 \code{pladdrr_input_error}.
 }
-\section{Usage}{
+\section{Construction}{
 
 \preformatted{
 PitchTier$new(path)          # load from file

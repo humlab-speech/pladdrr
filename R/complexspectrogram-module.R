@@ -6,6 +6,7 @@
 #' Create a ComplexSpectrogram object from a Sound: a phase-preserving
 #' spectrogram computed with a complex FFT.
 #'
+#' @usage ComplexSpectrogram(sound, window_length, maximum_frequency)
 #' @param sound Sound object.
 #' @param window_length Window length in seconds. Default 0.005.
 #' @param maximum_frequency Maximum frequency to analyze, in Hz. Default 5000.

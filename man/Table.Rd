@@ -3,6 +3,9 @@
 \name{Table}
 \alias{Table}
 \title{Praat Table Object}
+\usage{
+Table(numberOfRows, numberOfColumns, columnNames, .xptr)
+}
 \arguments{
 \item{numberOfRows}{Number of rows. Required unless \code{.xptr} is given.}
 

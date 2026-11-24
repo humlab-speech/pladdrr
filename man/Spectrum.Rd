@@ -3,6 +3,9 @@
 \name{Spectrum}
 \alias{Spectrum}
 \title{Spectrum}
+\usage{
+Spectrum(.xptr)
+}
 \arguments{
 \item{.xptr}{Not for direct use. External pointer to the underlying C++
 Spectrum

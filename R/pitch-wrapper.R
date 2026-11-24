@@ -83,6 +83,7 @@
 #' @seealso \code{\link{Sound}}, \code{\link{PointProcess}},
 #'  \code{\link{PitchTier}}
 #'
+#' @usage Pitch(.xptr)
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #'   Pitch object; set internally when a method returns a new Pitch.
 #' @return A Pitch object.

@@ -3,6 +3,9 @@
 \name{SpectrumTier}
 \alias{SpectrumTier}
 \title{SpectrumTier}
+\usage{
+SpectrumTier(.xptr)
+}
 \arguments{
 \item{.xptr}{Not for direct use. External pointer to the underlying C++
 object; set internally by \code{ltas$to_spectrum_tier_peaks()}.}
@@ -21,7 +24,7 @@ pull out harmonic or formant-like peaks from a spectral average without
 scanning the raw values by hand. It's read-only: build one with
 \code{ltas$to_spectrum_tier_peaks()}, then inspect or export it.
 }
-\section{Usage}{
+\section{Construction}{
 
 \preformatted{
 peaks <- ltas$to_spectrum_tier_peaks()

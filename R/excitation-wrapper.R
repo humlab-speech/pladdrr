@@ -27,6 +27,7 @@
 #'  excitation
 #' }
 #'
+#' @usage Excitation(.xptr)
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #'  Excitation
 #'   object; set internally when a method returns a new Excitation.

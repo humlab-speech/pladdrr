@@ -3,6 +3,9 @@
 \name{TextGrid}
 \alias{TextGrid}
 \title{Praat TextGrid Object}
+\usage{
+TextGrid(path, .xptr)
+}
 \arguments{
 \item{path}{Path to a TextGrid file (Praat text or binary format). See the
 Creating TextGrid objects section for details.}

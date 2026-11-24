@@ -4,6 +4,9 @@
 \alias{pladdrr-references}
 \alias{pladdrr_references}
 \title{Primary references for the algorithms in pladdrr}
+\value{
+No return value; this page only documents the references.
+}
 \description{
 pladdrr does not implement new methods: it compiles Praat's own C/C++
 routines and returns what the Praat application returns. The methods below
@@ -108,12 +111,10 @@ follow the definitions in Praat's manual rather than a single primary
 paper; \code{vignette("terminology")} states the definition each result uses.
 }
 
-\value{
-No return value; this page only documents the references.
-}
 \examples{
 # Open the reference list from within R
 help("pladdrr-references", package = "pladdrr")
+
 }
 \seealso{
 \code{\link{pladdrr-package}}

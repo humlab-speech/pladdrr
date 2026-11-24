@@ -73,6 +73,7 @@
 #'   \item \code{down_to_formant_tier()} - extract all formants as a FormantTier
 #' }
 #'
+#' @usage Formant(.xptr)
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #'  Formant
 #'   object; set internally when a method returns a new Formant.

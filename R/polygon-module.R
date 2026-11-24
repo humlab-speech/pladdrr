@@ -15,6 +15,7 @@
 #'   \item Convex hull computation
 #' }
 #'
+#' @usage Polygon(x, y, .xptr)
 #' @param x Numeric vector of x coordinates. Required unless \code{.xptr} is
 #'  given.
 #' @param y Numeric vector of y coordinates. Required unless \code{.xptr} is

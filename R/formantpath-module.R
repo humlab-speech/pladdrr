@@ -8,6 +8,7 @@
 #' different ceiling frequencies, allowing for robust formant analysis by
 #' automatically selecting the optimal tracking path.
 #'
+#' @usage FormantPath(sound, time_step, max_num_formants, formant_ceiling, window_length, preemphasis_from, ceiling_step_fraction, num_steps_up_down)
 #' @param sound A Sound object or path to audio file
 #' @param time_step Time step for analysis in seconds (must be > 0, typically
 #'  0.005)

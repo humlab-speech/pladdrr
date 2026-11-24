@@ -3,6 +3,9 @@
 \name{Cochleagram}
 \alias{Cochleagram}
 \title{Cochleagram}
+\usage{
+Cochleagram(.xptr)
+}
 \arguments{
 \item{.xptr}{Not for direct use. External pointer to the underlying C++
 Cochleagram object; set internally when a method returns a new
@@ -23,7 +26,7 @@ Sound with \code{sound$to_cochleagram()} or
 slice it at a time point to get an Excitation pattern, from which loudness
 can be read off.
 }
-\section{Usage}{
+\section{Construction}{
 
 \preformatted{
 cochleagram <- sound$to_cochleagram()

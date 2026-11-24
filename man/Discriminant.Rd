@@ -3,6 +3,9 @@
 \name{Discriminant}
 \alias{Discriminant}
 \title{Discriminant}
+\usage{
+Discriminant(.xptr)
+}
 \arguments{
 \item{.xptr}{Not for direct use. External pointer to the underlying C++
 Discriminant object; set internally when a method returns a new

@@ -52,6 +52,7 @@
 #'  matrix
 #' }
 #'
+#' @usage Harmonicity(.xptr)
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #'   Harmonicity object; set internally when a method returns a new Harmonicity.
 #' @return A \code{Harmonicity} object with methods for harmonics-to-noise ratio

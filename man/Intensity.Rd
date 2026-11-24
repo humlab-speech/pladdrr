@@ -3,6 +3,9 @@
 \name{Intensity}
 \alias{Intensity}
 \title{Intensity}
+\usage{
+Intensity(.xptr)
+}
 \arguments{
 \item{.xptr}{Not for direct use. External pointer to the underlying C++
 Intensity object; set internally when a method returns a new Intensity.}

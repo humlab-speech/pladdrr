@@ -3,6 +3,9 @@
 \name{Excitation}
 \alias{Excitation}
 \title{Excitation}
+\usage{
+Excitation(.xptr)
+}
 \arguments{
 \item{.xptr}{Not for direct use. External pointer to the underlying C++
 Excitation

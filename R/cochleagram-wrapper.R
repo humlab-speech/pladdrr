@@ -10,7 +10,7 @@
 #' slice it at a time point to get an Excitation pattern, from which loudness
 #' can be read off.
 #'
-#' @section Usage:
+#' @section Construction:
 #' \preformatted{
 #' cochleagram <- sound$to_cochleagram()
 #' }
@@ -41,6 +41,7 @@
 #'  frames)
 #' }
 #'
+#' @usage Cochleagram(.xptr)
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #'   Cochleagram object; set internally when a method returns a new
 #'   Cochleagram.

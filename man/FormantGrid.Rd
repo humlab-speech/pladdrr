@@ -3,6 +3,9 @@
 \name{FormantGrid}
 \alias{FormantGrid}
 \title{FormantGrid}
+\usage{
+FormantGrid(tmin, tmax, number_of_formants, initial_first_formant, initial_formant_spacing, initial_first_bandwidth, initial_bandwidth_spacing, .xptr)
+}
 \arguments{
 \item{tmin}{Start time in seconds.}
 

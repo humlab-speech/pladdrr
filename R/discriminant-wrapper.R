@@ -7,6 +7,7 @@
 #' classification, speaker identification, dialect/accent classification,
 #' and phoneme recognition.
 #'
+#' @usage Discriminant(.xptr)
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #'   Discriminant object; set internally when a method returns a new
 #'   Discriminant (for example \code{\link{discriminant_from_matrix}}).

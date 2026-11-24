@@ -64,6 +64,7 @@
 #'  is the energy average (code 1), the same as \code{get_mean()}'s default;
 #'  pass \code{metrics = "median"} for the 0.5 quantile.
 #'
+#' @usage Intensity(.xptr)
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #'   Intensity object; set internally when a method returns a new Intensity.
 #' @seealso \code{\link{Sound}}, \code{\link{Pitch}},

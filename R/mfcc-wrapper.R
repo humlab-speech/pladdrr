@@ -40,6 +40,7 @@
 #'   \item \code{to_matrix()} - convert to a Matrix object
 #' }
 #'
+#' @usage MFCC(.xptr)
 #' @param .xptr Not for direct use. External pointer to the underlying C++ MFCC
 #'   object; set internally when a method returns a new MFCC.
 #' @return An \code{MFCC} object with methods for Mel-frequency cepstral
@@ -221,6 +222,7 @@ MFCC <- function(.xptr = NULL) {
 #' speaker recognition tasks. Uses a shared dispatch table for minimal memory
 #' per object.
 #'
+#' @usage LFCC(.xptr)
 #' @param .xptr Not for direct use. External pointer to the underlying C++ LFCC
 #'   object; set internally when a method returns a new LFCC.
 #' @return An \code{LFCC} object with methods for linear-frequency cepstral

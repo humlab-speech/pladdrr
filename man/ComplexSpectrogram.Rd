@@ -3,6 +3,9 @@
 \name{ComplexSpectrogram}
 \alias{ComplexSpectrogram}
 \title{ComplexSpectrogram}
+\usage{
+ComplexSpectrogram(sound, window_length, maximum_frequency)
+}
 \arguments{
 \item{sound}{Sound object.}
 

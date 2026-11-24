@@ -10,6 +10,7 @@
 #'
 #' @inheritParams pladdrr_shared_params tmin
 #' @inheritParams pladdrr_shared_params tmax
+#' @usage KlattGrid(numberOfFormants, numberOfNasalFormants, numberOfNasalAntiFormants, numberOfTrachealFormants, numberOfTrachealAntiFormants, numberOfFricationFormants, numberOfDeltaFormants)
 #' @param numberOfFormants Number of oral formants (typically 6)
 #' @param numberOfNasalFormants Number of nasal formants (typically 1)
 #' @param numberOfNasalAntiFormants Number of nasal antiformants (typically 1)

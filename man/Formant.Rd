@@ -3,6 +3,9 @@
 \name{Formant}
 \alias{Formant}
 \title{Formant}
+\usage{
+Formant(.xptr)
+}
 \arguments{
 \item{.xptr}{Not for direct use. External pointer to the underlying C++
 Formant

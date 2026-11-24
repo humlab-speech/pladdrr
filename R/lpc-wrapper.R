@@ -51,6 +51,7 @@
 #' (glottal flow waveform), useful for voice quality research and vocal fold
 #' dynamics.
 #'
+#' @usage LPC(.xptr)
 #' @param .xptr Not for direct use. External pointer to the underlying C++ LPC
 #'   object; set internally when a method returns a new LPC.
 #' @return An \code{LPC} object with methods for linear predictive coding

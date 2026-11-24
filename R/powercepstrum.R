@@ -314,7 +314,7 @@ PowerCepstrum <- function(.xptr = NULL) {
 #' directly or slice out a single frame as a PowerCepstrum for closer
 #' inspection.
 #'
-#' @section Usage:
+#' @section Construction:
 #' \preformatted{
 #' cepstrogram <- sound$to_powercepstrogram(pitch_floor = 60)
 #' }
@@ -342,6 +342,7 @@ PowerCepstrum <- function(.xptr = NULL) {
 #'  time)
 #' }
 #'
+#' @usage PowerCepstrogram(.xptr)
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #'   PowerCepstrogram object; set internally when a method returns a new
 #'   PowerCepstrogram.

@@ -3,6 +3,9 @@
 \name{Sound}
 \alias{Sound}
 \title{Sound}
+\usage{
+Sound(path, .xptr)
+}
 \arguments{
 \item{path}{Path to an audio file. See the File I/O section for supported
 formats.}
@@ -50,7 +53,7 @@ Convert to WAV up front if you want to avoid the \code{av} dependency
  entirely.
 }
 
-\section{Usage}{
+\section{Construction}{
 
 \preformatted{
 # From file

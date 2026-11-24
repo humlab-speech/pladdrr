@@ -54,6 +54,7 @@
 #'   \item \code{save(path)} - save to a file
 #' }
 #'
+#' @usage Spectrum(.xptr)
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #'  Spectrum
 #'   object; set internally when a method returns a new Spectrum.

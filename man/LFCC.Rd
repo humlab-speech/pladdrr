@@ -3,6 +3,9 @@
 \name{LFCC}
 \alias{LFCC}
 \title{LFCC}
+\usage{
+LFCC(.xptr)
+}
 \arguments{
 \item{.xptr}{Not for direct use. External pointer to the underlying C++ LFCC
 object; set internally when a method returns a new LFCC.}

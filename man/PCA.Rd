@@ -3,6 +3,9 @@
 \name{PCA}
 \alias{PCA}
 \title{PCA}
+\usage{
+PCA(.xptr)
+}
 \arguments{
 \item{.xptr}{Not for direct use. External pointer to the underlying C++
 PCA object; set internally when a method returns a new PCA (for example

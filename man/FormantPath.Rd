@@ -3,6 +3,9 @@
 \name{FormantPath}
 \alias{FormantPath}
 \title{Create a FormantPath object from a Sound}
+\usage{
+FormantPath(sound, time_step, max_num_formants, formant_ceiling, window_length, preemphasis_from, ceiling_step_fraction, num_steps_up_down)
+}
 \arguments{
 \item{sound}{A Sound object or path to audio file}
 

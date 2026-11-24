@@ -15,7 +15,7 @@
 #' waveform data for pitch, formant, or intensity analysis: it reads just
 #' the requested time window and hands back a normal Sound.
 #'
-#' @section Usage:
+#' @section Construction:
 #' \preformatted{
 #' ls <- LongSound$open("recording.wav")
 #' part <- ls$extract_part(10, 15)   # 5 seconds as a Sound
@@ -78,6 +78,7 @@
 #' regions; see \code{\link{longsound_get_buffer_size_pref_seconds}} to tune
 #' how much Praat keeps cached between reads.
 #'
+#' @usage LongSound(.xptr)
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #'   LongSound object; set internally when a method returns a new LongSound.
 #' @return A LongSound object.

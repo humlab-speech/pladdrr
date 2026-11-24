@@ -75,6 +75,7 @@
 #'   \item \code{extract_part(start, end)} - extract a time range
 #' }
 #'
+#' @usage TextGrid(path, .xptr)
 #' @param path Path to a TextGrid file (Praat text or binary format). See the
 #'   Creating TextGrid objects section for details.
 #' @param .xptr Not for direct use. External pointer to the underlying C++

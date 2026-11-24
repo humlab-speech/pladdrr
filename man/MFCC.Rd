@@ -3,6 +3,9 @@
 \name{MFCC}
 \alias{MFCC}
 \title{MFCC}
+\usage{
+MFCC(.xptr)
+}
 \arguments{
 \item{.xptr}{Not for direct use. External pointer to the underlying C++ MFCC
 object; set internally when a method returns a new MFCC.}

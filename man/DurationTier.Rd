@@ -3,6 +3,9 @@
 \name{DurationTier}
 \alias{DurationTier}
 \title{DurationTier}
+\usage{
+DurationTier(tmin, tmax, .xptr)
+}
 \arguments{
 \item{tmin}{Start time in seconds. Used with \code{tmax} to create a new,
 empty DurationTier.}

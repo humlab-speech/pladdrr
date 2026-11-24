@@ -3,6 +3,9 @@
 \name{pladdrr-test-data}
 \alias{pladdrr-test-data}
 \title{Data files shipped with pladdrr, and how the tests use them}
+\value{
+No return value; this page only documents the shipped data files.
+}
 \description{
 The package ships a few small files so that the examples and the test suite
 can be run, and any test result reproduced, by a user. Find them with
@@ -32,11 +35,9 @@ user can recreate every synthetic test signal; the faithfulness tests
 (\code{tests/testthat/test-praat-faithfulness.R}) compare pladdrr with the
 Praat application on such signals and on \code{test.wav}.
 }
-\value{
-No return value; this page only documents the shipped data files.
-}
 \examples{
 file.exists(system.file("extdata", "test.wav", package = "pladdrr"))
+
 }
 \seealso{
 \code{\link{pladdrr-references}}

@@ -10,7 +10,7 @@
 #' pulling amplitude at glottal pulse times (from a PointProcess) to compute
 #' shimmer.
 #'
-#' @section Usage:
+#' @section Construction:
 #' \preformatted{
 #' tier <- amplitude_tier_create(0, 1)
 #' tier <- amplitude_tier_from_point_process(point_process, sound)
@@ -42,6 +42,7 @@
 #'   \item \code{save(path)} - write to file
 #' }
 #'
+#' @usage AmplitudeTier(.xptr)
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #'   AmplitudeTier object; set internally when a method returns a new
 #'   AmplitudeTier.

@@ -6,6 +6,7 @@
 #' Electroglottogram inherits from Sound and represents a specialized
 #' single-channel sound that records vocal fold contact area.
 #'
+#' @usage Electroglottogram(.xptr)
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #'   Electroglottogram object; set internally when a method returns a new
 #'   Electroglottogram.

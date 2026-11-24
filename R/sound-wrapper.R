@@ -37,7 +37,7 @@
 #' Convert to WAV up front if you want to avoid the \code{av} dependency
 #'  entirely.
 #'
-#' @section Usage:
+#' @section Construction:
 #' \preformatted{
 #' # From file
 #' sound <- Sound(path = "audio.wav")
@@ -129,6 +129,7 @@
 #'   \item \code{save()} - save to an audio file
 #' }
 #'
+#' @usage Sound(path, .xptr)
 #' @param path Path to an audio file. See the File I/O section for supported
 #'  formats.
 #' @param .xptr Not for direct use. External pointer to the underlying C++ Sound

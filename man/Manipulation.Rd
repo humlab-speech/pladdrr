@@ -3,6 +3,9 @@
 \name{Manipulation}
 \alias{Manipulation}
 \title{Praat Manipulation Object}
+\usage{
+Manipulation(.xptr)
+}
 \arguments{
 \item{.xptr}{Not for direct use. External pointer to the underlying C++
 Manipulation object; set internally when a method returns a new

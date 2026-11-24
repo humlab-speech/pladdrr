@@ -81,6 +81,7 @@
 #' metrics; later jitter or shimmer calls with matching parameters return from
 #' cache (no additional C++ call).
 #'
+#' @usage PointProcess(tmin, tmax, .xptr)
 #' @param tmin,tmax When creating an empty PointProcess, the time span of the
 #'   object. Leave \code{NULL} (the default) when supplying \code{.xptr}.
 #' @param .xptr Not for direct use. External pointer to the underlying C++

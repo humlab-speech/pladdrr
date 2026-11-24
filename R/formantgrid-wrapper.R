@@ -6,6 +6,7 @@
 #' Used for voice transformation and synthesis. This is the editable
 #' counterpart to the read-only Formant object.
 #'
+#' @usage FormantGrid(tmin, tmax, number_of_formants, initial_first_formant, initial_formant_spacing, initial_first_bandwidth, initial_bandwidth_spacing, .xptr)
 #' @param tmin Start time in seconds.
 #' @param tmax End time in seconds.
 #' @param number_of_formants Number of formants to track. Default 10.

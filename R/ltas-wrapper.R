@@ -12,7 +12,7 @@
 #' shape (tilt, resonance pattern, noise floor), useful for comparing voice
 #' quality across speakers or checking a recording's frequency balance.
 #'
-#' @section Usage:
+#' @section Construction:
 #' \preformatted{
 #' ltas <- sound$to_ltas(bandwidth = 100)
 #' ltas <- sound$to_ltas_pitch_corrected(pitch_floor = 75, pitch_ceiling = 600)
@@ -116,6 +116,7 @@
 #'   \item \code{save(path)} - write to a Praat text file
 #' }
 #'
+#' @usage Ltas(.xptr)
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #'   object; set internally when a method returns a new Ltas.
 #' @return An Ltas object with methods for long-term average spectrum analysis.

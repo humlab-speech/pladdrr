@@ -12,7 +12,7 @@
 #' scanning the raw values by hand. It's read-only: build one with
 #' \code{ltas$to_spectrum_tier_peaks()}, then inspect or export it.
 #'
-#' @section Usage:
+#' @section Construction:
 #' \preformatted{
 #' peaks <- ltas$to_spectrum_tier_peaks()
 #' }
@@ -34,6 +34,7 @@
 #'   \item \code{save(path)} - write to a Praat text file
 #' }
 #'
+#' @usage SpectrumTier(.xptr)
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #'   object; set internally by \code{ltas$to_spectrum_tier_peaks()}.
 #' @return A SpectrumTier object with methods for reading its frequency/power

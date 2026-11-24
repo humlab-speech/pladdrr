@@ -7,6 +7,7 @@
 #' Table objects store tabular data with named columns and support various
 #' statistical operations.
 #'
+#' @usage Table(numberOfRows, numberOfColumns, columnNames, .xptr)
 #' @param numberOfRows Number of rows. Required unless \code{.xptr} is given.
 #' @param numberOfColumns Number of columns. Required unless \code{columnNames}
 #'   or \code{.xptr} is given.

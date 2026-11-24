@@ -3,6 +3,9 @@
 \name{Polygon}
 \alias{Polygon}
 \title{Polygon Object}
+\usage{
+Polygon(x, y, .xptr)
+}
 \arguments{
 \item{x}{Numeric vector of x coordinates. Required unless \code{.xptr} is
 given.}

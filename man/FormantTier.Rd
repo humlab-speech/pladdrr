@@ -3,6 +3,9 @@
 \name{FormantTier}
 \alias{FormantTier}
 \title{FormantTier}
+\usage{
+FormantTier(tmin, tmax, .xptr)
+}
 \arguments{
 \item{tmin}{Start time in seconds. Default 0.}
 
@@ -23,7 +26,7 @@ time points, with interpolation between points.
 The interpolated contour can be used to filter sounds for vowel
 modification or resynthesis.
 }
-\section{Usage}{
+\section{Construction}{
 
 \preformatted{
 FormantTier(tmin, tmax)              # create an empty FormantTier

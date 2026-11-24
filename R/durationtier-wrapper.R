@@ -11,6 +11,7 @@
 #'   \item 0.5 - double speed (halved duration)
 #' }
 #'
+#' @usage DurationTier(tmin, tmax, .xptr)
 #' @param tmin Start time in seconds. Used with \code{tmax} to create a new,
 #'  empty DurationTier.
 #' @param tmax End time in seconds. Used with \code{tmin} to create a new, empty

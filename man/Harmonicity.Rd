@@ -3,6 +3,9 @@
 \name{Harmonicity}
 \alias{Harmonicity}
 \title{Harmonicity}
+\usage{
+Harmonicity(.xptr)
+}
 \arguments{
 \item{.xptr}{Not for direct use. External pointer to the underlying C++
 Harmonicity object; set internally when a method returns a new Harmonicity.}
