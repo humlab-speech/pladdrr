@@ -410,7 +410,7 @@ before committing to a setting for a full run:
 ```{r best_practice4}
 # Test different core counts on a subset
 benchmark_results <- benchmark_parallel(
-  files[1:10],  # Use subset for a quick test
+  files,  # small repeated-file subset keeps the vignette fast to build
   function(s) s$to_pitch()$get_mean(0, 0, "hertz"),
   core_counts = c(1, 2)  # extend to c(1, 2, 4, 8) etc. up to your machine's cores
 )
