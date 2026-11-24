@@ -3,6 +3,12 @@
 Praat PitchTier object: a sequence of time-value points describing a
 pitch contour.
 
+## Usage
+
+``` r
+PitchTier(tmin, tmax, .xptr)
+```
+
 ## Arguments
 
 - tmin:
@@ -35,7 +41,7 @@ The same check guards the `.xptr` argument: `PitchTier(.xptr = )`
 refuses an object that is not a PitchTier or a Praat subclass of one,
 with the package's `pladdrr_input_error`.
 
-## Usage
+## Construction
 
     PitchTier$new(path)          # load from file
     PitchTier(tmin, tmax)        # create an empty PitchTier

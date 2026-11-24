@@ -328,7 +328,7 @@ all.equal(old_result, new_result)
 
 ``` r
 # Before (v2.2.6)
-sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
 tg <- TextGrid(system.file("extdata", "test.TextGrid", package = "pladdrr"))
 
 # Extract intervals
@@ -348,7 +348,7 @@ results <- lapply(intervals, function(int) {
 })
 
 # After (v2.3.0)
-sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
 tg <- TextGrid(system.file("extdata", "test.TextGrid", package = "pladdrr"))
 
 # Batch extraction
@@ -396,7 +396,7 @@ names(results) <- basename(files)
 
 ``` r
 # Before (v2.2.6)
-sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
 formant <- sound$to_formant()
 times <- seq(0.1, 0.5, by = 0.001)
 

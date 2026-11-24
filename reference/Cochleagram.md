@@ -3,6 +3,12 @@
 A Praat Cochleagram: the output of a bank of auditory filters modeling
 the basilar membrane, over time.
 
+## Usage
+
+``` r
+Cochleagram(.xptr)
+```
+
 ## Arguments
 
 - .xptr:
@@ -22,7 +28,7 @@ a Sound with `sound$to_cochleagram()` or `sound$to_cochleagram_edb()`;
 slice it at a time point to get an Excitation pattern, from which
 loudness can be read off.
 
-## Usage
+## Construction
 
     cochleagram <- sound$to_cochleagram()
 

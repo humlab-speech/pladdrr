@@ -3,6 +3,12 @@
 Principal Component Analysis (PCA) for dimensionality reduction and
 analysis of multivariate acoustic data.
 
+## Usage
+
+``` r
+PCA(.xptr)
+```
+
 ## Arguments
 
 - .xptr:

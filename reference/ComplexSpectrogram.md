@@ -3,6 +3,12 @@
 Create a ComplexSpectrogram object from a Sound: a phase-preserving
 spectrogram computed with a complex FFT.
 
+## Usage
+
+``` r
+ComplexSpectrogram(sound, window_length, maximum_frequency)
+```
+
 ## Arguments
 
 - sound:

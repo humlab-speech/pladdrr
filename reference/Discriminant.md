@@ -3,6 +3,12 @@
 Linear Discriminant Analysis (LDA) for vowel classification, speaker
 identification, and other multivariate acoustic classification tasks.
 
+## Usage
+
+``` r
+Discriminant(.xptr)
+```
+
 ## Arguments
 
 - .xptr:

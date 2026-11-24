@@ -5,14 +5,20 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Speech Synthesis with KlattGrid • pladdrr</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="icon" sizes="any" href="../favicon.ico">
+<link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/Roboto-0.4.10/font.css" rel="stylesheet">
-<link href="../deps/JetBrains_Mono-0.4.10/font.css" rel="stylesheet">
-<link href="../deps/Roboto_Slab-0.4.10/font.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/Roboto-0.5.0/font.css" rel="stylesheet">
+<link href="../deps/JetBrains_Mono-0.5.0/font.css" rel="stylesheet">
+<link href="../deps/Roboto_Slab-0.5.0/font.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Speech Synthesis with KlattGrid">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
+<meta property="og:title" content="Speech Synthesis with KlattGrid">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -22,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">pladdrr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -87,8 +93,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-
-      <h1>Speech Synthesis with KlattGrid</h1>
+      <img src="../logo.svg" class="logo" alt=""><h1>Speech Synthesis with KlattGrid</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/humlab-speech/pladdrr/blob/main/vignettes/speech-synthesis-klattgrid.Rmd" class="external-link"><code>vignettes/speech-synthesis-klattgrid.Rmd</code></a></small>
@@ -594,7 +599,7 @@ tiers (B1, B2, B3, …)</p>
 </h3>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load real speech</span></span>
-<span><span class="va">sound_real</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Sound.html">Sound</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.wav"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">sound_real</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Sound.html">Sound</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.flac"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Extract mean formants from real speech</span></span>
 <span><span class="va">formant_real</span> <span class="op">&lt;-</span> <span class="va">sound_real</span><span class="op">$</span><span class="fu">to_formant_burg</span><span class="op">(</span><span class="op">)</span></span>
@@ -607,11 +612,11 @@ tiers (B1, B2, B3, …)</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Extracted formants from real speech:\n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Extracted formants from real speech:</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  F1: %.0f Hz\n"</span>, <span class="va">f1_mean</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   F1: 421 Hz</span></span>
+<span><span class="co">#&gt;   F1: 420 Hz</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  F2: %.0f Hz\n"</span>, <span class="va">f2_mean</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   F2: 465 Hz</span></span>
+<span><span class="co">#&gt;   F2: 464 Hz</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  F3: %.0f Hz\n"</span>, <span class="va">f3_mean</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   F3: 3080 Hz</span></span>
+<span><span class="co">#&gt;   F3: 3150 Hz</span></span>
 <span></span>
 <span><span class="co"># Resynthesize with extracted formants</span></span>
 <span><span class="va">kg_synth</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/klattgrid_create_from_vowel.html">klattgrid_create_from_vowel</a></span><span class="op">(</span></span>
@@ -679,7 +684,7 @@ tiers (B1, B2, B3, …)</p>
 </h3>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># 1. Load real speech</span></span>
-<span><span class="va">sound_orig</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Sound.html">Sound</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.wav"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">sound_orig</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Sound.html">Sound</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.flac"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># 2. Extract formants (using FormantPath for robustness)</span></span>
 <span><span class="va">fp</span> <span class="op">&lt;-</span> <span class="va">sound_orig</span><span class="op">$</span><span class="fu">to_formant_path</span><span class="op">(</span>num_steps_up_down <span class="op">=</span> <span class="fl">2L</span><span class="op">)</span></span>
@@ -700,11 +705,11 @@ tiers (B1, B2, B3, …)</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  F0: %.0f Hz\n"</span>, <span class="va">f0_mean</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   F0: 440 Hz</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  F1: %.0f Hz\n"</span>, <span class="va">f1_mean</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   F1: 421 Hz</span></span>
+<span><span class="co">#&gt;   F1: 420 Hz</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  F2: %.0f Hz\n"</span>, <span class="va">f2_mean</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   F2: 465 Hz</span></span>
+<span><span class="co">#&gt;   F2: 464 Hz</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  F3: %.0f Hz\n"</span>, <span class="va">f3_mean</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   F3: 3080 Hz</span></span>
+<span><span class="co">#&gt;   F3: 3150 Hz</span></span>
 <span></span>
 <span><span class="co"># 5. Resynthesize</span></span>
 <span><span class="va">kg_resynth</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/klattgrid_create_from_vowel.html">klattgrid_create_from_vowel</a></span><span class="op">(</span></span>
@@ -1053,18 +1058,18 @@ formant extraction</li>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] ggplot2_4.0.4 pladdrr_5.1.1</span></span>
+<span><span class="co">#&gt; [1] ggplot2_4.0.4 pladdrr_5.2.0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] gtable_0.3.6        jsonlite_2.0.0      dplyr_1.2.1        </span></span>
 <span><span class="co">#&gt;  [4] compiler_4.6.2      tidyselect_1.2.1    Rcpp_1.1.2         </span></span>
-<span><span class="co">#&gt;  [7] jquerylib_0.1.4     systemfonts_1.3.2   scales_1.4.0       </span></span>
-<span><span class="co">#&gt; [10] textshaping_1.0.5   yaml_2.3.12         fastmap_1.2.0      </span></span>
+<span><span class="co">#&gt;  [7] jquerylib_0.1.4     systemfonts_1.3.4   scales_1.4.0       </span></span>
+<span><span class="co">#&gt; [10] textshaping_1.1.0   yaml_2.3.12         fastmap_1.2.0      </span></span>
 <span><span class="co">#&gt; [13] R6_2.6.1            labeling_0.4.3      generics_0.1.4     </span></span>
 <span><span class="co">#&gt; [16] knitr_1.52          tibble_3.3.1        desc_1.4.3         </span></span>
 <span><span class="co">#&gt; [19] bslib_0.12.0        pillar_1.11.1       RColorBrewer_1.1-3 </span></span>
 <span><span class="co">#&gt; [22] rlang_1.3.0         cachem_1.1.0        xfun_0.62          </span></span>
-<span><span class="co">#&gt; [25] fs_2.1.0            sass_0.4.10         S7_0.2.2           </span></span>
+<span><span class="co">#&gt; [25] fs_2.1.0            sass_0.5.0          S7_1.0.0           </span></span>
 <span><span class="co">#&gt; [28] otel_0.3.0          cli_3.6.6           pkgdown_2.2.1      </span></span>
 <span><span class="co">#&gt; [31] withr_3.0.3         magrittr_2.0.5      digest_0.6.39      </span></span>
 <span><span class="co">#&gt; [34] grid_4.6.2          lifecycle_1.0.5     vctrs_0.7.3        </span></span>

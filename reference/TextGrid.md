@@ -3,6 +3,12 @@
 R wrapper for a Praat TextGrid object for linguistic annotation. Uses
 shared dispatch table for minimal memory per object.
 
+## Usage
+
+``` r
+TextGrid(path, .xptr)
+```
+
 ## Arguments
 
 - path:

@@ -2,6 +2,12 @@
 
 Mel-frequency cepstral coefficients for speech and speaker recognition.
 
+## Usage
+
+``` r
+MFCC(.xptr)
+```
+
 ## Arguments
 
 - .xptr:

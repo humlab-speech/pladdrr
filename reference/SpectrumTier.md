@@ -2,6 +2,12 @@
 
 Holds the frequency peaks picked out of a long-term average spectrum.
 
+## Usage
+
+``` r
+SpectrumTier(.xptr)
+```
+
 ## Arguments
 
 - .xptr:
@@ -23,7 +29,7 @@ Use it to pull out harmonic or formant-like peaks from a spectral
 average without scanning the raw values by hand. It's read-only: build
 one with `ltas$to_spectrum_tier_peaks()`, then inspect or export it.
 
-## Usage
+## Construction
 
     peaks <- ltas$to_spectrum_tier_peaks()
 

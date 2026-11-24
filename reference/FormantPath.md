@@ -4,6 +4,13 @@ A FormantPath object represents multiple formant tracking candidates
 with different ceiling frequencies, allowing for robust formant analysis
 by automatically selecting the optimal tracking path.
 
+## Usage
+
+``` r
+FormantPath(sound, time_step, max_num_formants, formant_ceiling,
+  window_length, preemphasis_from, ceiling_step_fraction, num_steps_up_down)
+```
+
 ## Arguments
 
 - sound:

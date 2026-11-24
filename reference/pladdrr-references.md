@@ -9,6 +9,10 @@ each command uses, and states where Praat departs from the paper. Where
 a pladdrr result is checked against the Praat application, the check is
 in `tests/testthat/test-praat-faithfulness.R`.
 
+## Value
+
+No return value; this page only documents the references.
+
 ## Software
 
 - Boersma, P. & Weenink, D. Praat: doing phonetics by computer.
@@ -97,10 +101,6 @@ remaining classes follow the definitions in Praat's manual rather than a
 single primary paper;
 [`vignette("terminology")`](https://humlab-speech.github.io/pladdrr/articles/terminology.md)
 states the definition each result uses.
-
-## Value
-
-No return value; this page only documents the references.
 
 ## See also
 

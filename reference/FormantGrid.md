@@ -3,6 +3,14 @@
 Praat FormantGrid object: formant frequencies and bandwidths over time,
 editable at arbitrary time points.
 
+## Usage
+
+``` r
+FormantGrid(tmin, tmax, number_of_formants, initial_first_formant,
+  initial_formant_spacing, initial_first_bandwidth, initial_bandwidth_spacing,
+  .xptr)
+```
+
 ## Arguments
 
 - tmin:

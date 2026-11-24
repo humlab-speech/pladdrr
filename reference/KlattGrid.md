@@ -4,7 +4,23 @@ A KlattGrid is a speech synthesizer based on the Klatt formant
 synthesizer. It allows detailed control over phonation, vocal tract
 resonances, frication, and other articulatory parameters.
 
+## Usage
+
+``` r
+KlattGrid(tmin, tmax, numberOfFormants, numberOfNasalFormants,
+  numberOfNasalAntiFormants, numberOfTrachealFormants,
+  numberOfTrachealAntiFormants, numberOfFricationFormants, numberOfDeltaFormants)
+```
+
 ## Arguments
+
+- tmin:
+
+  Start time in seconds
+
+- tmax:
+
+  End time in seconds
 
 - numberOfFormants:
 

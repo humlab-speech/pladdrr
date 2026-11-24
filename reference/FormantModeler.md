@@ -3,6 +3,12 @@
 Robust formant trajectory modeling using polynomial fits with outlier
 detection.
 
+## Usage
+
+``` r
+FormantModeler(.xptr)
+```
+
 ## Arguments
 
 - .xptr:

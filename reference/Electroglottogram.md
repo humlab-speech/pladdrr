@@ -3,6 +3,12 @@
 Praat Electroglottogram (EGG) object. Measures electrical impedance
 across the larynx, varying with vocal fold contact during phonation.
 
+## Usage
+
+``` r
+Electroglottogram(.xptr)
+```
+
 ## Arguments
 
 - .xptr:

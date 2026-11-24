@@ -3,6 +3,12 @@
 A Praat PowerCepstrogram: a power cepstrum computed at every time frame
 of a sound, forming a quefrency-by-time surface.
 
+## Usage
+
+``` r
+PowerCepstrogram(.xptr)
+```
+
 ## Arguments
 
 - .xptr:
@@ -24,7 +30,7 @@ one with `sound$to_powercepstrogram()`, then either read `get_cpps()`
 directly or slice out a single frame as a PowerCepstrum for closer
 inspection.
 
-## Usage
+## Construction
 
     cepstrogram <- sound$to_powercepstrogram(pitch_floor = 60)
 

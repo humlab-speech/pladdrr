@@ -3,6 +3,12 @@
 Praat Table object with direct C++ module binding for tabular data
 operations.
 
+## Usage
+
+``` r
+Table(numberOfRows, numberOfColumns, columnNames, .xptr)
+```
+
 ## Arguments
 
 - numberOfRows:

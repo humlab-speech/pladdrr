@@ -3,6 +3,12 @@
 Praat DurationTier object for duration manipulation, created via direct
 C++ module binding.
 
+## Usage
+
+``` r
+DurationTier(tmin, tmax, .xptr)
+```
+
 ## Arguments
 
 - tmin:

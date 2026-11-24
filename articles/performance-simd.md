@@ -114,7 +114,7 @@ workload:
 ``` r
 library(microbenchmark)
 
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 
 pladdrr_simd(FALSE)
 scalar_time <- microbenchmark(sound$to_pitch(), times = 50)
@@ -123,13 +123,7 @@ pladdrr_simd(TRUE)
 simd_time <- microbenchmark(sound$to_pitch(), times = 50)
 
 print(scalar_time)
-#> Unit: milliseconds
-#>              expr     min       lq     mean   median      uq     max neval
-#>  sound$to_pitch() 3.02325 3.100806 5.424929 3.151026 3.16782 117.474    50
 print(simd_time)
-#> Unit: milliseconds
-#>              expr      min       lq     mean   median       uq      max neval
-#>  sound$to_pitch() 2.917585 3.092782 3.114688 3.123404 3.161628 3.534177    50
 ```
 
 Gains vary by routine, CPU, compiler, and vector length — there is no
@@ -196,7 +190,7 @@ rather than relying on a quoted figure.
 ### Formant Extraction Performance
 
 ``` r
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 
 result <- microbenchmark(
   burg = sound$to_formant_burg(),
@@ -237,7 +231,7 @@ measure the ratio on your own hardware if it matters for your pipeline.
 Higher sample rates mean more samples to process:
 
 ``` r
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 
 # For speech analysis, 16-22 kHz is often sufficient
 sound_22k <- sound$resample(22050)
@@ -290,7 +284,7 @@ f1_f2 <- do.call(rbind, lapply(formants, function(f) {
 ### 4. Reuse Objects When Possible
 
 ``` r
-wav_path <- system.file("extdata", "test.wav", package = "pladdrr")
+wav_path <- system.file("extdata", "test.flac", package = "pladdrr")
 
 # Good: Reuse sound object
 sound <- Sound$new(wav_path)
@@ -367,7 +361,7 @@ library(profvis)
 
 profvis({
   # Load sound
-  sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+  sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 
   # Perform analysis
   pitch <- sound$to_pitch()
@@ -386,7 +380,7 @@ profvis({
 ``` r
 library(microbenchmark)
 
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 
 # Compare formant extraction methods
 result <- microbenchmark(
@@ -525,7 +519,7 @@ functions instead of repeated R method calls:
 
 ``` r
 # Create pitch object
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 pitch <- sound$to_pitch_cc()
 
 # Define 100 time intervals covering the file's duration
@@ -699,22 +693,22 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] RcppXPtrUtils_0.1.3  microbenchmark_1.5.0 pladdrr_5.1.1       
+#> [1] RcppXPtrUtils_0.1.3 pladdrr_5.2.0      
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] gtable_0.3.6        jsonlite_2.0.0      dplyr_1.2.1        
 #>  [4] compiler_4.6.2      tidyselect_1.2.1    Rcpp_1.1.2         
-#>  [7] jquerylib_0.1.4     systemfonts_1.3.2   scales_1.4.0       
-#> [10] textshaping_1.0.5   yaml_2.3.12         fastmap_1.2.0      
+#>  [7] jquerylib_0.1.4     systemfonts_1.3.4   scales_1.4.0       
+#> [10] textshaping_1.1.0   yaml_2.3.12         fastmap_1.2.0      
 #> [13] ggplot2_4.0.4       R6_2.6.1            generics_0.1.4     
 #> [16] knitr_1.52          tibble_3.3.1        desc_1.4.3         
 #> [19] bslib_0.12.0        pillar_1.11.1       RColorBrewer_1.1-3 
 #> [22] rlang_1.3.0         cachem_1.1.0        xfun_0.62          
-#> [25] fs_2.1.0            sass_0.4.10         S7_0.2.2           
+#> [25] fs_2.1.0            sass_0.5.0          S7_1.0.0           
 #> [28] otel_0.3.0          cli_3.6.6           pkgdown_2.2.1      
 #> [31] magrittr_2.0.5      digest_0.6.39       grid_4.6.2         
 #> [34] lifecycle_1.0.5     vctrs_0.7.3         evaluate_1.0.5     
 #> [37] glue_1.8.1          data.table_1.18.6.1 farver_2.1.2       
 #> [40] codetools_0.2-20    ragg_1.5.2          rmarkdown_2.32     
-#> [43] pkgconfig_2.0.3     tools_4.6.2         htmltools_0.5.9
+#> [43] tools_4.6.2         pkgconfig_2.0.3     htmltools_0.5.9
 ```

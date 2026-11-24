@@ -40,7 +40,7 @@ ceiling** - the maximum frequency for formant detection:
 
 ``` r
 # Load example audio
-sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
 
 # Standard method (single ceiling) - with error handling
 formant_standard <- tryCatch({
@@ -81,7 +81,7 @@ if (!is.null(formant_standard) && !is.null(formant_path)) {
       round(max(formant_path$get_all_ceiling_frequencies())), " Hz\n", sep = "")
 } else {
   cat("Note: Formant extraction requires readable audio input.\n")
-  cat("Check that inst/extdata/test.wav is present and readable.\n")
+  cat("Check that inst/extdata/test.flac is present and readable.\n")
 }
 #> Standard method: 1 ceiling (5500 Hz)
 #> FormantPath: 5 ceilings tested
@@ -185,16 +185,16 @@ print(data.frame(
   Ceiling = round(fp$get_all_ceiling_frequencies()),
   Stress = round(stresses, 4)
 ))
-#>   Candidate Ceiling Stress
-#> 1         1    4977 5.8956
-#> 2         2    5232 3.9507
-#> 3         3    5500 3.7211
-#> 4         4    5782 3.0112
-#> 5         5    6078 2.9142
+#>   Candidate Ceiling  Stress
+#> 1         1    4977  4.1904
+#> 2         2    5232  3.4219
+#> 3         3    5500  3.7666
+#> 4         4    5782  4.5426
+#> 5         5    6078 72.8453
 cat("\nLowest stress: Candidate", best_idx, 
     "(", round(fp$get_ceiling_frequency(best_idx)), "Hz )\n")
 #> 
-#> Lowest stress: Candidate 5 ( 6078 Hz )
+#> Lowest stress: Candidate 2 ( 5232 Hz )
 ```
 
 ## Extracting the Optimal Formant
@@ -224,11 +224,11 @@ cat("\nFormants at midpoint (", round(mid_time, 3), "s):\n", sep = "")
 #> 
 #> Formants at midpoint (0.5s):
 cat("  F1:", round(f1), "Hz\n")
-#>   F1: 421 Hz
+#>   F1: 420 Hz
 cat("  F2:", round(f2), "Hz\n")
-#>   F2: 465 Hz
+#>   F2: 464 Hz
 cat("  F3:", round(f3), "Hz\n")
-#>   F3: 2998 Hz
+#>   F3: 3049 Hz
 ```
 
 ### Manual Path Selection
@@ -412,7 +412,7 @@ textgrid <- TextGrid(
 intervals <- textgrid$get_all_intervals("phones")
 intervals <- intervals[intervals$text != "", ]
 
-# test.TextGrid spans 3s but test.wav is only 1s - clip segment
+# test.TextGrid spans 3s but test.flac is only 1s - clip segment
 # boundaries to the sound's actual duration before extracting
 intervals$end <- pmin(intervals$end, sound$get_duration())
 intervals <- intervals[intervals$start < intervals$end, ]
@@ -436,8 +436,8 @@ results <- lapply(seq_len(nrow(intervals)), function(i) {
 phone_formants <- do.call(rbind, results)
 print(phone_formants)
 #>   phone       f1       f2
-#> 1     h 420.9056 464.9144
-#> 2     ɛ 420.9347 464.9425
+#> 1     h 420.4072 464.4267
+#> 2     ɛ 420.3874 464.4071
 ```
 
 ### 4. Batch Processing Multiple Files
@@ -446,7 +446,7 @@ print(phone_formants)
 # Process multiple recordings with unknown speaker characteristics.
 # Replace `files` with your own vector of file paths; here we reuse the
 # bundled example file to show the pattern.
-files <- rep(system.file("extdata", "test.wav", package = "pladdrr"), 3)
+files <- rep(system.file("extdata", "test.flac", package = "pladdrr"), 3)
 
 formants <- lapply(files, function(file) {
   sound <- Sound(file)
@@ -486,10 +486,10 @@ requested. Measure on your own data:
 ``` r
 system.time(frm_result <- sound$to_formant_burg())
 #>    user  system elapsed 
-#>   0.010   0.002   0.005
+#>   0.015   0.001   0.007
 system.time(fp <- sound$to_formant_path(num_steps_up_down = 2L))
 #>    user  system elapsed 
-#>   0.049   0.000   0.021
+#>   0.069   0.000   0.027
 ```
 
 ## Best Practices
@@ -640,18 +640,18 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] ggplot2_4.0.4 pladdrr_5.1.1
+#> [1] ggplot2_4.0.4 pladdrr_5.2.0
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] gtable_0.3.6        jsonlite_2.0.0      dplyr_1.2.1        
 #>  [4] compiler_4.6.2      tidyselect_1.2.1    Rcpp_1.1.2         
-#>  [7] jquerylib_0.1.4     systemfonts_1.3.2   scales_1.4.0       
-#> [10] textshaping_1.0.5   yaml_2.3.12         fastmap_1.2.0      
+#>  [7] jquerylib_0.1.4     systemfonts_1.3.4   scales_1.4.0       
+#> [10] textshaping_1.1.0   yaml_2.3.12         fastmap_1.2.0      
 #> [13] R6_2.6.1            labeling_0.4.3      generics_0.1.4     
 #> [16] knitr_1.52          tibble_3.3.1        desc_1.4.3         
 #> [19] bslib_0.12.0        pillar_1.11.1       RColorBrewer_1.1-3 
 #> [22] rlang_1.3.0         cachem_1.1.0        xfun_0.62          
-#> [25] fs_2.1.0            sass_0.4.10         S7_0.2.2           
+#> [25] fs_2.1.0            sass_0.5.0          S7_1.0.0           
 #> [28] otel_0.3.0          cli_3.6.6           pkgdown_2.2.1      
 #> [31] withr_3.0.3         magrittr_2.0.5      digest_0.6.39      
 #> [34] grid_4.6.2          lifecycle_1.0.5     vctrs_0.7.3        

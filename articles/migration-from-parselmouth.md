@@ -44,7 +44,7 @@ library(pladdrr)
 #> pladdrr: direct access to Praat's core algorithms from R.
 #> See ?pladdrr for an overview, or citation("pladdrr") for citation details.
 
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 ```
 
 ### Pitch Extraction
@@ -62,7 +62,7 @@ mean_f0 = pm.praat.call(pitch, "Get mean", 0, 0, "Hertz")
 **pladdrr:**
 
 ``` r
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
 mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
 ```
@@ -81,7 +81,7 @@ f2 = pm.praat.call(formant, "Get value at time", 2, 0.5, "Hertz", "Linear")
 **pladdrr:**
 
 ``` r
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 formant <- sound$to_formant_burg(
   time_step = 0.01,
   max_number_of_formants = 5,
@@ -106,7 +106,7 @@ mean_int = pm.praat.call(intensity, "Get mean", 0, 0, "energy")
 **pladdrr:**
 
 ``` r
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 intensity <- sound$to_intensity(minimum_pitch = 100, time_step = 0.01,
   subtract_mean = TRUE)
 mean_int <- intensity$get_mean(from_time = 0, to_time = 0,
@@ -126,7 +126,7 @@ cog = pm.praat.call(spectrum, "Get centre of gravity", 2.0)
 **pladdrr:**
 
 ``` r
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 spectrum <- sound$to_spectrum(fast = TRUE)
 cog <- spectrum$get_centre_of_gravity(power = 2.0)
 ```
@@ -162,7 +162,7 @@ df.to_csv('results.csv', index=False)
 library(pladdrr)
 
 files <- list.files(system.file("extdata", package = "pladdrr"),
-                    pattern = "\\.wav$", full.names = TRUE)
+                    pattern = "\\.flac$", full.names = TRUE)
 
 results <- lapply(files, function(filepath) {
   sound <- Sound$new(filepath)
@@ -205,7 +205,7 @@ df = pd.DataFrame({'time': times, 'frequency': frequencies})
 **pladdrr:**
 
 ``` r
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
 
 # Direct conversion to data frame
@@ -242,7 +242,7 @@ plt.show()
 library(pladdrr)
 library(ggplot2)
 
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
 pitch_data <- pitch$as_data_frame()
 
@@ -343,7 +343,7 @@ library(dplyr)
 library(purrr)
 library(tidyr)
 
-wav <- system.file("extdata", "test.wav", package = "pladdrr")
+wav <- system.file("extdata", "test.flac", package = "pladdrr")
 results <- tibble(
   file = c(wav, wav, wav),
   speaker = c("A", "B", "C")

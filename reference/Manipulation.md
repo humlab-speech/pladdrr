@@ -3,6 +3,12 @@
 Praat Manipulation object with direct C++ module binding for PSOLA-based
 pitch and duration modification.
 
+## Usage
+
+``` r
+Manipulation(.xptr)
+```
+
 ## Arguments
 
 - .xptr:

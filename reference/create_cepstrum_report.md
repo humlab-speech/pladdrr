@@ -52,6 +52,5 @@ sound <- Sound$create_tone(frequency = 150, duration = 0.6, sampling_rate =
   # Create comprehensive report at t = 0.3s (mid-signal)
   create_cepstrum_report(cepstrogram, time_slice = 0.3)
 }
-#> Warning: Could not compute peak: unused arguments (qmin = 0.001, qmax = 0)
 
 ```

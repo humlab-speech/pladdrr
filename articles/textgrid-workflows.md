@@ -311,7 +311,7 @@ tg <- TextGrid$new(tg_file)
 load_time <- as.numeric(difftime(Sys.time(), start_time, units = "secs"))
 
 cat(sprintf("Loaded in %.3f seconds\n", load_time))
-#> Loaded in 0.007 seconds
+#> Loaded in 0.009 seconds
 cat(sprintf("Duration: %.2f minutes\n", tg$get_total_duration() / 60))
 #> Duration: 1.00 minutes
 cat(sprintf("File size: %.1f MB\n", file.size(tg_file) / 1024^2))
@@ -562,7 +562,7 @@ autoplot(tg)
 ``` r
 
 # One tier as a layer on top of a waveform
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 autoplot(sound) + autolayer(tg, tier = "words")
 ```
 
@@ -656,7 +656,7 @@ Extract F0 contours aligned to intonational phrases:
 
 ``` r
 # Assume the "words" tier has intonational phrase boundaries
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 pitch <- sound$to_pitch()
 tg <- TextGrid$new(system.file("extdata", "test.TextGrid", package = "pladdrr"))
 

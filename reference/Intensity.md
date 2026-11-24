@@ -3,6 +3,12 @@
 Intensity objects represent sound power (loudness) over time, measured
 in decibels (dB) relative to the auditory threshold.
 
+## Usage
+
+``` r
+Intensity(.xptr)
+```
+
 ## Arguments
 
 - .xptr:
@@ -94,7 +100,7 @@ mean_int <- intensity$get_mean()
 df <- intensity$as_data_frame()
 
 # The same analysis on a recording read from disk
-sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
 intensity <- sound$to_intensity(minimum_pitch = 100, time_step = 0.0)
 int_at_02s <- intensity$get_value_at_time(0.2)
 ```

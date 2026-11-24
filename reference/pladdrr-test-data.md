@@ -5,9 +5,13 @@ suite can be run, and any test result reproduced, by a user. Find them
 with [`system.file()`](https://rdrr.io/r/base/system.file.html); none is
 loaded into the session automatically.
 
+## Value
+
+No return value; this page only documents the shipped data files.
+
 ## Details
 
-- `system.file("extdata", "test.wav", package = "pladdrr")`: a
+- `system.file("extdata", "test.flac", package = "pladdrr")`: a
   one-second, 44.1 kHz recording used by the examples.
 
 - `system.file("extdata", "test.TextGrid", package = "pladdrr")`: a
@@ -20,9 +24,6 @@ loaded into the session automatically.
   reference pitch values (time, frequency, strength) that the
   faithfulness tests compare against.
 
-- `system.file("signalfiles", "DSI", "input", package = "pladdrr")`: the
-  voice recordings of the Dysphonia Severity Index example.
-
 Most tests need no file at all: they build their signals with
 [`generate_sine_wave`](https://humlab-speech.github.io/pladdrr/reference/generate_sine_wave.md),
 [`generate_noise`](https://humlab-speech.github.io/pladdrr/reference/generate_noise.md),
@@ -33,11 +34,7 @@ whose output is known exactly (a tone of given frequency and amplitude,
 or a vowel with given formant targets). Those generators are exported so
 that a user can recreate every synthetic test signal; the faithfulness
 tests (`tests/testthat/test-praat-faithfulness.R`) compare pladdrr with
-the Praat application on such signals and on `test.wav`.
-
-## Value
-
-No return value; this page only documents the shipped data files.
+the Praat application on such signals and on `test.flac`.
 
 ## See also
 
@@ -46,6 +43,6 @@ No return value; this page only documents the shipped data files.
 ## Examples
 
 ``` r
-file.exists(system.file("extdata", "test.wav", package = "pladdrr"))
+file.exists(system.file("extdata", "test.flac", package = "pladdrr"))
 #> [1] TRUE
 ```

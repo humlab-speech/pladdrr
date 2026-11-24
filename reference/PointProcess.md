@@ -5,6 +5,12 @@ glottal pulse boundaries (moments of vocal fold closure). Used for voice
 quality analysis: jitter (period perturbation) and shimmer (amplitude
 perturbation).
 
+## Usage
+
+``` r
+PointProcess(tmin, tmax, .xptr)
+```
+
 ## Arguments
 
 - tmin, tmax:

@@ -3,6 +3,12 @@
 Represents a long-term average spectrum (LTAS): the frequency spectrum
 of a sound averaged over its whole duration.
 
+## Usage
+
+``` r
+Ltas(.xptr)
+```
+
 ## Arguments
 
 - .xptr:
@@ -22,7 +28,7 @@ averaged out. It's the standard tool for describing overall spectral
 shape (tilt, resonance pattern, noise floor), useful for comparing voice
 quality across speakers or checking a recording's frequency balance.
 
-## Usage
+## Construction
 
     ltas <- sound$to_ltas(bandwidth = 100)
     ltas <- sound$to_ltas_pitch_corrected(pitch_floor = 75, pitch_ceiling = 600)

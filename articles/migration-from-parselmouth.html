@@ -5,14 +5,20 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Migration Guide: From Parselmouth (Python) to pladdrr • pladdrr</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="icon" sizes="any" href="../favicon.ico">
+<link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/Roboto-0.4.10/font.css" rel="stylesheet">
-<link href="../deps/JetBrains_Mono-0.4.10/font.css" rel="stylesheet">
-<link href="../deps/Roboto_Slab-0.4.10/font.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/Roboto-0.5.0/font.css" rel="stylesheet">
+<link href="../deps/JetBrains_Mono-0.5.0/font.css" rel="stylesheet">
+<link href="../deps/Roboto_Slab-0.5.0/font.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Migration Guide: From Parselmouth (Python) to pladdrr">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
+<meta property="og:title" content="Migration Guide: From Parselmouth (Python) to pladdrr">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -22,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">pladdrr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">5.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -87,12 +93,11 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-
-      <h1>Migration Guide: From Parselmouth (Python) to pladdrr</h1>
+      <img src="../logo.svg" class="logo" alt=""><h1>Migration Guide: From Parselmouth (Python) to pladdrr</h1>
                         <h4 data-toc-skip class="author">Fredrik
 Nylén</h4>
             
-            <h4 data-toc-skip class="date">2026-11-15</h4>
+            <h4 data-toc-skip class="date">2026-11-24</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/humlab-speech/pladdrr/blob/main/vignettes/migration-from-parselmouth.Rmd" class="external-link"><code>vignettes/migration-from-parselmouth.Rmd</code></a></small>
       <div class="d-none name"><code>migration-from-parselmouth.Rmd</code></div>
@@ -174,7 +179,7 @@ parameters - Direct C++ binding (Rcpp)</p>
 <span><span class="co">#&gt; pladdrr: direct access to Praat's core algorithms from R.</span></span>
 <span><span class="co">#&gt; See ?pladdrr for an overview, or citation("pladdrr") for citation details.</span></span>
 <span></span>
-<span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Sound.html">Sound</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.wav"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Sound.html">Sound</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.flac"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="pitch-extraction">Pitch Extraction<a class="anchor" aria-label="anchor" href="#pitch-extraction"></a>
@@ -187,7 +192,7 @@ parameters - Direct C++ binding (Rcpp)</p>
 <span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>mean_f0 <span class="op">=</span> pm.praat.call(pitch, <span class="st">"Get mean"</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="st">"Hertz"</span>)</span></code></pre></div>
 <p><strong>pladdrr:</strong></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Sound.html">Sound</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.wav"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Sound.html">Sound</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.flac"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">pitch</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_pitch</span><span class="op">(</span>time_step <span class="op">=</span> <span class="fl">0.01</span>, pitch_floor <span class="op">=</span> <span class="fl">75</span>, pitch_ceiling <span class="op">=</span> <span class="fl">600</span><span class="op">)</span></span>
 <span><span class="va">mean_f0</span> <span class="op">&lt;-</span> <span class="va">pitch</span><span class="op">$</span><span class="fu">get_mean</span><span class="op">(</span>from_time <span class="op">=</span> <span class="fl">0</span>, to_time <span class="op">=</span> <span class="fl">0</span>, unit <span class="op">=</span> <span class="st">"hertz"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -201,7 +206,7 @@ parameters - Direct C++ binding (Rcpp)</p>
 <span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>f2 <span class="op">=</span> pm.praat.call(formant, <span class="st">"Get value at time"</span>, <span class="dv">2</span>, <span class="fl">0.5</span>, <span class="st">"Hertz"</span>, <span class="st">"Linear"</span>)</span></code></pre></div>
 <p><strong>pladdrr:</strong></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Sound.html">Sound</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.wav"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Sound.html">Sound</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.flac"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">formant</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_formant_burg</span><span class="op">(</span></span>
 <span>  time_step <span class="op">=</span> <span class="fl">0.01</span>,</span>
 <span>  max_number_of_formants <span class="op">=</span> <span class="fl">5</span>,</span>
@@ -221,7 +226,7 @@ parameters - Direct C++ binding (Rcpp)</p>
 <span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>mean_int <span class="op">=</span> pm.praat.call(intensity, <span class="st">"Get mean"</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="st">"energy"</span>)</span></code></pre></div>
 <p><strong>pladdrr:</strong></p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Sound.html">Sound</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.wav"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Sound.html">Sound</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.flac"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">intensity</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_intensity</span><span class="op">(</span>minimum_pitch <span class="op">=</span> <span class="fl">100</span>, time_step <span class="op">=</span> <span class="fl">0.01</span>,</span>
 <span>  subtract_mean <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">mean_int</span> <span class="op">&lt;-</span> <span class="va">intensity</span><span class="op">$</span><span class="fu">get_mean</span><span class="op">(</span>from_time <span class="op">=</span> <span class="fl">0</span>, to_time <span class="op">=</span> <span class="fl">0</span>,</span>
@@ -236,7 +241,7 @@ parameters - Direct C++ binding (Rcpp)</p>
 <span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>cog <span class="op">=</span> pm.praat.call(spectrum, <span class="st">"Get centre of gravity"</span>, <span class="fl">2.0</span>)</span></code></pre></div>
 <p><strong>pladdrr:</strong></p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Sound.html">Sound</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.wav"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Sound.html">Sound</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.flac"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">spectrum</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_spectrum</span><span class="op">(</span>fast <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">cog</span> <span class="op">&lt;-</span> <span class="va">spectrum</span><span class="op">$</span><span class="fu">get_centre_of_gravity</span><span class="op">(</span>power <span class="op">=</span> <span class="fl">2.0</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -273,7 +278,7 @@ parameters - Direct C++ binding (Rcpp)</p>
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/humlab-speech/pladdrr" class="external-link">pladdrr</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span>,</span>
-<span>                    pattern <span class="op">=</span> <span class="st">"\\.wav$"</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>                    pattern <span class="op">=</span> <span class="st">"\\.flac$"</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">files</span>, <span class="kw">function</span><span class="op">(</span><span class="va">filepath</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">sound</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Sound.html">Sound</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">filepath</span><span class="op">)</span></span>
@@ -313,7 +318,7 @@ parameters - Direct C++ binding (Rcpp)</p>
 <span id="cb13-13"><a href="#cb13-13" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame({<span class="st">'time'</span>: times, <span class="st">'frequency'</span>: frequencies})</span></code></pre></div>
 <p><strong>pladdrr:</strong></p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Sound.html">Sound</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.wav"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Sound.html">Sound</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.flac"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">pitch</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_pitch</span><span class="op">(</span>time_step <span class="op">=</span> <span class="fl">0.01</span>, pitch_floor <span class="op">=</span> <span class="fl">75</span>, pitch_ceiling <span class="op">=</span> <span class="fl">600</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Direct conversion to data frame</span></span>
@@ -351,7 +356,7 @@ parameters - Direct C++ binding (Rcpp)</p>
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/humlab-speech/pladdrr" class="external-link">pladdrr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Sound.html">Sound</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.wav"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">sound</span> <span class="op">&lt;-</span> <span class="va"><a href="../reference/Sound.html">Sound</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.flac"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">pitch</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_pitch</span><span class="op">(</span>time_step <span class="op">=</span> <span class="fl">0.01</span>, pitch_floor <span class="op">=</span> <span class="fl">75</span>, pitch_ceiling <span class="op">=</span> <span class="fl">600</span><span class="op">)</span></span>
 <span><span class="va">pitch_data</span> <span class="op">&lt;-</span> <span class="va">pitch</span><span class="op">$</span><span class="fu">as_data_frame</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
@@ -449,7 +454,7 @@ parameters - Direct C++ binding (Rcpp)</p>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://purrr.tidyverse.org/" class="external-link">purrr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">wav</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.wav"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span></span>
+<span><span class="va">wav</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"test.flac"</span>, package <span class="op">=</span> <span class="st">"pladdrr"</span><span class="op">)</span></span>
 <span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
 <span>  file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">wav</span>, <span class="va">wav</span>, <span class="va">wav</span><span class="op">)</span>,</span>
 <span>  speaker <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span><span class="op">)</span></span>

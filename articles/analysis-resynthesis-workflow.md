@@ -56,14 +56,14 @@ and perceptual reality:
 
 ``` r
 # Load audio file
-sound_orig <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+sound_orig <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
 
 cat("Original audio:\n")
 #> Original audio:
 cat("  Duration:", sound_orig$get_duration(), "s\n")
 #>   Duration: 1 s
 cat("  Samples:", sound_orig$get_number_of_samples(), "\n")
-#>   Samples: 44100
+#>   Samples: 16000
 
 # Extract formants with FormantPath (robust multi-ceiling)
 fp <- sound_orig$to_formant_path(
@@ -103,11 +103,11 @@ f3_mean <- mean(df$frequency[df$formant == 3], na.rm = TRUE)
 cat("Mean formant values:\n")
 #> Mean formant values:
 cat(sprintf("  F1: %.0f Hz\n", f1_mean))
-#>   F1: 421 Hz
+#>   F1: 420 Hz
 cat(sprintf("  F2: %.0f Hz\n", f2_mean))
-#>   F2: 465 Hz
+#>   F2: 464 Hz
 cat(sprintf("  F3: %.0f Hz\n", f3_mean))
-#>   F3: 3080 Hz
+#>   F3: 3150 Hz
 
 # Also extract pitch for realistic resynthesis
 pitch <- sound_orig$to_pitch()
@@ -766,18 +766,18 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] ggplot2_4.0.4 pladdrr_5.1.1
+#> [1] ggplot2_4.0.4 pladdrr_5.2.0
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] gtable_0.3.6        jsonlite_2.0.0      dplyr_1.2.1        
 #>  [4] compiler_4.6.2      tidyselect_1.2.1    Rcpp_1.1.2         
-#>  [7] jquerylib_0.1.4     systemfonts_1.3.2   scales_1.4.0       
-#> [10] textshaping_1.0.5   yaml_2.3.12         fastmap_1.2.0      
+#>  [7] jquerylib_0.1.4     systemfonts_1.3.4   scales_1.4.0       
+#> [10] textshaping_1.1.0   yaml_2.3.12         fastmap_1.2.0      
 #> [13] R6_2.6.1            generics_0.1.4      knitr_1.52         
 #> [16] tibble_3.3.1        desc_1.4.3          bslib_0.12.0       
 #> [19] pillar_1.11.1       RColorBrewer_1.1-3  rlang_1.3.0        
 #> [22] cachem_1.1.0        xfun_0.62           fs_2.1.0           
-#> [25] sass_0.4.10         S7_0.2.2            otel_0.3.0         
+#> [25] sass_0.5.0          S7_1.0.0            otel_0.3.0         
 #> [28] cli_3.6.6           pkgdown_2.2.1       withr_3.0.3        
 #> [31] magrittr_2.0.5      digest_0.6.39       grid_4.6.2         
 #> [34] lifecycle_1.0.5     vctrs_0.7.3         evaluate_1.0.5     

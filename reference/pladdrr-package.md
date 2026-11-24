@@ -9,8 +9,8 @@ multivariate statistics.
 
 ## Acoustic Analysis
 
-- **Sound**: read/write WAV, AIFF and NIST (FLAC and MP3 are read
-  through the `av` fallback, see
+- **Sound**: read/write WAV, AIFF, NIST and FLAC (MP3 is read through
+  the `av` fallback, see
   [`Sound`](https://humlab-speech.github.io/pladdrr/reference/Sound.md));
   generate tones and noise; `LongSound` for streaming files too large to
   hold in memory

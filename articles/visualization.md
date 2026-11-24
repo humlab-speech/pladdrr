@@ -42,7 +42,7 @@ Visualize a single power cepstrum with peak detection:
 
 ``` r
 # Create a PowerCepstrum object (Sound -> Spectrum -> PowerCepstrum)
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 cepstrum <- sound$to_spectrum()$to_power_cepstrum()
 
 # Plot with peak annotation
@@ -53,8 +53,6 @@ plot_powercepstrum(
   fit_method = "exponential decay",
   title = "Power Cepstrum with CPP Peak"
 )
-#> Warning in value[[3L]](cond): Could not compute peak: unused arguments (qmin =
-#> 0.001, qmax = 0)
 ```
 
 ![](visualization_files/figure-html/cepstrum-basic-1.png)
@@ -131,8 +129,6 @@ Multi-panel diagnostic figure combining all cepstral visualizations:
 # Complete cepstral analysis report (power cepstrum + cepstrogram + CPP time
 #  series)
 report_plot <- create_cepstrum_report(cepstrogram = cepstrogram)
-#> Warning in value[[3L]](cond): Could not compute peak: unused arguments (qmin =
-#> 0.001, qmax = 0)
 ```
 
 ![](visualization_files/figure-html/cepstrum-report-1.png)
@@ -160,7 +156,7 @@ vowels):
 
 ``` r
 # Extract formants at the midpoint of each labeled interval on the "phones" tier
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 textgrid <- TextGrid$new(
   system.file("extdata", "test.TextGrid", package = "pladdrr"))
 
@@ -263,7 +259,7 @@ F1-F3 trajectory plot without manual reshaping.
 
 ``` r
 # Extract pitch
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 pitch <- sound$to_pitch()
 
 # Convert to data frame
@@ -422,7 +418,7 @@ ggplot(tier_data_labeled, aes(x = duration, fill = text)) +
 
 ``` r
 # Create spectrogram
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 spectrogram <- sound$to_spectrogram(
   window_length = 0.005,
   max_frequency = 5000,

@@ -4,6 +4,12 @@ Praat Spectrum object with direct C++ module binding (complex FFT
 spectrum). Spectrum objects represent frequency-domain representations
 of sounds. Uses a shared dispatch table for minimal memory per object.
 
+## Usage
+
+``` r
+Spectrum(.xptr)
+```
+
 ## Arguments
 
 - .xptr:
@@ -93,7 +99,7 @@ cog <- spectrum$get_centre_of_gravity(power = 2.0)
 energy <- spectrum$get_band_energy(fmin = 400, fmax = 500)
 
 # Create a spectrum from a recording read from disk
-sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
 spectrum <- sound$to_spectrum(fast = TRUE)
 spec_df <- spectrum$as_data_frame()
 ```

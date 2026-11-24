@@ -3,6 +3,12 @@
 Praat LPC object for linear predictive coding analysis, created via
 direct C++ module binding.
 
+## Usage
+
+``` r
+LPC(.xptr)
+```
+
 ## Arguments
 
 - .xptr:

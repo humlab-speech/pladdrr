@@ -64,7 +64,7 @@ recording. In real research, load an actual recording with
 `Sound$new("path/to/recording.wav")` and its annotation with
 `TextGrid$new("path/to/recording.TextGrid")`. The package ships one
 example pair for experimentation:
-`system.file("extdata", "test.wav", package = "pladdrr")` and
+`system.file("extdata", "test.flac", package = "pladdrr")` and
 `system.file("extdata", "test.TextGrid", package = "pladdrr")`.
 
 ``` r

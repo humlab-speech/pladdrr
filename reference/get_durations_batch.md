@@ -1,7 +1,8 @@
 # Get Audio File Durations via WAV Header Reading
 
-Reads only the 44-byte WAV header to calculate duration, avoiding full
-file loading via \`LongSound\$from_file()\$get_total_duration()\`.
+Reads only the WAV header (or FLAC STREAMINFO block) to calculate
+duration, avoiding full file loading via
+\`LongSound\$from_file()\$get_total_duration()\`.
 
 This is a \*\*Tier 4 "Ultra"\*\* function for batch DSI (Dysphonia
 Severity Index) calculations where file duration is the MPT (Maximum
@@ -17,12 +18,12 @@ get_durations_batch(file_paths)
 
 - file_paths:
 
-  Character vector of .wav file paths
+  Character vector of .wav or .flac file paths
 
 ## Value
 
 Numeric vector of durations (seconds). Returns \`NA\` for files that
-cannot be read or are not valid WAV files.
+cannot be read or are not valid WAV or FLAC files.
 
 ## Performance
 

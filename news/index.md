@@ -1,6 +1,25 @@
 # Changelog
 
-## pladdrr (development version)
+## pladdrr 5.2.0
+
+### FLAC is decoded and encoded natively; shipped audio slimmed
+
+- libFLAC (BSD-3-Clause, vendored from Praat under
+  `src/praat.github.io/external/flac/`) is compiled in again.
+  [`Sound()`](https://humlab-speech.github.io/pladdrr/reference/Sound.md),
+  [`longsound_open()`](https://humlab-speech.github.io/pladdrr/reference/longsound_open.md),
+  [`sound_load_window()`](https://humlab-speech.github.io/pladdrr/reference/sound_load_window.md)
+  and `Sound$save(format = "FLAC")` handle FLAC without the `av` package
+  and without the `pladdrr_decoder_fallback` warning;
+  [`get_durations_batch()`](https://humlab-speech.github.io/pladdrr/reference/get_durations_batch.md)
+  reads FLAC STREAMINFO. MP3 is still read through `av`.
+- The shipped example sound is now `inst/extdata/test.flac` (was
+  `test.wav`, sample-identical). `inst/signalfiles/` (12 WAVs holding 2
+  distinct signals) is gone; the 2 signals live as FLAC test fixtures,
+  excluded from the built tarball, so tests that need them skip when run
+  from an installed copy.
+- [`batch_process()`](https://humlab-speech.github.io/pladdrr/reference/batch_process.md)
+  and friends now match `.wav` and `.flac` by default.
 
 ### BREAKING CHANGE: `Matrix()` is now `PraatMatrix()`
 
@@ -287,7 +306,7 @@ states by how much. The safety and robustness items are listed after
   from the WAV it was converted from, and it ignored the channel count,
   so a 2 x N stereo file arrived as a 1 x 2N mono Sound of twice the
   length. It now scales by full scale (2^31, the S32LE that
-  [`av::read_audio_bin()`](https://docs.ropensci.org/av//reference/read_audio.html)
+  [`av::read_audio_bin()`](https://docs.ropensci.org/av/reference/read_audio.html)
   hands back) and de-interleaves into one row per channel. The
   substitution itself is announced with a catchable
   `pladdrr_decoder_fallback` warning instead of a console message, so a

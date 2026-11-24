@@ -62,12 +62,12 @@ print(noise)
 
 ``` r
 # Load a WAV file using the object-oriented interface
-speech <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+speech <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 speech
 #> <Praat Sound>
 #>   Duration: 1.000 s
-#>   Sampling frequency: 44100 Hz
-#>   Number of samples: 44100
+#>   Sampling frequency: 16000 Hz
+#>   Number of samples: 16000
 #>   Number of channels: 1
 #>   Intensity: 84.9 dB
 
@@ -350,7 +350,7 @@ Here’s a complete analysis workflow:
 
 ``` r
 # 1. Load sound
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 
 # 2. Extract all analyses
 pitch <- sound$to_pitch(pitch_floor = 75, pitch_ceiling = 600)
@@ -376,8 +376,8 @@ vowel_data <- data.frame(
 )
 
 print(vowel_data)
-#>         F0       F1       F2      F3 Intensity
-#> 1 440.0102 420.6663 464.6014 2998.34  84.94835
+#>         F0       F1       F2       F3 Intensity
+#> 1 440.0098 420.0067 463.9559 3049.092  84.94854
 ```
 
 ## Comparing with Praat Scripts
@@ -396,7 +396,7 @@ Praat scripts:
 
 ``` r
 # R with pladdrr
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 pitch <- sound$to_pitch(time_step = 0.01,
                        pitch_floor = 75, pitch_ceiling = 600)
 f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
@@ -437,7 +437,7 @@ if (is.na(f0)) {
 } else {
   cat("F0:", f0, "Hz\n")
 }
-#> F0: 440.0102 Hz
+#> F0: 440.0098 Hz
 
 # Mean functions automatically exclude NA
 mean_f0 <- pitch$get_mean()  # NA values excluded
@@ -448,7 +448,7 @@ mean_f0 <- pitch$get_mean()  # NA values excluded
 ``` r
 # Package version
 packageVersion("pladdrr")
-#> [1] '5.1.1'
+#> [1] '5.2.0'
 
 # Citation information
 citation("pladdrr")
@@ -456,7 +456,7 @@ citation("pladdrr")
 #> 
 #>   Nylén, Fredrik, Skotare, Tomas & von Boer, Johan (2026). pladdrr:
 #>   Direct Access to the Core Algorithms of Praat. R package version
-#>   5.1.1. https://doi.org/10.5281/zenodo.21884217
+#>   5.2.0. https://doi.org/10.5281/zenodo.21884217
 #> 
 #>   Boersma, Paul & Weenink, David (2024). Praat: doing phonetics by
 #>   computer [Computer program]. Version 6.4.47, retrieved from

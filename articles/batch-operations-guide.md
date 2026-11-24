@@ -15,7 +15,7 @@ processing multiple files or querying multiple time points.
 adding overhead.
 
 ``` r
-sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
 formant <- sound$to_formant()
 
 # 100 R->C crossings for 100 time points
@@ -53,7 +53,7 @@ Cross-correlation pitch (batch) -
 ``` r
 # Load multiple sounds (here, the bundled test file repeated;
 # point list.files() at your own directory of WAV files in practice)
-files <- rep(system.file("extdata", "test.wav", package = "pladdrr"), 3)
+files <- rep(system.file("extdata", "test.flac", package = "pladdrr"), 3)
 sounds <- lapply(files, Sound)
 
 # Loop approach
@@ -76,7 +76,7 @@ Extract + formant
 
 ``` r
 # Analyze multiple intervals from a recording, using its TextGrid annotation
-sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
 textgrid <- TextGrid(system.file("extdata", "test.TextGrid", package = "pladdrr"))
 
 # Get interval times (non-empty intervals that fall within the sound's duration)
@@ -114,7 +114,7 @@ Pitch strength at multiple times
 **Example: Formant Tracking**
 
 ``` r
-sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
 formant <- sound$to_formant()
 
 # Define time points
@@ -170,7 +170,7 @@ extract-and-analyze batch functions.
 library(pladdrr)
 
 # Load recording and its TextGrid
-sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
 tg <- TextGrid(system.file("extdata", "test.TextGrid", package = "pladdrr"))
 
 # Non-empty segments that fall within the sound's duration
@@ -203,7 +203,7 @@ mean_f1 <- mean(all_f1, na.rm = TRUE)
 Analyze voice tremor by tracking pitch and intensity modulation.
 
 ``` r
-sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
 
 # Extract pitch and intensity
 pitch <- sound$to_pitch()
@@ -246,7 +246,7 @@ Process many files efficiently.
 # Get all files (here, the package's bundled extdata directory;
 # point this at your own corpus directory in practice)
 corpus_files <- list.files(system.file("extdata", package = "pladdrr"),
-                           pattern = "\\.wav$", full.names = TRUE)
+                           pattern = "\\.flac$", full.names = TRUE)
 cat(sprintf("Processing %d files\n", length(corpus_files)))
 
 # Parallel batch processing
@@ -370,10 +370,10 @@ when an element of the input list is neither a `Sound` object nor a raw
 external pointer:
 
 ``` r
-sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
 
 # Fails: batch functions expect a list of Sound objects, not a bare path
-# pitches <- sound_to_pitch_batch("test.wav")
+# pitches <- sound_to_pitch_batch("test.flac")
 
 # Works
 pitches <- sound_to_pitch_batch(list(sound))

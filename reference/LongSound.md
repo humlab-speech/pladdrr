@@ -3,6 +3,12 @@
 Represents a Praat LongSound object: an audio file that stays on disk
 instead of loading into memory.
 
+## Usage
+
+``` r
+LongSound(.xptr)
+```
+
 ## Arguments
 
 - .xptr:
@@ -25,7 +31,7 @@ memory allows. Use `extract_part()` whenever you need actual waveform
 data for pitch, formant, or intensity analysis: it reads just the
 requested time window and hands back a normal Sound.
 
-## Usage
+## Construction
 
     ls <- LongSound$open("recording.wav")
     part <- ls$extract_part(10, 15)   # 5 seconds as a Sound
@@ -108,7 +114,7 @@ Sound$create_tone(frequency = 150, duration = 1.0)$save(tmp)
 ls <- LongSound$open(tmp)
 print(ls)
 #> <Praat LongSound>
-#>   File: /tmp/RtmpPcxhSv/file21536bd469f.wav 
+#>   File: /tmp/RtmpOyvRic/file22823abec252.wav 
 #>   Duration: 1.000 seconds
 #>   Sample rate: 44100 Hz
 #>   Channels: 1 

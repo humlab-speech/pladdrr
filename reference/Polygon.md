@@ -2,6 +2,12 @@
 
 2D polygon for geometric operations and spatial analysis.
 
+## Usage
+
+``` r
+Polygon(x, y, .xptr)
+```
+
 ## Arguments
 
 - x:

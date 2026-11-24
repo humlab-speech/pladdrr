@@ -8,7 +8,7 @@ Praat's pattern of creating Strings objects and looping over files.
 ``` r
 batch_process(
   directory,
-  pattern = "\\.wav$",
+  pattern = "\\.(wav|flac)$",
   func,
   recursive = FALSE,
   parallel = FALSE,

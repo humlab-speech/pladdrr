@@ -54,7 +54,7 @@ object if needed
 ## Examples
 
 ``` r
-sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
 
 # Fast path: returns an external pointer, no wrapper object built
 pcep_ptr <- to_powercepstrogram_fast(sound, 60, 0.002, 5000, 50)
@@ -62,5 +62,5 @@ pcep_ptr <- to_powercepstrogram_fast(sound, 60, 0.002, 5000, 50)
 # Wrap it when you want the method API
 pcep <- PowerCepstrogram(.xptr = pcep_ptr)
 pcep$get_cpps()
-#> [1] 9.923184
+#> [1] 10.58548
 ```

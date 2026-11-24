@@ -27,9 +27,9 @@ change global behaviour.
 
 Load, create and inspect audio. Start here.
 
-- [`Sound`](https://humlab-speech.github.io/pladdrr/reference/Sound.md)
+- [`Sound()`](https://humlab-speech.github.io/pladdrr/reference/Sound.md)
   : Sound
-- [`LongSound`](https://humlab-speech.github.io/pladdrr/reference/LongSound.md)
+- [`LongSound()`](https://humlab-speech.github.io/pladdrr/reference/LongSound.md)
   : LongSound
 - [`read_sound()`](https://humlab-speech.github.io/pladdrr/reference/read_sound.md)
   : Read sound from audio file (DEPRECATED)
@@ -83,11 +83,11 @@ Load, create and inspect audio. Start here.
 Fundamental frequency extraction (all four Praat pitch methods) and
 point processes.
 
-- [`Pitch`](https://humlab-speech.github.io/pladdrr/reference/Pitch.md)
+- [`Pitch()`](https://humlab-speech.github.io/pladdrr/reference/Pitch.md)
   : Pitch
 - [`PitchModule()`](https://humlab-speech.github.io/pladdrr/reference/PitchModule.md)
   : Create a Pitch Object from Module
-- [`PitchTier`](https://humlab-speech.github.io/pladdrr/reference/PitchTier.md)
+- [`PitchTier()`](https://humlab-speech.github.io/pladdrr/reference/PitchTier.md)
   : PitchTier
 - [`to_pitch_ac_direct()`](https://humlab-speech.github.io/pladdrr/reference/to_pitch_ac_direct.md)
   : Create Pitch from Sound Directly (Autocorrelation) - Full Parameters
@@ -142,7 +142,7 @@ point processes.
   : Extract Pitch (SHS) from Multiple Sounds
 - [`sound_to_pitch_spinet_batch()`](https://humlab-speech.github.io/pladdrr/reference/sound_to_pitch_spinet_batch.md)
   : Extract Pitch (SPINET) from Multiple Sounds
-- [`PointProcess`](https://humlab-speech.github.io/pladdrr/reference/PointProcess.md)
+- [`PointProcess()`](https://humlab-speech.github.io/pladdrr/reference/PointProcess.md)
   : Praat PointProcess object
 - [`to_point_process_direct()`](https://humlab-speech.github.io/pladdrr/reference/to_point_process_direct.md)
   : Create PointProcess from Sound Directly (returns XPtr)
@@ -175,7 +175,7 @@ Jitter, shimmer, HNR, CPPS and multiband harmonicity.
   : Get Voice Quality Metrics in Single Call (Tier 4 Ultra)
 - [`get_durations_batch()`](https://humlab-speech.github.io/pladdrr/reference/get_durations_batch.md)
   : Get Audio File Durations via WAV Header Reading
-- [`Harmonicity`](https://humlab-speech.github.io/pladdrr/reference/Harmonicity.md)
+- [`Harmonicity()`](https://humlab-speech.github.io/pladdrr/reference/Harmonicity.md)
   : Harmonicity
 - [`to_harmonicity_direct()`](https://humlab-speech.github.io/pladdrr/reference/to_harmonicity_direct.md)
   : Create Harmonicity from Sound Directly (returns XPtr)
@@ -201,15 +201,15 @@ Jitter, shimmer, HNR, CPPS and multiband harmonicity.
 Resonance tracking, including the robust FormantPath/FormantModeler
 trackters.
 
-- [`Formant`](https://humlab-speech.github.io/pladdrr/reference/Formant.md)
+- [`Formant()`](https://humlab-speech.github.io/pladdrr/reference/Formant.md)
   : Formant
-- [`FormantPath`](https://humlab-speech.github.io/pladdrr/reference/FormantPath.md)
+- [`FormantPath()`](https://humlab-speech.github.io/pladdrr/reference/FormantPath.md)
   : Create a FormantPath object from a Sound
-- [`FormantGrid`](https://humlab-speech.github.io/pladdrr/reference/FormantGrid.md)
+- [`FormantGrid()`](https://humlab-speech.github.io/pladdrr/reference/FormantGrid.md)
   : FormantGrid
-- [`FormantTier`](https://humlab-speech.github.io/pladdrr/reference/FormantTier.md)
+- [`FormantTier()`](https://humlab-speech.github.io/pladdrr/reference/FormantTier.md)
   : FormantTier
-- [`FormantModeler`](https://humlab-speech.github.io/pladdrr/reference/FormantModeler.md)
+- [`FormantModeler()`](https://humlab-speech.github.io/pladdrr/reference/FormantModeler.md)
   : FormantModeler
 - [`formanttier_from_formant()`](https://humlab-speech.github.io/pladdrr/reference/formanttier_from_formant.md)
   : Create FormantTier from Formant
@@ -238,7 +238,7 @@ trackters.
 
 Intensity contours, tiers and per-sound level statistics.
 
-- [`Intensity`](https://humlab-speech.github.io/pladdrr/reference/Intensity.md)
+- [`Intensity()`](https://humlab-speech.github.io/pladdrr/reference/Intensity.md)
   : Intensity
 - [`IntensityTier`](https://humlab-speech.github.io/pladdrr/reference/IntensityTier.md)
   : Praat IntensityTier Object
@@ -271,13 +271,13 @@ Intensity contours, tiers and per-sound level statistics.
 
 Spectrum, spectrogram, LTAS and batch spectral moments.
 
-- [`Spectrum`](https://humlab-speech.github.io/pladdrr/reference/Spectrum.md)
+- [`Spectrum()`](https://humlab-speech.github.io/pladdrr/reference/Spectrum.md)
   : Spectrum
 - [`Spectrogram`](https://humlab-speech.github.io/pladdrr/reference/Spectrogram.md)
   : Spectrogram
-- [`Ltas`](https://humlab-speech.github.io/pladdrr/reference/Ltas.md) :
-  Ltas
-- [`ComplexSpectrogram`](https://humlab-speech.github.io/pladdrr/reference/ComplexSpectrogram.md)
+- [`Ltas()`](https://humlab-speech.github.io/pladdrr/reference/Ltas.md)
+  : Ltas
+- [`ComplexSpectrogram()`](https://humlab-speech.github.io/pladdrr/reference/ComplexSpectrogram.md)
   : ComplexSpectrogram
 - [`BarkSpectrogram()`](https://humlab-speech.github.io/pladdrr/reference/BarkSpectrogram.md)
   : BarkSpectrogram
@@ -297,7 +297,7 @@ Spectrum, spectrogram, LTAS and batch spectral moments.
   : Apply Hann band-pass filter to spectrum (in-place)
 - [`spectrum_stop_hann_band()`](https://humlab-speech.github.io/pladdrr/reference/spectrum_stop_hann_band.md)
   : Apply Hann band-stop filter to spectrum (in-place)
-- [`SpectrumTier`](https://humlab-speech.github.io/pladdrr/reference/SpectrumTier.md)
+- [`SpectrumTier()`](https://humlab-speech.github.io/pladdrr/reference/SpectrumTier.md)
   : SpectrumTier
 
 ## Cepstrum, MFCC and auditory models
@@ -307,21 +307,21 @@ models.
 
 - [`Cepstrum`](https://humlab-speech.github.io/pladdrr/reference/Cepstrum.md)
   : Praat Cepstrum Object
-- [`MFCC`](https://humlab-speech.github.io/pladdrr/reference/MFCC.md) :
-  MFCC
-- [`LFCC`](https://humlab-speech.github.io/pladdrr/reference/LFCC.md) :
-  LFCC
-- [`LPC`](https://humlab-speech.github.io/pladdrr/reference/LPC.md) :
+- [`MFCC()`](https://humlab-speech.github.io/pladdrr/reference/MFCC.md)
+  : MFCC
+- [`LFCC()`](https://humlab-speech.github.io/pladdrr/reference/LFCC.md)
+  : LFCC
+- [`LPC()`](https://humlab-speech.github.io/pladdrr/reference/LPC.md) :
   LPC
 - [`PowerCepstrum`](https://humlab-speech.github.io/pladdrr/reference/PowerCepstrum.md)
   : PowerCepstrum
-- [`PowerCepstrogram`](https://humlab-speech.github.io/pladdrr/reference/PowerCepstrogram.md)
+- [`PowerCepstrogram()`](https://humlab-speech.github.io/pladdrr/reference/PowerCepstrogram.md)
   : PowerCepstrogram
 - [`to_powercepstrogram_fast()`](https://humlab-speech.github.io/pladdrr/reference/to_powercepstrogram_fast.md)
   : Fast PowerCepstrogram Creation (Advanced Performance API)
-- [`Cochleagram`](https://humlab-speech.github.io/pladdrr/reference/Cochleagram.md)
+- [`Cochleagram()`](https://humlab-speech.github.io/pladdrr/reference/Cochleagram.md)
   : Cochleagram
-- [`Excitation`](https://humlab-speech.github.io/pladdrr/reference/Excitation.md)
+- [`Excitation()`](https://humlab-speech.github.io/pladdrr/reference/Excitation.md)
   : Excitation
 - [`spectrum_cepstral_smoothing()`](https://humlab-speech.github.io/pladdrr/reference/spectrum_cepstral_smoothing.md)
   : Apply cepstral smoothing to spectrum
@@ -330,7 +330,7 @@ models.
 
 Time-aligned annotation, including the per-interval batch analysers.
 
-- [`TextGrid`](https://humlab-speech.github.io/pladdrr/reference/TextGrid.md)
+- [`TextGrid()`](https://humlab-speech.github.io/pladdrr/reference/TextGrid.md)
   : Praat TextGrid Object
 - [`textgrid_create()`](https://humlab-speech.github.io/pladdrr/reference/textgrid_create.md)
   : Create TextGrid
@@ -374,17 +374,17 @@ Time-aligned annotation, including the per-interval batch analysers.
 
 Parametric synthesis and articulatory models.
 
-- [`KlattGrid`](https://humlab-speech.github.io/pladdrr/reference/KlattGrid.md)
+- [`KlattGrid()`](https://humlab-speech.github.io/pladdrr/reference/KlattGrid.md)
   : Create a KlattGrid object
 - [`klattgrid_create_example()`](https://humlab-speech.github.io/pladdrr/reference/klattgrid_create_example.md)
   : Create example KlattGrid
 - [`klattgrid_create_from_vowel()`](https://humlab-speech.github.io/pladdrr/reference/klattgrid_create_from_vowel.md)
   : Create KlattGrid from vowel parameters
-- [`VocalTract`](https://humlab-speech.github.io/pladdrr/reference/VocalTract.md)
+- [`VocalTract()`](https://humlab-speech.github.io/pladdrr/reference/VocalTract.md)
   : VocalTract
 - [`vocaltract_create_from_phone()`](https://humlab-speech.github.io/pladdrr/reference/vocaltract_create_from_phone.md)
   : Create VocalTract from phone
-- [`Manipulation`](https://humlab-speech.github.io/pladdrr/reference/Manipulation.md)
+- [`Manipulation()`](https://humlab-speech.github.io/pladdrr/reference/Manipulation.md)
   : Praat Manipulation Object
 
 ## Sound manipulation
@@ -484,11 +484,11 @@ objects.
   : Create DTW from two Sound objects
 - [`spectrograms_to_dtw()`](https://humlab-speech.github.io/pladdrr/reference/spectrograms_to_dtw.md)
   : Create DTW from two Spectrogram objects
-- [`PCA`](https://humlab-speech.github.io/pladdrr/reference/PCA.md) :
+- [`PCA()`](https://humlab-speech.github.io/pladdrr/reference/PCA.md) :
   PCA
 - [`pca_from_matrix()`](https://humlab-speech.github.io/pladdrr/reference/pca_from_matrix.md)
   : Create PCA from data matrix
-- [`Discriminant`](https://humlab-speech.github.io/pladdrr/reference/Discriminant.md)
+- [`Discriminant()`](https://humlab-speech.github.io/pladdrr/reference/Discriminant.md)
   : Discriminant
 - [`discriminant_from_matrix()`](https://humlab-speech.github.io/pladdrr/reference/discriminant_from_matrix.md)
   : Create Discriminant Analysis from labeled data
@@ -497,15 +497,15 @@ objects.
 
 Containers and tiers that the analysers return.
 
-- [`AmplitudeTier`](https://humlab-speech.github.io/pladdrr/reference/AmplitudeTier.md)
+- [`AmplitudeTier()`](https://humlab-speech.github.io/pladdrr/reference/AmplitudeTier.md)
   : AmplitudeTier
 - [`amplitude_tier_create()`](https://humlab-speech.github.io/pladdrr/reference/amplitude_tier_create.md)
   : Create an empty AmplitudeTier
 - [`amplitude_tier_from_point_process()`](https://humlab-speech.github.io/pladdrr/reference/amplitude_tier_from_point_process.md)
   : Create AmplitudeTier from PointProcess and Sound
-- [`DurationTier`](https://humlab-speech.github.io/pladdrr/reference/DurationTier.md)
+- [`DurationTier()`](https://humlab-speech.github.io/pladdrr/reference/DurationTier.md)
   : DurationTier
-- [`Electroglottogram`](https://humlab-speech.github.io/pladdrr/reference/Electroglottogram.md)
+- [`Electroglottogram()`](https://humlab-speech.github.io/pladdrr/reference/Electroglottogram.md)
   : Electroglottogram
 - [`electroglottogram_create()`](https://humlab-speech.github.io/pladdrr/reference/electroglottogram_create.md)
   : Create an Electroglottogram object
@@ -517,11 +517,11 @@ Containers and tiers that the analysers return.
   : Create a simple Praat Matrix
 - [`matrix_read()`](https://humlab-speech.github.io/pladdrr/reference/matrix_read.md)
   : Read a Matrix from file
-- [`Table`](https://humlab-speech.github.io/pladdrr/reference/Table.md)
+- [`Table()`](https://humlab-speech.github.io/pladdrr/reference/Table.md)
   : Praat Table Object
 - [`table_create()`](https://humlab-speech.github.io/pladdrr/reference/table_create.md)
   : Create a Praat Table
-- [`Polygon`](https://humlab-speech.github.io/pladdrr/reference/Polygon.md)
+- [`Polygon()`](https://humlab-speech.github.io/pladdrr/reference/Polygon.md)
   : Polygon Object
 
 ## Praat script interpreter

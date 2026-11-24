@@ -406,7 +406,7 @@ autoplot(spec) +
 
 ``` r
 # Load real speech
-sound_real <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+sound_real <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
 
 # Extract mean formants from real speech
 formant_real <- sound_real$to_formant_burg()
@@ -419,11 +419,11 @@ f3_mean <- mean(df_real$frequency[df_real$formant == 3], na.rm = TRUE)
 cat("Extracted formants from real speech:\n")
 #> Extracted formants from real speech:
 cat(sprintf("  F1: %.0f Hz\n", f1_mean))
-#>   F1: 421 Hz
+#>   F1: 420 Hz
 cat(sprintf("  F2: %.0f Hz\n", f2_mean))
-#>   F2: 465 Hz
+#>   F2: 464 Hz
 cat(sprintf("  F3: %.0f Hz\n", f3_mean))
-#>   F3: 3080 Hz
+#>   F3: 3150 Hz
 
 # Resynthesize with extracted formants
 kg_synth <- klattgrid_create_from_vowel(
@@ -489,7 +489,7 @@ cat("  Uses multiple pitch points, formant tiers, and amplitude control\n")
 
 ``` r
 # 1. Load real speech
-sound_orig <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+sound_orig <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
 
 # 2. Extract formants (using FormantPath for robustness)
 fp <- sound_orig$to_formant_path(num_steps_up_down = 2L)
@@ -510,11 +510,11 @@ cat("Extracted parameters:\n")
 cat(sprintf("  F0: %.0f Hz\n", f0_mean))
 #>   F0: 440 Hz
 cat(sprintf("  F1: %.0f Hz\n", f1_mean))
-#>   F1: 421 Hz
+#>   F1: 420 Hz
 cat(sprintf("  F2: %.0f Hz\n", f2_mean))
-#>   F2: 465 Hz
+#>   F2: 464 Hz
 cat(sprintf("  F3: %.0f Hz\n", f3_mean))
-#>   F3: 3080 Hz
+#>   F3: 3150 Hz
 
 # 5. Resynthesize
 kg_resynth <- klattgrid_create_from_vowel(
@@ -800,18 +800,18 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] ggplot2_4.0.4 pladdrr_5.1.1
+#> [1] ggplot2_4.0.4 pladdrr_5.2.0
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] gtable_0.3.6        jsonlite_2.0.0      dplyr_1.2.1        
 #>  [4] compiler_4.6.2      tidyselect_1.2.1    Rcpp_1.1.2         
-#>  [7] jquerylib_0.1.4     systemfonts_1.3.2   scales_1.4.0       
-#> [10] textshaping_1.0.5   yaml_2.3.12         fastmap_1.2.0      
+#>  [7] jquerylib_0.1.4     systemfonts_1.3.4   scales_1.4.0       
+#> [10] textshaping_1.1.0   yaml_2.3.12         fastmap_1.2.0      
 #> [13] R6_2.6.1            labeling_0.4.3      generics_0.1.4     
 #> [16] knitr_1.52          tibble_3.3.1        desc_1.4.3         
 #> [19] bslib_0.12.0        pillar_1.11.1       RColorBrewer_1.1-3 
 #> [22] rlang_1.3.0         cachem_1.1.0        xfun_0.62          
-#> [25] fs_2.1.0            sass_0.4.10         S7_0.2.2           
+#> [25] fs_2.1.0            sass_0.5.0          S7_1.0.0           
 #> [28] otel_0.3.0          cli_3.6.6           pkgdown_2.2.1      
 #> [31] withr_3.0.3         magrittr_2.0.5      digest_0.6.39      
 #> [34] grid_4.6.2          lifecycle_1.0.5     vctrs_0.7.3        

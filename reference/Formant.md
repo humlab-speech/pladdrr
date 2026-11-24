@@ -5,6 +5,12 @@ Created from a Sound via formant tracking algorithms (Burg,
 Split-Levinson, or Willems). Formant frequencies and bandwidths are the
 primary acoustic correlates of vowel quality in speech.
 
+## Usage
+
+``` r
+Formant(.xptr)
+```
+
 ## Arguments
 
 - .xptr:
@@ -108,7 +114,7 @@ f1 <- formant$get_value_at_time(formant_number = 1, time = 0.5, unit =
  "hertz")
 
 # The same analysis on a recording read from disk
-sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
 formant <- sound$to_formant_burg(
   time_step = 0.01, max_number_of_formants = 5,
   maximum_formant = 5500, window_length = 0.025, pre_emphasis_from = 50

@@ -196,13 +196,13 @@ Compare cochleagrams of normal and impaired hearing:
 ``` r
 # Original speech sound
 sound_original <- Sound$new(
-  system.file("extdata", "test.wav", package = "pladdrr"))
+  system.file("extdata", "test.flac", package = "pladdrr"))
 
 # In practice, apply a low-pass filter to sound_filtered here to simulate
 # high-frequency hearing loss (Sound objects have no clone() method, so
 # start from a fresh load rather than copying sound_original)
 sound_filtered <- Sound$new(
-  system.file("extdata", "test.wav", package = "pladdrr"))
+  system.file("extdata", "test.flac", package = "pladdrr"))
 
 # Create cochleagrams
 cochlea_normal <- sound_original$to_cochleagram()
@@ -232,11 +232,11 @@ uses the bundled test file for both, so `distance` will be 0.
 ``` r
 # Clean speech
 speech_clean <- Sound$new(
-  system.file("extdata", "test.wav", package = "pladdrr"))
+  system.file("extdata", "test.flac", package = "pladdrr"))
 
 # Noisy speech (in practice, a separate recording made in noise)
 speech_noisy <- Sound$new(
-  system.file("extdata", "test.wav", package = "pladdrr"))
+  system.file("extdata", "test.flac", package = "pladdrr"))
 
 # Get excitation patterns
 exc_clean <- speech_clean$to_spectrum()$to_excitation()
@@ -356,8 +356,8 @@ loudness_time_series <- vapply(seq(0, 0.5, by = 0.01),
 rm(cochlea)
 gc()  # Force garbage collection
 #>           used  (Mb) gc trigger  (Mb) max used  (Mb)
-#> Ncells 1985765 106.1    3245584 173.4  3245584 173.4
-#> Vcells 3366091  25.7    8388608  64.0  7877735  60.2
+#> Ncells 2008809 107.3    3361824 179.6  3361824 179.6
+#> Vcells 3408488  26.1    8388608  64.0  8388608  64.0
 ```
 
 ## Comparison with Traditional Analysis
@@ -406,18 +406,18 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] ggplot2_4.0.4 pladdrr_5.1.1
+#> [1] ggplot2_4.0.4 pladdrr_5.2.0
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] gtable_0.3.6        jsonlite_2.0.0      dplyr_1.2.1        
 #>  [4] compiler_4.6.2      tidyselect_1.2.1    Rcpp_1.1.2         
-#>  [7] jquerylib_0.1.4     systemfonts_1.3.2   scales_1.4.0       
-#> [10] textshaping_1.0.5   yaml_2.3.12         fastmap_1.2.0      
+#>  [7] jquerylib_0.1.4     systemfonts_1.3.4   scales_1.4.0       
+#> [10] textshaping_1.1.0   yaml_2.3.12         fastmap_1.2.0      
 #> [13] R6_2.6.1            labeling_0.4.3      generics_0.1.4     
 #> [16] knitr_1.52          tibble_3.3.1        desc_1.4.3         
 #> [19] bslib_0.12.0        pillar_1.11.1       RColorBrewer_1.1-3 
 #> [22] rlang_1.3.0         cachem_1.1.0        xfun_0.62          
-#> [25] fs_2.1.0            sass_0.4.10         S7_0.2.2           
+#> [25] fs_2.1.0            sass_0.5.0          S7_1.0.0           
 #> [28] otel_0.3.0          viridisLite_0.4.3   cli_3.6.6          
 #> [31] pkgdown_2.2.1       withr_3.0.3         magrittr_2.0.5     
 #> [34] digest_0.6.39       grid_4.6.2          lifecycle_1.0.5    

@@ -2,6 +2,12 @@
 
 Linear-frequency cepstral coefficients for speaker recognition.
 
+## Usage
+
+``` r
+LFCC(.xptr)
+```
+
 ## Arguments
 
 - .xptr:

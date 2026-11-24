@@ -22,7 +22,7 @@ sound = Read from file: "audio.wav"
 library(pladdrr)
 #> pladdrr: direct access to Praat's core algorithms from R.
 #> See ?pladdrr for an overview, or citation("pladdrr") for citation details.
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 ```
 
 ### 2. Method Calls
@@ -69,7 +69,7 @@ std_f0 = Get standard deviation: 0, 0, "Hertz"
 **pladdrr:**
 
 ``` r
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
 mean_f0 <- pitch$get_mean(from_time = 0, to_time = 0, unit = "hertz")
 std_f0 <- pitch$get_standard_deviation(from_time = 0, to_time = 0,
@@ -90,7 +90,7 @@ f2 = Get value at time: 2, 0.5, "Hertz", "Linear"
 **pladdrr:**
 
 ``` r
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 formant <- sound$to_formant_burg(
   time_step = 0.01,
   max_number_of_formants = 5,
@@ -116,7 +116,7 @@ max_intensity = Get maximum: 0, 0, "Parabolic"
 **pladdrr:**
 
 ``` r
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 intensity <- sound$to_intensity(minimum_pitch = 100, time_step = 0.01,
   subtract_mean = TRUE)
 mean_intensity <- intensity$get_mean(from_time = 0, to_time = 0,
@@ -138,7 +138,7 @@ cog = Get centre of gravity: 2.0
 **pladdrr:**
 
 ``` r
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 spectrum <- sound$to_spectrum(fast = TRUE)
 cog <- spectrum$get_centre_of_gravity(power = 2.0)
 ```
@@ -246,7 +246,7 @@ results <- tibble(file = list.files(pattern = "\\.wav$")) %>%
 library(ggplot2)
 
 # Extract pitch contour
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 pitch <- sound$to_pitch(time_step = 0.01, pitch_floor = 75, pitch_ceiling = 600)
 pitch_data <- pitch$as_data_frame()
 
@@ -284,7 +284,7 @@ removeObject: sound
 
 ``` r
 # Objects are automatically cleaned up when no longer referenced
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 # 'sound' is freed when it goes out of scope or is reassigned
 ```
 
@@ -309,11 +309,11 @@ Use lowercase for units in pladdrr:
 ``` r
 # Correct
 pitch$get_mean(unit = "hertz")
-#> [1] 440.0102
+#> [1] 440.0098
 
 # Also works (case-insensitive in many methods)
 pitch$get_mean(unit = "Hertz")
-#> [1] 440.0102
+#> [1] 440.0098
 ```
 
 ## Getting Help

@@ -145,7 +145,7 @@ The \`fit_method\` difference is deliberate beyond convention: Praat's
 ## Examples
 
 ``` r
-sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound(system.file("extdata", "test.flac", package = "pladdrr"))
 
 # Full-file CPPS calls on the 60 s demo file are CPU-heavy (> 5 s under
 # R CMD check), so they live in \donttest{} (still run under
@@ -153,12 +153,12 @@ sound <- Sound(system.file("extdata", "test.wav", package = "pladdrr"))
 # \donttest{
 # One-call CPPS with the default (AVQI-convention) parameters
 calculate_cpps_fast(sound)
-#> [1] 9.923184
+#> [1] 10.58548
 
 # The object API gives the identical value
 pcep <- sound$to_powercepstrogram(60, 0.002, 5000, 50)
 pcep$get_cpps()
-#> [1] 9.923184
+#> [1] 10.58548
 
 # Reproduce Praat's own "Get CPPS..." defaults
 calculate_cpps_fast(sound,
@@ -166,7 +166,7 @@ calculate_cpps_fast(sound,
   qstart_fit = 0.001, qend_fit = 0.05,
   trend_line_type = "exponential", fit_method = "least_squares"
 )
-#> [1] 5.668984
+#> [1] 6.195884
 # }
 # Single-interval CPP is a different, cheaper path
 segment <- sound$extract_part(0, 0.5)

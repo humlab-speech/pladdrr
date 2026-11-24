@@ -3,6 +3,12 @@
 Praat FormantTier object: formant frequencies and bandwidths at discrete
 time points, with interpolation between points.
 
+## Usage
+
+``` r
+FormantTier(tmin, tmax, .xptr)
+```
+
 ## Arguments
 
 - tmin:
@@ -28,7 +34,7 @@ manipulation via time-value points.
 The interpolated contour can be used to filter sounds for vowel
 modification or resynthesis.
 
-## Usage
+## Construction
 
     FormantTier(tmin, tmax)              # create an empty FormantTier
     FormantTier$from_formant(formant)    # convert from a Formant object

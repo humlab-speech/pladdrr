@@ -3,6 +3,12 @@
 A Praat AmplitudeTier: sound pressure amplitude in Pascals as a function
 of time.
 
+## Usage
+
+``` r
+AmplitudeTier(.xptr)
+```
+
 ## Arguments
 
 - .xptr:
@@ -24,7 +30,7 @@ dB instead of Pa), and the two convert into each other. A common use is
 pulling amplitude at glottal pulse times (from a PointProcess) to
 compute shimmer.
 
-## Usage
+## Construction
 
     tier <- amplitude_tier_create(0, 1)
     tier <- amplitude_tier_from_point_process(point_process, sound)

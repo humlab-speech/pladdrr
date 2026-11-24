@@ -33,7 +33,7 @@ method that creates an appropriate visualization.
 
 ``` r
 # Load example sound
-sound <- Sound$new(system.file("extdata", "test.wav", package = "pladdrr"))
+sound <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 ```
 
 ### Sound Waveform

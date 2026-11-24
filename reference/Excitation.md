@@ -2,6 +2,12 @@
 
 Represents a Praat auditory excitation pattern.
 
+## Usage
+
+``` r
+Excitation(.xptr)
+```
+
 ## Arguments
 
 - .xptr:
