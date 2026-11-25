@@ -385,19 +385,19 @@ articles:
   desc: Common phonetic analysis tasks
   contents:
   - formant-analysis
-  - formantpath-robust-tracking
-  - vowel-space-analysis
-  - textgrid-workflows
+  - articles/formantpath-robust-tracking
+  - articles/vowel-space-analysis
+  - articles/textgrid-workflows
   - integrated-phonetic-analysis
 
 - title: Advanced Topics
   desc: Complex analysis and synthesis
   contents:
-  - speech-synthesis-klattgrid
+  - articles/speech-synthesis-klattgrid
   - analysis-resynthesis-workflow
-  - auditory-modeling
-  - visualization
-  - autoplot-autolayer
+  - articles/auditory-modeling
+  - articles/visualization
+  - articles/autoplot-autolayer
   - praat-interpreter
 
 - title: Performance & Optimization
