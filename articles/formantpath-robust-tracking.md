@@ -491,10 +491,10 @@ requested. Measure on your own data:
 ``` r
 system.time(frm_result <- sound$to_formant_burg())
 #>    user  system elapsed 
-#>   0.008   0.003   0.004
+#>   0.011   0.000   0.005
 system.time(fp <- sound$to_formant_path(num_steps_up_down = 2L))
 #>    user  system elapsed 
-#>   0.040   0.002   0.018
+#>   0.044   0.001   0.020
 ```
 
 ## Best Practices
