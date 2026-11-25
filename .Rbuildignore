@@ -202,7 +202,6 @@ manual_.*\.cpp$
 ^src/praat\.github\.io/excluded_sources/SpellingChecker\.cpp$
 ^src/praat\.github\.io/excluded_sources/TextGrid_files\.cpp$
 ^src/praat\.github\.io/excluded_sources/WordList\.cpp$
-^src/praat\.github\.io/external/flac/flac_share_win_utf8_io\.c$
 ^src/praat\.github\.io/fon/ExperimentMFC\.cpp$
 ^src/praat\.github\.io/fon/FujisakiPitch\.cpp$
 ^src/praat\.github\.io/fon/praat_ExperimentMFC\.cpp$
