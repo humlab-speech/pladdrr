@@ -9,6 +9,7 @@ vignette: >
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
+  dpi = 72,
   collapse = TRUE,
   comment = "#>",
   fig.width = 7,
