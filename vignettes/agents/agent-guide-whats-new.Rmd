@@ -1,0 +1,390 @@
+---
+title: "Agent Guide: What's New"
+---
+
+Part of the [Agent Guide](agent-guide.html). Release-by-release notes; the full archive is in [version history](history.html).
+
+- **v4.9.18 — Performance + docs + CI (2026-08-05 assessment, Phases 1-4):**
+  - **PointProcess jitter/shimmer batch cache:** First shimmer call fetches all 11 jitter+shimmer metrics via `get_jitter_shimmer_batch_cpp()`. Subsequent jitter or shimmer calls with matching parameters return from cache — no additional C++ crossing. Backward compatible: jitter methods unchanged (no Sound required); cache activates automatically after first shimmer call.
+  - **Formant `get_all_values_at_time` — single C++ call:** Added `formant_get_all_values_at_time()` export; replaces `vapply` loop over N module calls with one direct wrapper call.
+  - **Runnable examples:** Spectrum, Harmonicity, PowerCepstrum, Pitch, PointProcess now have self-contained examples using `Sound$create_tone()` — executable during `R CMD check`.
+  - **Phase 2 — class documentation overhaul:** All 15 R6 class wrapper files expanded with full method listings grouped by category, `@seealso` cross-references, and improved `@description` text (Formant, Pitch, Intensity, PointProcess, Spectrum, Spectrogram, Harmonicity, PowerCepstrum, LPC, TextGrid, Ltas, MFCC/LFCC, PCA, Discriminant, DTW).
+  - **Phase 3 — dispatch migration from module to wrapper calls:** Sound (7 query methods), Formant (14), Spectrum (16), Spectrogram (12) migrated from `.self$.cpp$method()` (Rcpp Module dispatch, 3 layers: R→Module→C++) to `.Call("_pladdrr_*", .self$.xptr, args)` (direct wrapper, 2 layers: R→C++). ~30-40% less per-call overhead. Remaining module calls: simple getters without wrapper equivalents (xmin/xmax), print methods, and object-creation transforms.
+  - **Phase 4 — CI infrastructure:** `.github/workflows/R-CMD-check.yaml` (ubuntu release/devel, macOS) with system deps. `.github/workflows/test-coverage.yaml` (covr + Codecov). Hardcoded developer paths in tests replaced with `PLADDRR_PRAAT_EXEC` / `PLADDRR_PLABENCH_DIR` env vars.
+- **v4.9.18 — Assessment-driven fixes (2026-08-05):**
+  - **CPPS trend-fit fusion:** `calculate_cpps_ultra(fused=TRUE)` reuses per-frame trends, eliminating duplicate trend fit (~2x speedup for CPPS-heavy pipelines). Default `fused=FALSE` preserves bit-exact Praat output.
+  - **SIMD small-input gating:** `simd_bridge.h` scalar fallback for `n < 16` avoids dispatch overhead on tiny vectors. `simd_bridge_stat_direct()` zero-copy overload for 0-based SIMD functions.
+  - **Thread pool consolidation:** Removed custom `parallel_for_range` pool in `batch_queries.cpp`; `PowerCepstrogram_smooth_fast` now uses `MelderThread_PARALLELIZE`, respecting `pladdrr_threads()` cap.
+  - **Frequency unit code fix:** `get_pitch_at_times()`, `get_pitch_quantiles_batch()`, and pitchtier wrapper now route through centralized `unit_to_code()` instead of inline `switch()` blocks with wrong `semitones=3` (Praat enum: `semitones=1`). String API users unaffected.
+  - **Bridge function visibility:** 13 `*_simd_bridge` functions re-marked `@keywords internal` (were erroneously `@export` in v4.9.14). Not part of the public API.
+  - **Faithfulness test expansion:** 5 → 11 Praat oracle routines (added CPPS, Pitch AC, Pitch SHS, Intensity, Formant KeepAll, Pitch quantile).
+  - **Documentation:** `vignettes/agents/architecture.Rmd` (dispatch patterns, threading, build system) and `vignettes/agents/history.Rmd` extracted from AGENT_GUIDE.
+
+- **v4.9.16 — SIMD enabled at build time; macOS parallelism fix; code cleanup (2026-08-04 assessment):**
+  - **SIMD now compiled by default:** `-DHAVE_XSIMD` added to `PKG_CPPFLAGS` in `Makevars.in`/`Makevars`. All 32 SIMD files (previously dead code gated behind `#ifdef HAVE_XSIMD`) are now active. Runtime detection via xsimd selects best instruction set per architecture (NEON on arm64, AVX2/SSE4.2 on x86_64). SIMD regression tests pass bit-identically (0 failures, 23 passes). `simd_info()` shows actual architecture at runtime.
+  - **macOS parallel-batch fix:** `analyze_files_parallel()` now uses PSOCK clusters on macOS (`Sys.info()[["sysname"]] == "Darwin"`) instead of `mclapply()`, avoiding fork event-loop issues. Linux and Windows paths unchanged.
+  - **Rename `num_stubs.cpp` → `melderthread_impl.cpp`:** The file contained the real `MelderThread` implementation (not stubs). Renamed for clarity. All 3 Makevars files + `praat_app_stubs.cpp` references updated.
+  - **Deleted `sound_module_poc.cpp`:** 1,197-line proof-of-concept duplicating `modules/sound_module.cpp`. Removed from build.
+  - **Unified SIMD bridge header:** New `src/simd_bridge.h` provides `simd_bridge_stat<T>()` and `simd_bridge_binary<T>()` templates for the repeated pattern across 6 bridge files (R vector → 1-indexed C array → SIMD fn → return). Reduces ~2,500 lines of future boilerplate.
+  - **Documentation:** 17 R6 class wrapper files now have `@return` tags. Self-contained runnable examples added to Formant, Intensity, PointProcess, Spectrogram (using `Sound$create_tone()` — executable during `R CMD check`). README spelling errors fixed (14 typos).
+- **v4.9.14 — SIMD batch-query bridge functions restored to public API; stale CPPS test fixed:** 8 `*_simd_bridge` functions in `batch_queries_simd_bridge.cpp` (`calculate_mean_simd_bridge` etc.) were implemented and compiled correctly but missing from `NAMESPACE` — `// [[Rcpp::export]]` tags had no `//' @export` roxygen comment, so `roxygen2::document()` silently dropped them. Added the missing tags and regenerated `NAMESPACE`/`RcppExports.R`. Also fixed `tests/testthat/test-cpps-defaults.R`, which still asserted the pre-v4.9.10 `max_quefrency`/`tilt_line_quefrency` defaults.
+- **v4.9.13 — `voice_report()` arg-order bug fixed; Tier 4 Ultra algorithm choices documented:** `PointProcess$voice_report()` passed xptrs in the wrong order and exposed `period_floor`/`period_ceiling` params with no C++ counterpart, silently corrupting jitter/shimmer/voice-break output; signature corrected to `silence_threshold`/`voicing_threshold`. `get_voice_quality_ultra()` gains `pitch_method = "periodic_cc"` as an alias for `pitch_method = "ac", very_accurate = FALSE`. See "Tier 4 Ultra: Hardcoded Algorithm Choices" below for the full per-function algorithm audit.
+- **v4.9.11 — `get_voice_quality_ultra()` gains `pitch_method`/`very_accurate`:** opt-in args let callers request Praat's `Sound_to_Pitch_rawAc` path instead of the hardcoded `Sound_to_Pitch_rawCc(veryAccurate=TRUE)`. Also fixes a `CallEntries[]` regression where `Rcpp::compileAttributes()` reverts `extern`→`static`, breaking dynamic symbol lookup; `tools/check_callentries.sh` now self-heals this in `configure`.
+- **v4.9.10 — `calculate_cpps_ultra()` trend-fit quefrency window fix:** `tilt_line_quefrency`/`max_quefrency` were declared but silently ignored by the C++ core (hardcoded `[0.003, 0.04]`); now threaded through correctly. R-level defaults changed `0.001`/`0.05` → `0.003`/`0.04` to match prior actual behavior (no change for default callers).
+
+---
+
+
+## Typed Errors (design principle 6)
+
+**Status as of v4.9.19: argument validation is wired up; the C++ layer mostly is not.**
+
+Two independent mechanisms produce classed conditions.
+
+**R-level validators (live, always on).** `R/validators.R` raises
+`pladdrr_input_error` conditions directly — you do **not** need
+`with_pladdrr_errors()` to catch them:
+
+```r
+tryCatch(
+  sound$to_pitch(0, 600, 75),                    # ceiling < floor
+  pladdrr_input_error = function(e) e$param      # -> "pitch_ceiling"
+)
+```
+
+Conditions carry `$routine` and `$param` so callers can branch programmatically.
+Validators currently covering: pitch range, positive counts/numbers, `time_step`
+(0 = auto, matching Praat), quefrency ranges, trend-fit method, positive finite sizes
+and the 2^29-cell allocation bound (`.check_positive_finite()`, `.check_cell_count()`),
+cochleagram step sizes, and the `unit` of the Ltas locators (`"dB"` only).
+
+**Data loss (live).** When a routine returns something Praat fabricated, pladdrr
+returns Praat's value and says so:
+
+```r
+w <- tryCatch(sound$extract_part(5, 10), warning = function(w) w)
+class(w)   # "pladdrr_data_loss" "pladdrr_warning" "warning" "condition"
+```
+
+Praat zero-pads a window that runs past the signal; goal 1 says reproduce the
+value, goal 6 says report the fabrication. Controlled by
+`options(pladdrr.data_loss = "warn" | "error" | "silent")`; default `"warn"`.
+
+A **file** can raise it too: `src/sound_wrappers.cpp` reports a WAV whose `data`
+chunk does not match the bytes that follow it — more, and the load returns
+exactly the samples that exist; fewer, and the load keeps Praat's shorter count
+(Praat 6.4.27 answers `nx = 4410` for a file holding 1750 samples) while naming
+the discarded ones. Reached by any file load (`Sound(path = )`, `Sound$new()`,
+deprecated `read_sound()`); locked in `tests/testthat/test-truncated-wav.R`.
+
+**C++ tags (partially wired).** Wrappers can emit tagged messages that
+`with_pladdrr_errors(expr)` reclassifies:
+
+```cpp
+PLADDRR_REQUIRE_PTR("routine_name", xptr, "xptr_param_name");
+PLADDRR_REQUIRE_FINITE("routine_name", "param_name", value);
+PLADDRR_STOP_INPUT("routine_name", "param", "human-readable reason");
+PLADDRR_STOP_PRAAT("routine_name", "Praat raised an error doing X");
+PLADDRR_WARN_DATA_LOSS("routine_name", "n of m values undefined");
+```
+
+`src/batch_queries.cpp` and `src/sound_wrappers.cpp` use them today (the latter
+`PLADDRR_WARN_DATA_LOSS`, for a WAV shorter than its own `data` chunk; the R
+side muffles it and re-raises it through `.warn_data_loss()`, which is what
+applies `options(pladdrr.data_loss = )`), and `src/praat_xptr_utils.h` uses
+`PLADDRR_STOP_INPUT` for the class check behind the `.xptr` constructor door and
+the two file readers. **Every other C++ wrapper still raises an untagged
+error** — measured, a bare `Rcpp::stop()` arrives as `Rcpp::exception` (e.g. the
+channel guards' `Channel out of range [0, 3]: 9`), and `with_pladdrr_errors()`
+cannot class it either because it only reclassifies conditions that carry the
+tag. So do not assume a `pladdrr_praat_error` or a `pladdrr_input_error` will
+arrive from an arbitrary routine — check before you rely on it.
+
+| Class                       | Meaning                                       | Where it comes from                        |
+|-----------------------------|-----------------------------------------------|--------------------------------------------|
+| `pladdrr_input_error`       | invalid argument / precondition fail          | R validators + C++ `require_praat_class()` |
+| `pladdrr_praat_error`       | Praat internal failure                        | C++ macros (2 sites only)       |
+| `pladdrr_data_loss`         | output incomplete vs request, or input shorter than its own header | R + C++ (live) |
+| `pladdrr_decoder_fallback`  | native reader refused the file (MP3/OGG, not FLAC since 5.2.0); `av` decoded it | R (`av` fallback in `.sound_ptr_from_path`) |
+
+The error classes inherit from `pladdrr_error` → `error` → `condition`, so one
+`tryCatch(pladdrr_error = ...)` catches them all; `pladdrr_data_loss` as a
+warning and `pladdrr_decoder_fallback` inherit from `pladdrr_warning` →
+`warning` → `condition` instead, so catch those as warnings. Both R-level
+classes are already classed and need no `with_pladdrr_errors()`:
+
+```r
+tryCatch(Sound(path = "truncated.wav"),
+  pladdrr_data_loss = function(w) conditionMessage(w))       # read N of M samples
+suppressWarnings(Sound(path = "song.mp3"))                   # hides pladdrr_decoder_fallback
+options(pladdrr.data_loss = "error")                         # does NOT affect decoder_fallback
+```
+
+When porting a new wrapper: call the shared validators at R level, replace bare
+`stop("...")` in C++ with the macros above, and emit `WARN_DATA_LOSS` whenever
+the result contains NA from out-of-range or undefined input. Lock the behaviour
+in `tests/testthat/test-error-reporting.R`.
+
+## Performance Audit
+
+**Before you time anything, check `simd_info()$debug_build`.** If it is `TRUE`
+the shared object was compiled without `NDEBUG` at `-O0` — almost always because
+`devtools::load_all()` / `pkgbuild::compile_dll()` wrote the `.o` files and a
+later `R CMD INSTALL` only relinked them. Every measurement from such a build is
+2–7x too slow and worthless. Fix with `R CMD INSTALL --preclean .`. See the
+v4.9.22 entry under "What's New" for the full diagnosis.
+
+Static SIMD + threading inventory: `tools/perf_inventory.sh` walks `src/` and
+the vendored Praat tree and emits `vignettes/agents/performance-inventory.Rmd`. Use it
+to find wrappers that lack an accompanying `*_simd.cpp` (Phase F SIMD
+candidates) and to enumerate every `MelderThread_PARALLELIZE` call site.
+
+Runtime benchmark: `inst/benchmarks/run_audit_benchmarks.R` times each
+faithfulness-registry routine against Praat-native execution and writes
+`inst/benchmarks/RESULTS.md` with a `speedup_vs_praat` column. Praat startup
+is intentionally part of the timing — that cost is real for the
+"shell out to Praat" alternative the package replaces. Requires
+`R CMD INSTALL .` first.
+
+## Faithfulness Audit
+
+Design principle 1 — faithfulness to Praat's own DSP output — is enforced by
+`tests/testthat/test-praat-faithfulness.R`, which invokes
+`/Applications/Praat.app/Contents/MacOS/Praat --run` against an extensible
+registry of routines in `tests/testthat/faithfulness/routines.R`, compares the
+output to the matching pladdrr call at a per-routine tolerance, and emits
+`vignettes/agents/faithfulness-report.Rmd` (set `PLADDRR_FAITHFULNESS_OUTDIR` to regenerate it;
+the caveats in it live in the test file, and the report names the Praat version it ran
+against). **Always name the Praat version with a reference number**: the vendored source
+tracks 6.4.47, and the CPPS pipeline differs from 6.4.27 by about 0.13 dB (Praat rewrote
+its CPP-to-CPPS post-processing); against 6.4.47 all 19 registry rows pass and CPPS is
+0.003 dB away. `tests/testthat/test-fidelity-fingerprint.R` is the second gate: 89
+numbers from one signal, no oracle needed, refuses any ERR/NA row.
+
+When porting a new Praat routine into pladdrr, add a registry row. Default
+tolerance is `0` for exact-arithmetic routines; looser tolerances require a
+written rationale in the row. Failing rows are first-class regressions.
+
+## What's New in v5.2.0 (2026-11-24)
+
+`NEWS.md` has the user-facing entry; `DESCRIPTION` is 5.2.0. Includes the `PraatMatrix()` rename and internals below, first made after 5.1.1 on 2026-11-13.
+
+- **FLAC is native.** libFLAC (BSD-3-Clause, decode and encode) is vendored from Praat under `src/praat.github.io/external/flac/` and compiled via `FLAC_C_SRC` in `Makevars.in`, `Makevars` and `Makevars.win`. `Sound()`, `longsound_open()`, `sound_load_window()` and `Sound$save(format = "FLAC")` no longer need `av` and emit no `pladdrr_decoder_fallback`; `get_durations_batch()` reads FLAC STREAMINFO; `batch_process()` and friends match `.wav` and `.flac` by default. `src/flac_stubs.cpp` and `flac_symbols.cpp` are gone. **MP3 and OGG still go through `av`** (`src/mp3_stubs.cpp`).
+- **Shipped audio slimmed.** The example sound is `inst/extdata/test.flac` (was `test.wav`, sample-identical); examples, vignettes and docs use it. `inst/signalfiles/` (12 WAVs, 2 distinct signals) is deleted. The 2 DSI signals live in `tests/testthat/fixtures/dsi/` as FLAC, excluded from the built tarball (`.Rbuildignore`), so a test that needs one calls `fixture_path()` (`tests/testthat/helper-fixtures.R`), which skips when run from an installed copy. The 3-channel oracle stays WAV (`multichannel-oracle-3ch.wav`). Do not add WAV assets to `inst/`.
+- **CRAN check-time trimming.** Tests and vignettes were shortened to stay under the checktime NOTE. `test-thread-granularity.R`'s bit-identity sweep is `skip_on_cran()` and the `{r parallel}` chunk in `performance-optimization.Rmd` is `eval=FALSE`; both still run in CI (`NOT_CRAN=true`). New skip messages need an entry on the CI skip gate's lists (see below).
+- **Small fixes.** `textgrid_create()` promotes point-tier names missing from `tier_names` (point-tier-only TextGrids work); `to_point_process()` guidance uses `message()` not `warning()`; the CPP peak annotation in `.add_peak_annotation()` renders; KlattGrid usage includes `tmin`/`tmax`; R6 class Rd files carry `\usage`.
+- **Package logo and pkgdown favicons** (`man/figures/logo.svg`, `pkgdown/favicon/`, `pkgdown/extra.css`); regeneration recipe in `CLAUDE.md`.
+
+- **`Matrix()` is renamed `PraatMatrix()`; class vector is `c("PraatMatrix", "PraatObject")` (BREAKING, no alias).** The CRAN package 'Matrix' owns the name `Matrix` and registers `as.matrix.Matrix`; 5.1.1 worked around the S3 clash with a leading `PraatMatrix` class, and `pkgcheck` still flagged the duplicate function name. All S3 methods (`$`, `as.data.frame`, `print`, `plot`, `autoplot`, `autolayer`, `as.matrix`) are on `PraatMatrix`. `as.matrix(m)` is unchanged. See "PraatMatrix and the 'Matrix' package".
+- **Internals, behaviour unchanged.** `pair_files()` validates `by` first and does one `merge(all = !require_both)`; the `av` fallback of `.sound_ptr_from_path()` lives in `.sound_read_via_av()` (`R/sound-wrapper.R`). Both were split to get under goodpractice's 50-line limit.
+- **srr tags live next to the code or test that addresses them.** `@srrstats` tags are no longer all in `R/srr-stats-standards.R`: pkgcheck fails ("standards mostly documented in one file") when one file holds more than half of them. Only `@srrstatsTODO` and `@srrstatsNA` stay in that file. See `documentation.Rmd` "srr tags".
+- **Vignette code fences.** Display-only blocks (python, praat, plain) use `~~~`, not backticks, because goodpractice counts every bare closing fence as a chunk end. See `documentation.Rmd` "Vignette code fences".
+- **CI skip gate.** `.github/workflows/R-CMD-check.yaml` fails the run on any testthat skip reason that is not on its `permanent` or `debt` list; `fork-based parallelism` (Windows) is on the permanent list. A new skip message needs a list entry, or the job goes red with 0 test failures.
+- **Dead internal functions: audited, none deleted.** pkgcheck's 119 "defined but never called" findings are 110 false positives (`$.<Class>` S3 methods, roxygen-only `pladdrr_shared_*` anchors, Rcpp bindings used from R) and 9 unused Rcpp bindings left for a build-verified change. Table: `dev/dead-code-audit-2026-11.md`. Do not bulk-delete from the goodpractice list: R-dead bindings have been alive from C++ before.
+
+## What's New in v5.1.1 (pitch units, Intensity interpolation, input guards)
+
+Recompute anything you saved with a non-hertz pitch unit or a non-linear Intensity lookup; the
+magnitudes are in `NEWS.md`.
+
+- **Pitch units follow `kPitch_unit` at every door.** `unit = "semitones"` is semitones re 100 Hz and `"erb"` is ERB (both used to return log10(Hz)); `"loghertz"` is log10(Hz). See "Frequency Units" for the table. Unknown units raise `pladdrr_input_error` instead of answering in hertz.
+- **`PitchTier$shift_frequencies()`** works in semitones (was a silent no-op) and ERB (was a logHertz shift, x10); `"hertz_logarithmic"` is refused.
+- **`Intensity$get_value_at_time()`** interpolates as asked: the default `"cubic"` returned the linear value. An interpolation is a name or the code 0 to 4; anything else raises (it used to become cubic). `get_intensity_at_time(interpolate = FALSE)` is nearest.
+- **Vendored-Praat defects fixed (win-builder GCC 14 warnings).** `dggsvd_` (GSVD) passed LAPACK a one-int `iwork` where it needs N, so it wrote past a stack variable; `_Label_to_TextGrid` dereferenced an `intervalTier` that `.move()` had nulled. Both, and the C++20 `-Wtemplate-id-cdtor` / `-Wclass-memaccess` / `-Wuninitialized` sites, are listed in `praat-modifications.Rmd`. Check with `g++ -O2 -Wall`; clang stays silent on these.
+- **Input guards:** `max_formants` outside 1 to 1000 and a wrong-class pointer at the `*_direct` getters raise instead of crashing; `sound_create_pure_tone()` counts `channels` in its size budget.
+
+## What's New in v5.1.0 (2026-11 audit round: numbers that change)
+
+Each item moves toward what the Praat application returns. Recompute anything you saved
+under the old behaviour; the magnitudes are in `NEWS.md`.
+
+- **Intensity averaging codes.** `Intensity$get_mean()`'s default `"energy"` used to return the *median* (codes were one too low). The strings now map onto Praat's enum (`"median"` 0, `"energy"` 1, `"sones"` 2, `"db"` 3); unknown strings and raw integers raise. `get_statistics()["mean"]` and `print()` use the energy average too. See "Unit Code Reference".
+- **Ltas units.** `unit = "energy"`/`"sones"` now return the dB number Praat prints (they returned the linear mean); `unit = "dB"` maps to code 3 so `get_slope()`/`get_local_peak_height()` return dB, not a ratio; band averages no longer interpolate (moves default-`dB` bands by up to 8.4 dB at bandwidth 100). Full-band means are unchanged. See "LTAS Units".
+- **Ltas locators accept only `"dB"`.** `get_value_at_frequency()`, `get_minimum()`, `get_maximum()` ignored `unit`; they now raise `pladdrr_input_error` for anything but `"dB"`.
+- **Script option arguments.** In `PraatInterpreter$run()`/`praat_run_script()`, CHOICE/OPTIONMENU arguments selected the wrong option (`base` offset stored unconverted in `src/uiform_libmode.cpp`); a numeric option argument changed meaning, and the first option of an enum (`"hertz"`, `"none"`) no longer errors.
+- **`av`-decoded audio** (MP3, OGG; FLAC too until 5.2.0, now native): full-scale amplitude (it was 6.02 dB hot) and one row per channel (stereo used to arrive as double-length mono). The substitution is announced with a catchable `pladdrr_decoder_fallback` warning.
+
+## What's New in v5.1.0 (2026-11 audit round: safety and robustness)
+
+- **Sessions that used to die now raise.** A foreign-class `.xptr` handed to *any* wrapper constructor (`Sound(.xptr = <TextGrid>)` etc.; 10 of them segfaulted); a file whose `Object class` line names another class (`matrix_read()`, `PitchTier$from_file()`); an out-of-range `channel` (returned heap garbage, `channel = 1000` segfaulted); `to_cochleagram()` on a Sound sampled at 66 Hz or less (aborted R with exit 134; it now refuses anything below 200 Hz at the default window); step sizes that request an impossible tensor (`df = 1e-9` is 2.5 TB: Linux errors, macOS SIGKILLs R). All raise catchable `pladdrr_input_error`/Praat errors now.
+- **Input validation.** `sound_create_tone()`/`_pure_tone()`/`_tone_complex()`, `PraatMatrix()`, `Excitation$to_formant()` and the cochleagram steps check positive, finite and at most 2^29 cells (`R/validators.R`: `.check_positive_finite()`, `.check_cell_count()`, `.check_cochleagram_steps()`).
+- **WAV sized from its `data` chunk.** A 46-byte file claiming 2^29 samples used to allocate 4.3 GB; the load now returns the samples that exist and reports the shortfall as `pladdrr_data_loss`.
+- **`as.matrix()`** returns the object's matrix or a typed error naming a conversion that class has (it returned a 2-element wrapper for 39 of 41 classes).
+- **Batch.** One unreadable file is one row (`error`, `error_class` columns), not a lost run. Conditions raised on a worker become rows, so `tryCatch(pladdrr_data_loss = )` around `batch_process()` cannot see them: filter on `error_class`. `.default_n_cores()` keeps a spare CPU only above 2 CPUs.
+- **Threads.** The automatic count is the affinity mask ∩ cgroup quota (Linux), capped at 2 under `_R_CHECK_LIMIT_CORES_` (what `R CMD check --as-cran` sets); cepstrogram and Burg-formant grains are 250/40 frames per thread. See `architecture.Rmd` "Threading Model".
+- **Praat's global error buffer** is read then cleared in the cochleagram/excitation catch blocks, so one failed conversion no longer prefixes every later Praat error.
+- **Tests.** The 81-number fidelity fingerprint is a real test (`tests/testthat/test-fidelity-fingerprint.R`); the audit's 12 dead `NA` rows were repaired. See `architecture.Rmd` "Test Gates".
+
+## What's New in v5.0.6 (2026-10 perf/memory audit)
+
+- **Load-time RSS 48 MB → 7 MB per R process / PSOCK worker.** Praat's `theForegroundPraatObjects` (10001 × ~4.2 KB) was *dynamically* initialised because `_autostring()` was not `constexpr`, so `dyn.load` dirtied all 42 MB. Fix needs **both** `constexpr _autostring()` (`melder_string32.h`) and value-init `structPraatObjects theForegroundPraatObjects {};` (`praat.cpp`); `constexpr` alone changed nothing. Never add a non-constexpr member/ctor to `structPraatObjects`.
+- **`FormantPath$path_finder()` bug fixed.** `formantpath_simd.cpp` clamped the frequency-change cost to 1, then the caller divided by the cutoff again (default 100) → cost capped at 0.01, wrong Viterbi path, F1 off by up to 1.7 kHz vs Praat. SIMD branch deleted; upstream scalar loop restored. New faithfulness row (`mpt2.wav`, mean F1/F2, tolerance 1e-6) passes at ~1e-12.
+- **8 SIMD files deleted** (`pitch_simd_bridge`, `pitch_filter_simd`, `autocorrelation_simd`, `window_functions_simd`, `formantpath_simd`, `slopeselector_simd`, `cochleagram_simd`, `excitation_simd`) plus their `#ifdef HAVE_XSIMD` hooks in `Sound_to_Pitch.cpp`, `SlopeSelector.cpp`, `Sound_and_Spectrogram.cpp`, `Sound_to_Formant.cpp`; 12 internal test-only Rcpp exports gone (none were in `NAMESPACE`). `PLADDRR_{EN,DIS}ABLE_SLOPESELECTOR_SIMD` env vars no longer exist. Remaining SIMD: spectrogram, preemphasis, sound mixing, MFCC, powercepstrogram, batch-stat bridges, textgrid.
+- **`pladdrr_simd(FALSE)` only gates `sound_mix`/`scale_peak`** (`use_simd()` in `sound_wrappers.cpp`). All other SIMD paths ignore it. PowerCepstrogram/MFCC kernels (`xsimd::log`, FMA) not yet verified bit-exact.
+- **`Sound_resample` sinc loop threaded** (`Sound.cpp`, `MelderThread_PARALLELIZE(numberOfSamples, 2000)` per channel): 25 → 10 ms for 6 s @ 44.1 kHz, bit-identical. Every Burg formant analysis resamples first.
+- **R/C++ boundary copies cut:** `as_data_frame()` of Spectrogram/ComplexSpectrogram/Matrix modules preallocates (peak ~1× not 2–3×); PSOCK `process_sounds_parallel()` ships one sound per task, not the whole `sound_data` list in a closure (`.analyze_one_sound_data` helper); `sound_mean/min/max/rms/statistics` read channel 1 via `get_values(1)`; VAD zero-crossing count O(n) via `findInterval`; AVQI frees sounding parts after concatenation.
+- **Sound pool:** `sound_extract_parts_pooled()` returns ordinary finalized Sounds (`use_pool` ignored) — it previously leaked every part. `sound_pool_acquire()` on a full pool returns a finalized XPtr.
+- **Faithfulness harness:** `Pitch (cc)`/`Pitch (AC)` rows had silently reported `praat-error` (a reflow split `To Pitch (cc)` across two lines); fixed. Harness still does **not** fail on `praat-error` rows — check the report.
+- **Still open:** MFCC/Intensity frame threading, pitch-cc centring hoist, `Sound_findMaximumCorrelation` norm1 hoist, per-table pocketfft plan, honouring `pladdrr_simd()` everywhere, `Makevars.win` unbuilt since the SIMD removal.
+
+## What's New in v5.0.4
+
+- **v5.0.4 — 8 Spectrogram/PowerCepstrogram/PowerCepstrum plotting bugs fixed; all 5 affected functions had zero prior test coverage (2026-08-19).**
+  - **Root cause, shared by all 5 functions:** each independently hand-rolled matrix-to-dataframe conversion instead of delegating to the object's own already-correct `as_data_frame()`/`as.data.frame()` accessor. `expand.grid(time =, frequency =)` (or `quefrency =`) varies its first-listed argument fastest; `as.vector(matrix)` varies the matrix's **row** fastest (column-major storage) — the two orderings only agree when the matrix happens to be square. Fix pattern throughout: delegate to the correct accessor, then apply `10 * log10(pmax(power, 1e-20))` explicitly where the source is raw linear power.
+  - **`autoplot.Spectrogram()` / `autolayer.Spectrogram()` / `plot.Spectrogram()`** (`R/autoplot-methods.R`, `R/plotting-methods.R`): frequency axis scrambled (measured: a 220 Hz tone peaked at 2201.3 Hz before the fix, 218.75 Hz after) — `nrow(mat)` is frequency, but `time` was listed first in `expand.grid()`. Also plotted raw linear power (measured range for a typical fixture: `4.8e-17` to `15.0`) directly as `"Power (dB)"`, so `dynamic_range` clipping (`power_db < max - dynamic_range`) never triggered — linear power is always numerically greater than a negative threshold. Fixed by delegating to `.spectrogram_methods$as_data_frame` (`R/spectrogram-wrapper.R`), which was already correct and already used elsewhere, plus explicit dB conversion. `plot.PraatMatrix` (`R/plotting-methods.R`) was checked and confirmed **not** to share this bug — it builds its data frame with `rep(each=)/rep(times=)`, not `expand.grid()`, and the two orderings do agree there.
+  - **`plot_powercepstrogram()`** (`R/cepstrum_plots.R`): same transposition bug (time/quefrency), plus `max_time <- 5.0  # Placeholder` instead of the cepstrogram's real duration (measured: 0.249s for a 0.3s fixture — a 20x error), plus the same missing-dB-conversion bug (measured raw range `6.9e-6` to `2.8e11`; `-51.6` to `114.5` dB after fixing). Fixed by delegating to `as.data.frame.PowerCepstrogram` (`R/as-data-frame-missing.R`), already correct.
+  - **`plot_cpp_timeseries()`** (`R/cepstrum_plots.R`): same `max_time <- 5.0` placeholder, plus an unrelated `tryCatch()` scoping bug — the error handler did `cpp_values[i] <- NA`, which assigns to a copy of `cpp_values` local to the handler closure (R closures over `for` loops don't get automatic `<<-` promotion), so a failed `get_cpp_at_time()` call silently left that sample at its `numeric(n_samples)` default of `0` instead of becoming `NA` and being dropped by the downstream `!is.na()` filter. One-character fix: `<-` → `<<-`.
+  - **`plot_powercepstrum()`** (`R/cepstrum_plots.R`): `max_quefrency <- 0.05  # Reasonable default max quefrency` instead of the cepstrum's real range (measured: 0.256 for the planning fixture — a >5x error), plus the same missing-dB-conversion bug with a twist: `cepstrum$as_data_frame()`'s second column is named `power_dB` (capital B) but is raw linear power (see `history.Rmd` "PowerCepstrum `power_dB` mislabel" — the same defect already tracked at other call sites, just not this one). Confirmed by comparing against `cepstrum$get_value_at_quefrency(q, unit = "dB")`, a *different* accessor on the same object that does return real dB — before the fix, the line trace and its own peak-prominence marker were plotted on incompatible scales (one linear, one log). Fixed by reading from the misleadingly-named `power_dB` source column and writing the converted value to a new, honestly-named `power_db` (lowercase) column — the capitalization difference is intentional, not a typo.
+   - **Deliberately not fixed in this release** (documented, not silently dropped) — *all of these were subsequently fixed later in the same 5.0.4 dev cycle* (see `history.Rmd` "PowerCepstrum `power_dB` mislabel" and the NEWS.md follow-up entries):
+     - The C++-level column mislabel (`RPowerCepstrum::as_data_frame()`) is now renamed `power_dB` → `power`, and `autoplot.PowerCepstrum()`/`autolayer.PowerCepstrum()`/`plot.PowerCepstrum()` now read `power` and convert to dB.
+     - `plot_powercepstrogram(show_cpp_contour = TRUE)` now overlays the real per-frame cepstral-peak quefrency (argmax of each frame's raster row), not a flat `quefrency = 0.01`.
+     - `plot.Spectrogram()`'s dead `preemphasis` parameter was removed.
+     - `plot_cpp_timeseries()`'s NaN subtitle now reads "No samples" when every sample fails.
+  - **New test files**, both added with zero prior coverage on the functions they exercise: `tests/testthat/test-spectrogram-plot-regression.R` (5 tests), `tests/testthat/test-cepstrum-plots-regression.R` (7 tests).
+  - Found while writing regression tests for `autoplot.Spectrogram()`/`autolayer.Spectrogram()` (part of a separate pass bringing `R/autoplot-methods.R`'s Sound/Pitch/Formant/Intensity/Spectrogram autoplot methods from 0% to 40% test coverage) — the frequency-axis-transposition bug surfaced there, and checking its siblings (`plot.Spectrogram()`, then the structurally similar `R/cepstrum_plots.R` functions) found the rest.
+  - **Coverage denominator pinned (2026-08-19):** `covr::package_coverage()` instruments compiled code by default (`covr.gcov = Sys.which("gcov")`, set on covr load), so measured coverage is dominated by ~2.31M lines of vendored Praat DSP (`src/praat.github.io/`) plus bundled third-party FFTs (`src/pffft/`, `src/pocketfft/`) — 96% of the codebase, vs ~28k lines of R and ~60k lines of pladdrr-authored C++ wrappers. A 75% bar over the full denominator is unreachable and meaningless. Added `.covrignore` excluding those vendored trees so both pkgcheck and Codecov measure pladdrr-authored code only; the 27%→75% roadmap applies to that reduced, meaningful denominator.
+
+## What's New in v5.0.3
+
+- **v5.0.3 — Ltas full Praat-parity query coverage, new SpectrumTier peak-picking class (2026-08-14).**
+  - **6 Ltas methods that already existed in the `RLtas` Rcpp module but were never reachable from R:** `get_value_in_bin(bin)`, `get_local_peak_height(environment_min, environment_max, peak_min, peak_max, unit)`, `get_standard_deviation(fmin, fmax, unit)`, `get_frequency_range()`, `to_matrix()` (returns a real `PraatMatrix` object via the module's `to_matrix_ptr`, distinct from the existing `as_matrix()` which returns a plain R matrix), and `save(path)`. All were mechanical R-side wiring, matching Praat's Ltas "Query" and "Hack" menus — no new C++ needed.
+  - **New `SpectrumTier` class** (`R/spectrumtier-wrapper.R`, `src/modules/spectrumtier_module.cpp`), wrapping Praat's `Ltas_to_SpectrumTier_peaks` (`fon/Ltas_to_SpectrumTier.cpp`), previously unwrapped anywhere in pladdrr. Read-only: it's peak-picking analysis output, not something a user constructs by hand. `ltas$to_spectrum_tier_peaks()` returns one; query methods (`get_number_of_points()`, `get_frequency_from_index()`, `get_value_at_index()`) and export (`as_data_frame()`, `as_matrix()`, `save()`) mirror the existing tier-wrapper pattern (e.g. `IntensityTier`). Corresponds to Praat's Ltas "Analyse > To SpectrumTier (peaks)".
+  - **Build fix surfaced along the way:** `RcppExports.cpp` needs every Praat struct type used in an exported function signature forward-declared in `inst/include/pladdrr_types.h` (that's how the other ~30 wrapper types already do it) — `structSpectrumTier` was missing, which failed the compile with a real (not just the usual `-Wdelete-incomplete` warning noise) error until added.
+  - **Deliberately not wrapped:** Praat's Ltas `Formula...` (R already gives full vector access via `as_data_frame()`/`as_matrix()`, which is strictly more capable than Praat's scripting mini-language) and `Combine > Merge` (`Ltases_merge`, not requested; `ltas_average()` already covers the "Combine" case that exists today). `Draw...` was already covered by `plot.Ltas()`/`autoplot.Ltas()`/`autolayer.Ltas()`.
+  - **Documentation rewrite** for `?Ltas` and new `?SpectrumTier` following the `Sound`-reference doc convention (`vignettes/agents/documentation.Rmd`): full `\itemize` method-list sections (Frequency domain, Query values, Batch queries, Trend and peaks, Export for Ltas; Query methods, Export for SpectrumTier), a shared "Units and interpolation" section explaining the `unit`/`interpolation` string codes once instead of repeating them per method, 90% usage-focused, humanized prose.
+  - Praat module count reconciled 38→39 in `DESCRIPTION`'s `Description:` field and here, matching the new `spectrumtier_module.cpp`.
+
+## What's New in v5.0.2
+
+- **v5.0.2 — LongSound API expansion, save_part/save_channel crash fix, doc rewrite (2026-08-14).**
+  - **New LongSound methods:** `get_dx()` (sampling period), `get_x1()` (time of first sample), `get_time_from_sample(sample)`/`get_sample_from_time(time)` (Sampled index/time conversion, matching Sound's existing convention), and package-level `longsound_get_buffer_size_pref_seconds()`/`longsound_set_buffer_size_pref_seconds()` (the global streaming-buffer-size preference, default 600 s).
+  - **Fixed a real, pre-existing crash in `save_part()`/`save_channel()`.** Root cause: pladdrr's headless build stubs out Praat's `Preferences_add*` functions (no GUI, no prefs file), but the stubs were pure no-ops — they never set `*value = defaultValue`. `LongSound_open()` relies on `Preferences_addInteger` to seed its streaming buffer-length preference at 600 s; with the no-op stub it silently stayed at 0. That made `LongSound`'s internal read buffer exactly 1 sample wide, and the write-path arithmetic (`(n-1)/nmax`) computed nonsense instead of trapping — ARM64 doesn't fault on integer division by zero — so every `save_part()`/`save_channel()` call overflowed a 1-element buffer by up to the full sample count. The corruption didn't crash immediately; it surfaced later, nondeterministically, usually at an unrelated garbage-collection pass, which is why it went unnoticed (LongSound had zero test coverage before this release). Fixed in two places: `src/praat_stubs.cpp`'s four `Preferences_add{Integer,Real,Bool}`/`_Preferences_addEnum` stubs now set the default value (matching the real function's essential contract) while still skipping the inapplicable persistent-registry bookkeeping; `praat_initialize()` (`src/praat_wrapper.cpp`) now calls `LongSound_preferences()` explicitly at package load, matching what Praat's own startup sequence does for every object type. Verified with 15 consecutive repro runs (0 crashes) after the fix, versus a consistent ~50-70% crash rate before it — see `tests/testthat/test-longsound.R`.
+  - **Architectural cleanup:** `save_part`/`save_channel` moved from standalone `Rcpp::export` functions into the `RLongSound` Rcpp module, matching every other query/streaming method. Removed 9 dead, unreachable `Rcpp::export` duplicates in `src/longsound_wrappers.cpp` (get_duration, get_start_time, get_end_time, get_sample_rate, get_number_of_channels, get_number_of_samples, get_file_path, extract_part, have_window, get_window_extrema) that duplicated the module's own methods but were never called from R.
+  - **Documentation rewrite** for `?LongSound` following the `Sound`-reference doc convention (`vignettes/agents/documentation.Rmd`): proper `\itemize` method-list sections (Query methods, Time/sample conversion, Streaming, Save, Utility), 90% usage-focused, humanized prose.
+
+## What's New in v5.0.1
+
+- **v5.0.1 — ggplot2 autoplot/autolayer coverage for all drawable Praat types (2026-08-12).**
+  - Added `autoplot()` + `autolayer()` S3 methods for 27 previously unsupported classes: AmplitudeTier, DurationTier, IntensityTier, PitchTier, FormantTier (sampled), FormantGrid, FormantPath (candidate paths), Excitation, ComplexSpectrogram, Cepstrum (via PowerCepstrum), Cochleagram, PowerCepstrogram, MFCC, LFCC (wide-to-long reshape), BarkSpectrogram, MelSpectrogram, Matrix, PCA, Discriminant (scree/scores/both), FormantModeler, Electroglottogram, LongSound (streaming extract), DTW (warping path), Polygon, VocalTract, LPC (spectrum envelope), KlattGrid. All methods return ggplot2 objects compatible with `+ autolayer()` composition.
+  - Added `as.data.frame()` S3 methods for 15 classes lacking data export: BarkSpectrogram, Cepstrum, Cochleagram, Discriminant, DTW, Electroglottogram, FormantModeler, KlattGrid, LPC, LongSound (errors with guidance), Matrix, MelSpectrogram, PCA, PowerCepstrogram, VocalTract.
+  - Fixed `FormantGrid$as_data_frame()` pre-existing bug: C++ method `as_data_frame(time_step)` was called without the required argument, producing "could not find valid method". Now passes `time_step = 0.005`.
+  - New files: `R/autoplot-missing.R`, `R/as-data-frame-missing.R`. NAMESPACE now registers 42 `as.data.frame`, 38 `autoplot`, 38 `autolayer` S3 methods.
+
+## What's New in v5.0.0
+
+- **v5.0.0 — Spectral-moments/data-frame memory rework; CRAN perf-claim sweep; full `man/` `\value`/`\examples` coverage (2026-08-07).**
+  - **`get_spectral_moments_batch_cpp` no longer allocates a `Spectrum` per frame.** Centre of gravity, standard deviation, skewness, and kurtosis are now computed directly from the spectrogram's z-matrix in two fused passes — bit-exact, because `Spectrogram_to_Spectrum` sets `re=sqrt(z)`, `im=0`, so `sqr(re)+sqr(im) = z`; the intermediate Spectrum was pure overhead. Removes N per-frame allocations for an N-frame spectrogram (was the primary driver of `spectral_moments`' 897 MB peak per algobench). Numerically identical to prior versions — a memory/allocation change, not an algorithm change; no new timing number is claimed here. See `praat-modifications.Rmd`.
+  - **`formant_as_data_frame`/`pitch_as_data_frame` pre-allocate output vectors.** `formant_as_data_frame` counts rows up front and allocates Rcpp vectors directly instead of `std::vector` push_back + copy; `pitch_as_data_frame` conditionally allocates the strength/intensity columns only when `include_strength`/`include_intensity` are requested, instead of always. Output unchanged.
+  - **BREAKING for embedders reading `DESCRIPTION`/`README.md` for numbers: all absolute and relative performance claims removed** (including Parselmouth comparisons), per CRAN submission review. Historical changelog entries carrying benchmark data moved to `NEWS-archive.md`, which is excluded from the package tarball. `NEWS.md` is now claim-free by policy — this file and `performance-inventory.Rmd` remain the place for agent-facing perf detail, since neither ships as CRAN-facing prose.
+  - **Praat module count reconciled 37→38** in `DESCRIPTION`'s `Description:` field, matching the actual number of exposed Rcpp modules under `src/modules/*.cpp`.
+  - **Full `man/` `\value`/`\examples` coverage.** Added missing `@return`/`@examples` roxygen blocks across Tier 1 (R6 object classes), Tier 2 (conversion functions), and Tier 3 (batch-query functions) — four Tier 3 batches plus two follow-up bugfixes surfaced by writing runnable examples: `.pitchtier_unit_code`/`.table_to_data_frame` were referenced but never defined, and 0-row `Table` columns were misdetected as numeric. All fixed alongside the doc sweep.
+  - **CRAN metadata hygiene:** added `URL`/`BugReports` fields; declared `methods`/`tools`/`utils`/`parallel`/`grid` as explicit `Imports`; un-excluded `NEWS.md` from the tarball (it was in `.Rbuildignore`, which would have hidden the changelog from CRAN's own listing).
+  - Also fixed: a malformed comment in `batch_queries.cpp` that broke `Rcpp::compileAttributes()` — introduced while stripping perf claims from roxygen source, caught before it reached a release.
+
+## What's New in v4.9.x
+
+- **v4.9.24 — CRAN pre-submission fixes: two example errors, doc/link gaps, tarball hygiene, build-flags re-confirmed clean (2026-08-06).**
+  - **Two stale-arg-name example errors that would have failed CRAN's automated check.** `Harmonicity.Rd` called `to_harmonicity_cc(minimum_pitch = 75)`; the real parameter is `min_pitch`. `Spectrogram.Rd` called `to_spectrogram(maximum_frequency = 5000)`; the real parameter is `max_frequency` (unlike `to_complex_spectrogram()`/`to_powercepstrogram()`, which do use `maximum_frequency` — don't assume consistency across sibling functions). `R CMD check` only reports the *first* example failure per run; found the second only after fixing the first and re-running against a clean tarball, then swept all 370 `man/*.Rd` pages against the installed package with `tools::Rd_db()` + `tools::Rd2ex()` to confirm no others remain.
+  - **8 `*_simd_bridge` functions were exported but undocumented again** (`src/batch_queries_simd_bridge.cpp`) — same failure mode as v4.9.14, this time from Doxygen-style `/** */` blocks that roxygen2 doesn't parse (only the `//' @export` line was roxygen syntax, so `@title`/`@description` never made it into the Rd). Converted to `//'`-prefixed roxygen comments with `@keywords internal`, kept `@export` (covered by `tests/testthat/test-phase3-batch-queries-simd.R`, which calls them by bare name).
+  - **Dangling `\link{TableOfReal}` removed** from `PCA.Rd`/`Discriminant.Rd` `@seealso` — no such doc topic exists in pladdrr's public API (Rd cross-reference WARNING).
+  - **`textgrid_filter_xptr.Rd` "Lost braces" NOTE fixed** — an embedded C++ predicate signature in the `@details` markdown fence had unescaped `{`/`}`; escaped to `\{`/`\}`. (Package doesn't set `Roxygen: list(markdown = TRUE)`, so fenced code blocks pass through as literal Rd text rather than `\preformatted{}` — that's a separate, lower-priority cosmetic gap: `**bold**`/backtick markdown shows up literally in several other Rd pages too.)
+  - **`.pi/` (unrelated local tool state, untracked) was leaking into the source tarball** — added to `.Rbuildignore`.
+  - **`LICENSE.note`'s GSL entry was stale since the v4.9.5 slimming**: it still described GSL as vendored at `src/gsl-2.8/` with license text there; that directory has been empty (dynamic linking via `configure`/`gsl-config` only) since v4.9.5. Corrected the note and removed the empty `src/gsl-2.8/`, `src/gsl_build/` placeholder dirs. `agent-guide.Rmd`'s own GSL section (below) was already accurate — only the license note had drifted.
+  - **`DESCRIPTION` cleanup:** dropped a changelog-style sentence from `Description:` (CRAN reviewers push back on version-history text there) and the redundant, stale manual `Author:`/`Maintainer:` fields (`Authors@R` already supplies both; R regenerates them at build time regardless).
+  - **Re-confirmed the v4.9.22 build-flags finding from the CRAN-check side, not just codegen.** A clean-tarball `R CMD check --as-cran` with only this machine's local toolchain path-fixes applied (no `-O3`/`-march=native`, no optimisation override at all) installed and checked with **0 install/check errors** — pladdrr's own `Makevars`/`Makevars.in` are genuinely portable; the `-march=native` NOTE seen in earlier ad hoc local checks was 100% `~/.R/Makevars` (a personal, non-CRAN file), never the package's own build config.
+  - Full before/after: 1 ERROR, 6 WARNINGs, 7 NOTEs → 0 ERRORs, 4 WARNINGs, 4 NOTEs (all four remaining are the ones already justified in `cran-comments.md`: `-ffp-contract=off`, residual vendored `stderr`/`stdout`/`_exit` symbols, installed size, outdated macOS HTML Tidy).
+
+- **v4.9.22 — the CPPS-vs-Praat gap was a debug build, not code. This closes the "Still open" item in the v4.9.21 entry below and invalidates the build-flag advice in the v4.9.15 entry. Read it before benchmarking anything.**
+  - **A `.so` compiled without `NDEBUG` costs 2.1–7.0x across the whole package.** `pkgbuild::compile_dll()` — i.e. `devtools::load_all()` — forces `-UNDEBUG -Wall -pedantic -g -O0`. A later `R CMD INSTALL` **does not** fix it: `make` sees the `.o` files as current and only relinks, so the installed package stays unoptimised with no outward sign. This is what every pladdrr-vs-Praat/parselmouth timing before 2026-08-05 was measured against.
+  - **How to recognise it in a profile.** `sample` the R process and look for `constvector<double>::operator[]`, `DYLD-STUB$$constvector<double>::operator[]`, `ninther`, `medianIndex` or `std::swap<double>` as top-of-stack entries. All of them are inlined in the Praat 6.4.47 binary; if they appear, the build is bad. In the disassembly, `getSlope_Siegel` is 186 instructions calling `operator[]` through PLT stubs 4x per inner iteration, and calls `Melder_assert_` — a live `Melder_assert_` call *proves* `NDEBUG` was absent. A good build is 82–87 instructions with 3–4 calls.
+  - **Detection is now built in.** `simd_info()$debug_build` is `TRUE` on such a build and `library(pladdrr)` prints a NOTE. **Never benchmark after `load_all()`; rebuild with `R CMD INSTALL --preclean .`.**
+  - **Effect of the rebuild alone (no source change), downstream plabench, 15/15 three-way Praat-parity tests byte-identical:** CPPS 3.72s→0.91s, AVQI v2.03 2.65→0.84, AVQI v3.01 2.61→0.83, VQ 1.97→0.46, DSI 0.28→0.06, VUV 0.110→0.020, pharyngeal 0.126→0.023, intensity 0.014→0.002, spectral moments 0.043→0.011, CPP 2.06→0.96, pitch 0.075→0.025, formant 0.099→0.030, voice report 0.088→0.019, PraatSauce 0.296→0.095, dysprosody 7.81→3.46. R goes from losing 9 of 14 to winning 11 of 15, and now matches the Praat 6.4.47 binary on the identical `Get CPPS` call (0.95–1.08s vs 0.95–1.04s).
+  - **⚠️ Supersedes v4.9.15's "`-O3 -march=native` yields 3–7x".** That 3–7x was the debug-build penalty, misattributed. Measured properly — two interleaved clean rebuilds, 6 timed reps each, machine settled after each build — CPPS min is **0.922/0.853s at CRAN `-O2`** vs **0.868/0.870s at `-O3 -march=native`**: indistinguishable. Codegen agrees: `SlopeSelector.cpp` produces a **byte-identical object** at `-O2`, `-O3` and `-O3 -march=native` (87144 / 89232 bytes; `getSlope_Siegel` 82 vs 87 instructions, quickselect chain already fully inlined at `-O2`). `-fvisibility-inlines-hidden` is likewise a no-op. **CRAN's stock `-O2` is full speed. Do not tell embedders to use custom flags.**
+  - **Where CPPS time actually goes, on an optimised build.** ~**84%** is Praat's median-of-ninthers quickselect (`expandPartition` 19729, `medianOfNinthers` 10404, `adaptiveQuickselect` 9280, `NUMquantile_e` 3987 samples); the Siegel pairwise-division loop is **~16%** (8351). FFT, cepstrogram creation and smoothing are each <1%. The v4.9.21 note that "~94% of `getSlope_Siegel` is median selection" was directionally right but measured on the debug build — use these numbers. Any future SIMD work must target `NUMquantile_e`; re-measuring `PLADDRR_ENABLE_SLOPESELECTOR_SIMD=1` interleaved (3 pairs x 6 reps) put it within noise, so it stays off.
+  - **Threading has no headroom either.** CPPS 1→10 threads: 8.42s → 1.55s (**5.4x**); 8 threads already gives 5.39x, so the M1 Pro's two efficiency cores contribute ~1% and a dynamic scheduler is not worth adding. Amdahl serial fraction ≈7%. The Praat binary's own parallel efficiency on the same workload is 4.85 effective cores (32.32s user / 6.67s wall over 5 runs) — *below* pladdrr's. The v4.9.x suspicion that thread QoS on Apple Silicon was costing us is dead.
+
+- **v4.9.20 — `Formant$as_data_frame()` shape fixed (build.log triage). Read this before writing any code that consumes `as.data.frame(formant_object)`.**
+  - **BREAKING: `Formant$as_data_frame()` / `as.data.frame.Formant()` now return long format** — one row per (frame, formant number), columns `time`, `formant`, `frequency`, `bandwidth` — instead of a wide `time, F1, B1, F2, B2, ...` layout. This matches `FormantPath$as_data_frame()`, which was already long format; `Formant`'s wide layout was the one thing in the package out of sync with its own tests. If you have code reading `$F1`/`$F2`/`$B1` off a `Formant` data frame, it will now get `NULL`. Filter instead: `df$frequency[df$formant == 1]`.
+  - **`df[cond, "colname"]` does not drop to a vector on a `data.table`** the way it does on a base `data.frame` — it returns a one-column `data.table`, and `mean()` on that silently returns `NA` with a warning rather than erroring. Every pladdrr `as_data_frame()` returns a `data.table`. Always write `df$colname[cond]`, never `df[cond, "colname"]`, when extracting a single column by name — this bit three vignettes (`analysis-resynthesis-workflow.Rmd`, `formantpath-robust-tracking.Rmd`, `speech-synthesis-klattgrid.Rmd`) and would not have shown up as an R CMD check ERROR, only a silently wrong NA.
+  - `plot.Formant()` and `plot_spectrogram_formants()` (`R/plotting-methods.R`, `R/plotting-combined.R`) were independently broken before this release, filtering on `formant_number`/`frequency_hz` — columns that existed in neither the old wide format nor the new long one. Fixed alongside.
+  - `autoplot.Formant()`/`autolayer.Formant()` no longer reshape internally; the data is long already.
+
+- **v4.9.19 — assessment follow-up (see `dev/ASSESSMENT_2026-08-05.md`). Read this before writing CPPS, spectrogram or formant code.**
+  - **BREAKING: `calculate_cpps_ultra(fused = )` removed.** It was added in v4.9.18 and was wrong: it reused the trend fitted on the *raw* cepstrum as the baseline for the peak measured on the *smoothed, trend-subtracted* cepstrum. Praat fits twice deliberately (`PowerCepstrogram_subtractTrend`, then again inside `PowerCepstrogram_to_Matrix_CPP`). Result was **-47.169 dB where the correct value is 9.9205 dB**, and 3.1x slower. Do not reintroduce this "optimisation".
+  - **`Spectrogram$get_power_at()` semantics changed to match Praat.** It performed a nearest-cell lookup; Praat's "Get power at (time, frequency)" is `Matrix_getValueAtXY`, i.e. **bilinear interpolation**. Old results differed from Praat by up to ~24% at a point, and disagreed with the same class's `get_power_at_points()`, which was always correct. Out-of-domain queries now return `NA` instead of a clamped edge cell. **Any stored spectrogram point values computed before v4.9.19 are wrong.**
+  - **`Formant$get_value_at_time()` returns `NA` for non-finite `time`** instead of raising "Failed to get formant value at time". A `NaN` in an upstream time vector no longer aborts the whole query.
+  - **`to_formant_keepall/willems/sl()` accept `time_step = 0` again.** Praat means "auto" (= `window_length / 4`) by 0 everywhere; rejecting it made a documented Praat idiom unusable. Use `.check_time_step()`, not `.check_positive_number()`, for any new time-step argument.
+  - **`get_pitch_strengths_at_times()` fixed** — it errored with `object 'unit_code' not found` (regression from the v4.9.18 unit-code refactor).
+  - **Reversed quefrency ranges now error.** `calculate_cpps_fast(qstart_fit = 0.04, qend_fit = 0.003)` used to return a silently different measurement. `qend = 0` still means "autowindow the full range" (Praat convention).
+  - **`fit_method = "robust slow"` warns once per session.** Praat's Theil-Sen trend fit samples randomly and **is not reproducible**: ~0.8 dB spread across identical runs, and Praat itself occasionally returns values around 1e290. This is an upstream Praat defect that pladdrr reproduces faithfully. Never use it for anything that must be reproducible; prefer `"robust"` (Siegel, deterministic) or `"least_squares"`.
+  - **CPPS defaults are documented as deviating from Praat's.** pladdrr follows the AVQI/clinical convention in 5 of 11 parameters (`time_averaging_window`, `pitch_ceiling`, `qstart_fit`, `qend_fit`, `trend_line_type`, `fit_method`). On a 1 s signal the two parameter sets give 9.92 dB and 4.82 dB — a different measurement, not rounding. See the table in `?calculate_cpps_fast`. **To reproduce a Praat run, pass Praat's values explicitly.**
+  - **Faithfulness registry: 10 -> 14 routines, all passing.** Four v4.9.18 additions could not run (malformed oracle scripts, a nonexistent method name, an unachievable tolerance); repaired. New coverage: harmonicity, spectrogram, jitter, MFCC. Tests no longer write into the source tree — reports go to `tempdir()` unless `PLADDRR_FAITHFULNESS_OUTDIR` is set.
+  - **SIMD batch bridges no longer copy their input** (`src/batch_queries_simd_bridge.cpp`): they pass `values.begin() - 1` to the 1-based kernels. vs base R on 1e6 doubles: mean 0.87x -> **4.1x**, sd 1.10x -> **2.8x**, range 2.33x -> **15.4x**, quantile 0.47x -> **1.8x**. `src/simd_bridge.h` is **dead** — included by no translation unit; do not "fix" bridges there.
+  - **Do not try `std::nth_element` in `getSlope_Siegel`.** Measured: bit-exact but **25% slower** than Praat's median-of-ninthers, because Siegel slopes are clustered. See `praat-modifications.Rmd` v4.9.19.
+  - Deleted 6 unreferenced `*_simd.cpp` files (1,174 lines); fixed the platform thread-count formula for Windows/Linux; corrected the FLAC/MP3 documentation (then: through the suggested `av` package; FLAC became native in 5.2.0, MP3 still uses `av`).
+
+- **v4.9.21 — SlopeSelector SIMD default flipped OFF. This supersedes the v4.9.15 entry below; read it before touching CPPS performance.**
+  - **`should_use_simd_for_slopeselector()` now returns `false` by default** (`src/slopeselector_simd.cpp`). The v4.9.15 "~25% faster" claim did not survive re-measurement against the real CPPS workload. M1 Pro, `ppq1.wav`, Praat-script parameter profile, `-O3 -march=native`, clean rebuild: `calculate_cpps_ultra` **4.06s wall / 31.2s CPU with SIMD vs 2.35s / 17.6s scalar**; AVQI v2.03 (R) **6.87s vs 2.84s**. Output bit-identical both ways (CPPS 19.36722538 dB, AVQI 3.471873) — it bought nothing and cost 1.7–2.4x.
+  - **Why it lost, so nobody re-tries it:** `sample` profiling puts ~94% of `getSlope_Siegel` in the median selection (`num::NUMquantile_e` → `adaptiveQuickselect`), not in the divides. The kernels vectorize the other ~6%, and as out-of-line `extern "C"` calls they lose cross-TU inlining while NEON f64 divide has no throughput edge over scalar `fdiv` on Apple silicon. **Any future SIMD work on this fit must target `NUMquantile_e`.** `PLADDRR_ENABLE_SLOPESELECTOR_SIMD=1` still forces the old path, for A/B only.
+  - Downstream: plabench R CPP benchmark **3.56s → 2.20s**, R AVQI v2.03 ~**4.26s → 2.8s**, values unchanged.
+  - ~~**Still open:** with SIMD off, pladdrr's serial CPPS work is ~16.8s CPU vs the Praat 6.4.47 binary's ~6.6s for the identical upstream algorithm, same n (491 fit points) and frame count (1410). Ruled out: n, frame count, fit method, optimisation level, thread count, bounds checks. Build/binary level, not yet root-caused.~~ **CLOSED in v4.9.22 — it was a `-O0`/`-UNDEBUG` build, see the v4.9.22 entry above.** The "optimisation level ruled out" step was the wrong one: `~/.R/Makevars` did request `-O3`, but the `.o` files predating it were never recompiled, because changing `~/.R/Makevars` does not make anything stale.
+
+- **v4.9.15 — CPPS slopeselector SIMD gate + stale-binary caveat + build-flag guidance (downstream perf assessment 2026-07-31):**
+  - **`should_use_simd_for_slopeselector()` now honors two env knobs** (`src/slopeselector_simd.cpp`): `PLADDRR_DISABLE_SLOPESELECTOR_SIMD=1` forces scalar, `PLADDRR_ENABLE_SLOPESELECTOR_SIMD=1` forces SIMD. ~~Default stays **ON**~~ — **superseded by v4.9.21: the default is now OFF and the "~25% faster on a clean build" claim below is wrong.** It was measured on the short `ppq1` case only; on the full CPPS workload the SIMD path is 1.7–2.4x *slower* with identical output.
+  - **⚠️ Stale-binary trap (root-caused downstream).** A released `.so` can carry a **mis-optimized `slopeselector_simd.o`** that is ~2× *slower* than a clean recompile of identical source (observed SIMD 2.14s vs 0.92s; CPP tool 3.63s vs 1.55s; AVQI 4.53s vs 0.69s). ~~Do NOT reflexively gate SIMD off on arm64.~~ **Superseded by v4.9.21:** the "clean rebuild fixes it" reading was wrong — a clean rebuild still leaves the SIMD path slower than scalar, so the 2.14s-vs-0.92s spread was the SIMD/scalar difference, not a stale object. The remaining useful part of this note is that the scalar path is stable across builds; if CPPS/AVQI timing regresses, still rebuild clean (`R CMD INSTALL --preclean .`) before suspecting the algorithm.
+  - **Long-signal CPPS regression guard** added to `inst/benchmarks/18_cpps_ultra_performance.R`: the per-frame Siegel trend fit only dominates on many-frame (long) signals, so the short `ppq1` case alone hid the stale-object slowdown. New case concatenates `ppq1` ~8× and times it; compare across versions/arches (a >20% jump = trend-fit regression).
+  - ~~**Build-flag guidance for non-CRAN consumers.** ... `-O3 -march=native` ... yields **3–7× on nearly every routine**~~ — **WRONG, superseded by v4.9.22.** The 3–7× was the debug-build penalty (`-UNDEBUG -O0` objects left behind by `devtools::load_all()`), not the optimisation level. `-O2` and `-O3 -march=native` are indistinguishable on this code and produce byte-identical objects for the hot translation unit. The one accurate part of this note survives: `CXX17FLAGS` is the variable R applies to `CXX_STD=CXX17` TUs (not `CXXFLAGS`), so a `~/.R/Makevars` that sets only `CXXFLAGS` silently does nothing here. **CRAN's `-O2` is full speed; recommend no custom flags.**
+
+- **v4.9.9 — optimization follow-ups from the 2026-07 assessment:** added public `pladdrr_simd(enabled = NULL)` for runtime SIMD A/B checks; `PowerCepstrum$get_peak_prominence()` now accepts the Praat-style trend-fit argument without coercion warnings; documented the measured arm64 reality that pitch gets little SIMD help while cepstrogram/CPPS gets a modest gain, so threading remains the main speed lever. Also clarified when to use single-interval CPP (`Spectrum -> PowerCepstrum`) versus smoothed CPPS (`PowerCepstrogram` helpers), and added the reusable `build_multiband_harmonicity()` + `multiband_hnr_stats()` path for repeated-interval VQ workflows.
+
+- **Unreleased (branch `cran-warnings-fix`) — CRAN build fixes + wrapper alignment:** `Makevars.win` now defines `UNICODE`/`_UNICODE` (Praat calls generic Win32 macros with wide buffers; without it they resolve to `...A` variants and fail on mingw) and `_FILE_OFFSET_BITS=64`, and drops the stale `-Iclapack/INCLUDE`; `r_lapack_wrapper.cpp` opts in to `USE_FC_LEN_T` (R-devel FCLEN compatibility); `-D_LIBCPP_DISABLE_DEPRECATION_WARNINGS` added to `PKG_CPPFLAGS` (silences C++17 allocator deprecations from RcppXsimd under `--as-cran`; inert on libstdc++). New methods: `formantgrid$to_sound()` (KlattGrid-style synthesis from formant tracks) and `cochleagram$get_loudness_at_time()`. Fixes: `to_formant_keepall/willems/sl()` now validate `time_step`/`max_frequency`/`window_length` at R level; `PraatInterpreter$set_object()` extracts `.xptr` from current S3 wrappers (was calling the removed R6 `get_ptr()`); `matrix$as_matrix()` calls the correct `.matrix_to_r_matrix()` export.
+
+- **v4.9.6 — CRAN compliance:** (1) **XPtr finalizer bug fixed** — module wrappers built pointers as `XPtr<T>(ptr, lambda)`, where the lambda silently bound Rcpp's `bool set_delete_finalizer` overload, so Praat objects were freed with `delete` instead of `forget()`. All construction now goes through `make_praat_xptr()` / `make_praat_xptr_from_auto()` (`src/praat_xptr_utils.h`), which register the finalizer explicitly via `R_RegisterCFinalizerEx`. **Never construct `XPtr<T>(ptr, deleter)` in new code.** (2) All `-Wno-*` warning suppressions removed from `Makevars`; `-ffp-contract=off` kept (required for bit-exact fidelity with Praat). (3) Vendored Praat patched so compiled code no longer calls `abort()`/`_Exit()` — assertions/fatals now throw and propagate to R as errors; `-Wunsequenced`/`-Wswitch` warnings fixed. (4) R-level cleanups: 147 internal `.Call` wrappers `@noRd`, `globalVariables` declared, non-ASCII removed.
+
+- **v4.9.5 — Source tarball slimmed 52 MB → 9 MB (no behaviour change):** the duplicate `src/praat/` tree (~107 MB, formerly the Windows build prefix) was **removed** — Windows now compiles from the same `praat.github.io/` prefix as Unix. Bundled external-library sources (espeak, flac, mp3, portaudio, vorbis, opusfile, lame, clapack, gsl, glpk) excluded from the tarball (stubbed at build time; only referenced headers kept). Any doc or script that references `src/praat/...` paths is stale.
+
+- **v4.9.4 — Nested-parallelism fix + lazy module load:** batch helpers (`analyze_files_parallel()`, `process_sounds_parallel()`, `batch_process()`) cap each parallel worker's C++ thread count so N R workers no longer spawn ~N² threads; new `threads_per_worker` argument (`NULL` = auto-divide, `1` = single-threaded workers). `PowerCepstrogram_smooth_fast` honours the `pladdrr_threads()` cap instead of always using all cores. Modules load lazily on first use instead of all ~38 eagerly in `.onLoad`. Numeric output unchanged.
+
+- **v4.9.3 — Willems/split-Levinson crash fixed:** `Sound$to_formant_willems()` and `to_formant_sl()` no longer segfault on pure tones or silence. Root cause was a null console stream in the embedded build (`MelderConsole::write` → `fputc(NULL)`); guarded to fall back to libc `stderr`/`stdout` (see `praat-modifications.Rmd` v4.9.3). Formant values are unchanged. Both methods now reject `number_of_formants`/`number_of_poles < 1` with a clear R-level error. Also fixed `sound_extract_parts()` (was passing a dead R6 private pointer → NULL; now uses `$.xptr`).
+- **v4.9.2 — Thread control:** `pladdrr_threads(n)` caps or disables Praat's multi-threaded analyses at runtime. `pladdrr_threads(1)` forces single-threaded (use inside `parallel::mclapply()` workers so cores aren't oversubscribed); `pladdrr_threads(0)` restores automatic (all cores); `pladdrr_threads()` with no argument returns the current state (`processors`, `enabled`, `max_threads`, `min_elements_per_thread`). Threading never changes results — threads only partition analysis frames.
+
+- **v4.9.2 — Data-loss policy:** `options(pladdrr.data_loss=)` controls how routines that report incomplete output react — NA for undefined values, a result shorter than the requested range, or a sound file read shorter than its own header (`Sound()` / `Sound$new()` on a truncated or malformed WAV): `"warn"` (default, classed warning per incident), `"error"` (stop at first incident), `"silent"` (only attach `attr(., "pladdrr_data_loss")`, and only where `with_pladdrr_errors()` returns a value that takes attributes). Set `"error"` in batch pipelines where silent truncation would corrupt aggregates — note that this then aborts a corpus loop on the first truncated file, which is the point: before the clamp such a loop completed on fabricated samples with no signal at all. Reading a file through the `av` fallback is reported by the separate `pladdrr_decoder_fallback` class, which this option deliberately does not govern.
+
+- **v4.9.2 — Input validation:** `Sound$to_pitch*/to_manipulation/to_ltas_pitch_corrected/change_speaker/to_point_process_periodic_*` now reject `pitch_floor <= 0` or `pitch_ceiling <= pitch_floor` with a clear R-level error instead of a generic "Failed to create ..." from C++.
+
+- **v4.9.2 — CPPS profiles:** the three CPPS parameter sets are now centralized in `R/constants.R` (`.cpps_profiles$r6`, `$avqi`, `$praat_gui`). `PowerCepstrogram$get_cpps()`/`calculate_cpps_fast()`/`calculate_cpps_ultra()` use the **r6** profile (0.001 s smoothing, ceiling 333.3 Hz); `get_cpps_fast()` uses the **avqi** profile (Maryn & Weenink: `subtract_tilt=FALSE`, 0.01/0.001 smoothing, ceiling 330 Hz). Neither equals the Praat GUI form defaults (**praat_gui**), which pladdrr reproduces exactly only when those values are passed explicitly. `test-cpps-defaults.R` fails if any signature drifts from its profile.
+
+- **v4.9.2 — Perf (no fidelity change):** eliminated redundant per-interval `Data_copy(sound)` in TextGrid interval extraction and concatenation paths (`sound_wrappers.cpp`, `textgrid_wrappers.cpp`, `batch_queries.cpp`) — inputs are now referenced or moved rather than deep-copied. `extract_measurements()` now pulls all formant numbers in a single `formant_get_multiple_formants_at_times()` call.
+
+- **v4.9.1 — PERF-1:** `get_spectral_moments_batch(spectrogram, power=2.0)` — new API returns a `data.frame(time, cog, sd, skewness, kurtosis)` for every frame in a single C++ pass. Eliminates the 14× R-loop penalty (400 per-frame `autoSpectrum` allocations + 1600 R→C++ boundary crossings per file). Available as standalone function and as `spectrogram$get_spectral_moments_batch()`. See [Pattern 2p](agent-guide-patterns.html#pattern-2p-spectral-moments-batch-v4.9.1).
+
+- **v4.9.1 — BUG-2:** Parabolic peak interpolation in `NUMimproveExtremum()` (`praat.github.io/melder/NUMinterpol.cpp`) now guards against division by near-zero `d2y` (flat or concave-up peak) and clamps `|offset| ≥ 1.0` (parabola cannot extrapolate beyond one bin). Fixes 500–1200 dB physically impossible values from `ltas$get_peaks_batch(interpolation="parabolic")`. Both `praat.github.io/` (macOS/Linux) and `praat/` (Windows) copies patched. See [Pitfall 13](agent-guide-pitfalls.html#pitfall-13-parabolic-interpolation-with-flat-ltas-peaks-fixed-v491).
+
+- **v4.9.1 — BUG-1:** Burg LPC formant extraction on short windows (≤100ms) now has a Laguerre-method fallback (`src/polynomial_roots_laguerre.h`) that activates when LAPACK `dhseqr_` fails to converge on all eigenvalues of the ill-conditioned companion matrix. Before this fix: F1 r=0.57, F2 r=0.38 vs Praat on 40ms windows; Python/Parselmouth achieved r>0.9999 on the same algorithm, confirming the bug was in pladdrr alone. Normal long-window audio is unaffected. See [Pitfall 14](agent-guide-pitfalls.html#pitfall-14-short-window-formant-extraction-fixed-v491).
+
+- **v4.9.1 — API-1:** `to_ltas_direct()` now returns a wrapped `Ltas` object, consistent with every other `*_direct()` constructor. Previously returned a raw `externalptr`, making it unusable without `Ltas(.xptr = to_ltas_direct(snd, bw))`. See [Pitfall 15](agent-guide-pitfalls.html#pitfall-15-to_ltas_direct-returned-raw-externalptr-fixed-v491).
+
+---
+
+## What's New in v4.8.x
+
+- **v4.8.35:** SPINET gammatone arg-swap fix in `src/praat.github.io/dwtools/Sound_to_SPINET.cpp`. `Sound_createGammaTone(...)` was called with `b=1.02` (ERB bandwidth constant) as frequency and `f[i]` as bandwidth — every filter was built at 1.02 Hz, so SPINET output was all zero on real speech and `SPINET_to_Pitch` aborted with *"The sound should not have all amplitudes equal to zero."* Corrected to `frequency=f[i]`, `bandwidth=bw[i]/NUM2pi` (bw already encodes `2π·b·ERB(f)`). Logged in `vignettes/agents/praat-modifications.Rmd` v4.8.35.
+
+- **v4.8.34:** SHS and SPINET pitch methods across all 3 API tiers. Tier 1: `sound$to_pitch_shs()`, `sound$to_pitch_spinet()`. Tier 2: `to_pitch_shs_direct()`, `to_pitch_spinet_direct()`. Tier 3: `sound_to_pitch_shs_batch()`, `sound_to_pitch_spinet_batch()`. Compiles 4 new Praat sources (`Sound_to_Pitch2.cpp`, `SPINET.cpp`, `Sound_to_SPINET.cpp`, `SPINET_to_Pitch.cpp`) plus extracted helper functions (`Sound_createGammaTone`, `Sound_power`, `Sound_correlateParts`, `Sound_localPeak`) in `sound_create_gaussian.cpp`. Build system updated (`Makevars.in`, `Makevars`, `Makevars.win`).
+
+- **v4.8.33:** All 35 wrappers ported to shared dispatch table pattern. Every wrapper (34 new + Sound from v4.8.32) now uses a shared `.{type}_methods` environment + `$.Type` S3 dispatch instead of per-instance closures. Zero new test regressions. Eliminates ~832 closure definitions across the codebase. Also: added `is_valid` method to 22 wrappers that lost it during porting, fixed `cochleagram$as_matrix()` return type (was trying `mat_list$values` on plain matrix), fixed `cepstrum$to_sound()` R6 call `Sound$new(xptr)` → `Sound(.xptr = xptr)`, added `@method $ Type` roxygen tags to 13 files, bumped NAMESPACE to 44 `S3method("$", ...)` entries.
+
+- **v4.8.32:** Sound shared dispatch table + critical bugfixes. (1) `sound-wrapper.R`: replaced per-instance closure list (~107 closures/object, ~120KB) with shared `.sound_methods` environment + `$.Sound` S3 dispatch. Creation 9x faster (23μs→2.6μs), memory 160x less (120KB→0.7KB). Method call ~2.5x slower per-call (0.4μs→1.0μs), negligible vs Praat computation. (2) `module_init.cpp`/`RcppExports.cpp`: fixed `R_registerRoutines` overwrite bug — the `[[Rcpp::init]]` hook was calling `R_registerRoutines` a second time with only 38 module entries, replacing the 777 Rcpp-exported entries. Now builds a combined table (777 + 38 = 815 entries) in a single registration call. This was breaking package load since v4.8.30 (Phase 1 commit `d99be82`). (3) `Makevars.in`: added missing `simd_utils.cpp` — the `configure` script generates `src/Makevars` from `src/Makevars.in` on every install, so fixing `Makevars` directly never persisted. (4) `NAMESPACE`: registered `S3method("$", Sound)` for shared dispatch.
+
+- **v4.8.31:** Phase 2 performance fixes — (1) `vad.R` `textgrid_get_intervals_where()`: replaced O(n²) vector growth (`c(x, val)` in loop) with pre-allocated vectors + counter + trim, (2) `textgrid-wrapper.R` `get_all_points()`: removed duplicate slow R-loop definition (line 409) that shadowed fast C++ version (line 300) due to R list duplicate-name semantics; fast version now uses `tier = 1L` default, (3) `batch-processing.R` `extract_measurements()`: replaced per-interval `lapply` with O(n) R→C++ calls with vectorized batch C++ calls — `textgrid_interval_statistics_batch()` for all intervals, `.pitch_get_values_at_times()` / `.formant_get_values_at_times()` / `.intensity_get_values_at_times()` for measurements; reduces ~10n R→C++ boundary crossings to ~(3 + max_formants) total calls.
+- **v4.8.30:** `Sound_to_Pitch.cpp`: SIMD optimizations re-enabled for FCC path — Fixes 1-5 (local mean, sum of squares, DC removal, local peak, batched `xsimd::sqrt` normalization over lags). Fixes earlier comment contradiction on `compute_local_mean_simd_bridge` (bridge returns mean, not sum). `Sound_to_Harmonicity_GNE.cpp`: Loop B (50-band Hilbert envelopes) and Loop C (1225-pair cross-correlation matrix) both parallelized via `MelderThread_PARALLELIZE`; upper-triangle pairs flattened into a linear index for even thread distribution.
+- **v4.8.29:** Critical performance regression fixes and HNR accuracy fix. Pitch CC and HNR: removed broken `#ifdef HAVE_XSIMD` blocks in `Sound_to_Pitch.cpp` — the FCC SIMD block allocated 2 heap vectors per pitch frame causing ~29× slowdown; the AC SIMD block had a brace bug that closed the channel loop prematurely (breaking stereo) and added non-inlined call overhead. Both revert to scalar loops that auto-vectorize under `-O3`. GNE: raised `MelderThread_PARALLELIZE` threshold 1→4 to cut allocator contention. `get_voice_quality_ultra(..., metrics="hnr")`: HNR now uses Praat's standard minimum pitch 75 Hz / time step 0.01 s instead of the caller's `min_pitch`; fixes ~1.31 dB underestimation in AVQI pipeline.
+- **v4.8.27/4.8.28:** Internal C++ performance optimizations (later found to regress — see v4.8.29). `Sound$to_harmonicity_gne()`: Loop B/C parallelized via `MelderThread_PARALLELIZE`. `sound$to_pitch_cc()`: batched `xsimd::sqrt` normalization (Fix 5). Both superseded/reverted by v4.8.29.
+- **v4.8.26:** Tier 3 audio additions: `Sound$change_speaker()`, `Sound$change_speaker_with_pitch()` (PSOLA-based speaker transformation — formant + pitch + duration multipliers), `sound_create_pure_tone()` / `Sound$create_pure_tone()` (pure tone with fades), `sound_create_tone_complex()` / `Sound$create_tone_complex()` (harmonic complex tone), `Spectrum$shift_frequencies()` (frequency shift with interpolation). See Pattern 2o for usage.
+- **v4.8.25:** Advanced audio analysis methods (Tier 1): `Sound$lengthen()` (overlap-add time-stretch), `Sound$to_ltas_pitch_corrected()` (voice quality LTAS), `Sound$to_formant_robust()` (outlier-resistant formants), `Sound$filter_by_formant[_noscale]()` (formant filtering), `Sound$to_mel_spectrogram()`, `Sound$to_bark_spectrogram()` (psychoacoustic spectrograms). New wrappers: `MelSpectrogram`, `BarkSpectrogram` with `to_mfcc()`, `to_matrix()`, `to_intensity()`. Extended Tier 2 methods: `Sound$autocorrelate()`, `Sound$deepen_band_modulation()`, `Sound$convolve()`, `Sound$cross_correlate()`, `MFCC$to_mel_spectrogram()`, `LPC$to_spectrogram()`, `PointProcess$to_sound_pulse_train()`, `PointProcess$to_sound_hum()`, `Intensity$to_textgrid_silences()`, `Table$sort_rows()`, `Table$extract_rows_where_[number|string]()`, `ltas_average()`. See Pattern 2n for usage.
+- **v4.8.24:** Convenience methods: `ltas$get_spectral_slope()`, `formant$get_all_values_at_time()`. New AGENT_GUIDE Pattern 2m (Prosodic Analysis Workflows) and Use Case 5 (Prosodic Feature Extraction)
+- **v4.8.23:** Doc/code default fixes (CPPS), AGENT_GUIDE reorganization (TOC, changelog moved to end), `plot.TextGrid`, `as.data.frame` for PointProcess/TextGrid/MFCC/LFCC, `interpolation` alias on `get_intensity_at_times()`, removed leaked `sound_as_matrix_fast_impl` export (was `sound_as_matrix_zerocopy_impl`)
+- **v4.8.22:** NaN/NA input guards on all query methods, Intensity batch queries, Formant/Spectrogram API additions
+- **v4.8.20:** Spectrogram segfault fix (thread-unsafe R API in SIMD check)
+- **v4.8.19:** xsimd v8+ compatibility for all SIMD files
+- **v4.8.15:** XPtr memory corruption fix across 123 methods

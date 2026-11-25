@@ -93,6 +93,14 @@ navbar:
       - text: Developer & Coding-Agent Docs
       - text: Agent Guide
         href: articles/agents/agent-guide.html
+      - text: "  Agent Guide: What's New"
+        href: articles/agents/agent-guide-whats-new.html
+      - text: "  Agent Guide: Common Patterns"
+        href: articles/agents/agent-guide-patterns.html
+      - text: "  Agent Guide: API Reference"
+        href: articles/agents/agent-guide-api-reference.html
+      - text: "  Agent Guide: Pitfalls & Use Cases"
+        href: articles/agents/agent-guide-pitfalls.html
       - text: Architecture
         href: articles/agents/architecture.html
       - text: Documentation Convention
@@ -437,6 +445,10 @@ articles:
   desc: Maintainer and LLM-agent reference; published on the site only, not shipped in the package
   contents:
   - agents/agent-guide
+  - agents/agent-guide-whats-new
+  - agents/agent-guide-patterns
+  - agents/agent-guide-api-reference
+  - agents/agent-guide-pitfalls
   - agents/architecture
   - agents/documentation
   - agents/praat-modifications
