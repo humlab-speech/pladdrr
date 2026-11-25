@@ -292,7 +292,7 @@ system.time({
   max_f0 <- pitch$get_maximum(0, 0, "hertz")
 })
 #>    user  system elapsed 
-#>   0.009   0.000   0.004
+#>   0.006   0.001   0.004
 # measure on your own data
 
 # Tier 2: Direct API
@@ -301,7 +301,7 @@ system.time({
   stats <- get_pitch_stats_direct(pitch_ptr)
 })
 #>    user  system elapsed 
-#>   0.008   0.000   0.003
+#>   0.007   0.000   0.002
 # fewer crossings; measure on your own data
 ```
 
@@ -319,7 +319,7 @@ system.time({
   pitches <- lapply(sounds, function(s) s$to_pitch())
 })
 #>    user  system elapsed 
-#>   0.036   0.000   0.017
+#>   0.027   0.000   0.013
 # measure on your own data
 
 # Tier 3: Batch
@@ -328,7 +328,7 @@ system.time({
   pitches <- sound_to_pitch_batch(sounds)
 })
 #>    user  system elapsed 
-#>   0.035   0.002   0.017
+#>   0.029   0.000   0.014
 # scales with cores; measure on your own data
 
 # Tier 3: Parallel (2 cores)
@@ -337,7 +337,7 @@ system.time({
 })
 #> Processing 4 files using 2 cores (2 thread(s)/worker)
 #>    user  system elapsed 
-#>   0.086   0.078   0.292
+#>   0.051   0.079   0.233
 # includes file I/O; measure on your own data
 ```
 
@@ -355,7 +355,7 @@ system.time({
   }, numeric(1))
 })
 #>    user  system elapsed 
-#>    0.01    0.00    0.01
+#>   0.007   0.000   0.007
 # one R->C crossing per time point
 
 # Tier 3: Vectorized
@@ -363,7 +363,7 @@ system.time({
   f1_values <- get_formants_at_times(formant, times, formant_numbers = 1)
 })
 #>    user  system elapsed 
-#>   0.001   0.000   0.001
+#>       0       0       0
 # one R->C crossing for the whole vector — this is where batching pays off
 ```
 
@@ -450,8 +450,8 @@ benchmark_results <- benchmark_parallel(
 
 print(benchmark_results)
 #>   cores   time_sec   speedup
-#> 1     1 0.02047825 1.0000000
-#> 2     2 0.03082752 0.6642846
+#> 1     1 0.01628184 1.0000000
+#> 2     2 0.02917218 0.5581291
 # Inspect the returned table to see where returns diminish on your machine
 ```
 
