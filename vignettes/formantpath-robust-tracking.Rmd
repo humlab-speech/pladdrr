@@ -218,8 +218,13 @@ cat("  F3:", round(f3), "Hz\n")
 selected candidate for a time range:
 
 ```{r manual-path}
-# Set candidate 3 for time range 0.2-0.4s
-fp$set_path(tmin = 0.2, tmax = 0.4, selected_candidate = 3)
+# Set candidate 3 for the middle third of the signal
+dur <- fp$get_xmax() - fp$get_xmin()
+fp$set_path(
+  tmin = fp$get_xmin() + dur / 3,
+  tmax = fp$get_xmin() + 2 * dur / 3,
+  selected_candidate = 3
+)
 
 # Or set optimal path for entire duration
 fp$set_optimal_path(
