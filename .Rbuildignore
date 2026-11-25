@@ -117,3 +117,6 @@ manual_.*\.cpp$
 
 # GUI command-registration units never compiled (only fon/praat_*_init.cpp is)
 ^src/praat\.github\.io/(dwtools|LPC|sensors|excluded_sources)/praat_.*_init\.cpp$
+
+# Contributor/agent docs; dev-only, ~190 KB compressed
+^inst/agents$
