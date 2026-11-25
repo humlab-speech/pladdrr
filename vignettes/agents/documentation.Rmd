@@ -2,7 +2,7 @@
 title: "pladdrr Documentation Convention"
 ---
 
-**Purpose:** How to write roxygen2 doc blocks for the shared-dispatch-table wrapper types (Sound, Formant, Pitch, etc. — see `ARCHITECTURE.md` § Dispatch Patterns). `Sound` (`R/sound-wrapper.R`) is the reference implementation; copy its shape.
+**Purpose:** How to write roxygen2 doc blocks for the shared-dispatch-table wrapper types (Sound, Formant, Pitch, etc. — see `architecture.Rmd` § Dispatch Patterns). `Sound` (`R/sound-wrapper.R`) is the reference implementation; copy its shape.
 
 ## Why this file exists
 
@@ -77,10 +77,10 @@ Rules, in order of how often they're missed:
    flags undocumented arguments), but say plainly that it's internal and
    what sets it — don't let it read like a normal user-facing argument.
 5. **No stale/marketing markers.** Cut `**NEW**`, "cutting-edge",
-   version-bragging, or anything whose real home is `HISTORY.md`/the
+   version-bragging, or anything whose real home is `history.Rmd`/the
    changelog, not the reference doc a user opens mid-analysis. If a fact
-   about *why* something exists matters, it belongs in `ARCHITECTURE.md` or
-   `HISTORY.md`, not repeated in every method's Rd page.
+   about *why* something exists matters, it belongs in `architecture.Rmd` or
+   `history.Rmd`, not repeated in every method's Rd page.
 6. **Humanize the prose.** No em dashes, no `**bold** \n**bold**` inline-header
    lists, no hedging/filler. Plain, direct, friendly-scientific register —
    write like the `Sound` doc reads. Run non-trivial rewrites past the

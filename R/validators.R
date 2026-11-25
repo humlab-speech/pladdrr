@@ -2,7 +2,7 @@
 # R-level error instead of a generic "Failed to ..." from the C++ boundary.
 #
 # These raise `pladdrr_input_error` conditions (see R/error-classes.R), so the
-# typed-error contract documented in inst/agents/AGENT_GUIDE.md holds for
+# typed-error contract documented in vignettes/agents/agent-guide.Rmd holds for
 # argument validation whether or not the call goes through
 # `with_pladdrr_errors()`. C++-side failures still surface untagged unless the
 # wrapper uses the PLADDRR_* macros in src/pladdrr_errors.h.

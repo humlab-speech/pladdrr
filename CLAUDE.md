@@ -45,7 +45,7 @@ R/
 ## Documentation
 
 Wrapper-type roxygen doc blocks (Sound, Formant, Pitch, etc.) follow a fixed
-convention — see `inst/agents/DOCUMENTATION.md`. Short version: this package
+convention — see `vignettes/agents/documentation.Rmd`. Short version: this package
 does not enable roxygen markdown, so method lists must use `\itemize`/`\code{}`
 Rd markup, not `` - `x` `` bullets, or they silently render as one run-on
 paragraph.

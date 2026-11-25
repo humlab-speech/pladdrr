@@ -111,7 +111,7 @@ test_that("a legacy class name for the same class is still accepted", {
 })
 
 test_that("the rejection is the package's tagged input error", {
-  # inst/agents/AGENT_GUIDE.md's typed-error contract: errors raised in C++
+  # vignettes/agents/agent-guide.Rmd's typed-error contract: errors raised in C++
   # carry a `[pladdrr_input_error:routine:param]` tag that
   # with_pladdrr_errors() turns into a classed condition. A bare Rcpp::stop()
   # here would leave this one error uncatchable by class.

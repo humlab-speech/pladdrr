@@ -616,7 +616,7 @@ create_window_xptr <- function(type = c("hamming", "hanning", "gaussian",
 #' `veryAccurate` choice to document here. See the CPPS parameter default
 #' table in `/CLAUDE.md` for the (non-pitch) parameters that do vary by
 #' caller, and the Tier 4 Ultra algorithm table in
-#' `inst/agents/AGENT_GUIDE.md` for how this compares to the pitch-based
+#' \url{https://humlab-speech.github.io/pladdrr/articles/agents/agent-guide.html} for how this compares to the pitch-based
 #' Ultra functions.
 #'
 #' @examples
@@ -755,7 +755,7 @@ calculate_cpps_ultra <- function(
 #' only controls the Intensity analysis window length (via
 #' `Sound_to_Intensity`'s own floor parameter), not a pitch-detection
 #' algorithm choice. See the Tier 4 Ultra algorithm table in
-#' `inst/agents/AGENT_GUIDE.md`.
+#' \url{https://humlab-speech.github.io/pladdrr/articles/agents/agent-guide.html}.
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate =
@@ -1000,7 +1000,7 @@ multiband_hnr_stats <- function(multiband, from_time = 0, to_time = 0) {
 #' Harmonicity is always computed with `Sound_to_Harmonicity_cc()` (the CC
 #' method) for every band — there is no AC alternative and no way to
 #' configure it. This matches VQ_measurements_V2.praat lines 102-122. See the
-#' Tier 4 Ultra algorithm table in `inst/agents/AGENT_GUIDE.md`.
+#' Tier 4 Ultra algorithm table in \url{https://humlab-speech.github.io/pladdrr/articles/agents/agent-guide.html}.
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 0.5, sampling_rate =

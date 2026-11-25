@@ -58,7 +58,7 @@ Triple class `c("Electroglottogram", "Sound", "PraatObject")` + `.pointer` compa
 
 ### Special Cases
 
-- **PraatMatrix:** the Praat `Matrix` wrapper is exported as `PraatMatrix()` with class `c("PraatMatrix", "PraatObject")`; the old name `Matrix` collided with the CRAN 'Matrix' package (duplicate function name in `pkgcheck`, S3 `as.matrix.Matrix` overwrite in `R CMD check`) and was removed without an alias. pladdrr registers no S3 method on a class named like another package's class. See `AGENT_GUIDE.md` "PraatMatrix and the 'Matrix' package".
+- **PraatMatrix:** the Praat `Matrix` wrapper is exported as `PraatMatrix()` with class `c("PraatMatrix", "PraatObject")`; the old name `Matrix` collided with the CRAN 'Matrix' package (duplicate function name in `pkgcheck`, S3 `as.matrix.Matrix` overwrite in `R CMD check`) and was removed without an alias. pladdrr registers no S3 method on a class named like another package's class. See `agent-guide.Rmd` "PraatMatrix and the 'Matrix' package".
 - **AmplitudeTier:** `.pointer` compat alias in `$` dispatch (used by factory functions)
 - **PitchTier, FormantTier, LongSound, VocalTier:** static `$.{type}_constructor` for class methods
 - **FormantPath, KlattGrid, ComplexSpectrogram:** no `.xptr` — only `.cpp` stored
@@ -104,7 +104,7 @@ efficiency-core straggler. Measured on an M1 Pro (8P+2E) with v4.9.19 this no
 longer costs anything — 10 threads is the fastest point and CPU time is flat
 above 8 — but the risk is latent if you change chunk sizes or thresholds.
 
-**pladdrr-added parallel regions** (not upstream; Praat-tree ones logged in `PRAAT_MODIFICATIONS.md`):
+**pladdrr-added parallel regions** (not upstream; Praat-tree ones logged in `praat-modifications.Rmd`):
 `Sound_resample` sinc branch (`fon/Sound.cpp`, threshold 2000 samples, per channel,
 2026-10) and `PowerCepstrogram_smooth_fast` (`batch_queries.cpp`). Only add one where
 each element writes a disjoint output slot and reads shared input only — that keeps
@@ -153,7 +153,7 @@ needs both halves; `tests/testthat/test-xptr-all-constructors.R` lists the types
 **Sizes that become allocations are bounded.** `src/pladdrr_limits.h` caps a
 Cochleagram at 2^29 cells and an Excitation at 10 000 bands; the guards sit in the
 vendored `Sound_to_Cochleagram.cpp` / `Spectrum_to_Excitation.cpp` (all three call
-doors reach them; logged in `PRAAT_MODIFICATIONS.md`). R-level factories
+doors reach them; logged in `praat-modifications.Rmd`). R-level factories
 (`sound_create_tone()` and siblings, `PraatMatrix()`, the cochleagram methods) check
 positive, finite and at most 2^29 cells with `.check_positive_finite()` /
 `.check_cell_count()` in `R/validators.R`. The reason is platform behaviour: asking
@@ -177,7 +177,7 @@ non-`NDEBUG` build is 2.1-7x slower package-wide).
   every moved key in `NEWS.md`.
 - `tests/testthat/test-praat-faithfulness.R` compares the routines in the registry with the Praat
   application (`PLADDRR_PRAAT_EXEC`, default `/Applications/Praat.app/...`) and, with
-  `PLADDRR_FAITHFULNESS_OUTDIR` set, regenerates `FAITHFULNESS_REPORT.md`. Name the
+  `PLADDRR_FAITHFULNESS_OUTDIR` set, regenerates `faithfulness-report.Rmd`. Name the
   Praat version with any reference number: the CPPS pipeline differs between 6.4.27 and
   6.4.47 by about 0.13 dB.
 - Some tests are platform-specific by nature (affinity and `/proc` checks are
@@ -192,7 +192,7 @@ non-`NDEBUG` build is 2.1-7x slower package-wide).
 
 ```
 -O2 (CRAN floor) — default, full speed
--O3 -march=native (embedder option) — byte-identical objects, no measurable gain (see v4.9.22 in AGENT_GUIDE.md)
+-O3 -march=native (embedder option) — byte-identical objects, no measurable gain (see v4.9.22 in agent-guide.Rmd)
 #pragma STDC FP_CONTRACT OFF in melder.h — required for bit-exactness (replaced -ffp-contract=off, 2026-08)
 -DHAVE_XSIMD — unconditional; RcppXsimd is a LinkingTo dependency
 ```
@@ -288,7 +288,7 @@ before each submission.
 | "version 5.0.5" (twice) | 5.1.1 | `DESCRIPTION` |
 | 1401 tests | 1587 `test_that()` blocks (2026-11-25) | count lines matching `^\s*test_that\(` in `tests/testthat/*.R` (the manuscript's counting unit is not stated; use one unit) |
 | 82% coverage | 93.8% (pkgcheck's covr run, macOS aarch64, 2026-11-12; `pkgcheck.log` is from 5.0.5 and stale) | rerun `covr` (see the covr FLIBS note in project memory) |
-| CCC 0.9959 and 1.00 | `FAITHFULNESS_REPORT.md` is the live registry: routine count, pass status and tolerances per row | regenerate with the registry runner |
+| CCC 0.9959 and 1.00 | `faithfulness-report.Rmd` is the live registry: routine count, pass status and tolerances per row | regenerate with the registry runner |
 
 Statements in the manuscript that hold and that these documents depend on: wrapper objects are plain lists with
 an external pointer and a shared per-class method environment; the interpreter is the only R6 class; SIMD and

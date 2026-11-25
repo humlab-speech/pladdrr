@@ -42,7 +42,7 @@ deterministic — a documented upstream Praat defect — and samples
 randomly: ~0.8 dB spread across identical runs of the same input, with
 occasional extreme outliers around `1e290`. pladdrr reproduces that
 non-determinism faithfully when `"robust slow"` is requested (see
-`AGENT_GUIDE.md` v4.9.19 entry and `PRAAT_MODIFICATIONS.md` v4.9.19).
+`agent-guide.Rmd` v4.9.19 entry and `praat-modifications.Rmd` v4.9.19).
 Do not read the row above as evidence that the robust-slow path is
 bit-reproducible — it is not, in Praat or in pladdrr.
 

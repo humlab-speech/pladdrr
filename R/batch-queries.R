@@ -601,7 +601,7 @@ get_durations_batch <- function(file_paths) {
 #' `veryAccurate = TRUE`, `silenceThreshold = 0.03` (matching DSI201.praat's
 #' `To Pitch (cc)...` step). Only `voicing_threshold` is configurable; the
 #' AC/CC choice and `veryAccurate` are not. See the Tier 4 Ultra algorithm
-#' table in `inst/agents/AGENT_GUIDE.md` for how this compares to the other
+#' table in \url{https://humlab-speech.github.io/pladdrr/articles/agents/agent-guide.html} for how this compares to the other
 #' Ultra functions.
 #'
 #' @examples
@@ -678,7 +678,7 @@ calculate_f0_stats_ultra <- function(sound, stat,
 #' uses a stricter voicing threshold than the jitter block. None of these are
 #' exposed as parameters (including `voicing_threshold`, unlike
 #' `calculate_f0_stats_ultra()`). See the Tier 4 Ultra algorithm table in
-#' `inst/agents/AGENT_GUIDE.md`.
+#' \url{https://humlab-speech.github.io/pladdrr/articles/agents/agent-guide.html}.
 #'
 #' @examples
 #' sound <- Sound$create_tone(frequency = 150, duration = 1, sampling_rate =

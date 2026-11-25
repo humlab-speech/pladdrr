@@ -82,7 +82,7 @@ relative to the maximum), not derived from a `Pitch` object. `min_pitch`
 only controls the Intensity analysis window length (via
 `Sound_to_Intensity`'s own floor parameter), not a pitch-detection
 algorithm choice. See the Tier 4 Ultra algorithm table in
-`inst/agents/AGENT_GUIDE.md`.
+\url{https://humlab-speech.github.io/pladdrr/articles/agents/agent-guide.html}.
 }
 
 \examples{
