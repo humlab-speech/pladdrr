@@ -633,7 +633,7 @@ flat LTAS peaks).
 
 ### v4.8.35 SPINET gammatone arg-swap fix (2026-05-06)
 
-#### `src/praat.github.io/fon/Sound_to_SPINET.cpp` — gammatone filter args
+#### `src/praat.github.io/dwtools/Sound_to_SPINET.cpp` — gammatone filter args
 
 Upstream Praat call `Sound_createGammaTone(..., b, f[i], ...)` passed `b=1.02`
 (the ERB bandwidth constant) as the frequency argument and the center

@@ -367,7 +367,7 @@ under the old behaviour; the magnitudes are in `NEWS.md`.
 
 ## What's New in v4.8.x
 
-- **v4.8.35:** SPINET gammatone arg-swap fix in `src/praat.github.io/fon/Sound_to_SPINET.cpp`. `Sound_createGammaTone(...)` was called with `b=1.02` (ERB bandwidth constant) as frequency and `f[i]` as bandwidth — every filter was built at 1.02 Hz, so SPINET output was all zero on real speech and `SPINET_to_Pitch` aborted with *"The sound should not have all amplitudes equal to zero."* Corrected to `frequency=f[i]`, `bandwidth=bw[i]/NUM2pi` (bw already encodes `2π·b·ERB(f)`). Logged in `inst/agents/PRAAT_MODIFICATIONS.md` v4.8.35.
+- **v4.8.35:** SPINET gammatone arg-swap fix in `src/praat.github.io/dwtools/Sound_to_SPINET.cpp`. `Sound_createGammaTone(...)` was called with `b=1.02` (ERB bandwidth constant) as frequency and `f[i]` as bandwidth — every filter was built at 1.02 Hz, so SPINET output was all zero on real speech and `SPINET_to_Pitch` aborted with *"The sound should not have all amplitudes equal to zero."* Corrected to `frequency=f[i]`, `bandwidth=bw[i]/NUM2pi` (bw already encodes `2π·b·ERB(f)`). Logged in `inst/agents/PRAAT_MODIFICATIONS.md` v4.8.35.
 
 - **v4.8.34:** SHS and SPINET pitch methods across all 3 API tiers. Tier 1: `sound$to_pitch_shs()`, `sound$to_pitch_spinet()`. Tier 2: `to_pitch_shs_direct()`, `to_pitch_spinet_direct()`. Tier 3: `sound_to_pitch_shs_batch()`, `sound_to_pitch_spinet_batch()`. Compiles 4 new Praat sources (`Sound_to_Pitch2.cpp`, `SPINET.cpp`, `Sound_to_SPINET.cpp`, `SPINET_to_Pitch.cpp`) plus extracted helper functions (`Sound_createGammaTone`, `Sound_power`, `Sound_correlateParts`, `Sound_localPeak`) in `sound_create_gaussian.cpp`. Build system updated (`Makevars.in`, `Makevars`, `Makevars.win`).
 
@@ -469,7 +469,7 @@ This guide provides the **complete API reference** for pladdrr, an R package tha
                             ▼
 ┌─────────────────────────────────────────────────────────────┐
 │ Praat C++ Layer (src/praat.github.io/)                      │
-│   - 1,254 headers from Praat codebase                      │
+│   - 1,217 headers from Praat codebase                      │
 │   - Direct calls: Sound_to_Pitch(), Formant_getValueAtTime()│
 │   - Build flags come from R Makeconf; FP contraction off   │
 │     via pragma in melder.h; -DHAVE_XSIMD unconditional     │
@@ -664,7 +664,7 @@ some modules like Electroglottogram/DTW/Polygon aren't broken out as separate ro
 |------|-----------------|
 | `TextGrid` | `TextGrid("file.TextGrid")` |
 | `Table` | `formant$down_to_table()` |
-| `Matrix` (Praat type) | `PraatMatrix(numberOfRows, numberOfColumns, ...)`; class `PraatMatrix` |
+| `Matrix` (Praat type) | `PraatMatrix(numberOfRows = , numberOfColumns = )` (or the full `xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1` set); class `PraatMatrix` |
 | `LongSound` | `LongSound$open("large_file.wav")` |
 
 ### Interpreter (NEW in v2.1.0)
@@ -677,9 +677,7 @@ some modules like Electroglottogram/DTW/Polygon aren't broken out as separate ro
 
 **Key Methods:**
 - `run(script)` - Execute Praat script
-- `eval_numeric(expr)` - Evaluate expression to number
-- `eval_string(expr)` - Evaluate expression to string
-- `eval_vector(expr)` - Evaluate to numeric vector
+- `eval(expr)` - Evaluate expression (tries numeric, then string, then vector, then string array)
 - `get_variable(name)` - Get interpreter variable
 - `set_variable(name, value)` - Set interpreter variable
 
@@ -2042,7 +2040,7 @@ see `R/performance-helpers.R:551` and CLAUDE.md's CPPS parameter-default warning
 
 ```r
 # OLD WAY: Multi-step pipeline (6+ Praat calls)
-tg <- sound_to_textgrid_detect_silences(sound, min_pitch = 100, silence_threshold = -25)
+tg <- sound$to_textgrid_silences(min_pitch = 100, silence_threshold = -25)
 voiced_sounds <- list()
 for (i in 1:tg$get_number_of_intervals(1)) {
   if (tg$get_interval_text(1, i) != "silent") {
@@ -3359,12 +3357,12 @@ MFCC (Mel-Frequency Cepstral Coefficients) for speaker recognition and speech an
 | Method | Parameters | Return | Notes |
 |--------|------------|--------|-------|
 | `get_number_of_frames()` | - | `integer` | Total analysis frames |
-| `get_number_of_coefficients()` | - | `integer` | Coefficients per frame (usually 12-13) |
+| `get_max_num_coefficients()` | - | `integer` | Max coefficients per frame (usually 12-13); per-frame count: `get_num_coefficients_at_frame(frame)` |
 | `get_xmin()`, `get_xmax()` | - | `numeric` | Time domain |
-| `get_frame_time(frame)` | `int` | `numeric` | Time of frame center |
+| `get_time_from_frame(frame)` | `int` | `numeric` | Time of frame center (inverse: `get_frame_from_time(time)`) |
 | `get_coefficients_at_frame(frame)` | `int` | `numeric vector` | All coefficients at frame |
 | `get_all_coefficients()` | - | `matrix` | Frames × coefficients matrix |
-| `lifter(from, to)` | `int, int` | `MFCC` | Apply liftering to coefficient range |
+| `lifter(lifter_coefficient = 22)` | `int` | `MFCC` (self, invisible) | Apply liftering in place |
 | `as_data_frame()` | - | `data.table` | Export to data.table |
 
 **Creation:** `sound$to_mfcc(num_coefficients = 13, analysis_width = 0.025, time_step = 0.01, f1_mel = 100.0, fmax_mel = 7800.0, df_mel = 100.0)`
@@ -3376,7 +3374,7 @@ LFCC (Linear-Frequency Cepstral Coefficients) - alternative to MFCC with linear 
 | Method | Parameters | Return | Notes |
 |--------|------------|--------|-------|
 | `get_number_of_frames()` | - | `integer` | Total analysis frames |
-| `get_number_of_coefficients()` | - | `integer` | Coefficients per frame |
+| `get_max_num_coefficients()` | - | `integer` | Max coefficients per frame (usually 12-13); per-frame count: `get_num_coefficients_at_frame(frame)` |
 | `get_coefficients_at_frame(frame)` | `int` | `numeric vector` | All coefficients at frame |
 | `get_all_coefficients()` | - | `matrix` | Frames × coefficients matrix |
 | `as_data_frame()` | - | `data.table` | Export to data.table |
@@ -3394,10 +3392,10 @@ Robust polynomial formant tracking with outlier detection.
 | `get_xmin()`, `get_xmax()` | - | `numeric` | Time domain |
 | `get_coefficient_of_determination(track)` | `int` | `numeric` | R² for track |
 | `get_model_value_at_time(track, time)` | `int, double` | `numeric` | Smoothed formant value |
-| `get_residual_at_time(track, time)` | `int, double` | `numeric` | Deviation from model |
-| `get_data_point_status(track, frame)` | `int, int` | `integer` | 1=valid, 0=outlier |
-| `to_formant()` | - | `Formant` | Convert back to Formant |
-| `process_outliers(sigma)` | `double` | `FormantModeler` | Mark outliers beyond sigma |
+| `get_residual_sum_of_squares(track)` | `int` | `numeric` | RSS of model fit for track |
+| `get_data_point_value(track, index)`, `get_data_point_sigma(track, index)` | `int, int` | `numeric` | Observed value / sigma of data point |
+| `to_formant(estimate = TRUE, estimate_undefined = TRUE)` | - | `Formant` | Convert back to Formant |
+| `process_outliers(num_sigmas = 3.0)` | `double` | `FormantModeler` | Mark outliers beyond num_sigmas |
 | `as_data_frame()` | - | `data.table` | Export modeled values |
 
 **Creation:** `formant$to_formant_modeler(tmin, tmax, num_tracks = 4, num_params = 5)`
@@ -3812,7 +3810,7 @@ the `Ltas(.xptr = ...)` wrap. All other `*_direct()` functions were already corr
 
 ## Deprecated API Migration
 
-⚠️ **Legacy S3 API functions are deprecated and will be removed in v5.0.0**
+⚠️ **Legacy S3 API functions are deprecated and will be removed in v6.0.0** (still present in v5.2.0)
 
 The following S3-style functions have been replaced by the modern shared dispatch API. While they still work, they emit deprecation warnings and should not be used in new code.
 
@@ -3820,7 +3818,7 @@ The following S3-style functions have been replaced by the modern shared dispatc
 
 | Deprecated Function | Modern Replacement |
 |---------------------|-------------------|
-| `create_sound(values, sr)` | `sound_n(values, sr)` |
+| `create_sound(values, sr)` | `Sound$from_values(values, sr)` |
 | `read_sound(file_path)` | `Sound(file_path)` |
 | `get_duration(sound)` | `sound$get_duration()` |
 | `get_sampling_rate(sound)` | `sound$get_sampling_frequency()` |
@@ -3872,7 +3870,8 @@ mean_f0 <- pitch$get_mean()
 ### Removal Timeline
 
 - **v4.x**: Deprecated functions emit warnings
-- **v5.0.0**: Deprecated functions will be removed
+- **v5.x**: Deprecated functions still present and warn
+- **v6.0.0**: Deprecated functions will be removed
 
 ---
 

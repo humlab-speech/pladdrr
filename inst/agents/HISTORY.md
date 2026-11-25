@@ -15,7 +15,7 @@ See this file's section "Version History (historical archive)" for the full vers
 
 ## Superseded SIMD Patterns
 
-See this file's section "Historical SIMD and performance archive (superseded)" (line 381) for documentation of SIMD implementation patterns that are no longer the recommended approach.
+See this file's section "Historical SIMD and performance archive (superseded)" for documentation of SIMD implementation patterns that are no longer the recommended approach.
 
 ---
 

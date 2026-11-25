@@ -40,7 +40,7 @@ Pitch <- function(.xptr = NULL) {
 - Wrapper dispatch (v4.9.18) replaces Rcpp Module's 3-layer R→Module→C++ path with direct 2-layer R→C++ `.Call()` for frequent query methods, reducing per-call overhead ~30-40%.
 - All wrappers inherit dispatch from this pattern via `$.PraatObject`.
 
-**List of types using this pattern:** AmplitudeTier, BarkSpectrogram, Cepstrum, Cochleagram, ComplexSpectrogram, DTW, Discriminant, DurationTier, Excitation, Formant, FormantGrid, FormantModeler, FormantPath, FormantTier, Harmonicity, Intensity, IntensityTier, KlattGrid, LFCC, LPC, LongSound, Ltas, MFCC, Manipulation, PraatMatrix, MelSpectrogram, PCA, Pitch, PitchModule, PitchTier, PointProcess, Polygon, Sound, Spectrogram, Spectrum, SpectrumTier, Table, TextGrid, VocalTract.
+**List of types using this pattern:** AmplitudeTier, Cepstrum, Cochleagram, ComplexSpectrogram, Discriminant, DurationTier, Excitation, Formant, FormantGrid, FormantModeler, FormantPath, FormantTier, Harmonicity, Intensity, IntensityTier, KlattGrid, LFCC, LPC, LongSound, Ltas, MFCC, Manipulation, PraatMatrix, PCA, Pitch, PitchModule, PitchTier, PointProcess, Polygon, PowerCepstrum, Sound, Spectrogram, Spectrum, SpectrumTier, Table, TextGrid, VocalTract. (`BarkSpectrogram`, `MelSpectrogram` and `DTW` have no `.{type}_methods` table or `$.Type` method in `NAMESPACE`.)
 
 ### 2. Pure XPtr (PowerCepstrogram)
 
@@ -284,7 +284,7 @@ before each submission.
 |-----------------|--------------|-----------------|
 | 38 Praat modules | 39 (`DESCRIPTION` Description; 39 files in `src/modules/`) | `ls src/modules/*.cpp \| wc -l` |
 | "version 5.0.5" (twice) | 5.1.1 | `DESCRIPTION` |
-| 1401 tests | 1556 `test_that()` blocks | count lines matching `^\s*test_that\(` in `tests/testthat/*.R` (the manuscript's counting unit is not stated; use one unit) |
+| 1401 tests | 1587 `test_that()` blocks (2026-11-25) | count lines matching `^\s*test_that\(` in `tests/testthat/*.R` (the manuscript's counting unit is not stated; use one unit) |
 | 82% coverage | 93.8% (pkgcheck's covr run, macOS aarch64, 2026-11-12; `pkgcheck.log` is from 5.0.5 and stale) | rerun `covr` (see the covr FLIBS note in project memory) |
 | CCC 0.9959 and 1.00 | `FAITHFULNESS_REPORT.md` is the live registry: routine count, pass status and tolerances per row | regenerate with the registry runner |
 
