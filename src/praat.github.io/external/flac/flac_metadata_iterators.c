@@ -3615,8 +3615,8 @@ void set_file_stats_(const char *filename, struct flac_stat_s *stats)
 	(void)flac_chmod(filename, stats->st_mode);
 	(void)flac_utime(filename, &srctime);
 #if !defined _MSC_VER && !defined __BORLANDC__ && !defined __MINGW32__
-	FLAC_CHECK_RETURN(chown(filename, stats->st_uid, -1));
-	FLAC_CHECK_RETURN(chown(filename, -1, stats->st_gid));
+	if (chown(filename, stats->st_uid, -1) != 0) { /* best effort; result intentionally ignored */ }
+	if (chown(filename, -1, stats->st_gid) != 0) { /* best effort; result intentionally ignored */ }
 #endif
 }
 
