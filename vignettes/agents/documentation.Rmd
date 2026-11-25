@@ -1,4 +1,6 @@
-# pladdrr Documentation Convention
+---
+title: "pladdrr Documentation Convention"
+---
 
 **Purpose:** How to write roxygen2 doc blocks for the shared-dispatch-table wrapper types (Sound, Formant, Pitch, etc. — see `ARCHITECTURE.md` § Dispatch Patterns). `Sound` (`R/sound-wrapper.R`) is the reference implementation; copy its shape.
 

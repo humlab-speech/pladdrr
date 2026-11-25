@@ -9,6 +9,9 @@ template:
     heading_font: {google: "Roboto Slab"}
     code_font: {google: "JetBrains Mono"}
 
+search:
+  exclude: ['articles/agents/history.html']
+
 home:
   title: "pladdrr: Direct Access to Praat C Functionality from R"
   description: |
@@ -86,6 +89,22 @@ navbar:
         href: articles/naming-conventions.html
       - text: Batch Operations Guide
         href: articles/batch-operations-guide.html
+      - text: -------
+      - text: Developer & Coding-Agent Docs
+      - text: Agent Guide
+        href: articles/agents/agent-guide.html
+      - text: Architecture
+        href: articles/agents/architecture.html
+      - text: Documentation Convention
+        href: articles/agents/documentation.html
+      - text: Praat Source Modifications
+        href: articles/agents/praat-modifications.html
+      - text: Faithfulness Report
+        href: articles/agents/faithfulness-report.html
+      - text: Performance Inventory
+        href: articles/agents/performance-inventory.html
+      - text: Version History
+        href: articles/agents/history.html
     news:
       text: News
       href: news/index.html
@@ -413,3 +432,14 @@ articles:
   - articles/v4-migration-guide
   - articles/naming-conventions
   - articles/batch-operations-guide
+
+- title: Developer & Coding-Agent Docs
+  desc: Maintainer and LLM-agent reference; published on the site only, not shipped in the package
+  contents:
+  - agents/agent-guide
+  - agents/architecture
+  - agents/documentation
+  - agents/praat-modifications
+  - agents/faithfulness-report
+  - agents/performance-inventory
+  - agents/history

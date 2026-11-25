@@ -1,4 +1,6 @@
-# Performance Inventory (pladdrr)
+---
+title: "Performance Inventory (pladdrr)"
+---
 
 _Generated: 2026-11-05T21:18:48Z by tools/perf_inventory.sh_
 

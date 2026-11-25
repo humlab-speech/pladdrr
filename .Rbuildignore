@@ -118,8 +118,9 @@ manual_.*\.cpp$
 # GUI command-registration units never compiled (only fon/praat_*_init.cpp is)
 ^src/praat\.github\.io/(dwtools|LPC|sensors|excluded_sources)/praat_.*_init\.cpp$
 
-# Contributor/agent docs; dev-only, ~190 KB compressed
-^inst/agents$
+# Contributor/agent docs and pkgdown-only articles: published on the site, not shipped
+^vignettes/agents$
+^vignettes/articles$
 
 # Vendored Praat sources not listed in src/Makevars.in (GUI/manual/editor code); never compiled
 ^src/praat\.github\.io/dwsys/ChebyshevSeries\.cpp$

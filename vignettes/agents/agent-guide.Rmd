@@ -1,4 +1,6 @@
-# pladdrr Agent Guide
+---
+title: "pladdrr Agent Guide"
+---
 
 **Version:** 5.2.0 guide refresh (2026-11-24; 5.1.1 refresh 2026-09-04; perf/memory audit notes 2026-10-19; 2026-11 audit round 2026-11-06)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr

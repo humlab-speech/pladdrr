@@ -1,4 +1,6 @@
-# pladdrr Version History
+---
+title: "pladdrr Version History"
+---
 
 **Maintained by:** coding agents and maintainers
 **Purpose:** Superseded patterns, historical version archive, SIMD implementation history.

@@ -1,4 +1,6 @@
-# Praat Source Modifications for pladdrr
+---
+title: "Praat Source Modifications for pladdrr"
+---
 
 **Last Updated:** 2026-11-24
 **Package Version:** 5.2.0

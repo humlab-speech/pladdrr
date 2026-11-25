@@ -1,4 +1,6 @@
-# Faithfulness Report (pladdrr vs Praat)
+---
+title: "Faithfulness Report (pladdrr vs Praat)"
+---
 
 _Generated: 2026-11-09 21:00:18 CET_
 
