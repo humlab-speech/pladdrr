@@ -173,7 +173,7 @@ non-`NDEBUG` build is 2.1-7x slower package-wide).
   (81 numbers from one synthetic signal) against `expected.tsv`; it refuses any
   ERR/NA/non-finite row. Re-record only after an intended numeric change, and explain
   every moved key in `NEWS.md`.
-- `tests/testthat/test-praat-faithfulness.R` compares 19 routines with the Praat
+- `tests/testthat/test-praat-faithfulness.R` compares the routines in the registry with the Praat
   application (`PLADDRR_PRAAT_EXEC`, default `/Applications/Praat.app/...`) and, with
   `PLADDRR_FAITHFULNESS_OUTDIR` set, regenerates `FAITHFULNESS_REPORT.md`. Name the
   Praat version with any reference number: the CPPS pipeline differs between 6.4.27 and
@@ -286,7 +286,7 @@ before each submission.
 | "version 5.0.5" (twice) | 5.1.1 | `DESCRIPTION` |
 | 1401 tests | 1556 `test_that()` blocks | count lines matching `^\s*test_that\(` in `tests/testthat/*.R` (the manuscript's counting unit is not stated; use one unit) |
 | 82% coverage | 93.8% (pkgcheck's covr run, macOS aarch64, 2026-11-12; `pkgcheck.log` is from 5.0.5 and stale) | rerun `covr` (see the covr FLIBS note in project memory) |
-| CCC 0.9959 and 1.00 | `FAITHFULNESS_REPORT.md` is the live registry: 19 routines, all pass, tolerances per row | regenerate with the registry runner |
+| CCC 0.9959 and 1.00 | `FAITHFULNESS_REPORT.md` is the live registry: routine count, pass status and tolerances per row | regenerate with the registry runner |
 
 Statements in the manuscript that hold and that these documents depend on: wrapper objects are plain lists with
 an external pointer and a shared per-class method environment; the interpreter is the only R6 class; SIMD and

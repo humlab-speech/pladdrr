@@ -22,7 +22,7 @@ See this file's section "Historical SIMD and performance archive (superseded)" (
 ## Key Breaking Changes
 
 - **v5.2.0 (2026-11-24):** FLAC decoded/encoded natively via vendored libFLAC (MP3/OGG still use `av`); `inst/extdata/test.flac` replaces `test.wav` and `inst/signalfiles/` is deleted (test fixtures in `tests/testthat/fixtures/`, `fixture_path()` skips when absent); CRAN check-time trimming; logo and favicons. Also `Matrix()` renamed `PraatMatrix()`, class `c("PraatMatrix", "PraatObject")`, no alias (the name collided with the CRAN package 'Matrix'; flagged by `pkgcheck`). See `AGENT_GUIDE.md` "What's New in v5.2.0" and `NEWS.md`.
-- **v5.0.4:** Non-breaking bug-fix release. Fixed 8 rendering bugs across 5 plotting functions that had zero prior test coverage — `autoplot.Spectrogram()`/`autolayer.Spectrogram()`/`plot.Spectrogram()` scrambled the frequency axis and skipped power→dB conversion; `plot_powercepstrogram()` had the same two bugs plus a hardcoded fake duration; `plot_cpp_timeseries()` had the fake-duration bug plus a `tryCatch` scoping bug that silently replaced failed samples with `0` instead of dropping them; `plot_powercepstrum()` had a hardcoded fake quefrency range plus the same missing-dB-conversion bug. All 5 shared one root cause (hand-rolled matrix-to-dataframe conversion duplicating logic that already existed correctly elsewhere) and one fix pattern (delegate to the existing correct accessor). See `AGENT_GUIDE.md` "What's New in v5.0.4" and `POWERCEPSTRUM_DB_MISLABEL.md` (updated) for what's still open.
+- **v5.0.4:** Non-breaking bug-fix release. Fixed 8 rendering bugs across 5 plotting functions that had zero prior test coverage — `autoplot.Spectrogram()`/`autolayer.Spectrogram()`/`plot.Spectrogram()` scrambled the frequency axis and skipped power→dB conversion; `plot_powercepstrogram()` had the same two bugs plus a hardcoded fake duration; `plot_cpp_timeseries()` had the fake-duration bug plus a `tryCatch` scoping bug that silently replaced failed samples with `0` instead of dropping them; `plot_powercepstrum()` had a hardcoded fake quefrency range plus the same missing-dB-conversion bug. All 5 shared one root cause (hand-rolled matrix-to-dataframe conversion duplicating logic that already existed correctly elsewhere) and one fix pattern (delegate to the existing correct accessor). See `AGENT_GUIDE.md` "What's New in v5.0.4" and `HISTORY.md` "PowerCepstrum `power_dB` mislabel" (fully resolved).
 - **v5.0.3:** Ltas gained 6 query methods that already existed in C++ but were never wired to R (`get_value_in_bin`, `get_local_peak_height`, `get_standard_deviation`, `get_frequency_range`, `to_matrix`, `save`), plus a new `SpectrumTier` class wrapping Praat's peak-picking (`ltas$to_spectrum_tier_peaks()`). Non-breaking, purely additive. Also fixed a real compile gap: `structSpectrumTier` was missing from `inst/include/pladdrr_types.h`'s forward-declaration list. See `AGENT_GUIDE.md` "What's New in v5.0.3".
 - **v5.0.2:** Fixed a real, pre-existing crash in `LongSound$save_part()`/`save_channel()` — root cause was `Preferences_add*` no-op stubs never setting a default value, leaving `LongSound`'s streaming buffer at 0 samples and causing an intermittent heap overflow on every write. Also: 4 new query/time-conversion methods, buffer-size-preference accessors, save_part/save_channel moved into the Rcpp module, 9 dead export duplicates removed, doc rewrite. See `AGENT_GUIDE.md` "What's New in v5.0.2".
 - **v5.0.1:** Added autoplot()/autolayer() for 27 classes, as.data.frame() for 15 classes, fixed FormantGrid as_data_frame() missing time_step argument.
@@ -5066,3 +5066,15 @@ try {
 ```
 
 ---
+
+---
+
+## PowerCepstrum `power_dB` mislabel (fixed 2026-08-19, v5.0.4)
+
+`RCepstrum`/`RPowerCepstrum::as_data_frame()` (`src/modules/powercepstrum_module.cpp`) returned a column named `power_dB` holding **raw linear power** (~1e-4 to ~1e11). Praat converts before painting (`TO10LOG` in `PowerCepstrogram_paint`, `PowerCepstrum_draw`), so plots reading the column straight were wrong or saturated. Found 2026-08-13 in the v5.0.1 autoplot branch; pre-existing.
+
+Fixed two ways: (b) every R plotting site (`autoplot`/`autolayer`/`plot` for PowerCepstrum, `plot_powercepstrum`) converts `power` to real dB via `10 * log10(pmax(power, 1e-20))`; (a) the C++ column was renamed to the honest `power`. Breaking for callers reading `$as_data_frame()$power_dB` (NEWS.md 5.0.4).
+
+Cosmetic leftover: converted dB columns are lowercase `power_db` at PowerCepstrum sites, capital `power_dB` at older Cepstrum/Spectrum/Ltas sites in `R/autoplot-missing.R`. Both are real dB; left as-is.
+
+Lesson: when a data accessor and a plot disagree on units, check the column's actual range (>6 orders of magnitude = linear, not dB) and fix the label at the source, not only the display layer.
