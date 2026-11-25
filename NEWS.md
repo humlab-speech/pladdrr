@@ -1,5 +1,9 @@
 # pladdrr 5.2.0
 
+* MP3 is read only through the suggested `av` package; leftover vendored
+  LAME/libmad files were removed from the tarball. `Sound$save(format = "MP3")`
+  now errors instead of reaching Praat's unsupported code path.
+
 ## FLAC is decoded and encoded natively; shipped audio slimmed
 
 * libFLAC (BSD-3-Clause, vendored from Praat under

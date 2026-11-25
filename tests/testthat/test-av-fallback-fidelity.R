@@ -94,3 +94,15 @@ test_that("stereo through the av fallback returns 2 channels, not 2x mono", {
   expect_equal(max(abs(s$get_values(2))), max(abs(av_right)),
     tolerance = 1e-4)
 })
+
+test_that("MP3 reads through the av fallback; writing MP3 errors", {
+  skip_if_not("libmp3lame" %in% av::av_encoders()$name, "no mp3 encoder")
+  mp3 <- av_convert(av_wav_mono, "mp3")
+  expect_warning(s <- Sound(mp3), class = "pladdrr_decoder_fallback")
+  expect_equal(s$get_sampling_frequency(), av_sr)
+  expect_equal(s$get_number_of_channels(), 1L)
+  expect_lt(abs(s$get_nx() - av_n), 2304) # up to 2 MP3 frames of delay/padding
+  wav <- Sound(av_wav_mono)
+  expect_lt(abs(s$get_rms(0, 0.5) - wav$get_rms(0, 0.5)), 0.05)
+  expect_error(wav$save(tempfile(), format = "MP3"), "not supported")
+})

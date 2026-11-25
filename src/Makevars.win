@@ -37,7 +37,6 @@ PKG_CPPFLAGS = -DHAVE_XSIMD -DUNICODE -D_UNICODE -D_FILE_OFFSET_BITS=64 \
                -Ipraat.github.io/sensors \
                -Ipraat.github.io/external/portaudio \
                -Ipraat.github.io/external/flac \
-               -Ipraat.github.io/external/mp3 \
                -Ipraat.github.io/external/espeak \
                -Ipraat.github.io/external/gsl \
                -Ipraat.github.io/external/glpk \

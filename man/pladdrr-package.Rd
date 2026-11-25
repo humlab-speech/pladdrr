@@ -158,12 +158,10 @@ Authors:
 
 Other contributors:
 \itemize{
-  \item Tomas Skotare (\href{https://orcid.org/0000-0001-8445-0559}{ORCID}) [contributor]
-  \item Johan von Boer (\href{https://orcid.org/0000-0003-4188-5872}{ORCID}) [contributor]
   \item Paul Boersma (Author of the bundled Praat sources in src/praat.github.io) [copyright holder]
   \item David Weenink (Author of the bundled Praat sources in src/praat.github.io) [copyright holder]
   \item Max-Planck-Society (Copyright holder of the bundled pocketfft headers in src/pocketfft) [copyright holder]
-  \item Xiph.Org Foundation (Copyright holder of the bundled Vorbis/Ogg and Opusfile sources) [copyright holder]
+  \item Xiph.Org Foundation (Copyright holder of the bundled libFLAC, Vorbis/Ogg and Opusfile sources) [copyright holder]
   \item Free Software Foundation (Copyright holder of the GNU Scientific Library, linked but not bundled) [copyright holder]
 }
 

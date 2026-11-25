@@ -538,13 +538,17 @@ NULL
 .sound_methods$as_data_frame <- function(.self) .self$.cpp$as_data_frame()
 
 .sound_methods$save <- function(.self, path, format = "WAV") {
+  if (toupper(format) == "MP3") {
+    stop("MP3 writing is not supported; save as WAV/FLAC, then convert with ",
+         "av::av_audio_convert().")
+  }
   format_code <- switch(toupper(format),
     "AIFF" = 1L, "AIFC" = 2L, "WAV" = 3L,
     "NEXT" = 4L, "SUN" = 4L, "NIST" = 5L,
-    "FLAC" = 6L, "MP3" = 7L, 3L)
+    "FLAC" = 6L, 3L)
   suffix <- switch(toupper(format), AIFF = "aiff", AIFC = "aifc", WAV = "wav",
                    NEXT = "au", SUN = "au", NIST = "nist", FLAC = "flac",
-                   MP3 = "mp3", "wav")
+                   "wav")
   .self$.cpp$save(.ensure_suffix(path, suffix), as.integer(format_code))
   invisible(NULL)
 }
@@ -1248,7 +1252,8 @@ lockEnvironment(.sound_methods, bindings = TRUE)
       }),
     error = function(e) {
       if (!requireNamespace("av", quietly = TRUE)) {
-        stop("Native reader failed and 'av' package not available.\n",
+        stop("Native reader failed and 'av' package not available",
+             " (MP3, OGG and AAC need it).\n",
              "Install av: install.packages('av')\n",
              "Native error: ", e$message)
       }
