@@ -2,7 +2,7 @@
 # Phase B — static SIMD + threading inventory.
 #
 # Walks src/ and src/praat.github.io/ and emits
-# inst/agents/PERFORMANCE_INVENTORY.md with:
+# vignettes/agents/performance-inventory.Rmd with:
 #   - every src/*_simd.cpp file mapped to the wrapper it accelerates
 #   - every MelderThread_PARALLELIZE call site in the Praat source
 #   - every wrapper in src/*_wrappers.cpp that has NO corresponding *_simd.cpp
@@ -12,11 +12,11 @@
 
 set -e
 ROOT=$(pwd)
-OUT="$ROOT/inst/agents/PERFORMANCE_INVENTORY.md"
+OUT="$ROOT/vignettes/agents/performance-inventory.Rmd"
 mkdir -p "$(dirname "$OUT")"
 
 {
-  printf '# Performance Inventory (pladdrr)\n\n'
+  printf -- '---\ntitle: "Performance Inventory (pladdrr)"\n---\n\n'
   printf '_Generated: %s by tools/perf_inventory.sh_\n\n' "$(date -u +%FT%TZ)"
   printf 'Static snapshot of where SIMD and multi-threading exist in the\n'
   printf 'pladdrr tree, plus the wrappers that do not yet have an accompanying\n'

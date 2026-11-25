@@ -1,5 +1,5 @@
 #!/bin/sh
-# Verify inst/agents/AGENT_GUIDE.md and inst/agents/PRAAT_MODIFICATIONS.md
+# Verify vignettes/agents/agent-guide.Rmd and vignettes/agents/praat-modifications.Rmd
 # carry a Version header that is >= DESCRIPTION's Version.
 #
 # Design principle 5: AGENT_GUIDE is the canonical re-implementation reference;
@@ -14,10 +14,10 @@ if [ -z "$DESC_VER" ]; then
 fi
 
 # AGENT_GUIDE: "**Version:** X.Y.Z"
-GUIDE_VER=$(grep -m1 -E '^\*\*Version:\*\*' inst/agents/AGENT_GUIDE.md 2>/dev/null | sed -E 's/.*\*\*Version:\*\*[[:space:]]+([0-9.]+).*/\1/')
+GUIDE_VER=$(grep -m1 -E '^\*\*Version:\*\*' vignettes/agents/agent-guide.Rmd 2>/dev/null | sed -E 's/.*\*\*Version:\*\*[[:space:]]+([0-9.]+).*/\1/')
 
 # PRAAT_MODIFICATIONS: "**Package Version:** X.Y.Z"
-MODS_VER=$(grep -m1 -E '^\*\*Package Version:\*\*' inst/agents/PRAAT_MODIFICATIONS.md 2>/dev/null | sed -E 's/.*\*\*Package Version:\*\*[[:space:]]+([0-9.]+).*/\1/')
+MODS_VER=$(grep -m1 -E '^\*\*Package Version:\*\*' vignettes/agents/praat-modifications.Rmd 2>/dev/null | sed -E 's/.*\*\*Package Version:\*\*[[:space:]]+([0-9.]+).*/\1/')
 
 fail=0
 ver_lt() {

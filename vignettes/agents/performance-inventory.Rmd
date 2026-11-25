@@ -2,7 +2,7 @@
 title: "Performance Inventory (pladdrr)"
 ---
 
-_Generated: 2026-11-05T21:18:48Z by tools/perf_inventory.sh_
+_Generated: 2026-11-25T18:27:46Z by tools/perf_inventory.sh_
 
 Static snapshot of where SIMD and multi-threading exist in the
 pladdrr tree, plus the wrappers that do not yet have an accompanying
@@ -13,39 +13,39 @@ SIMD path. Use this to prioritise Phase F work.
 | File | Lines |
 |------|------:|
 | `src/batch_queries_simd.cpp` | 472 |
-| `src/mfcc_simd.cpp` | 420 |
+| `src/mfcc_simd.cpp` | 253 |
 | `src/powercepstrogram_simd.cpp` | 389 |
 | `src/preemphasis_simd.cpp` | 198 |
 | `src/sound_mixing_simd.cpp` | 208 |
 | `src/spectrogram_simd.cpp` | 295 |
-| `src/textgrid_simd.cpp` | 523 |
+| `src/textgrid_simd.cpp` | 480 |
 
 ## Threaded Praat call sites (MelderThread_PARALLELIZE)
 
 | File | Line | Function context |
 |------|-----:|------------------|
-| `src/praat.github.io/melder/MelderThread.h` | 172 | #define MelderThread_PARALLELIZE(numberOfElements, thresholdNumberOfElementsPerT |
-| `src/praat.github.io/melder/MelderThread.h` | 216 | 				MelderThread_PARALLELIZE (numberOfFrames, 5, false) |
-| `src/praat.github.io/melder/MelderThread.h` | 309 | 			MelderThread_PARALLELIZE (thy nx, 5, false) |
 | `src/praat.github.io/LPC/LPC_and_Formant.cpp` | 99 | 	MelderThread_PARALLELIZE (numberOfFrames, thresholdNumberOfFramesPerThread) |
 | `src/praat.github.io/LPC/LPC_and_Formant.cpp` | 216 | 		MelderThread_PARALLELIZE (my nx, thresholdNumberOfFramesPerThread) |
-| `src/praat.github.io/LPC/Sound_to_PowerCepstrogram.cpp` | 73 | 	MelderThread_PARALLELIZE (numberOfFrames, thresholdNumberOfFramesPerThread) |
 | `src/praat.github.io/LPC/LPC_and_LineSpectralFrequencies.cpp` | 130 | 	MelderThread_PARALLELIZE (numberOfFrames, thresholdNumberOfFramesPerThread) |
 | `src/praat.github.io/LPC/LPC_and_LineSpectralFrequencies.cpp` | 211 | 	MelderThread_PARALLELIZE (numberOfFrames, thresholdNumberOfFramesPerThread) |
 | `src/praat.github.io/LPC/Sound_to_Formant_mt.cpp` | 115 | 	MelderThread_PARALLELIZE (outputFormant -> nx, thresholdNumberOfFramesPerThread |
 | `src/praat.github.io/LPC/Sound_to_Formant_mt.cpp` | 162 | 	MelderThread_PARALLELIZE (outputFormant -> nx, thresholdNumberOfFramesPerThread |
+| `src/praat.github.io/LPC/Sound_to_PowerCepstrogram.cpp` | 73 | 	MelderThread_PARALLELIZE (numberOfFrames, thresholdNumberOfFramesPerThread) |
 | `src/praat.github.io/LPC/Sound_and_LPC.cpp` | 119 | 	MelderThread_PARALLELIZE (outputLPC -> nx, thresholdNumberOfFramesPerThread) |
 | `src/praat.github.io/LPC/Sound_and_LPC.cpp` | 233 | 	MelderThread_PARALLELIZE (outputLPC -> nx, thresholdNumberOfFramesPerThread) |
 | `src/praat.github.io/LPC/Sound_and_LPC.cpp` | 346 | 	MelderThread_PARALLELIZE (outputLPC -> nx, thresholdNumberOfFramesPerThread) |
 | `src/praat.github.io/LPC/Sound_and_LPC.cpp` | 520 | 	MelderThread_PARALLELIZE (outputLPC -> nx, thresholdNumberOfFramesPerThread) |
 | `src/praat.github.io/LPC/Sound_and_LPC.cpp` | 737 | 	MelderThread_PARALLELIZE (outputLPC -> nx, thresholdNumberOfFramesPerThread) |
-| `src/praat.github.io/fon/Sound_and_Spectrogram.cpp` | 145 | 		MelderThread_PARALLELIZE (numberOfTimes, 15) |
 | `src/praat.github.io/fon/Sound_to_Pitch.cpp` | 477 | 	MelderThread_PARALLELIZE (numberOfFrames, parallelization_threshold) |
-| `src/praat.github.io/fon/Sound_to_Harmonicity_GNE.cpp` | 103 | 		MelderThread_PARALLELIZE (nenvelopes, 4) |
-| `src/praat.github.io/fon/Sound_to_Harmonicity_GNE.cpp` | 135 | 		MelderThread_PARALLELIZE (npairs, 5) |
+| `src/praat.github.io/fon/Sound_and_Spectrogram.cpp` | 145 | 		MelderThread_PARALLELIZE (numberOfTimes, 15) |
 | `src/praat.github.io/fon/Sound_to_Formant.cpp` | 370 | 	MelderThread_PARALLELIZE (numberOfFrames, PLADDRR_FORMANT_FRAMES_PER_THREAD) |
 | `src/praat.github.io/fon/Sound.cpp` | 454 | 				MelderThread_PARALLELIZE (numberOfSamples, 2000) |
+| `src/praat.github.io/fon/Sound_to_Harmonicity_GNE.cpp` | 103 | 		MelderThread_PARALLELIZE (nenvelopes, 4) |
+| `src/praat.github.io/fon/Sound_to_Harmonicity_GNE.cpp` | 135 | 		MelderThread_PARALLELIZE (npairs, 5) |
 | `src/praat.github.io/dwtools/SampledIntoSampled.cpp` | 30 | 	MelderThread_PARALLELIZE (numberOfFrames, thresholdNumberOfFramesPerThread) |
+| `src/praat.github.io/melder/MelderThread.h` | 172 | #define MelderThread_PARALLELIZE(numberOfElements, thresholdNumberOfElementsPerT |
+| `src/praat.github.io/melder/MelderThread.h` | 216 | 				MelderThread_PARALLELIZE (numberOfFrames, 5, false) |
+| `src/praat.github.io/melder/MelderThread.h` | 309 | 			MelderThread_PARALLELIZE (thy nx, 5, false) |
 
 ## Wrappers without a matching *_simd.cpp
 

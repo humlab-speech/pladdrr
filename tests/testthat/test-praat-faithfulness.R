@@ -12,9 +12,9 @@
 #
 # Output side-effects (only when the suite actually runs end-to-end):
 #   <tempdir>/faithfulness_report.csv
-#   <tempdir>/FAITHFULNESS_REPORT.md
+#   <tempdir>/faithfulness-report.Rmd
 # Set PLADDRR_FAITHFULNESS_OUTDIR=<repo root> to regenerate the committed
-# tests/faithfulness_report.csv and inst/agents/FAITHFULNESS_REPORT.md instead.
+# tests/faithfulness_report.csv and vignettes/agents/faithfulness-report.Rmd instead.
 #
 # Skipped on CRAN and whenever Praat is not installed locally.
 
@@ -190,13 +190,15 @@ write_reports <- function(rows) {
   write.csv(df, csv_path, row.names = FALSE)
 
   md_path <- if (writing_to_repo) {
-    file.path(out_dir, "inst", "agents", "FAITHFULNESS_REPORT.md")
+    file.path(out_dir, "vignettes", "agents", "faithfulness-report.Rmd")
   } else {
-    file.path(out_dir, "FAITHFULNESS_REPORT.md")
+    file.path(out_dir, "faithfulness-report.Rmd")
   }
   if (dir.exists(dirname(md_path))) {
     lines <- c(
-      "# Faithfulness Report (pladdrr vs Praat)",
+      "---",
+      "title: \"Faithfulness Report (pladdrr vs Praat)\"",
+      "---",
       "",
       sprintf("_Generated: %s_", format(Sys.time(), "%Y-%m-%d %H:%M:%S %Z")),
       "",

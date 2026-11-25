@@ -6,7 +6,7 @@
 # Rcpp::compileAttributes() regenerates RcppExports.cpp with `static` every
 # time it's re-run. This script self-heals: it patches `static` back to
 # `extern` in place before the build compiles the file, so the fix survives
-# regeneration without manual intervention. See inst/agents/PRAAT_MODIFICATIONS.md v4.8.32.
+# regeneration without manual intervention. See vignettes/agents/praat-modifications.Rmd v4.8.32.
 
 set -e
 F="src/RcppExports.cpp"
