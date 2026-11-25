@@ -39,7 +39,6 @@
  * saved `uid`.
  */
 
+/* pladdrr: R CMD check forbids stderr in compiled code; failures here are ignored. */
 #define FLAC_CHECK_RETURN(x) \
-			{	if ((x) < 0) \
-					fprintf (stderr, "%s : %s\n", #x, strerror (errno)) ; \
-			}
+			{	(void) (x); }

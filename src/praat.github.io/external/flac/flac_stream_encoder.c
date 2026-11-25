@@ -68,6 +68,11 @@
 #include "flac_private_stream_encoder_framing.h"
 #include "flac_private_window.h"
 #include "flac_share_alloc.h"
+
+/* pladdrr: R CMD check forbids stdout in compiled code. Encoding to stdout is
+ * unused (we always pass a filename or callbacks), so make it a null FILE*. */
+#undef stdout
+#define stdout ((FILE*)0)
 #include "flac_share_private.h"
 
 
