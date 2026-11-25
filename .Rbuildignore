@@ -114,3 +114,6 @@ manual_.*\.cpp$
 ^tests/testthat/testthat-problems\.rds$
 ^pladdrr-.*-message$
 ^tests/testthat/fixtures/.*\.flac$
+
+# GUI command-registration units never compiled (only fon/praat_*_init.cpp is)
+^src/praat\.github\.io/(dwtools|LPC|sensors|excluded_sources)/praat_.*_init\.cpp$
