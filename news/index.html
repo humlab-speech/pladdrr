@@ -49,6 +49,19 @@
     <li><a class="dropdown-item" href="../articles/v4-migration-guide.html">Migration Guide (v4.0)</a></li>
     <li><a class="dropdown-item" href="../articles/naming-conventions.html">Naming Conventions</a></li>
     <li><a class="dropdown-item" href="../articles/batch-operations-guide.html">Batch Operations Guide</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Developer &amp; Coding-Agent Docs</h6></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide.html">Agent Guide</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide-whats-new.html">  Agent Guide: What's New</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide-patterns.html">  Agent Guide: Common Patterns</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide-api-reference.html">  Agent Guide: API Reference</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide-pitfalls.html">  Agent Guide: Pitfalls &amp; Use Cases</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/architecture.html">Architecture</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/documentation.html">Documentation Convention</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/praat-modifications.html">Praat Source Modifications</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/faithfulness-report.html">Faithfulness Report</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/performance-inventory.html">Performance Inventory</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/history.html">Version History</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">News</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -67,7 +80,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="5.2.0" id="pladdrr-520">pladdrr 5.2.0<a class="anchor" aria-label="anchor" href="#pladdrr-520"></a></h2>
-<div class="section level3">
+<ul><li>MP3 is read only through the suggested <code>av</code> package; leftover vendored LAME/libmad files were removed from the tarball. <code>Sound$save(format = "MP3")</code> now errors instead of reaching Praat’s unsupported code path.</li>
+</ul><div class="section level3">
 <h3 id="flac-is-decoded-and-encoded-natively-shipped-audio-slimmed-5-2-0">FLAC is decoded and encoded natively; shipped audio slimmed<a class="anchor" aria-label="anchor" href="#flac-is-decoded-and-encoded-natively-shipped-audio-slimmed-5-2-0"></a></h3>
 <ul><li>libFLAC (BSD-3-Clause, vendored from Praat under <code>src/praat.github.io/external/flac/</code>) is compiled in again. <code><a href="../reference/Sound.html">Sound()</a></code>, <code><a href="../reference/longsound_open.html">longsound_open()</a></code>, <code><a href="../reference/sound_load_window.html">sound_load_window()</a></code> and <code>Sound$save(format = "FLAC")</code> handle FLAC without the <code>av</code> package and without the <code>pladdrr_decoder_fallback</code> warning; <code><a href="../reference/get_durations_batch.html">get_durations_batch()</a></code> reads FLAC STREAMINFO. MP3 is still read through <code>av</code>.</li>
 <li>The shipped example sound is now <code>inst/extdata/test.flac</code> (was <code>test.wav</code>, sample-identical). <code>inst/signalfiles/</code> (12 WAVs holding 2 distinct signals) is gone; the 2 signals live as FLAC test fixtures, excluded from the built tarball, so tests that need them skip when run from an installed copy.</li>

@@ -311,7 +311,7 @@ tg <- TextGrid$new(tg_file)
 load_time <- as.numeric(difftime(Sys.time(), start_time, units = "secs"))
 
 cat(sprintf("Loaded in %.3f seconds\n", load_time))
-#> Loaded in 0.009 seconds
+#> Loaded in 0.008 seconds
 cat(sprintf("Duration: %.2f minutes\n", tg$get_total_duration() / 60))
 #> Duration: 1.00 minutes
 cat(sprintf("File size: %.1f MB\n", file.size(tg_file) / 1024^2))
@@ -569,8 +569,7 @@ autoplot(sound) + autolayer(tg, tier = "words")
 ![](textgrid-workflows_files/figure-html/visualize_textgrid-2.png)
 
 For further examples (interval duration distributions, label frequency
-plots, multi-tier layouts), see
-[`vignette("visualization")`](https://humlab-speech.github.io/pladdrr/articles/visualization.md).
+plots, multi-tier layouts), see `vignette("visualization")`.
 
 ## Best Practices
 
@@ -752,8 +751,7 @@ For related workflows, see:
 
 - [`vignette("integrated-phonetic-analysis")`](https://humlab-speech.github.io/pladdrr/articles/integrated-phonetic-analysis.md) -
   TextGrid + acoustic analysis
-- [`vignette("vowel-space-analysis")`](https://humlab-speech.github.io/pladdrr/articles/vowel-space-analysis.md) -
-  Formant extraction pipelines
+- `vignette("vowel-space-analysis")` - Formant extraction pipelines
 - `inst/examples/06_textgrid_analysis.R` - Basic operations
 - `inst/examples/08_textgrid_corpus_analysis.R` - Large-scale processing
 

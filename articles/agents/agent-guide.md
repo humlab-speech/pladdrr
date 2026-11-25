@@ -1,0 +1,717 @@
+# pladdrr Agent Guide
+
+**Version:** 5.2.0 guide refresh (2026-11-24; 5.1.1 refresh 2026-09-04;
+perf/memory audit notes 2026-10-19; 2026-11 audit round 2026-11-06)
+**Purpose:** Reference for LLM agents reimplementing Praat functionality
+via pladdrr **Status:** Current through package 5.2.0 (native FLAC,
+[`PraatMatrix()`](https://humlab-speech.github.io/pladdrr/reference/PraatMatrix.md)
+rename, CRAN check-time trimming; see `NEWS.md` under 5.2.0, 5.1.1 and
+5.1.0). Shared-dispatch wrappers + threaded Praat backend + xsimd
+acceleration (enabled at build time, runtime toggle via
+[`pladdrr_simd()`](https://humlab-speech.github.io/pladdrr/reference/pladdrr_simd.md)) +
+clinical Tier 4 helpers + wrapper dispatch migration
+(Sound/Formant/Spectrum/Spectrogram queries now use direct
+[`.Call()`](https://rdrr.io/r/base/CallExternal.html) instead of Rcpp
+module dispatch) + current `praat.github.io/` build prefix guidance +
+current CPPS/CPP usage notes + macOS PSOCK parallelism + unified SIMD
+bridge header (`simd_bridge.h`) + GitHub Actions CI + code coverage +
+spectral-moments/data-frame allocation cleanup (v4.9.24) + CRAN
+pre-submission hygiene and full man/ coverage (v5.0.0) + Ltas full
+Praat-parity query coverage and new SpectrumTier peak-picking class
+(v5.0.3) + perf/memory audit: load-time RSS fix, FormantPath parity fix,
+8 SIMD files removed (development version, 2026-10).
+
+## Guide contents
+
+The guide is split into parts; each part is its own page.
+
+- [Recent changes (What’s New, v4.8 to
+  v5.2)](https://humlab-speech.github.io/pladdrr/articles/agents/agent-guide-whats-new.md)
+- [Common
+  patterns](https://humlab-speech.github.io/pladdrr/articles/agents/agent-guide-patterns.md):
+  Patterns 1 to 2p, worked examples for every tier
+- [API
+  reference](https://humlab-speech.github.io/pladdrr/articles/agents/agent-guide-api-reference.md):
+  `PraatMatrix` and the Matrix package, re-implementing a Praat
+  procedure, utility functions, method signatures, quick reference card,
+  parameter naming
+- [Pitfalls, limitations and use
+  cases](https://humlab-speech.github.io/pladdrr/articles/agents/agent-guide-pitfalls.md):
+  validation patterns, common pitfalls, deprecated API migration, file
+  locations, known limitations, real-world use cases
+- Sections kept on this page: typed errors, performance and faithfulness
+  audits, quick start, architecture overview, object types, unit code
+  reference
+
+Sibling documents:
+[architecture](https://humlab-speech.github.io/pladdrr/articles/agents/architecture.md),
+[Praat source
+modifications](https://humlab-speech.github.io/pladdrr/articles/agents/praat-modifications.md),
+[faithfulness
+report](https://humlab-speech.github.io/pladdrr/articles/agents/faithfulness-report.md),
+[documentation
+convention](https://humlab-speech.github.io/pladdrr/articles/agents/documentation.md),
+[performance
+inventory](https://humlab-speech.github.io/pladdrr/articles/agents/performance-inventory.md),
+[version
+history](https://humlab-speech.github.io/pladdrr/articles/agents/history.md).
+
+## Typed Errors (design principle 6)
+
+**Status as of v4.9.19: argument validation is wired up; the C++ layer
+mostly is not.**
+
+Two independent mechanisms produce classed conditions.
+
+**R-level validators (live, always on).** `R/validators.R` raises
+`pladdrr_input_error` conditions directly — you do **not** need
+[`with_pladdrr_errors()`](https://humlab-speech.github.io/pladdrr/reference/with_pladdrr_errors.md)
+to catch them:
+
+``` r
+tryCatch(
+  sound$to_pitch(0, 600, 75),                    # ceiling < floor
+  pladdrr_input_error = function(e) e$param      # -> "pitch_ceiling"
+)
+```
+
+Conditions carry `$routine` and `$param` so callers can branch
+programmatically. Validators currently covering: pitch range, positive
+counts/numbers, `time_step` (0 = auto, matching Praat), quefrency
+ranges, trend-fit method, positive finite sizes and the 2^29-cell
+allocation bound (`.check_positive_finite()`, `.check_cell_count()`),
+cochleagram step sizes, and the `unit` of the Ltas locators (`"dB"`
+only).
+
+**Data loss (live).** When a routine returns something Praat fabricated,
+pladdrr returns Praat’s value and says so:
+
+``` r
+w <- tryCatch(sound$extract_part(5, 10), warning = function(w) w)
+class(w)   # "pladdrr_data_loss" "pladdrr_warning" "warning" "condition"
+```
+
+Praat zero-pads a window that runs past the signal; goal 1 says
+reproduce the value, goal 6 says report the fabrication. Controlled by
+`options(pladdrr.data_loss = "warn" | "error" | "silent")`; default
+`"warn"`.
+
+A **file** can raise it too: `src/sound_wrappers.cpp` reports a WAV
+whose `data` chunk does not match the bytes that follow it — more, and
+the load returns exactly the samples that exist; fewer, and the load
+keeps Praat’s shorter count (Praat 6.4.27 answers `nx = 4410` for a file
+holding 1750 samples) while naming the discarded ones. Reached by any
+file load (`Sound(path = )`, `Sound$new()`, deprecated
+[`read_sound()`](https://humlab-speech.github.io/pladdrr/reference/read_sound.md));
+locked in `tests/testthat/test-truncated-wav.R`.
+
+**C++ tags (partially wired).** Wrappers can emit tagged messages that
+`with_pladdrr_errors(expr)` reclassifies:
+
+``` cpp
+PLADDRR_REQUIRE_PTR("routine_name", xptr, "xptr_param_name");
+PLADDRR_REQUIRE_FINITE("routine_name", "param_name", value);
+PLADDRR_STOP_INPUT("routine_name", "param", "human-readable reason");
+PLADDRR_STOP_PRAAT("routine_name", "Praat raised an error doing X");
+PLADDRR_WARN_DATA_LOSS("routine_name", "n of m values undefined");
+```
+
+`src/batch_queries.cpp` and `src/sound_wrappers.cpp` use them today (the
+latter `PLADDRR_WARN_DATA_LOSS`, for a WAV shorter than its own `data`
+chunk; the R side muffles it and re-raises it through
+`.warn_data_loss()`, which is what applies
+`options(pladdrr.data_loss = )`), and `src/praat_xptr_utils.h` uses
+`PLADDRR_STOP_INPUT` for the class check behind the `.xptr` constructor
+door and the two file readers. **Every other C++ wrapper still raises an
+untagged error** — measured, a bare `Rcpp::stop()` arrives as
+`Rcpp::exception` (e.g. the channel guards’
+`Channel out of range [0, 3]: 9`), and
+[`with_pladdrr_errors()`](https://humlab-speech.github.io/pladdrr/reference/with_pladdrr_errors.md)
+cannot class it either because it only reclassifies conditions that
+carry the tag. So do not assume a `pladdrr_praat_error` or a
+`pladdrr_input_error` will arrive from an arbitrary routine — check
+before you rely on it.
+
+| Class | Meaning | Where it comes from |
+|----|----|----|
+| `pladdrr_input_error` | invalid argument / precondition fail | R validators + C++ `require_praat_class()` |
+| `pladdrr_praat_error` | Praat internal failure | C++ macros (2 sites only) |
+| `pladdrr_data_loss` | output incomplete vs request, or input shorter than its own header | R + C++ (live) |
+| `pladdrr_decoder_fallback` | native reader refused the file (MP3/OGG, not FLAC since 5.2.0); `av` decoded it | R (`av` fallback in `.sound_ptr_from_path`) |
+
+The error classes inherit from `pladdrr_error` → `error` → `condition`,
+so one `tryCatch(pladdrr_error = ...)` catches them all;
+`pladdrr_data_loss` as a warning and `pladdrr_decoder_fallback` inherit
+from `pladdrr_warning` → `warning` → `condition` instead, so catch those
+as warnings. Both R-level classes are already classed and need no
+[`with_pladdrr_errors()`](https://humlab-speech.github.io/pladdrr/reference/with_pladdrr_errors.md):
+
+``` r
+tryCatch(Sound(path = "truncated.wav"),
+  pladdrr_data_loss = function(w) conditionMessage(w))       # read N of M samples
+suppressWarnings(Sound(path = "song.mp3"))                   # hides pladdrr_decoder_fallback
+options(pladdrr.data_loss = "error")                         # does NOT affect decoder_fallback
+```
+
+When porting a new wrapper: call the shared validators at R level,
+replace bare `stop("...")` in C++ with the macros above, and emit
+`WARN_DATA_LOSS` whenever the result contains NA from out-of-range or
+undefined input. Lock the behaviour in
+`tests/testthat/test-error-reporting.R`.
+
+## Performance Audit
+
+**Before you time anything, check `simd_info()$debug_build`.** If it is
+`TRUE` the shared object was compiled without `NDEBUG` at `-O0` — almost
+always because `devtools::load_all()` /
+[`pkgbuild::compile_dll()`](https://pkgbuild.r-lib.org/reference/compile_dll.html)
+wrote the `.o` files and a later `R CMD INSTALL` only relinked them.
+Every measurement from such a build is 2–7x too slow and worthless. Fix
+with `R CMD INSTALL --preclean .`. See the v4.9.22 entry under “What’s
+New” for the full diagnosis.
+
+Static SIMD + threading inventory: `tools/perf_inventory.sh` walks
+`src/` and the vendored Praat tree and emits
+`vignettes/agents/performance-inventory.Rmd`. Use it to find wrappers
+that lack an accompanying `*_simd.cpp` (Phase F SIMD candidates) and to
+enumerate every `MelderThread_PARALLELIZE` call site.
+
+Runtime benchmark: `inst/benchmarks/run_audit_benchmarks.R` times each
+faithfulness-registry routine against Praat-native execution and writes
+`inst/benchmarks/RESULTS.md` with a `speedup_vs_praat` column. Praat
+startup is intentionally part of the timing — that cost is real for the
+“shell out to Praat” alternative the package replaces. Requires
+`R CMD INSTALL .` first.
+
+## Faithfulness Audit
+
+Design principle 1 — faithfulness to Praat’s own DSP output — is
+enforced by `tests/testthat/test-praat-faithfulness.R`, which invokes
+`/Applications/Praat.app/Contents/MacOS/Praat --run` against an
+extensible registry of routines in
+`tests/testthat/faithfulness/routines.R`, compares the output to the
+matching pladdrr call at a per-routine tolerance, and emits
+`vignettes/agents/faithfulness-report.Rmd` (set
+`PLADDRR_FAITHFULNESS_OUTDIR` to regenerate it; the caveats in it live
+in the test file, and the report names the Praat version it ran
+against). **Always name the Praat version with a reference number**: the
+vendored source tracks 6.4.47, and the CPPS pipeline differs from 6.4.27
+by about 0.13 dB (Praat rewrote its CPP-to-CPPS post-processing);
+against 6.4.47 all 19 registry rows pass and CPPS is 0.003 dB away.
+`tests/testthat/test-fidelity-fingerprint.R` is the second gate: 89
+numbers from one signal, no oracle needed, refuses any ERR/NA row.
+
+When porting a new Praat routine into pladdrr, add a registry row.
+Default tolerance is `0` for exact-arithmetic routines; looser
+tolerances require a written rationale in the row. Failing rows are
+first-class regressions.
+
+## Quick Start for Agents
+
+This guide provides the **complete API reference** for pladdrr, an R
+package that provides direct access to Praat C++ functionality. When
+reimplementing Praat code in R:
+
+1.  **Object Creation**: Use function constructors (not R6 classes):
+    [`Sound()`](https://humlab-speech.github.io/pladdrr/reference/Sound.md),
+    [`Pitch()`](https://humlab-speech.github.io/pladdrr/reference/Pitch.md),
+    etc.
+2.  **Method Calls**: Use `$` syntax: `sound$to_pitch()`,
+    `pitch$get_mean()`
+3.  **Units**: Specify as strings: `"hertz"`, `"bark"`, `"db"`
+    (converted internally to codes)
+4.  **Class Names**: Use clean names for
+    [`inherits()`](https://rdrr.io/r/base/class.html) checks: `Formant`,
+    `Pitch`, `Intensity` (not internal `*_constructor` names) (a Praat
+    Matrix is a `PraatMatrix`, class vector
+    `c("PraatMatrix", "PraatObject")`; see [PraatMatrix and the ‘Matrix’
+    package](https://humlab-speech.github.io/pladdrr/articles/agents/agent-guide-api-reference.html#praatmatrix-and-the-matrix-package))
+5.  **Batch Operations**: Use batch query functions when extracting
+    multiple values
+6.  **Vectorized Methods**: Use `$get_*_windows()`, `$get_*_vector()`,
+    `$get_spectral_moments_batch()` for 14-150x speedups (Patterns 2i,
+    2p)
+7.  **Properties**: Fast access via `.cpp$property` or
+    backward-compatible `get_property()` methods
+8.  **Pipeline Operations**: Use
+    [`two_pass_adaptive_pitch()`](https://humlab-speech.github.io/pladdrr/reference/two_pass_adaptive_pitch.md)
+    and
+    [`get_jitter_shimmer_batch()`](https://humlab-speech.github.io/pladdrr/reference/get_jitter_shimmer_batch.md)
+    for voice quality (Pattern 2k)
+9.  **Tier 4 Ultra API**: Use
+    [`get_durations_batch()`](https://humlab-speech.github.io/pladdrr/reference/get_durations_batch.md),
+    [`calculate_f0_stats_ultra()`](https://humlab-speech.github.io/pladdrr/reference/calculate_f0_stats_ultra.md),
+    [`calculate_minimum_intensity_ultra()`](https://humlab-speech.github.io/pladdrr/reference/calculate_minimum_intensity_ultra.md),
+    [`get_voice_quality_ultra()`](https://humlab-speech.github.io/pladdrr/reference/get_voice_quality_ultra.md)
+    for DSI workflows, plus
+    [`calculate_cpps_ultra()`](https://humlab-speech.github.io/pladdrr/reference/calculate_cpps_ultra.md),
+    [`extract_voiced_segments_ultra()`](https://humlab-speech.github.io/pladdrr/reference/extract_voiced_segments_ultra.md),
+    [`calculate_multiband_hnr_ultra()`](https://humlab-speech.github.io/pladdrr/reference/calculate_multiband_hnr_ultra.md)
+    for simple AVQI/VQ workflows. For repeated intervals on the same
+    sound, build once with
+    [`build_multiband_harmonicity()`](https://humlab-speech.github.io/pladdrr/reference/build_multiband_harmonicity.md)
+    and query with
+    [`multiband_hnr_stats()`](https://humlab-speech.github.io/pladdrr/reference/multiband_hnr_stats.md)
+    (Pattern 2l)
+10. **Fidelity target**: Every re-implemented Praat procedure must
+    achieve r \> 0.95 vs Praat on ≥50 real files before shipping. Use
+    the in-repo Praat faithfulness registry and audit benchmark runner
+    (see [Re-implementing a Praat
+    Procedure](https://humlab-speech.github.io/pladdrr/articles/agents/agent-guide-api-reference.html#re-implementing-a-praat-procedure)).
+11. **Praat `Matrix` objects**: construct with
+    [`PraatMatrix()`](https://humlab-speech.github.io/pladdrr/reference/PraatMatrix.md)
+    and test with `inherits(m, "PraatMatrix")`; read the numbers with
+    `as.matrix(m)` or `m$as_matrix()`. `Matrix()` and
+    `inherits(m, "Matrix")` no longer exist/hold. See [PraatMatrix and
+    the ‘Matrix’
+    package](https://humlab-speech.github.io/pladdrr/articles/agents/agent-guide-api-reference.html#praatmatrix-and-the-matrix-package).
+
+------------------------------------------------------------------------
+
+## Architecture Overview (current shared-dispatch + 4-tier performance API)
+
+    ┌─────────────────────────────────────────────────────────────┐
+    │ R User Code                                                  │
+    │   sound <- Sound("audio.wav")                               │
+    │   pitch <- sound$to_pitch_cc()                              │
+    └─────────────────────────────────────────────────────────────┘
+                                │
+            ┌───────────────────┼───────────────────┐
+            │                   │                   │
+            ▼                   ▼                   ▼
+    ┌───────────────┐  ┌───────────────┐  ┌───────────────────────┐
+    │ TIER 3        │  │ TIER 2        │  │ TIER 1                │
+    │ (Fastest)     │  │ (Fast)        │  │ (Standard)            │
+    │               │  │               │  │                       │
+    │ *_batch()     │  │ *_direct()    │  │ object$method()       │
+    │ *_parallel()  │  │ to_*_direct() │  │                       │
+    │ 5-20x faster  │  │ 2-3x faster   │  │ Full features         │
+    └───────────────┘  └───────────────┘  └───────────────────────┘
+            │                   │                   │
+            └───────────────────┼───────────────────┘
+                                ▼
+    ┌─────────────────────────────────────────────────────────────┐
+    │ Rcpp Module Layer (src/modules/*.cpp)                       │
+    │   - 39 C++ module classes: RSound, RPitch, RMFCC, RPCA, etc. │
+    │   - XPtr<structPitch> wrapping Praat objects               │
+    │   - Batch queries: batch_queries.cpp (vectorized)          │
+    │   - Parallel processing: R/parallel-batch.R (multi-core)   │
+    └─────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+    ┌─────────────────────────────────────────────────────────────┐
+    │ Praat C++ Layer (src/praat.github.io/)                      │
+    │   - 1,217 headers from Praat codebase                      │
+    │   - Direct calls: Sound_to_Pitch(), Formant_getValueAtTime()│
+    │   - Build flags come from R Makeconf; FP contraction off   │
+    │     via pragma in melder.h; -DHAVE_XSIMD unconditional     │
+    └─────────────────────────────────────────────────────────────┘
+
+Tier 4 Ultra is a specialized one-call layer that sits alongside the
+tiered APIs above; the diagram shows the shared object/direct/batch
+structure, while the table below lists the current public tiers.
+
+**Performance Tiers (current):** \| Tier \| API \| Speedup \| Use Case
+\| \|——\|—–\|———\|———-\| \| **Tier 1 (Standard)** \| `sound$to_pitch()`
+\| 1x baseline \| Interactive, \<10 files \| \| **Tier 2 (Direct)** \|
+[`to_pitch_direct()`](https://humlab-speech.github.io/pladdrr/reference/to_pitch_direct.md)
+\| 2-3x \| Loops, 10-100 files \| \| **Tier 3 (Batch)** \|
+[`sound_to_pitch_batch()`](https://humlab-speech.github.io/pladdrr/reference/sound_to_pitch_batch.md)
+\| 5-10x \| Production, \>100 files \| \| **Tier 4 (Ultra)** \|
+[`get_durations_batch()`](https://humlab-speech.github.io/pladdrr/reference/get_durations_batch.md),
+[`calculate_f0_stats_ultra()`](https://humlab-speech.github.io/pladdrr/reference/calculate_f0_stats_ultra.md),
+[`calculate_cpps_ultra()`](https://humlab-speech.github.io/pladdrr/reference/calculate_cpps_ultra.md)
+\| 5-77x \| DSI/AVQI/VQ clinical workflows \|
+
+**See comprehensive guides:** -
+`vignettes/performance-optimization.Rmd` - Complete performance API
+guide - `vignettes/articles/batch-operations-guide.Rmd` -
+High-performance batch processing -
+`vignettes/articles/migration-guide.Rmd` - v3.0 breaking changes guide -
+`vignettes/articles/naming-conventions.Rmd` - API organization and
+patterns
+
+### Tier 4 Ultra: Hardcoded Algorithm Choices
+
+Every Tier 4 “Ultra” function that touches pitch/harmonicity picks one
+Praat algorithm internally (raw AC vs. raw CC, `veryAccurate`
+true/false, fixed threshold constants) so the whole pipeline can run in
+one C++ call. Some of that choice is exposed as an R parameter, some is
+hardcoded to match a specific reference Praat script. Check this table
+before assuming an Ultra function is configurable, or before porting a
+Praat script that expects a different algorithm — the alternative is
+discovering the mismatch via a Praat-vs-R diff test (see
+[`get_voice_quality_ultra()`](https://humlab-speech.github.io/pladdrr/reference/get_voice_quality_ultra.md)’s
+AC-vs-CC history) or reading the C++ source directly.
+
+| Function | Pitch/harmonicity algorithm | Configurable | Matches |
+|----|----|----|----|
+| [`calculate_f0_stats_ultra()`](https://humlab-speech.github.io/pladdrr/reference/calculate_f0_stats_ultra.md) | `Sound_to_Pitch_rawCc`, `veryAccurate = TRUE`, `silenceThreshold = 0.03` | `voicing_threshold` only | DSI201.praat `To Pitch (cc)...` |
+| [`calculate_minimum_intensity_ultra()`](https://humlab-speech.github.io/pladdrr/reference/calculate_minimum_intensity_ultra.md) | `Sound_to_Pitch_rawCc`, `veryAccurate = FALSE`, `silenceThreshold = 0.03`, `voicingThreshold = 0.8` (hardcoded, not exposed) | none | DSI201.praat IM component (stricter voicing threshold than the jitter block) |
+| [`get_voice_quality_ultra()`](https://humlab-speech.github.io/pladdrr/reference/get_voice_quality_ultra.md) | `Sound_to_Pitch_rawCc` or `rawAc` via `pitch_method` (`"cc"`/`"ac"`), `very_accurate` | `pitch_method`, `very_accurate` | DSI201.praat (default `"cc"`); `pitch_method = "periodic_cc"` is an alias for `"ac"` + `very_accurate = FALSE`, which is byte-for-byte Praat’s `Sound: To PointProcess (periodic, cc)...` (see `Sound_to_PointProcess.cpp`: that command is defined as `Sound_to_Pitch()` + `Sound_Pitch_to_PointProcess_cc`, and `Sound_to_Pitch()` is `Sound_to_Pitch_rawAc(..., veryAccurate=false, 0.03,0.45,0.01,0.35,0.14)`) |
+| [`calculate_multiband_hnr_ultra()`](https://humlab-speech.github.io/pladdrr/reference/calculate_multiband_hnr_ultra.md) | `Sound_to_Harmonicity_cc` (no AC option) | none | VQ_measurements_V2.praat lines 102-122 |
+| [`calculate_cpps_ultra()`](https://humlab-speech.github.io/pladdrr/reference/calculate_cpps_ultra.md) | n/a — pitch-independent, built on `Sound_to_PowerCepstrogram` | see CPPS parameter table in `/CLAUDE.md` | — |
+| [`extract_voiced_segments_ultra()`](https://humlab-speech.github.io/pladdrr/reference/extract_voiced_segments_ultra.md) | n/a — voiced/silence split is Intensity-threshold based, not pitch-based | `silence_threshold_db`, `min_pitch` (controls the Intensity window, not a pitch algorithm choice) | — |
+
+Each function’s own `?function_name` help has a matching
+`@section Algorithm choice:` block with the same fact, so this table and
+the roxygen never need to be read in isolation.
+
+### Data Flow Example: `sound$to_pitch_cc()`
+
+**Shared Dispatch Table Architecture (v4.8.33, optimized v4.9.18)**
+
+1.  User calls:
+    `pitch <- sound$to_pitch_cc(pitch_floor = 75, pitch_ceiling = 600)`
+2.  `$.Sound` S3 dispatch looks up `to_pitch_cc` in `.sound_methods` env
+3.  Method calls **either** `.self$.cpp$method()` (module, for
+    transforms/complex ops) **or**
+    `.Call("_pladdrr_*", .self$.xptr, args)` (wrapper, for frequent
+    queries). As of v4.9.18: Sound (7 methods), Formant (14), Spectrum
+    (16), Spectrogram (12) use the faster wrapper path (~30-40% less
+    overhead).
+4.  C++ calls Praat function (`Sound_to_Pitch_cc()`,
+    `Formant_getValueAtTime()`, etc.)
+5.  Result wrapped in `XPtr<structPitch>` with custom deleter
+6.  R wrapper creates new
+    [`Pitch()`](https://humlab-speech.github.io/pladdrr/reference/Pitch.md)
+    from pointer via factory function
+7.  Returns:
+    `structure(list(.xptr = ptr, .cpp = module), class = c("Pitch", "PraatObject"))`
+
+**Key Performance Improvements:** - Shared dispatch tables eliminate
+per-instance closure allocation (9x faster creation, 160x less memory,
+v4.8.32). - Wrapper dispatch (v4.9.18) replaces Rcpp Module’s 3-layer
+R→Module→C++ path with direct 2-layer R→C++
+[`.Call()`](https://rdrr.io/r/base/CallExternal.html) for frequent query
+methods, reducing per-call overhead ~30-40%.
+
+### Object Structure (Shared Dispatch Table Pattern)
+
+**All 36 wrappers use the Shared Dispatch Table pattern (v4.8.33,
+extended since):**
+
+All wrappers use a shared `.{type}_methods` environment + `$.Type` S3
+dispatch. PraatInterpreter is the only R6Class — it requires persistent
+mutable state and reference semantics.
+
+``` r
+# Shared method table (one per type, not per instance)
+.pitch_methods <- new.env(hash = TRUE, parent = emptyenv())
+.pitch_methods$get_mean <- function(.self, ...) .self$.cpp$get_mean(...)
+.pitch_methods$to_point_process <- function(.self, ...) { ... }
+# ... all methods take .self as first arg
+lockEnvironment(.pitch_methods, bindings = TRUE)
+
+# Constructor: minimal list, no closures
+Pitch <- function(.xptr = NULL) {
+  pitch_mod <- get_module("pitch_module")
+  cpp_obj <- pitch_mod$RPitch$new(.xptr)
+  structure(list(.xptr = .xptr, .cpp = cpp_obj), class = c("Pitch", "PraatObject"))
+}
+
+# S3 dispatch: $.Pitch intercepts field/method access
+`$.Pitch` <- function(x, name) {
+  val <- .subset2(x, name)       # Fast path: .xptr, .cpp
+  if (!is.null(val)) return(val)
+  method <- .pitch_methods[[name]]
+  if (is.null(method)) return(NULL)
+  function(...) method(x, ...)    # Bind self, return closure
+}
+```
+
+**`.xptr` is a checked door, not a bare cast (5.1.0):** `RType$new(ptr)`
+is where Rcpp reinterprets the external pointer as the wrapper’s C++
+struct, so that module constructor is the last place a wrong-class
+pointer can still be refused. Every module constructor that takes one
+(`src/modules/*_module.cpp`, 37 types plus `Matrix` and `PitchTier`)
+calls `require_praat_class()` (`src/praat_xptr_utils.h`, Praat’s
+`Thing_isa` *subclass* test — so an `Ltas` or `Sound` pointer still
+passes as a Matrix), and the R constructor wraps the call in
+[`with_pladdrr_errors()`](https://humlab-speech.github.io/pladdrr/reference/with_pladdrr_errors.md),
+so the refusal is a classed `pladdrr_input_error` naming the class found
+(“Not a Sound (found TextGrid)”). `PowerCepstrogram` has no module
+object of its own; its constructor builds one only to run the check.
+Without the check the first field read after construction is out of
+bounds and the R session dies uncatchably. A new wrapper type needs both
+halves; the list of types is in
+`tests/testthat/test-xptr-all-constructors.R`.
+
+**Special cases:** Some wrappers have additional fields or no `.xptr`: -
+**FormantPath, KlattGrid, ComplexSpectrogram**: no `.xptr` — only `.cpp`
+stored - **PowerCepstrogram**: opposite of the above — pure `.xptr`, no
+`.cpp` module at all - **Electroglottogram**: triple class
+`c("Electroglottogram", "Sound", "PraatObject")` + `.pointer` compat
+alias - **AmplitudeTier**: `.pointer` compat alias in `$` dispatch (used
+by factory functions) - **PitchTier, FormantTier, LongSound,
+VocalTract**: static `$.{type}_constructor` for class methods
+
+**Intentionally R6 (1/37):** PraatInterpreter (requires persistent
+mutable state for script execution)
+
+------------------------------------------------------------------------
+
+## Object Types
+
+**Note:** ~41 distinct object types are wrapped in R, backed by 39
+`src/modules/*.cpp` files (not a 1:1 mapping — some types like
+MelSpectrogram/BarkSpectrogram/LFCC/PowerCepstrogram share or lack a
+dedicated module file, while some modules like
+Electroglottogram/DTW/Polygon aren’t broken out as separate rows below).
+
+**Update v4.8.25:** Added MelSpectrogram and BarkSpectrogram modules for
+psychoacoustic analysis. **Update v4.0.7:** Added MFCC, LFCC,
+FormantModeler, PCA, Discriminant modules for speaker recognition,
+robust formant tracking, and statistical analysis.
+
+### Audio Analysis
+
+| Type | R Constructor | Creation Method |
+|----|----|----|
+| `Sound` | `Sound("file.wav")` | Direct from file |
+| `Pitch` | `sound$to_pitch()` | From Sound |
+| `Formant` | `sound$to_formant_burg()` | From Sound |
+| `Intensity` | `sound$to_intensity()` | From Sound |
+| `Harmonicity` | `sound$to_harmonicity_cc()` | From Sound |
+| `Spectrum` | `sound$to_spectrum()` | From Sound |
+| `Spectrogram` | `sound$to_spectrogram()` | From Sound |
+| `ComplexSpectrogram` | `ComplexSpectrogram(sound)` | From Sound (phase-preserving) |
+| `MelSpectrogram` | `sound$to_mel_spectrogram()` | From Sound (v4.8.25) |
+| `BarkSpectrogram` | `sound$to_bark_spectrogram()` | From Sound (v4.8.25) |
+| `Ltas` | `sound$to_ltas()` | From Sound |
+| `SpectrumTier` | `ltas$to_spectrum_tier_peaks()` | From Ltas (read-only peak-picking output, v5.0.3) |
+| `PointProcess` | `sound$to_point_process_periodic_cc()` | From Sound |
+
+### Editable Tiers
+
+| Type            | Creation Method                                           |
+|-----------------|-----------------------------------------------------------|
+| `PitchTier`     | `pitch$down_to_pitch_tier()`                              |
+| `DurationTier`  | `DurationTier(tmin, tmax)`                                |
+| `IntensityTier` | `IntensityTier(tmin, tmax)`                               |
+| `AmplitudeTier` | `amplitude_tier_from_point_process(point_process, sound)` |
+| `FormantTier`   | `FormantTier$from_formant(formant)`                       |
+| `FormantGrid`   | `formant$to_formantgrid()`                                |
+
+### Advanced Analysis
+
+| Type | Creation Method |
+|----|----|
+| `Cepstrum` | `spectrum$to_cepstrum()` |
+| `PowerCepstrum` | `spectrum$to_power_cepstrum()` |
+| `PowerCepstrogram` | `sound$to_powercepstrogram()` |
+| `Cochleagram` | `sound$to_cochleagram()` |
+| `Excitation` | `cochleagram$to_excitation(time)` (one frame; `time` has no default) or `spectrum$to_excitation(erb_density)` |
+| `LPC` | `sound$to_lpc_burg()` |
+| `FormantPath` | `sound$to_formant_path()` |
+| `FormantModeler` | `formant$to_formant_modeler()` |
+| `MFCC` | `sound$to_mfcc()` |
+| `LFCC` | `lpc$to_lfcc()` |
+
+### Statistical Analysis (NEW in v4.0.7)
+
+| Type | Creation Method | Use Case |
+|----|----|----|
+| `PCA` | `pca_from_matrix(data)` | Dimensionality reduction, vowel space analysis |
+| `Discriminant` | `discriminant_from_matrix(data, labels)` | Classification, speaker ID, vowel classification |
+
+### Manipulation
+
+| Type           | Creation Method              |
+|----------------|------------------------------|
+| `Manipulation` | `sound$to_manipulation()`    |
+| `KlattGrid`    | `KlattGrid(tmin, tmax, ...)` |
+| `VocalTract`   | `VocalTract(nx, dx)`         |
+
+### Data Structures
+
+| Type | Creation Method |
+|----|----|
+| `TextGrid` | `TextGrid("file.TextGrid")` |
+| `Table` | `formant$down_to_table()` |
+| `Matrix` (Praat type) | `PraatMatrix(numberOfRows = , numberOfColumns = )` (or the full `xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1` set); class `PraatMatrix` |
+| `LongSound` | `LongSound$open("large_file.wav")` |
+
+### Interpreter (NEW in v2.1.0)
+
+| Type | Creation Method | Purpose |
+|----|----|----|
+| `PraatInterpreter` | `PraatInterpreter$new()` | Persistent Praat script interpreter with variable state |
+
+**NOTE:** PraatInterpreter is the **only object that uses R6::R6Class**.
+All other ~40 object types use the shared dispatch table pattern
+(v4.8.33). This is intentional — the interpreter requires persistent
+mutable state, reference semantics, and method chaining (`self`
+reference).
+
+**Key Methods:** - `run(script)` - Execute Praat script - `eval(expr)` -
+Evaluate expression (tries numeric, then string, then vector, then
+string array) - `get_variable(name)` - Get interpreter variable -
+`set_variable(name, value)` - Set interpreter variable
+
+**Example:**
+
+``` r
+interp <- PraatInterpreter$new()
+interp$run('x = 42')
+interp$run('y = x * 2')
+result <- interp$eval('y')  # 84 (numeric tried first, then string)
+```
+
+------------------------------------------------------------------------
+
+## Unit Code Reference
+
+### Frequency Units (Pitch, Formant)
+
+Every pitch door (`Pitch$` methods, `PitchTier$`, the batch queries,
+`praat-direct.R`) now resolves the string through one table,
+`.pitch_unit_code()` in `R/utils-internal.R`, which is Praat’s
+`kPitch_unit` enum (`src/praat.github.io/fon/Pitch_enums.h`). An unknown
+string raises `pladdrr_input_error`; it no longer falls back to hertz.
+Use the strings; the codes are listed only for reading C++.
+
+| Code | `kPitch_unit`       | R string(s)                                   |
+|------|---------------------|-----------------------------------------------|
+| `0`  | `HERTZ`             | `"hertz"`, `"hz"`                             |
+| `1`  | `HERTZ_LOGARITHMIC` | `"hertz_logarithmic"`                         |
+| `2`  | `MEL`               | `"mel"`                                       |
+| `3`  | `LOG_HERTZ`         | `"loghertz"`                                  |
+| `4`  | `SEMITONES_1`       | `"semitones_re_1hz"`                          |
+| `5`  | `SEMITONES_100`     | `"semitones_re_100hz"`, `"semitones"`, `"st"` |
+| `6`  | `SEMITONES_200`     | `"semitones_re_200hz"`                        |
+| `7`  | `SEMITONES_440`     | `"semitones_re_440hz"`                        |
+| `8`  | `ERB`               | `"erb"`                                       |
+
+A bare `"semitones"` is Praat’s default, semitones re 100 Hz. Before
+5.1.1 four tables disagreed with the enum: `unit = "semitones"` and
+`"erb"` returned log10(Hz) from `Pitch$` methods, and the direct getters
+answered `"loghertz"` in semitones re 1 Hz.
+
+### Formant Units
+
+| R String  | Code | Praat Enum             |
+|-----------|------|------------------------|
+| `"hertz"` | `0`  | `kFormant_unit::HERTZ` |
+| `"bark"`  | `1`  | `kFormant_unit::BARK`  |
+
+### Intensity Units
+
+There is no general-purpose “intensity unit” code. The only related
+parameter is `averaging_method` on
+`Intensity$get_mean(from_time, to_time, averaging_method)`, internally
+mapped by `.intensity_avg_code` (`R/intensity-wrapper.R`) onto Praat’s
+`Intensity_averaging` enum (`fon/Intensity.h:64-67`); the returned
+number is always in dB, and any other string is an error:
+
+| R String   | Code | What it averages                                   |
+|------------|------|----------------------------------------------------|
+| `"median"` | `0`  | 0.5 quantile of the contour                        |
+| `"energy"` | `1`  | mean of `10^(dB/10)`, re-expressed in dB (DEFAULT) |
+| `"sones"`  | `2`  | mean of `2^(dB/10)`, re-expressed in dB            |
+| `"db"`     | `3`  | arithmetic mean of the dB values                   |
+
+This is **not** the LTAS averaging enum (which has no median; see “LTAS
+Units” below). The integer APIs `intensity_get_mean_direct()` and
+`intensity_get_statistics_batch()` take the same raw codes and default
+to `0` = median; Praat’s legacy two-argument
+`Intensity: Get mean: from, to` is the plain dB mean (= `3`), so those
+defaults are a pladdrr convention, not an oracle match.
+`Intensity$get_statistics(… , metrics = "mean")` and
+[`print()`](https://rdrr.io/r/base/print.html)’s “Mean intensity” line
+use energy (= `1`), the same number `get_mean()` returns by default.
+
+### LTAS Units (fixed again in v5.1.0 — the v4.0.4 table this section used to carry was wrong)
+
+Five `Ltas` queries take a `unit` argument —
+`get_mean(fmin, fmax, unit)`, `get_means_batch(fmins, fmaxs, unit)`,
+`get_standard_deviation(fmin, fmax, unit)`,
+`get_slope(f1min, f1max, f2min, f2max, unit)` and
+`get_local_peak_height(environment_min, environment_max, peak_min, peak_max, unit)`
+— and **the number they return is always in dB**, whatever `unit` you
+name. `unit` selects the domain the *average* is taken in; Praat’s own
+queries convert the result back (`Sampled_getMean_standardUnit`,
+`fon/Sampled.cpp:505-509`, and
+`Sampled_getStandardDeviation_standardUnit`, `fon/Sampled.cpp:550-554`,
+called at `fon/praat_uvafon_init.cpp:1107` and `:1156`).
+`.ltas_unit_code` (`R/ltas-wrapper.R`) maps the string onto Praat’s Ltas
+averaging `CHOICE`, which is **1-based and has no median**
+(`fon/praat_uvafon_init.cpp:1101-1105`); any other string is an error:
+
+| R String | Code | What it averages | Returned |
+|----|----|----|----|
+| `"energy"` | `1` | mean of `10^(dB/10)` | that mean converted back: `10*log10(...)` dB |
+| `"sones"` | `2` | mean of `2^(dB/10)` | that mean converted back: `10*log2(...)` dB |
+| `"dB"` | `3` | arithmetic mean of the dB values (DEFAULT) | the dB mean itself |
+
+`get_slope()` and `get_local_peak_height()` compare two band averages:
+code 3 subtracts them, the other two divide them and convert the ratio
+back (`fon/Ltas.cpp:83-97`). Code **3** — not 0 — is what selects the dB
+branch, which is why `"dB"` must map to 3.
+
+Three other Ltas queries — `get_value_at_frequency()`, `get_minimum()`,
+`get_maximum()` — also accept a `unit` argument, but they read bins that
+are already in dB and Praat’s dialogs for them have no unit. They accept
+only `"dB"` (any case) and raise a `pladdrr_input_error` for anything
+else (before 5.1.0 the argument was silently ignored).
+
+A band average covers the whole bins between the two frequencies,
+weighting the bins at an incomplete range edge by the fraction of the
+bin inside the range; pladdrr does *not* interpolate between bins here,
+because Praat’s Ltas queries pass `interpolate = false`
+(`fon/praat_uvafon_init.cpp:1108`, `:1159`). Values are frozen against
+the oracle in `tests/testthat/test-ltas-averaging-unit.R`.
+
+**Wrong in earlier editions of this guide:** the table read
+`"db" | 0 | Passthrough`, and the `10*log10(ratio) → dB` column
+described the *conversion helper* rather than the unit of the answer.
+Both readings cost users numbers: `unit = "energy"` returned the linear
+mean (`14170.064098` where Praat prints `41.513718` dB), and
+`get_slope()` with its default `unit = "dB"` returned a dimensionless
+ratio (`-0.115522`) instead of `-31.906946` dB.
+
+``` r
+# All three answers are dB; they differ because the average is taken in three domains:
+ltas$get_mean(0, 0, unit = "dB")       # -22.832719   mean of the bins
+ltas$get_mean(0, 0, unit = "energy")   #  41.513718   mean of 10^(dB/10), back in dB
+ltas$get_mean(0, 0, unit = "sones")    #  -1.519995   mean of 2^(dB/10), back in dB
+
+# Spectral tilt in dB — the default spelling now works (values: inst/extdata/test.flac):
+ltas$get_slope(0, 1000, 1000, 4000, unit = "dB")        # -31.906946
+ltas$get_slope(0, 1000, 1000, 4000, unit = "energy")    # -52.513078
+```
+
+### Interpolation Methods
+
+**Updated v2.1.1:** Fixed intensity interpolation codes.
+
+| Code | Method  | Use Case                              |
+|------|---------|---------------------------------------|
+| `0`  | Nearest | Fast, no smoothing                    |
+| `1`  | Linear  | Moderate smoothing                    |
+| `2`  | Cubic   | Smooth curves (DEFAULT for intensity) |
+| `3`  | Sinc70  | High-quality, 70-point window         |
+| `4`  | Sinc700 | Highest quality, 700-point window     |
+
+**String API (recommended):**
+
+``` r
+# Use string names - automatically converted to codes
+intensity$get_value_at_time(time = 1.0, interpolation = "cubic")
+get_intensity_at_times(intensity, times, interpolate = "sinc70")
+```
+
+------------------------------------------------------------------------
+
+## Version history and superseded material
+
+Moved out of this guide in v4.9.19. Version history, the superseded SIMD
+and performance archive, and the full changelog now live in
+`history.Rmd` (same directory). Nothing was deleted — only relocated, so
+this guide stays usable as a reference rather than a changelog.
+
+- Architecture, build system, threading, dispatch patterns:
+  `architecture.Rmd`
+- Changes to the vendored Praat tree: `praat-modifications.Rmd`
+- Faithfulness status per routine: `faithfulness-report.Rmd`
+- Version history and superseded notes: `history.Rmd`

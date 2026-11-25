@@ -72,6 +72,19 @@
     <li><a class="dropdown-item" href="../articles/v4-migration-guide.html">Migration Guide (v4.0)</a></li>
     <li><a class="dropdown-item" href="../articles/naming-conventions.html">Naming Conventions</a></li>
     <li><a class="dropdown-item" href="../articles/batch-operations-guide.html">Batch Operations Guide</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Developer &amp; Coding-Agent Docs</h6></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide.html">Agent Guide</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide-whats-new.html">  Agent Guide: What's New</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide-patterns.html">  Agent Guide: Common Patterns</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide-api-reference.html">  Agent Guide: API Reference</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide-pitfalls.html">  Agent Guide: Pitfalls &amp; Use Cases</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/architecture.html">Architecture</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/documentation.html">Documentation Convention</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/praat-modifications.html">Praat Source Modifications</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/faithfulness-report.html">Faithfulness Report</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/performance-inventory.html">Performance Inventory</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/history.html">Version History</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">News</a></li>
@@ -97,7 +110,7 @@
                         <h4 data-toc-skip class="author">Fredrik
 Nylén</h4>
             
-            <h4 data-toc-skip class="date">2026-11-24</h4>
+            <h4 data-toc-skip class="date">2026-11-25</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/humlab-speech/pladdrr/blob/main/vignettes/migration-from-praat.Rmd" class="external-link"><code>vignettes/migration-from-praat.Rmd</code></a></small>
       <div class="d-none name"><code>migration-from-praat.Rmd</code></div>
@@ -427,11 +440,11 @@ range”:</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Correct</span></span>
 <span><span class="va">pitch</span><span class="op">$</span><span class="fu">get_mean</span><span class="op">(</span>unit <span class="op">=</span> <span class="st">"hertz"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 440.0098</span></span>
+<span><span class="co">#&gt; [1] 440.0102</span></span>
 <span></span>
 <span><span class="co"># Also works (case-insensitive in many methods)</span></span>
 <span><span class="va">pitch</span><span class="op">$</span><span class="fu">get_mean</span><span class="op">(</span>unit <span class="op">=</span> <span class="st">"Hertz"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 440.0098</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 440.0102</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">

@@ -61,7 +61,8 @@ repeated interval queries on the same \`Sound\`, use
 Harmonicity is always computed with \`Sound_to_Harmonicity_cc()\` (the
 CC method) for every band — there is no AC alternative and no way to
 configure it. This matches VQ_measurements_V2.praat lines 102-122. See
-the Tier 4 Ultra algorithm table in \`inst/agents/AGENT_GUIDE.md\`.
+the Tier 4 Ultra algorithm table in
+<https://humlab-speech.github.io/pladdrr/articles/agents/agent-guide.html>.
 
 ## References
 

@@ -2916,10 +2916,10 @@ comprehensive documentation.
 ### Phase 3.4: Comprehensive Vignettes
 
 - **3 new vignettes for Phase 2 modules** (~3,000 lines total)
-  - [`vignette("formantpath-robust-tracking")`](https://humlab-speech.github.io/pladdrr/articles/formantpath-robust-tracking.md) -
-    Multi-ceiling formant tracking
-  - [`vignette("speech-synthesis-klattgrid")`](https://humlab-speech.github.io/pladdrr/articles/speech-synthesis-klattgrid.md) -
-    Vowel synthesis, pitch contours, formant transitions
+  - `vignette("formantpath-robust-tracking")` - Multi-ceiling formant
+    tracking
+  - `vignette("speech-synthesis-klattgrid")` - Vowel synthesis, pitch
+    contours, formant transitions
   - [`vignette("analysis-resynthesis-workflow")`](https://humlab-speech.github.io/pladdrr/articles/analysis-resynthesis-workflow.md) -
     Complete FormantPath→KlattGrid pipeline
 

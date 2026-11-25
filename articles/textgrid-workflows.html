@@ -72,6 +72,19 @@
     <li><a class="dropdown-item" href="../articles/v4-migration-guide.html">Migration Guide (v4.0)</a></li>
     <li><a class="dropdown-item" href="../articles/naming-conventions.html">Naming Conventions</a></li>
     <li><a class="dropdown-item" href="../articles/batch-operations-guide.html">Batch Operations Guide</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Developer &amp; Coding-Agent Docs</h6></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide.html">Agent Guide</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide-whats-new.html">  Agent Guide: What's New</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide-patterns.html">  Agent Guide: Common Patterns</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide-api-reference.html">  Agent Guide: API Reference</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide-pitfalls.html">  Agent Guide: Pitfalls &amp; Use Cases</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/architecture.html">Architecture</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/documentation.html">Documentation Convention</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/praat-modifications.html">Praat Source Modifications</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/faithfulness-report.html">Faithfulness Report</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/performance-inventory.html">Performance Inventory</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/history.html">Version History</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">News</a></li>
@@ -97,9 +110,9 @@
                         <h4 data-toc-skip class="author">pladdrr Package
 Authors</h4>
             
-            <h4 data-toc-skip class="date">2026-11-24</h4>
+            <h4 data-toc-skip class="date">2026-11-25</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/humlab-speech/pladdrr/blob/main/vignettes/textgrid-workflows.Rmd" class="external-link"><code>vignettes/textgrid-workflows.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/humlab-speech/pladdrr/blob/main/vignettes/articles/textgrid-workflows.Rmd" class="external-link"><code>vignettes/articles/textgrid-workflows.Rmd</code></a></small>
       <div class="d-none name"><code>textgrid-workflows.Rmd</code></div>
     </div>
 
@@ -447,7 +460,7 @@ segmentation - Manual correction in Praat - Batch analysis in R</p>
 <span><span class="va">load_time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/difftime.html" class="external-link">difftime</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">start_time</span>, units <span class="op">=</span> <span class="st">"secs"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Loaded in %.3f seconds\n"</span>, <span class="va">load_time</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Loaded in 0.009 seconds</span></span>
+<span><span class="co">#&gt; Loaded in 0.008 seconds</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Duration: %.2f minutes\n"</span>, <span class="va">tg</span><span class="op">$</span><span class="fu">get_total_duration</span><span class="op">(</span><span class="op">)</span> <span class="op">/</span> <span class="fl">60</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Duration: 1.00 minutes</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"File size: %.1f MB\n"</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.info.html" class="external-link">file.size</a></span><span class="op">(</span><span class="va">tg_file</span><span class="op">)</span> <span class="op">/</span> <span class="fl">1024</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
@@ -695,7 +708,7 @@ be added to an existing plot, e.g. on top of a Sound’s waveform.</p>
 <p><img src="textgrid-workflows_files/figure-html/visualize_textgrid-2.png" class="r-plt" alt="" width="672"></p>
 <p>For further examples (interval duration distributions, label
 frequency plots, multi-tier layouts), see
-<code><a href="../articles/visualization.html">vignette("visualization")</a></code>.</p>
+<code>vignette("visualization")</code>.</p>
 </div>
 </div>
 <div class="section level2">
@@ -877,7 +890,7 @@ frequency plots, multi-tier layouts), see
 <code><a href="../articles/integrated-phonetic-analysis.html">vignette("integrated-phonetic-analysis")</a></code> - TextGrid +
 acoustic analysis</li>
 <li>
-<code><a href="../articles/vowel-space-analysis.html">vignette("vowel-space-analysis")</a></code> - Formant extraction
+<code>vignette("vowel-space-analysis")</code> - Formant extraction
 pipelines</li>
 <li>
 <code>inst/examples/06_textgrid_analysis.R</code> - Basic

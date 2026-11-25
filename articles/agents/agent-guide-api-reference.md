@@ -1,0 +1,788 @@
+# Agent Guide: API Reference
+
+Part of the [Agent
+Guide](https://humlab-speech.github.io/pladdrr/articles/agents/agent-guide.md).
+
+## PraatMatrix and the ‘Matrix’ package
+
+Praat’s `Matrix` and the CRAN package ‘Matrix’ share a name. After 5.1.1
+pladdrr’s constructor and S3 class are `PraatMatrix` (the exported
+`Matrix()` was removed with no alias; an alias would have kept the
+duplicate-name finding from `pkgcheck`). Praat `Matrix` objects
+(`Matrix: Get value in cell...`, `To Matrix` results from Ltas, DTW,
+MFCC, LPC and others) are `PraatMatrix` objects in R.
+
+| Situation | Do this | Why |
+|----|----|----|
+| Constructing | `PraatMatrix(numberOfRows = 3, numberOfColumns = 4)` | No clash with [`Matrix::Matrix()`](https://rdrr.io/pkg/Matrix/man/Matrix.html) whichever package is attached first. |
+| Testing the type | `inherits(m, "PraatMatrix")` | The class vector is `c("PraatMatrix", "PraatObject")`. `inherits(m, "Matrix")` is FALSE and `class(m)[1] == "Matrix"` fails (5.1.1 had `c("PraatMatrix", "Matrix", "PraatObject")`; earlier `c("Matrix", "PraatObject")`). |
+| Getting the numbers out | `as.matrix(m)` or `m$as_matrix()` | Both return a base R numeric matrix whether or not ‘Matrix’ is loaded. |
+
+pladdrr registers no S3 method on class `Matrix`: `$`, `as.matrix`,
+`as.data.frame`, `print`, `plot`, `autoplot` and `autolayer` are all on
+`PraatMatrix`. This is the pattern for any future wrapper whose class
+name is also an S3 or S4 class in a popular package. The regression test
+is the last block of `tests/testthat/test-as-matrix-fallback.R`.
+
+Faithfulness is unaffected: only dispatch names changed, not values. A
+Praat `Matrix` read back through the interpreter (`praat_class`
+attribute `"Matrix"`, the Praat type name) is wrapped by
+`PraatMatrix(.xptr = )`.
+
+## Re-implementing a Praat Procedure
+
+This section is a step-by-step guide for agents porting a new Praat
+analysis procedure into pladdrr. It distils lessons from the 2026
+developer report and prior SIMD/threading work.
+
+### Step 1 — Find the Praat source
+
+Every Praat menu action maps to a C++ function in the vendored Praat
+tree:
+
+    src/praat.github.io/fon/          ← core audio analysis (Pitch, Formant, Intensity, etc.)
+    src/praat.github.io/LPC/          ← LPC, Cepstrum, PowerCepstrogram
+    src/praat.github.io/dwtools/      ← advanced (KlattGrid, DTW, MFCC, CC, SSCP, PCA)
+    src/praat.github.io/dwsys/        ← numerical utilities (Polynomial, Roots, SVD, etc.)
+    src/praat.github.io/melder/       ← signal math (NUMinterpol, NUMfilter, FFT, etc.)
+
+All platforms (including Windows via `Makevars.win`) compile from the
+`praat.github.io/` prefix. The former `src/praat/` Windows mirror was
+removed in v4.9.5 — never reference it.
+
+Map from Praat menu name to file:
+
+| Praat menu action | Source file |
+|----|----|
+| `Sound: To Formant (burg)...` | `fon/Sound_to_Formant.cpp` |
+| `Sound: To Pitch (cc)...` | `fon/Sound_to_Pitch.cpp` |
+| `Sound: To Spectrogram...` | `fon/Sound_and_Spectrogram.cpp` |
+| `Spectrum: Get centre of gravity...` | `fon/Spectrum.cpp` |
+| `Sound: To PowerCepstrogram...` | `LPC/Sound_to_PowerCepstrogram.cpp` |
+| `LTAS: Get maximum...` | `fon/Vector.cpp` → `melder/NUMinterpol.cpp` |
+
+To locate any function:
+`grep -r "FunctionName" src/praat.github.io/fon/ --include="*.h"`.
+
+### Step 2 — Choose the right API tier
+
+| Tier | When to use | What it returns | Relative speed |
+|----|----|----|----|
+| **Tier 1** (object method `sound$to_X()`) | Interactive / exploratory; full API surface | Wrapped R object | 1× |
+| **Tier 2** (`to_X_direct()`) | Chaining: result goes straight into another Praat call | `externalptr` | ~2× |
+| **Tier 3** (batch `sound_to_X_batch()`) | ≥10 files; loops over a corpus | List of results | 5–10× |
+| **Tier 4** (ultra `calculate_X_ultra()`) | Complete pipeline that never needs to surface R objects | Named list of scalars | 10–30× |
+
+**Critical rule for Tier 2:** Always wrap the returned pointer before
+returning it to user code. Every `*_direct()` function **must** return a
+wrapped object (e.g. `Ltas(.xptr = ...)`), not a raw `externalptr`.
+[`to_ltas_direct()`](https://humlab-speech.github.io/pladdrr/reference/to_ltas_direct.md)
+returned a raw pointer until v4.9.1 — that was a bug, not a feature. See
+[Pitfall
+15](https://humlab-speech.github.io/pladdrr/articles/agents/agent-guide-pitfalls.html#pitfall-15-to_ltas_direct-returned-raw-externalptr-fixed-v491).
+
+### Step 3 — Avoid per-frame R loops (the \#1 performance anti-pattern)
+
+Any R loop that calls a Praat object method once per audio frame is an
+anti-pattern. The canonical example from the 2026 developer report:
+
+``` r
+# ANTI-PATTERN: 1600 R→C++ crossings for a 400-frame spectrogram
+for (frame in seq_len(n_frames)) {
+  t    <- spectrogram$get_time_from_frame(frame)   # C++ round-trip
+  spec <- spectrogram$to_spectrum(t)               # C++ object allocation
+  cog  <- spec$get_centre_of_gravity(power)        # C++ round-trip
+  sd   <- spec$get_standard_deviation(power)       # C++ round-trip
+  ...
+}
+# Result: 14× slower than Praat on the same algorithm.
+
+# CORRECT: implement as a C++ batch function (see src/batch_queries.cpp)
+moments <- get_spectral_moments_batch(spectrogram, power = 2.0)
+```
+
+**Recipe for a new batch function:**
+
+1.  Add `// [[Rcpp::export(.my_batch_fn)]]` to `src/batch_queries.cpp`
+2.  Accept the object as `SEXP xptr`, cast to `XPtr<structType>`
+3.  Loop in C++, call Praat functions directly
+4.  Return `List::create(Named("col1") = vec1, ...)`. If returning a
+    **new Praat object**, wrap it with `make_praat_xptr()` /
+    `make_praat_xptr_from_auto()` from `src/praat_xptr_utils.h` — NEVER
+    construct `XPtr<T>(ptr, deleter)` with a lambda: the lambda silently
+    binds Rcpp’s `bool set_delete_finalizer` overload, so the object is
+    freed with `delete` instead of Praat’s `forget()` (the v4.9.6
+    finalizer bug)
+5.  Run `Rcpp::compileAttributes(".")` to regenerate
+    `src/RcppExports.cpp`
+6.  **After `compileAttributes`:** verify `src/RcppExports.cpp` has
+    `extern const R_CallMethodDef CallEntries[]` (NOT `static`) —
+    `compileAttributes` resets it to `static`, which breaks the
+    `module_init.cpp` link. Fix if needed before building.
+7.  Add R wrapper in `R/batch-queries.R` + entry in `NAMESPACE`
+8.  Add delegating method to the object’s `R/*-wrapper.R`
+
+### Step 4 — Numerical traps in Praat DSP
+
+Three classes of traps discovered during the 2026 benchmarking cycle:
+
+#### Trap A: Division by near-zero in interpolation
+
+`NUMimproveExtremum()` in `melder/NUMinterpol.cpp` (and all callers
+using parabolic interpolation) is vulnerable to near-zero denominators
+when adjacent bins have nearly equal power. **Fixed in v4.9.1** for the
+`NUM_PEAK_INTERPOLATE_PARABOLIC` path.
+
+**Rule for new interpolation code:** Always guard
+`|denominator| > epsilon` before dividing, and clamp the result to a
+physically plausible range (e.g., `|offset| < 1.0` for one-bin parabolic
+interpolation).
+
+#### Trap B: Silent partial convergence in eigenvalue solvers
+
+LAPACK `NUMlapack_dhseqr_()` (called by `Polynomial_to_Roots()` in
+`dwsys/Roots.cpp`) may return `info > 0`, indicating it only found
+`n - info` of the `n` eigenvalues. The code silently uses the partial
+set — producing fewer formants than expected from short-window LPC.
+
+**Fixed in v4.9.1** with a Laguerre-method fallback in
+`Sound_to_Formant.cpp`.
+
+**Rule for new LPC-based procedures:** After calling
+`Polynomial_to_Roots`, assert `roots->numberOfRoots == expected_order`.
+If the assertion can fail, add a robust fallback.
+`src/polynomial_roots_laguerre.h` provides a self-contained Laguerre +
+deflation implementation that does not depend on LAPACK conditioning.
+
+#### Trap C: dB-domain vs energy-domain averaging
+
+Praat’s `Intensity: Get mean` averages in the **energy domain** (Pa²),
+then converts to dB:
+
+    mean_dB = 10 * log10( mean(energy_i) )
+
+Averaging in the dB domain directly gives a systematically lower result
+(Jensen’s inequality). This is a known 1–3 dB bias if the wrong domain
+is used. Always verify the domain in the Praat source before
+implementing a mean-intensity wrapper.
+
+### Step 5 — Faithfulness testing
+
+Every new procedure must have a faithfulness registry entry in
+`tests/testthat/faithfulness/routines.R` and must pass at r \> 0.95 vs
+Praat on ≥50 real files.
+
+``` r
+# In faithfulness/routines.R, add a row like:
+list(
+  name       = "spectral_moments_cog",
+  pladdrr_fn = function(snd) {
+    spg <- snd$to_spectrogram(window_length = 0.005, max_frequency = 5000)
+    get_spectral_moments_batch(spg)$cog
+  },
+  praat_script = "spectral_moments_cog.praat",
+  tolerance    = 1.0,   # Hz; requires written rationale if > 0
+  n_min        = 50
+)
+```
+
+Run the package-local validation commands with:
+
+``` bash
+Rscript tests/testthat/test-praat-faithfulness.R
+Rscript inst/benchmarks/run_audit_benchmarks.R
+```
+
+Target metrics per fix category: - Bug fix: r \> 0.95 (was typically \<
+0.60 before fix) - New API: r \> 0.99 vs the R-loop reference
+implementation - Performance: speedup ≥ 0.80× Praat (within 20% of
+Praat’s native speed)
+
+### Step 6 — Log Praat source modifications
+
+Whenever `src/praat.github.io/` is modified, add an entry to
+`vignettes/agents/praat-modifications.Rmd` in this format:
+
+``` markdown
+## v4.9.1 — NUMinterpol.cpp parabolic guard (2026-06-10)
+
+**File:** `src/praat.github.io/melder/NUMinterpol.cpp`
+**Function:** `NUMimproveExtremum()`
+**Change:** Added `d2y <= 0` guard and `|offset| >= 1.0` clamp to prevent division by
+near-zero denominator in parabolic peak interpolation.
+**Reason:** 500–1231 dB physically impossible values from LTAS get_peaks_batch.
+**Upstream:** Not reported upstream (Praat's own parabolic path may not be called with
+flat LTAS peaks in normal Praat GUI use).
+```
+
+This log is the authoritative record of divergences between pladdrr’s
+Praat source and upstream Praat. It must be updated before committing
+any change to `src/praat.github.io/`.
+
+------------------------------------------------------------------------
+
+## Utility Functions
+
+### Memory Pooling API
+
+Pool of reusable Sound allocations. **Since 2026-10,
+[`sound_extract_parts_pooled()`](https://humlab-speech.github.io/pladdrr/reference/sound_extract_parts_pooled.md)
+does not use it** (`use_pool` ignored; parts are ordinary R-owned Sounds
+— the pooled path leaked them). The stats/clear/resize API is kept for
+compatibility:
+
+``` r
+# Check pool efficiency
+stats <- sound_pool_stats()
+cat("Hit rate:", stats$hits / (stats$hits + stats$misses) * 100, "%\n")
+
+# Clear pool to free memory
+sound_pool_clear()
+
+# Resize pool capacity (default: 32)
+sound_pool_resize(64)
+```
+
+| Function | Description |
+|----|----|
+| [`sound_pool_stats()`](https://humlab-speech.github.io/pladdrr/reference/sound_pool.md) | Get hit/miss statistics |
+| [`sound_pool_clear()`](https://humlab-speech.github.io/pladdrr/reference/sound_pool.md) | Clear pool, free memory |
+| `sound_pool_resize(max_size)` | Change pool capacity |
+| `sound_pool_acquire(...)` | Internal: get Sound from pool |
+| `sound_pool_release(xptr)` | Internal: return Sound to pool |
+
+### Spectrum Filtering
+
+Filter spectrum frequencies with Hann window smoothing:
+
+``` r
+spectrum <- sound$to_spectrum()
+
+# Pass band (keep 100-4000 Hz, smooth 100 Hz)
+spectrum_pass_hann_band(spectrum, fmin = 100, fmax = 4000, smooth = 100)
+
+# Stop band (remove 50-60 Hz hum)
+spectrum_stop_hann_band(spectrum, fmin = 50, fmax = 60, smooth = 10)
+```
+
+### Sound Filtering
+
+Apply frequency filters directly to Sound objects:
+
+``` r
+# Bandpass filter (100-4000 Hz)
+filtered <- sound_filter_pass_hann_band(sound, fmin = 100, fmax = 4000, smooth = 100)
+
+# Bandstop filter (remove hum)
+cleaned <- sound_filter_stop_hann_band(sound, fmin = 50, fmax = 60, smooth = 10)
+```
+
+### Sound Operations
+
+Correlation and convolution functions:
+
+``` r
+# Auto-correlation
+autocorr <- sound_auto_correlate(sound, scaling = 4L, signal_outside = 1L)
+
+# Cross-correlation between two sounds
+xcorr <- sounds_cross_correlate(sound1, sound2, scaling = 4L)
+
+# Convolve two sounds
+convolved <- sounds_convolve(sound1, sound2, scaling = 4L)
+```
+
+### Fast Data Access
+
+2-5x faster access to Sound samples via direct pointer copy:
+
+``` r
+# Fast sample access (independent copy — safe to modify)
+samples <- get_sound_values_fast(sound, channel = 1)
+rms <- sqrt(mean(samples^2))
+peak <- max(abs(samples))
+
+# Check if vector came from fast access
+is_fast_vector(samples)  # TRUE
+
+# Matrix access (all channels)
+mat <- sound_as_matrix_fast(sound)
+
+# Fast time vector computation
+times <- get_sound_times_fast(sound)
+```
+
+**Note:** Despite the legacy “zerocopy” name, these functions always
+return independent R copies. The old names (`get_sound_values_zerocopy`,
+`sound_as_matrix_zerocopy`, `is_zerocopy_vector`) still work but are
+deprecated — use the `_fast` variants instead.
+
+### Batch Processing
+
+High-level functions for corpus-scale measurement extraction:
+
+``` r
+# Pair .wav and .TextGrid files by basename
+pairs <- pair_files("~/audio/", "~/annotations/")
+
+# Extract pitch/formant/intensity at interval midpoints (uses batch C++ calls internally)
+results <- extract_measurements(
+  sound = "audio.wav", textgrid = "audio.TextGrid",
+  tier = 1, measurements = c("pitch", "formants", "intensity"),
+  time_point = "midpoint"
+)
+
+# Generic batch processing over a directory
+batch_process("~/audio/", pattern = "\\.wav$", func = my_analysis, parallel = TRUE)
+```
+
+| Function | Description |
+|----|----|
+| `pair_files(sound_dir, textgrid_dir)` | Match .wav/.TextGrid by basename |
+| `extract_measurements(sound, textgrid, ...)` | Per-interval pitch/formant/intensity via batch C++ |
+| `extract_measurements_custom(sound, textgrid, tier, measures)` | Custom measure functions per interval |
+| `batch_process(directory, pattern, func, parallel)` | Map function over files with optional parallelism |
+
+[`batch_process()`](https://humlab-speech.github.io/pladdrr/reference/batch_process.md)
+returns one row per file, in file order: a file that cannot be read, or
+on which `func` errors, does not abort the batch but gets the message in
+an `error` column and `NA` in the measured columns (so `error` appears
+only when something failed). `error_class` next to it holds the first
+class of the condition (`"pladdrr_input_error"`, `"simpleError"`, …): a
+worker turns a condition into a row, so a
+`tryCatch(pladdrr_data_loss = )` around
+[`batch_process()`](https://humlab-speech.github.io/pladdrr/reference/batch_process.md)
+never fires; filter on `error_class` instead.
+
+### SIMD Information
+
+SIMD acceleration is **enabled at build time** (`-DHAVE_XSIMD` in
+`Makevars.in`). The instruction set is fixed at compile time, no runtime
+dispatch: CRAN builds get NEON on arm64 and SSE2 on x86_64. After the
+2026-10 audit, 10 `*_simd*.cpp` files remain (spectrogram, preemphasis,
+sound mixing, MFCC, powercepstrogram, batch-stat bridges, textgrid); see
+`performance-inventory.Rmd`.
+
+Check capabilities:
+
+``` r
+info <- simd_info()
+# Returns: enabled, available, architecture, batch_size_double, batch_size_float, version
+
+# Common architectures:
+# - AVX2: 4 doubles/operation (Intel/AMD x86_64)
+# - SSE4.2: 2 doubles/operation (older x86_64)
+# - NEON: 2 doubles/operation (ARM/Apple Silicon)
+
+# Disable SIMD at runtime -- only affects sound_mix / scale_peak (2026-10)
+pladdrr_simd(FALSE)
+```
+
+`simd_bridge.h` is included by no translation unit (dead); real bridges
+are the hand-written `src/*_simd_bridge.cpp` files. CRAN builds reach
+SSE2/NEON only (2 doubles per batch) – the AVX2 lines above apply only
+to `-march=native` builds.
+
+------------------------------------------------------------------------
+
+## Method Signatures
+
+### Sound Methods
+
+| Method | Parameters | Return | Praat Function |
+|----|----|----|----|
+| [`get_duration()`](https://humlab-speech.github.io/pladdrr/reference/get_duration.md) | \- | `numeric` | `sound->xmax - sound->xmin` |
+| `get_sampling_frequency()` | \- | `numeric` | `1.0 / sound->dx` |
+| `get_number_of_samples()` | \- | `integer` | `sound->nx` |
+| `get_number_of_channels()` | \- | `integer` | `sound->ny` |
+| `get_value_at_time(time, channel, interpolation)` | `double, int, string` | `numeric` | `Vector_getValueAtX()`; `interpolation` is a string (e.g. `"linear"`), not an int |
+| `get_rms(from_time, to_time)` | `double, double` | `numeric` | `Sound_getRootMeanSquare()`; no `channel` param |
+| `get_energy(from_time, to_time)` | `double, double` | `numeric` | `Sound_getEnergy()` |
+| `get_power(from_time, to_time)` | `double, double` | `numeric` | `Sound_getPower()` |
+| `get_intensity_db()` | \- | `numeric` | `Sound_getIntensity_dB()`; takes NO arguments |
+| `to_pitch(time_step, pitch_floor, pitch_ceiling)` | `double, double, double` | `Pitch` | `Sound_to_Pitch()` |
+| `to_formant_burg(...)` | multiple | `Formant` | `Sound_to_Formant_burg()` |
+| `to_intensity(minimum_pitch, time_step, subtract_mean)` | `double, double, bool` | `Intensity` | `Sound_to_Intensity()` |
+| `to_spectrum(fast)` | `bool` | `Spectrum` | `Sound_to_Spectrum()` |
+| `to_spectrogram(window_length, max_freq, time_step, freq_step, window_shape)` | multiple | `Spectrogram` | `Sound_to_Spectrogram()` |
+| `pitch_to_pointprocess_peaks(pitch, include_maxima, include_minima)` | `Pitch, bool, bool` | `PointProcess` | `Sound_Pitch_to_PointProcess_peaks()` (NEW v4.0.9) |
+| `extract_part(from_time, to_time, window_shape, relative_width, preserve_times)` | `double, double, string, double, bool` | `Sound` | `Sound_extractPart()`; `window_shape = "rectangular"`, `relative_width = 1.0`, `preserve_times = FALSE` |
+| `extract_channel(channel)` | `int` | `Sound` | `Sound_extractChannel()` |
+
+### Pitch Methods
+
+| Method | Parameters | Return | Notes |
+|----|----|----|----|
+| `get_value_at_time(time, unit, interpolate)` | `double, string, bool` | `numeric` | unit: “hertz”, “semitones”, “mel”, “erb” |
+| `get_mean(from_time, to_time, unit)` | `double, double, string` | `numeric` | 0,0 = entire duration |
+| `get_standard_deviation(from_time, to_time, unit)` | `double, double, string` | `numeric` |  |
+| `get_minimum(from_time, to_time, unit, interpolate)` | `double, double, string, bool` | `numeric` |  |
+| `get_maximum(from_time, to_time, unit, interpolate)` | `double, double, string, bool` | `numeric` |  |
+| `get_quantile(quantile, from_time, to_time, unit)` | `double, double, double, string` | `numeric` | quantile: 0.5 = median |
+| `count_voiced_frames()` | \- | `integer` |  |
+| `down_to_pitch_tier()` | \- | `PitchTier` |  |
+
+### Formant Methods
+
+| Method | Parameters | Return | Notes |
+|----|----|----|----|
+| `get_value_at_time(formant_number, time, unit, interpolation)` | `int, double, string, string` | `numeric` | unit: “hertz”, “bark” |
+| `get_bandwidth_at_time(formant_number, time, unit)` | `int, double, string` | `numeric` |  |
+| `get_values_at_times(formant_number, times, unit, interpolation)` | `int, numeric vector, string, string` | `numeric vector` | interpolation param v4.8.22 |
+| `get_mean(formant_number, from_time, to_time, unit)` | `int, double, double, string` | `numeric` |  |
+| `get_standard_deviation(formant_number, from_time, to_time, unit)` | `int, double, double, string` | `numeric` |  |
+| `get_quantile(formant_number, quantile, from_time, to_time, unit)` | `int, double, double, double, string` | `numeric` |  |
+| `track(number_of_tracks, ref_f1, ...)` | multiple | `Formant` |  |
+| `to_formantgrid()` | \- | `FormantGrid` |  |
+
+### Intensity Methods
+
+| Method | Parameters | Return | Notes |
+|----|----|----|----|
+| `get_value_at_time(time, interpolation)` | `double, string` | `numeric` | interpolation: “nearest”, “linear”, “cubic” |
+| `get_values_at_times(times, interpolation)` | `numeric vector, string` | `numeric vector` | Batch query (v4.8.22) |
+| `get_mean(from_time, to_time, averaging_method)` | `double, double, string` | `numeric` |  |
+| `get_minimum(from_time, to_time, interpolation)` | `double, double, string` | `numeric` |  |
+| `get_maximum(from_time, to_time, interpolation)` | `double, double, string` | `numeric` |  |
+| `get_standard_deviation(from_time, to_time)` | `double, double` | `numeric` |  |
+| `get_quantile(from_time, to_time, quantile, unit)` | `double, double, double, string` | `numeric` |  |
+
+### MFCC Methods (NEW in v4.0.7)
+
+MFCC (Mel-Frequency Cepstral Coefficients) for speaker recognition and
+speech analysis.
+
+| Method | Parameters | Return | Notes |
+|----|----|----|----|
+| `get_number_of_frames()` | \- | `integer` | Total analysis frames |
+| `get_max_num_coefficients()` | \- | `integer` | Max coefficients per frame (usually 12-13); per-frame count: `get_num_coefficients_at_frame(frame)` |
+| `get_xmin()`, `get_xmax()` | \- | `numeric` | Time domain |
+| `get_time_from_frame(frame)` | `int` | `numeric` | Time of frame center (inverse: `get_frame_from_time(time)`) |
+| `get_coefficients_at_frame(frame)` | `int` | `numeric vector` | All coefficients at frame |
+| `get_all_coefficients()` | \- | `matrix` | Frames × coefficients matrix |
+| `lifter(lifter_coefficient = 22)` | `int` | `MFCC` (self, invisible) | Apply liftering in place |
+| `as_data_frame()` | \- | `data.table` | Export to data.table |
+
+**Creation:**
+`sound$to_mfcc(num_coefficients = 13, analysis_width = 0.025, time_step = 0.01, f1_mel = 100.0, fmax_mel = 7800.0, df_mel = 100.0)`
+
+### LFCC Methods (NEW in v4.0.7)
+
+LFCC (Linear-Frequency Cepstral Coefficients) - alternative to MFCC with
+linear frequency scale.
+
+| Method | Parameters | Return | Notes |
+|----|----|----|----|
+| `get_number_of_frames()` | \- | `integer` | Total analysis frames |
+| `get_max_num_coefficients()` | \- | `integer` | Max coefficients per frame (usually 12-13); per-frame count: `get_num_coefficients_at_frame(frame)` |
+| `get_coefficients_at_frame(frame)` | `int` | `numeric vector` | All coefficients at frame |
+| `get_all_coefficients()` | \- | `matrix` | Frames × coefficients matrix |
+| `as_data_frame()` | \- | `data.table` | Export to data.table |
+
+**Creation:** `lpc$to_lfcc(num_coefficients = 12)` (from LPC object)
+
+### FormantModeler Methods (NEW in v4.0.7)
+
+Robust polynomial formant tracking with outlier detection.
+
+| Method | Parameters | Return | Notes |
+|----|----|----|----|
+| `get_number_of_tracks()` | \- | `integer` | Number of formant tracks |
+| `get_number_of_parameters()` | \- | `integer` | Polynomial order per track |
+| `get_xmin()`, `get_xmax()` | \- | `numeric` | Time domain |
+| `get_coefficient_of_determination(track)` | `int` | `numeric` | R² for track |
+| `get_model_value_at_time(track, time)` | `int, double` | `numeric` | Smoothed formant value |
+| `get_residual_sum_of_squares(track)` | `int` | `numeric` | RSS of model fit for track |
+| `get_data_point_value(track, index)`, `get_data_point_sigma(track, index)` | `int, int` | `numeric` | Observed value / sigma of data point |
+| `to_formant(estimate = TRUE, estimate_undefined = TRUE)` | \- | `Formant` | Convert back to Formant |
+| `process_outliers(num_sigmas = 3.0)` | `double` | `FormantModeler` | Mark outliers beyond num_sigmas |
+| `as_data_frame()` | \- | `data.table` | Export modeled values |
+
+**Creation:**
+`formant$to_formant_modeler(tmin, tmax, num_tracks = 4, num_params = 5)`
+
+### PCA Methods (NEW in v4.0.7)
+
+Principal Component Analysis for vowel space analysis and dimensionality
+reduction.
+
+| Method | Parameters | Return | Notes |
+|----|----|----|----|
+| `get_number_of_components()` | \- | `integer` | Number of principal components |
+| `get_dimension()` | \- | `integer` | Original data dimension |
+| `get_number_of_observations()` | \- | `integer` | Training data count |
+| `get_eigenvalues()` | \- | `numeric vector` | All eigenvalues |
+| `get_eigenvalue(component)` | `int` | `numeric` | Single eigenvalue |
+| `get_fraction_variance(from, to)` | `int, int` | `numeric` | Cumulative variance explained |
+| `get_dimension_of_fraction(frac)` | `double` | `integer` | Components for variance fraction |
+| `get_eigenvector(component)` | `int` | `numeric vector` | PC loadings |
+| `get_eigenvectors()` | \- | `matrix` | All PC loadings |
+| `get_centroid()` | \- | `numeric vector` | Data centroid |
+| `project(data, num_dimensions)` | `matrix, int` | `matrix` | Project new data |
+| `as_data_frame()` | \- | `data.table` | Component summary |
+
+**Creation:** `pca_from_matrix(data)` where rows are observations,
+columns are variables.
+
+**Example - Vowel Space Analysis:**
+
+``` r
+# F1, F2, F3 measurements for vowels
+vowels <- matrix(c(
+  700, 1200, 2500,  # /a/
+  350, 2100, 2800,  # /i/
+  450, 700, 2400    # /u/
+), ncol = 3, byrow = TRUE)
+
+pca <- pca_from_matrix(vowels)
+pca$get_fraction_variance(1, 2)  # Variance in first 2 PCs
+projected <- pca$project(new_vowels, num_dimensions = 2)  # Project to 2D
+```
+
+### Discriminant Methods (NEW in v4.0.7)
+
+Linear Discriminant Analysis for classification (vowel ID, speaker ID,
+dialect classification).
+
+| Method | Parameters | Return | Notes |
+|----|----|----|----|
+| `get_number_of_groups()` | \- | `integer` | Number of classes |
+| `get_number_of_functions()` | \- | `integer` | Discriminant functions |
+| `get_dimension()` | \- | `integer` | Feature dimension |
+| `get_number_of_observations(group)` | `int` | `integer` | Training samples in group |
+| `get_total_observations()` | \- | `integer` | Total training samples |
+| `get_eigenvalues()` | \- | `numeric vector` | Discriminant eigenvalues |
+| `get_fraction_variance(from, to)` | `int, int` | `numeric` | Variance explained |
+| `get_wilks_lambda(from)` | `int` | `numeric` | Wilks’ Lambda statistic |
+| `get_partial_discrimination_probability(n)` | `int` | `list` | Chi-squared test |
+| `get_eigenvector(func)` | `int` | `numeric vector` | Discriminant function coefficients |
+| `get_eigenvectors()` | \- | `matrix` | All discriminant coefficients |
+| `get_group_centroids()` | \- | `matrix` | Group means in original space |
+| `get_group_labels()` | \- | `character vector` | Class names |
+| `get_apriori_probabilities()` | \- | `numeric vector` | Prior probabilities |
+| `set_apriori_probability(group, p)` | `int, double` | \- | Set prior for group |
+| `as_data_frame()` | \- | `data.table` | Function summary |
+
+**Creation:** `discriminant_from_matrix(data, labels)` where labels is a
+character vector of group memberships.
+
+**Example - Vowel Classification:**
+
+``` r
+# Training data: F1, F2, F3 for labeled vowels
+vowels <- matrix(c(
+  700, 1200, 2500,  # /a/
+  720, 1180, 2520,  # /a/
+  350, 2100, 2800,  # /i/
+  340, 2150, 2780   # /i/
+), ncol = 3, byrow = TRUE)
+labels <- c("a", "a", "i", "i")
+
+lda <- discriminant_from_matrix(vowels, labels)
+lda$get_wilks_lambda(1)  # Classification power (lower = better)
+lda$get_group_centroids()  # Mean formants per vowel
+```
+
+------------------------------------------------------------------------
+
+## Quick Reference Card
+
+**Updated for the current shared-dispatch + 4-tier performance API**
+
+``` r
+# === LOAD AUDIO ===
+sound <- Sound("audio.wav")
+
+# === TIER 1: STANDARD API (baseline, full features) ===
+pitch <- sound$to_pitch_cc(time_step = 0, pitch_floor = 75, pitch_ceiling = 600)
+formant <- sound$to_formant_burg()
+intensity <- sound$to_intensity()
+
+# === QUERY AT TIME (single point) ===
+f0 <- pitch$get_value_at_time(1.0, "hertz")
+f1 <- formant$get_value_at_time(1, 1.0, "hertz")
+f2 <- formant$get_value_at_time(2, 1.0, "hertz")
+db <- intensity$get_value_at_time(1.0, "cubic")
+
+# === DATA EXPORT (v4.0+: returns data.table) ===
+pitch_df <- as.data.frame(pitch)      # Returns data.table (inherits data.frame)
+formant_df <- as.data.frame(formant)  # data.table with keyed columns
+library(data.table)
+pitch_df[f0 > 200]                    # Fast filtering (5-15x faster)
+
+# === TIER 2: DIRECT API (2-3x faster, bypasses R dispatch) ===
+# NEW in v4.0.2: Full-parameter pitch functions available!
+pitch_ptr <- to_pitch_cc_direct(sound, voicing_threshold = 0.6)  # All 10 params ✓
+f0_value <- get_pitch_value_direct(pitch_ptr, 1.0, "hertz", TRUE)
+all_stats <- get_pitch_stats_direct(pitch_ptr, 0, 0, "hertz")
+
+# Legacy: Basic parameters only
+pitch_ptr <- to_pitch_direct(sound)  # Basic: time_step, pitch_floor, pitch_ceiling
+
+# === TIER 3: BATCH QUERIES (5-10x faster for multiple points) ===
+times <- seq(0.5, 2.5, by = 0.01)
+formants <- get_formants_at_times(formant, times, 1:4)  # Returns list(F1, F2, F3, F4)
+f0_contour <- get_pitch_at_times(pitch, times, "hertz")
+db_contour <- get_intensity_at_times(intensity, times, "cubic")
+
+# === TIER 3: BATCH OPERATIONS (5-10x faster bulk processing) ===
+sounds <- lapply(files, Sound)
+pitches <- sound_to_pitch_batch(sounds, time_step = 0.01)
+formants <- sound_to_formant_batch(sounds)
+
+# Aggregate using data.table::rbindlist (v4.0+)
+library(data.table)
+all_results <- rbindlist(results, idcol = "file_id")
+
+# === BATCH STATISTICS (10-50x faster for multi-interval) ===
+from_times <- seq(0, 9, length.out = 100)
+to_times <- from_times + 0.1
+stats <- pitch_get_statistics_batch(pitch$.xptr, from_times, to_times,
+                                     c("min", "max", "mean", "stdev"), 0L)
+
+# === VECTORIZED OBJECT METHODS (20-150x faster, v4.0.13) ===
+# Sound window operations (AVQI: 100-150x speedup)
+powers <- sound$get_power_windows(starts, ends)
+rms_vals <- sound$get_rms_windows(starts, ends)
+values <- sound$get_values_at_times(times, channel = 1)
+
+# Pitch vectors (DSI: 5x speedup)
+voiced_mask <- pitch$get_voiced_mask()           # Logical: TRUE = voiced
+f0_values <- pitch$get_values_vector()           # All frame values
+strengths <- pitch$get_strengths_vector()
+
+# Formant tracks (Vowel analysis: 20x speedup)
+f1_track <- formant$get_formant_track(1)
+all_tracks <- formant$get_all_formant_tracks(4)  # matrix[frames, 4]
+
+# Spectrum vectors (Pharyngeal: 150x speedup)
+powers <- spectrum$get_power_vector()
+energies <- spectrum$get_band_energies(fmins, fmaxs)
+
+# Spectrogram slices (50x speedup)
+frame <- spectrogram$get_frame(time = 1.0)
+band_power <- spectrogram$get_band_power(500, 2000)
+
+# HNR batch stats (VQ: 10x speedup)
+stats <- hnr$get_statistics_batch(starts, ends, c("mean", "min", "max"))
+
+# TextGrid batch labels (VUV: 60x speedup)
+labels <- tg$get_labels_at_times(tier = 1, times)
+
+# === BATCH API v4.0.14 (10-50x faster for specific workflows) ===
+# LTAS batch peak search (Pharyngeal: 18x speedup)
+peaks <- ltas$get_peaks_batch(fmins, fmaxs)     # data.frame(fmin, fmax, peak_value, peak_frequency)
+minima <- ltas$get_minima_batch(fmins, fmaxs)   # data.frame(fmin, fmax, min_value, min_frequency)
+
+# Pitch detrending (slope removed, mean preserved; not lm residuals)
+detrended <- pitch$get_values_detrended(unit = "hertz")  # NumericVector
+detrended_pitch <- pitch$subtract_linear_fit(unit = "hertz")  # Pitch object
+
+# Filtered window extraction (AVQI: 10x speedup)
+voiced <- sound$extract_windows_filtered(starts, ends, min_power = 0.03, max_zcr = 3000)
+passes <- sound$get_windows_passing_filter(starts, ends, min_power = 0.03, max_zcr = 3000)
+
+# PointProcess batch (DSI/Shimmer: 20x speedup)
+amplitudes <- pp$get_values_from_sound(sound, channel = 1, interpolation = "cubic")
+periods <- pp$get_periods_vector()
+jitter <- pp$get_jitter_batch(0, 0, 0.0001, 0.02, 1.3)  # list(local, local_abs, rap, ppq5, ddp)
+
+# Spectrum at frequencies (Pharyngeal harmonics)
+powers <- spectrum$get_power_at_frequencies(freqs)
+
+# === FAST CPPS (1.5-2x faster AVQI) ===
+cpps <- calculate_cpps_fast(sound, subtract_tilt = FALSE,
+                             pitch_floor = 60, pitch_ceiling = 330)
+
+# === VOICED EXTRACTION WITH ZCR (v4.0.4 - AVQI-compatible) ===
+voiced <- extract_voiced_segments(sound, zcr_threshold = 3000, use_zcr = TRUE)
+zcr_data <- sound_get_zcr(sound, window_duration = 0.03)  # Per-frame ZCR
+
+# === XPTR WINDOWS (70x faster custom DSP) ===
+hamming <- create_window_xptr("hamming")
+windowed <- apply_window_xptr(sound, hamming)
+
+# === MFCC/LFCC (v4.0.7 - Speaker Recognition) ===
+mfcc <- sound$to_mfcc(num_coefficients = 12)
+coeffs <- mfcc$get_all_coefficients()  # Frames × coefficients matrix
+
+lpc <- sound$to_lpc_burg()
+lfcc <- lpc$to_lfcc(num_coefficients = 12)
+
+# === PCA (v4.0.7 - Dimensionality Reduction) ===
+vowels <- matrix(c(700, 1200, 350, 2100, 450, 700), ncol = 2, byrow = TRUE)
+pca <- pca_from_matrix(vowels)
+projected <- pca$project(new_data, num_dimensions = 2)
+
+# === DISCRIMINANT (v4.0.7 - Classification) ===
+lda <- discriminant_from_matrix(vowels, labels = c("a", "i", "u"))
+lda$get_wilks_lambda(1)  # Lower = better separation
+lda$get_group_centroids()  # Class means
+
+# === FORMANTMODELER (v4.0.7 - Robust Formant Tracking) ===
+fm <- formant$to_formant_modeler(tmin = 0, tmax = 0, num_tracks = 4)
+smoothed_f1 <- fm$get_model_value_at_time(track = 1, time = 0.5)
+
+# === STATISTICS (0,0 = entire duration) ===
+mean_f0 <- pitch$get_mean(0, 0, "hertz")
+sd_f0 <- pitch$get_standard_deviation(0, 0, "hertz")
+
+# === FAST PROPERTY ACCESS ===
+duration <- sound$.cpp$duration        # Fast C++ property
+sr <- sound$.cpp$sampling_frequency    # Direct member access
+
+# === EXPORT ===
+df <- as.data.frame(pitch)
+pitch$save("output.Pitch")
+
+# === CLASS CHECKING ===
+if (inherits(pitch, "Pitch")) {
+  # Process pitch object
+}
+
+# === INTERPRETER (persistent state) ===
+interp <- PraatInterpreter$new()
+interp$run('x = 42')
+result <- interp$eval('x * 2')
+```
+
+**Performance Decision Tree:** - **\< 10 files, interactive:** Use Tier
+1 (Standard API) - **10-100 files, loops:** Use Tier 2 (Direct API) -
+**\> 100 files, production:** Use Tier 3 (Batch/Parallel) -
+**DSI/AVQI/VQ one-call helpers:** Use Tier 4 (Ultra) - **Many values
+from one object:** Use Vectorized Methods (`$get_*_vector()`,
+`$get_*_windows()`) - **Need statistics from many intervals:** Use Tier
+3 (Batch Statistics)
+
+**See comprehensive guides:** -
+`vignettes/performance-optimization.Rmd` - Complete performance API
+guide - `vignettes/articles/batch-operations-guide.Rmd` - All batch
+functions with benchmarks - `vignettes/articles/migration-guide.Rmd` -
+How to optimize existing code -
+`vignettes/articles/naming-conventions.Rmd` - Function naming patterns
+
+------------------------------------------------------------------------
+
+## Parameter Naming Conventions
+
+pladdrr parameter names intentionally follow Praat’s own naming
+conventions, which differ across analysis domains. These are **not
+inconsistencies** — they reflect distinct physical concepts:
+
+| Parameter | Used In | Rationale |
+|----|----|----|
+| `minimum_pitch` | Intensity analysis | Praat UI: “Minimum pitch (Hz)” for effective analysis length |
+| `pitch_floor` | Pitch, CPPS, voice quality | Praat UI: “Pitch floor” for F0 candidate range |
+| `max_frequency` | Spectrogram, Cepstrogram | Maximum frequency of spectral representation |
+| `maximum_formant` | Formant extraction (deprecated S3) | Nyquist-like ceiling for formant search |
+| `max_formant` | `to_formant_burg()` | Same concept, shorter name in wrapper API |
+
+**Known intentional inconsistencies:** - `interpolate` (boolean/string
+in batch queries) vs `interpolation` (string in wrapper methods) — batch
+queries accept both `TRUE`/`FALSE` shorthand and string values; wrapper
+methods always use string names -
+`get_intensity_at_times(..., interpolate = "cubic")` uses string type
+while `get_pitch_at_times(..., interpolate = TRUE)` uses boolean — these
+cannot be unified without breaking changes
+
+------------------------------------------------------------------------

@@ -133,7 +133,8 @@ comparisons with a value the caller typed, not with a computed result.
 The vendored Praat sources compare floating-point numbers exactly in
 many places; those are Praat’s own and are left untouched on purpose,
 since pladdrr’s contract is to reproduce Praat’s numbers (changes are
-recorded in `inst/agents/PRAAT_MODIFICATIONS.md`).
+recorded in [the modification
+log](https://humlab-speech.github.io/pladdrr/articles/agents/praat-modifications.html)).
 
 ## References
 

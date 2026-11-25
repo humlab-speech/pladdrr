@@ -404,5 +404,4 @@ The autoplot/autolayer pattern provides:
 - **Customization** - Full ggplot2 compatibility
 - **Publication quality** - Vector graphics output
 
-For more visualization options, see
-[`vignette("visualization")`](https://humlab-speech.github.io/pladdrr/articles/visualization.md).
+For more visualization options, see `vignette("visualization")`.

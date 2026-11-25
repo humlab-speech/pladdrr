@@ -139,8 +139,9 @@ Not applicable — this function is pitch-independent. It builds a
 so there is no AC/CC or \`veryAccurate\` choice to document here. See
 the CPPS parameter default table in \`/CLAUDE.md\` for the (non-pitch)
 parameters that do vary by caller, and the Tier 4 Ultra algorithm table
-in \`inst/agents/AGENT_GUIDE.md\` for how this compares to the
-pitch-based Ultra functions.
+in
+<https://humlab-speech.github.io/pladdrr/articles/agents/agent-guide.html>
+for how this compares to the pitch-based Ultra functions.
 
 ## Examples
 

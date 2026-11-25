@@ -75,3 +75,31 @@ Package development and migration information
   Guide](https://humlab-speech.github.io/pladdrr/articles/batch-operations-guide.md):
 
   Complete guide to high-performance batch processing in pladdrr.
+
+### Developer & Coding-Agent Docs
+
+Maintainer and LLM-agent reference; published on the site only, not
+shipped in the package
+
+- [pladdrr Agent
+  Guide](https://humlab-speech.github.io/pladdrr/articles/agents/agent-guide.md):
+- [Agent Guide: What's
+  New](https://humlab-speech.github.io/pladdrr/articles/agents/agent-guide-whats-new.md):
+- [Agent Guide: Common
+  Patterns](https://humlab-speech.github.io/pladdrr/articles/agents/agent-guide-patterns.md):
+- [Agent Guide: API
+  Reference](https://humlab-speech.github.io/pladdrr/articles/agents/agent-guide-api-reference.md):
+- [Agent Guide: Pitfalls, Limitations and Use
+  Cases](https://humlab-speech.github.io/pladdrr/articles/agents/agent-guide-pitfalls.md):
+- [pladdrr Architecture
+  Reference](https://humlab-speech.github.io/pladdrr/articles/agents/architecture.md):
+- [pladdrr Documentation
+  Convention](https://humlab-speech.github.io/pladdrr/articles/agents/documentation.md):
+- [Praat Source Modifications for
+  pladdrr](https://humlab-speech.github.io/pladdrr/articles/agents/praat-modifications.md):
+- [Faithfulness Report (pladdrr vs
+  Praat)](https://humlab-speech.github.io/pladdrr/articles/agents/faithfulness-report.md):
+- [Performance Inventory
+  (pladdrr)](https://humlab-speech.github.io/pladdrr/articles/agents/performance-inventory.md):
+- [pladdrr Version
+  History](https://humlab-speech.github.io/pladdrr/articles/agents/history.md):

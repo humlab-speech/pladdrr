@@ -66,8 +66,8 @@ speech <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
 speech
 #> <Praat Sound>
 #>   Duration: 1.000 s
-#>   Sampling frequency: 16000 Hz
-#>   Number of samples: 16000
+#>   Sampling frequency: 44100 Hz
+#>   Number of samples: 44100
 #>   Number of channels: 1
 #>   Intensity: 84.9 dB
 
@@ -331,11 +331,9 @@ head(intensity_df)
 
 The `pladdrr` package provides ggplot2-based visualization functions (
 [`autoplot( )`](https://ggplot2.tidyverse.org/reference/autoplot.html)/[`autolayer()`](https://ggplot2.tidyverse.org/reference/autolayer.html)
-methods, see
-[`vignette("autoplot-autolayer")`](https://humlab-speech.github.io/pladdrr/articles/autoplot-autolayer.md))
-for its analysis objects. For detailed examples of creating plots, see
-[`vignette("visualization")`](https://humlab-speech.github.io/pladdrr/articles/visualization.md),
-which covers:
+methods, see `vignette("autoplot-autolayer")`) for its analysis objects.
+For detailed examples of creating plots, see
+`vignette("visualization")`, which covers:
 
 - Voice quality visualization (AVQI, DSI, CPP)
 - Formant analysis (vowel spaces, trajectories)
@@ -376,8 +374,8 @@ vowel_data <- data.frame(
 )
 
 print(vowel_data)
-#>         F0       F1       F2       F3 Intensity
-#> 1 440.0098 420.0067 463.9559 3049.092  84.94854
+#>         F0       F1       F2      F3 Intensity
+#> 1 440.0102 420.6663 464.6014 2998.34  84.94835
 ```
 
 ## Comparing with Praat Scripts
@@ -437,7 +435,7 @@ if (is.na(f0)) {
 } else {
   cat("F0:", f0, "Hz\n")
 }
-#> F0: 440.0098 Hz
+#> F0: 440.0102 Hz
 
 # Mean functions automatically exclude NA
 mean_f0 <- pitch$get_mean()  # NA values excluded

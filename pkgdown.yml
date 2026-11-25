@@ -2,28 +2,39 @@ pandoc: 3.7.0.2
 pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
+  agents/agent-guide-api-reference: agents/agent-guide-api-reference.html
+  agents/agent-guide-patterns: agents/agent-guide-patterns.html
+  agents/agent-guide-pitfalls: agents/agent-guide-pitfalls.html
+  agents/agent-guide-whats-new: agents/agent-guide-whats-new.html
+  agents/agent-guide: agents/agent-guide.html
   analysis-resynthesis-workflow: analysis-resynthesis-workflow.html
-  auditory-modeling: auditory-modeling.html
-  autoplot-autolayer: autoplot-autolayer.html
+  agents/architecture: agents/architecture.html
+  articles/auditory-modeling: auditory-modeling.html
+  articles/autoplot-autolayer: autoplot-autolayer.html
   articles/batch-operations-guide: batch-operations-guide.html
+  agents/documentation: agents/documentation.html
+  agents/faithfulness-report: agents/faithfulness-report.html
   formant-analysis: formant-analysis.html
-  formantpath-robust-tracking: formantpath-robust-tracking.html
+  articles/formantpath-robust-tracking: formantpath-robust-tracking.html
   getting-started: getting-started.html
+  agents/history: agents/history.html
   integrated-phonetic-analysis: integrated-phonetic-analysis.html
   migration-from-parselmouth: migration-from-parselmouth.html
   migration-from-praat: migration-from-praat.html
   articles/migration-guide: migration-guide.html
   articles/naming-conventions: naming-conventions.html
+  agents/performance-inventory: agents/performance-inventory.html
   performance-optimization: performance-optimization.html
   performance-simd: performance-simd.html
   praat-interpreter: praat-interpreter.html
-  speech-synthesis-klattgrid: speech-synthesis-klattgrid.html
+  agents/praat-modifications: agents/praat-modifications.html
+  articles/speech-synthesis-klattgrid: speech-synthesis-klattgrid.html
   terminology: terminology.html
-  textgrid-workflows: textgrid-workflows.html
+  articles/textgrid-workflows: textgrid-workflows.html
   articles/v4-migration-guide: v4-migration-guide.html
-  visualization: visualization.html
-  vowel-space-analysis: vowel-space-analysis.html
-last_built: 2026-11-24T20:22Z
+  articles/visualization: visualization.html
+  articles/vowel-space-analysis: vowel-space-analysis.html
+last_built: 2026-11-25T19:18Z
 urls:
   reference: https://humlab-speech.github.io/pladdrr/reference
   article: https://humlab-speech.github.io/pladdrr/articles

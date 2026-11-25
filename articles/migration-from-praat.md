@@ -309,11 +309,11 @@ Use lowercase for units in pladdrr:
 ``` r
 # Correct
 pitch$get_mean(unit = "hertz")
-#> [1] 440.0098
+#> [1] 440.0102
 
 # Also works (case-insensitive in many methods)
 pitch$get_mean(unit = "Hertz")
-#> [1] 440.0098
+#> [1] 440.0102
 ```
 
 ## Getting Help

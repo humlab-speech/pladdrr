@@ -92,11 +92,9 @@ is the place to start. Other vignettes worth knowing about:
 - [`vignette("formant-analysis")`](https://humlab-speech.github.io/pladdrr/articles/formant-analysis.md) -
   formant tracking, including `FormantPath`
 
-- [`vignette("speech-synthesis-klattgrid")`](https://humlab-speech.github.io/pladdrr/articles/speech-synthesis-klattgrid.md) -
-  articulatory synthesis
+- `vignette("speech-synthesis-klattgrid")` - articulatory synthesis
 
-- [`vignette("textgrid-workflows")`](https://humlab-speech.github.io/pladdrr/articles/textgrid-workflows.md) -
-  reading and querying annotations
+- `vignette("textgrid-workflows")` - reading and querying annotations
 
 - [`vignette("performance-optimization")`](https://humlab-speech.github.io/pladdrr/articles/performance-optimization.md) -
   batching, threading, SIMD
@@ -143,12 +141,6 @@ Authors:
 
 Other contributors:
 
-- Tomas Skotare ([ORCID](https://orcid.org/0000-0001-8445-0559))
-  \[contributor\]
-
-- Johan von Boer ([ORCID](https://orcid.org/0000-0003-4188-5872))
-  \[contributor\]
-
 - Paul Boersma (Author of the bundled Praat sources in
   src/praat.github.io) \[copyright holder\]
 
@@ -158,8 +150,8 @@ Other contributors:
 - Max-Planck-Society (Copyright holder of the bundled pocketfft headers
   in src/pocketfft) \[copyright holder\]
 
-- Xiph.Org Foundation (Copyright holder of the bundled Vorbis/Ogg and
-  Opusfile sources) \[copyright holder\]
+- Xiph.Org Foundation (Copyright holder of the bundled libFLAC,
+  Vorbis/Ogg and Opusfile sources) \[copyright holder\]
 
 - Free Software Foundation (Copyright holder of the GNU Scientific
   Library, linked but not bundled) \[copyright holder\]

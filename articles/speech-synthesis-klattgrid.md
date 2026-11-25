@@ -419,11 +419,11 @@ f3_mean <- mean(df_real$frequency[df_real$formant == 3], na.rm = TRUE)
 cat("Extracted formants from real speech:\n")
 #> Extracted formants from real speech:
 cat(sprintf("  F1: %.0f Hz\n", f1_mean))
-#>   F1: 420 Hz
+#>   F1: 421 Hz
 cat(sprintf("  F2: %.0f Hz\n", f2_mean))
-#>   F2: 464 Hz
+#>   F2: 465 Hz
 cat(sprintf("  F3: %.0f Hz\n", f3_mean))
-#>   F3: 3150 Hz
+#>   F3: 3080 Hz
 
 # Resynthesize with extracted formants
 kg_synth <- klattgrid_create_from_vowel(
@@ -510,11 +510,11 @@ cat("Extracted parameters:\n")
 cat(sprintf("  F0: %.0f Hz\n", f0_mean))
 #>   F0: 440 Hz
 cat(sprintf("  F1: %.0f Hz\n", f1_mean))
-#>   F1: 420 Hz
+#>   F1: 421 Hz
 cat(sprintf("  F2: %.0f Hz\n", f2_mean))
-#>   F2: 464 Hz
+#>   F2: 465 Hz
 cat(sprintf("  F3: %.0f Hz\n", f3_mean))
-#>   F3: 3150 Hz
+#>   F3: 3080 Hz
 
 # 5. Resynthesize
 kg_resynth <- klattgrid_create_from_vowel(
@@ -771,9 +771,8 @@ audio
   [KlattGrid](https://www.fon.hum.uva.nl/praat/manual/KlattGrid.html)
 - pladdrr documentation:
   [`?klattgrid_create_from_vowel`](https://humlab-speech.github.io/pladdrr/reference/klattgrid_create_from_vowel.md)
-- See also:
-  [`vignette("formantpath-robust-tracking")`](https://humlab-speech.github.io/pladdrr/articles/formantpath-robust-tracking.md)
-  for formant extraction
+- See also: `vignette("formantpath-robust-tracking")` for formant
+  extraction
 
 ## Session Info
 

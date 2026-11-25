@@ -72,6 +72,19 @@
     <li><a class="dropdown-item" href="../articles/v4-migration-guide.html">Migration Guide (v4.0)</a></li>
     <li><a class="dropdown-item" href="../articles/naming-conventions.html">Naming Conventions</a></li>
     <li><a class="dropdown-item" href="../articles/batch-operations-guide.html">Batch Operations Guide</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Developer &amp; Coding-Agent Docs</h6></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide.html">Agent Guide</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide-whats-new.html">  Agent Guide: What's New</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide-patterns.html">  Agent Guide: Common Patterns</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide-api-reference.html">  Agent Guide: API Reference</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide-pitfalls.html">  Agent Guide: Pitfalls &amp; Use Cases</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/architecture.html">Architecture</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/documentation.html">Documentation Convention</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/praat-modifications.html">Praat Source Modifications</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/faithfulness-report.html">Faithfulness Report</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/performance-inventory.html">Performance Inventory</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/history.html">Version History</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">News</a></li>
@@ -97,7 +110,7 @@
                         <h4 data-toc-skip class="author">pladdrr Package
 Authors</h4>
             
-            <h4 data-toc-skip class="date">2026-11-24</h4>
+            <h4 data-toc-skip class="date">2026-11-25</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/humlab-speech/pladdrr/blob/main/vignettes/getting-started.Rmd" class="external-link"><code>vignettes/getting-started.Rmd</code></a></small>
       <div class="d-none name"><code>getting-started.Rmd</code></div>
@@ -169,8 +182,8 @@ Intensity) with an object-oriented interface (S3-based, with R6-like
 <span><span class="va">speech</span></span>
 <span><span class="co">#&gt; &lt;Praat Sound&gt;</span></span>
 <span><span class="co">#&gt;   Duration: 1.000 s</span></span>
-<span><span class="co">#&gt;   Sampling frequency: 16000 Hz</span></span>
-<span><span class="co">#&gt;   Number of samples: 16000</span></span>
+<span><span class="co">#&gt;   Sampling frequency: 44100 Hz</span></span>
+<span><span class="co">#&gt;   Number of samples: 44100</span></span>
 <span><span class="co">#&gt;   Number of channels: 1</span></span>
 <span><span class="co">#&gt;   Intensity: 84.9 dB</span></span>
 <span></span>
@@ -427,9 +440,9 @@ further analysis:</p>
 </h2>
 <p>The <code>pladdrr</code> package provides ggplot2-based visualization
 functions ( <code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot(     )</a></code>/<code><a href="https://ggplot2.tidyverse.org/reference/autolayer.html" class="external-link">autolayer()</a></code>
-methods, see <code><a href="../articles/autoplot-autolayer.html">vignette("autoplot-autolayer")</a></code>) for its
+methods, see <code>vignette("autoplot-autolayer")</code>) for its
 analysis objects. For detailed examples of creating plots, see
-<code><a href="../articles/visualization.html">vignette("visualization")</a></code>, which covers:</p>
+<code>vignette("visualization")</code>, which covers:</p>
 <ul>
 <li>Voice quality visualization (AVQI, DSI, CPP)</li>
 <li>Formant analysis (vowel spaces, trajectories)</li>
@@ -471,8 +484,8 @@ analysis objects. For detailed examples of creating plots, see
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">vowel_data</span><span class="op">)</span></span>
-<span><span class="co">#&gt;         F0       F1       F2       F3 Intensity</span></span>
-<span><span class="co">#&gt; 1 440.0098 420.0067 463.9559 3049.092  84.94854</span></span></code></pre></div>
+<span><span class="co">#&gt;         F0       F1       F2      F3 Intensity</span></span>
+<span><span class="co">#&gt; 1 440.0102 420.6663 464.6014 2998.34  84.94835</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="comparing-with-praat-scripts">Comparing with Praat Scripts<a class="anchor" aria-label="anchor" href="#comparing-with-praat-scripts"></a>
@@ -534,7 +547,7 @@ f0 = Get mean: 0, 0, "Hertz"</code></pre>
 <span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"F0:"</span>, <span class="va">f0</span>, <span class="st">"Hz\n"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
-<span><span class="co">#&gt; F0: 440.0098 Hz</span></span>
+<span><span class="co">#&gt; F0: 440.0102 Hz</span></span>
 <span></span>
 <span><span class="co"># Mean functions automatically exclude NA</span></span>
 <span><span class="va">mean_f0</span> <span class="op">&lt;-</span> <span class="va">pitch</span><span class="op">$</span><span class="fu">get_mean</span><span class="op">(</span><span class="op">)</span>  <span class="co"># NA values excluded</span></span></code></pre></div>

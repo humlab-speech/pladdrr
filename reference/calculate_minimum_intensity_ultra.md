@@ -62,7 +62,7 @@ Pitch is always extracted with \`Sound_to_Pitch_rawCc()\`,
 uses a stricter voicing threshold than the jitter block. None of these
 are exposed as parameters (including \`voicing_threshold\`, unlike
 \`calculate_f0_stats_ultra()\`). See the Tier 4 Ultra algorithm table in
-\`inst/agents/AGENT_GUIDE.md\`.
+<https://humlab-speech.github.io/pladdrr/articles/agents/agent-guide.html>.
 
 ## See also
 

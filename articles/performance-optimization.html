@@ -72,6 +72,19 @@
     <li><a class="dropdown-item" href="../articles/v4-migration-guide.html">Migration Guide (v4.0)</a></li>
     <li><a class="dropdown-item" href="../articles/naming-conventions.html">Naming Conventions</a></li>
     <li><a class="dropdown-item" href="../articles/batch-operations-guide.html">Batch Operations Guide</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Developer &amp; Coding-Agent Docs</h6></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide.html">Agent Guide</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide-whats-new.html">  Agent Guide: What's New</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide-patterns.html">  Agent Guide: Common Patterns</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide-api-reference.html">  Agent Guide: API Reference</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide-pitfalls.html">  Agent Guide: Pitfalls &amp; Use Cases</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/architecture.html">Architecture</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/documentation.html">Documentation Convention</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/praat-modifications.html">Praat Source Modifications</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/faithfulness-report.html">Faithfulness Report</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/performance-inventory.html">Performance Inventory</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/history.html">Version History</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">News</a></li>
@@ -354,7 +367,7 @@ much by machine, file size, and workload to be worth quoting here.</p>
 <span>  <span class="va">max_f0</span> <span class="op">&lt;-</span> <span class="va">pitch</span><span class="op">$</span><span class="fu">get_maximum</span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="st">"hertz"</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.007   0.000   0.003</span></span>
+<span><span class="co">#&gt;   0.009   0.000   0.004</span></span>
 <span><span class="co"># measure on your own data</span></span>
 <span></span>
 <span><span class="co"># Tier 2: Direct API</span></span>
@@ -363,7 +376,7 @@ much by machine, file size, and workload to be worth quoting here.</p>
 <span>  <span class="va">stats</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_pitch_stats_direct.html">get_pitch_stats_direct</a></span><span class="op">(</span><span class="va">pitch_ptr</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.006   0.000   0.003</span></span>
+<span><span class="co">#&gt;   0.008   0.000   0.003</span></span>
 <span><span class="co"># fewer crossings; measure on your own data</span></span></code></pre></div>
 </div>
 <div class="section level4">
@@ -381,7 +394,7 @@ much by machine, file size, and workload to be worth quoting here.</p>
 <span>  <span class="va">pitches</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">sounds</span>, <span class="kw">function</span><span class="op">(</span><span class="va">s</span><span class="op">)</span> <span class="va">s</span><span class="op">$</span><span class="fu">to_pitch</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.027   0.000   0.014</span></span>
+<span><span class="co">#&gt;   0.036   0.000   0.017</span></span>
 <span><span class="co"># measure on your own data</span></span>
 <span></span>
 <span><span class="co"># Tier 3: Batch</span></span>
@@ -390,7 +403,7 @@ much by machine, file size, and workload to be worth quoting here.</p>
 <span>  <span class="va">pitches</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sound_to_pitch_batch.html">sound_to_pitch_batch</a></span><span class="op">(</span><span class="va">sounds</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.026   0.000   0.012</span></span>
+<span><span class="co">#&gt;   0.035   0.002   0.017</span></span>
 <span><span class="co"># scales with cores; measure on your own data</span></span>
 <span></span>
 <span><span class="co"># Tier 3: Parallel (2 cores)</span></span>
@@ -399,7 +412,7 @@ much by machine, file size, and workload to be worth quoting here.</p>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Processing 4 files using 2 cores (2 thread(s)/worker)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.092   0.069   0.305</span></span>
+<span><span class="co">#&gt;   0.086   0.078   0.292</span></span>
 <span><span class="co"># includes file I/O; measure on your own data</span></span></code></pre></div>
 </div>
 <div class="section level4">
@@ -425,7 +438,7 @@ much by machine, file size, and workload to be worth quoting here.</p>
 <span>  <span class="va">f1_values</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_formants_at_times.html">get_formants_at_times</a></span><span class="op">(</span><span class="va">formant</span>, <span class="va">times</span>, formant_numbers <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.000   0.000   0.001</span></span>
+<span><span class="co">#&gt;   0.001   0.000   0.001</span></span>
 <span><span class="co"># one R-&gt;C crossing for the whole vector — this is where batching pays off</span></span></code></pre></div>
 <hr>
 </div>
@@ -510,8 +523,8 @@ for a full run:</p>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">benchmark_results</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   cores   time_sec   speedup</span></span>
-<span><span class="co">#&gt; 1     1 0.01631808 1.0000000</span></span>
-<span><span class="co">#&gt; 2     2 0.02469659 0.6607424</span></span>
+<span><span class="co">#&gt; 1     1 0.02047825 1.0000000</span></span>
+<span><span class="co">#&gt; 2     2 0.03082752 0.6642846</span></span>
 <span><span class="co"># Inspect the returned table to see where returns diminish on your machine</span></span></code></pre></div>
 </div>
 <div class="section level4">
@@ -544,120 +557,120 @@ for a full run:</p>
 <span><span class="co">#&gt; [[1]]</span></span>
 <span><span class="co">#&gt; [[1]][[1]]</span></span>
 <span><span class="co">#&gt; [[1]][[1]]$F1</span></span>
-<span><span class="co">#&gt; [1]       NA       NA 420.2580 420.6059 420.4799</span></span>
+<span><span class="co">#&gt; [1]       NA       NA 420.8500 420.7663 421.1240</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[1]][[1]]$F2</span></span>
-<span><span class="co">#&gt; [1]       NA       NA 464.2000 464.5420 464.4191</span></span>
+<span><span class="co">#&gt; [1]       NA       NA 464.7808 464.6990 465.0480</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[1]][[1]]$F3</span></span>
-<span><span class="co">#&gt; [1]       NA       NA 3050.516 3044.467 3122.512</span></span>
+<span><span class="co">#&gt; [1]       NA       NA 2999.369 2975.049 3042.348</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[1]][[1]]$F4</span></span>
-<span><span class="co">#&gt; [1]       NA       NA 4220.387 4192.507 4361.578</span></span>
+<span><span class="co">#&gt; [1]       NA       NA 4205.872 4190.150 4248.532</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[1]][[2]]</span></span>
 <span><span class="co">#&gt; [[1]][[2]]$F1</span></span>
-<span><span class="co">#&gt; [1]       NA       NA 420.3867 420.3379 420.3619</span></span>
+<span><span class="co">#&gt; [1]       NA       NA 421.0817 421.0195 420.9680</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[1]][[2]]$F2</span></span>
-<span><span class="co">#&gt; [1]       NA       NA 464.3273 464.2792 464.3031</span></span>
+<span><span class="co">#&gt; [1]       NA       NA 465.0067 464.9466 464.8963</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[1]][[2]]$F3</span></span>
-<span><span class="co">#&gt; [1]       NA       NA 3117.992 3093.343 3181.749</span></span>
+<span><span class="co">#&gt; [1]       NA       NA 3031.412 3089.364 3011.475</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[1]][[2]]$F4</span></span>
-<span><span class="co">#&gt; [1]       NA       NA 4237.901 4154.117 4177.308</span></span>
+<span><span class="co">#&gt; [1]       NA       NA 4239.889 4211.581 4289.379</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]]</span></span>
 <span><span class="co">#&gt; [[2]][[1]]</span></span>
 <span><span class="co">#&gt; [[2]][[1]]$F1</span></span>
-<span><span class="co">#&gt; [1]       NA       NA 420.2580 420.6059 420.4799</span></span>
+<span><span class="co">#&gt; [1]       NA       NA 420.8500 420.7663 421.1240</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]][[1]]$F2</span></span>
-<span><span class="co">#&gt; [1]       NA       NA 464.2000 464.5420 464.4191</span></span>
+<span><span class="co">#&gt; [1]       NA       NA 464.7808 464.6990 465.0480</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]][[1]]$F3</span></span>
-<span><span class="co">#&gt; [1]       NA       NA 3050.516 3044.467 3122.512</span></span>
+<span><span class="co">#&gt; [1]       NA       NA 2999.369 2975.049 3042.348</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]][[1]]$F4</span></span>
-<span><span class="co">#&gt; [1]       NA       NA 4220.387 4192.507 4361.578</span></span>
+<span><span class="co">#&gt; [1]       NA       NA 4205.872 4190.150 4248.532</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]][[2]]</span></span>
 <span><span class="co">#&gt; [[2]][[2]]$F1</span></span>
-<span><span class="co">#&gt; [1]       NA       NA 420.3867 420.3379 420.3619</span></span>
+<span><span class="co">#&gt; [1]       NA       NA 421.0817 421.0195 420.9680</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]][[2]]$F2</span></span>
-<span><span class="co">#&gt; [1]       NA       NA 464.3273 464.2792 464.3031</span></span>
+<span><span class="co">#&gt; [1]       NA       NA 465.0067 464.9466 464.8963</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]][[2]]$F3</span></span>
-<span><span class="co">#&gt; [1]       NA       NA 3117.992 3093.343 3181.749</span></span>
+<span><span class="co">#&gt; [1]       NA       NA 3031.412 3089.364 3011.475</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[2]][[2]]$F4</span></span>
-<span><span class="co">#&gt; [1]       NA       NA 4237.901 4154.117 4177.308</span></span>
+<span><span class="co">#&gt; [1]       NA       NA 4239.889 4211.581 4289.379</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[3]]</span></span>
 <span><span class="co">#&gt; [[3]][[1]]</span></span>
 <span><span class="co">#&gt; [[3]][[1]]$F1</span></span>
-<span><span class="co">#&gt; [1]       NA       NA 420.2580 420.6059 420.4799</span></span>
+<span><span class="co">#&gt; [1]       NA       NA 420.8500 420.7663 421.1240</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[3]][[1]]$F2</span></span>
-<span><span class="co">#&gt; [1]       NA       NA 464.2000 464.5420 464.4191</span></span>
+<span><span class="co">#&gt; [1]       NA       NA 464.7808 464.6990 465.0480</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[3]][[1]]$F3</span></span>
-<span><span class="co">#&gt; [1]       NA       NA 3050.516 3044.467 3122.512</span></span>
+<span><span class="co">#&gt; [1]       NA       NA 2999.369 2975.049 3042.348</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[3]][[1]]$F4</span></span>
-<span><span class="co">#&gt; [1]       NA       NA 4220.387 4192.507 4361.578</span></span>
+<span><span class="co">#&gt; [1]       NA       NA 4205.872 4190.150 4248.532</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[3]][[2]]</span></span>
 <span><span class="co">#&gt; [[3]][[2]]$F1</span></span>
-<span><span class="co">#&gt; [1]       NA       NA 420.3867 420.3379 420.3619</span></span>
+<span><span class="co">#&gt; [1]       NA       NA 421.0817 421.0195 420.9680</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[3]][[2]]$F2</span></span>
-<span><span class="co">#&gt; [1]       NA       NA 464.3273 464.2792 464.3031</span></span>
+<span><span class="co">#&gt; [1]       NA       NA 465.0067 464.9466 464.8963</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[3]][[2]]$F3</span></span>
-<span><span class="co">#&gt; [1]       NA       NA 3117.992 3093.343 3181.749</span></span>
+<span><span class="co">#&gt; [1]       NA       NA 3031.412 3089.364 3011.475</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[3]][[2]]$F4</span></span>
-<span><span class="co">#&gt; [1]       NA       NA 4237.901 4154.117 4177.308</span></span>
+<span><span class="co">#&gt; [1]       NA       NA 4239.889 4211.581 4289.379</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[4]]</span></span>
 <span><span class="co">#&gt; [[4]][[1]]</span></span>
 <span><span class="co">#&gt; [[4]][[1]]$F1</span></span>
-<span><span class="co">#&gt; [1]       NA       NA 420.2580 420.6059 420.4799</span></span>
+<span><span class="co">#&gt; [1]       NA       NA 420.8500 420.7663 421.1240</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[4]][[1]]$F2</span></span>
-<span><span class="co">#&gt; [1]       NA       NA 464.2000 464.5420 464.4191</span></span>
+<span><span class="co">#&gt; [1]       NA       NA 464.7808 464.6990 465.0480</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[4]][[1]]$F3</span></span>
-<span><span class="co">#&gt; [1]       NA       NA 3050.516 3044.467 3122.512</span></span>
+<span><span class="co">#&gt; [1]       NA       NA 2999.369 2975.049 3042.348</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[4]][[1]]$F4</span></span>
-<span><span class="co">#&gt; [1]       NA       NA 4220.387 4192.507 4361.578</span></span>
+<span><span class="co">#&gt; [1]       NA       NA 4205.872 4190.150 4248.532</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[4]][[2]]</span></span>
 <span><span class="co">#&gt; [[4]][[2]]$F1</span></span>
-<span><span class="co">#&gt; [1]       NA       NA 420.3867 420.3379 420.3619</span></span>
+<span><span class="co">#&gt; [1]       NA       NA 421.0817 421.0195 420.9680</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[4]][[2]]$F2</span></span>
-<span><span class="co">#&gt; [1]       NA       NA 464.3273 464.2792 464.3031</span></span>
+<span><span class="co">#&gt; [1]       NA       NA 465.0067 464.9466 464.8963</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[4]][[2]]$F3</span></span>
-<span><span class="co">#&gt; [1]       NA       NA 3117.992 3093.343 3181.749</span></span>
+<span><span class="co">#&gt; [1]       NA       NA 3031.412 3089.364 3011.475</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; [[4]][[2]]$F4</span></span>
-<span><span class="co">#&gt; [1]       NA       NA 4237.901 4154.117 4177.308</span></span></code></pre></div>
+<span><span class="co">#&gt; [1]       NA       NA 4239.889 4211.581 4289.379</span></span></code></pre></div>
 <hr>
 </div>
 </div>

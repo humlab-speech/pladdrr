@@ -49,6 +49,19 @@
     <li><a class="dropdown-item" href="articles/v4-migration-guide.html">Migration Guide (v4.0)</a></li>
     <li><a class="dropdown-item" href="articles/naming-conventions.html">Naming Conventions</a></li>
     <li><a class="dropdown-item" href="articles/batch-operations-guide.html">Batch Operations Guide</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Developer &amp; Coding-Agent Docs</h6></li>
+    <li><a class="dropdown-item" href="articles/agents/agent-guide.html">Agent Guide</a></li>
+    <li><a class="dropdown-item" href="articles/agents/agent-guide-whats-new.html">  Agent Guide: What's New</a></li>
+    <li><a class="dropdown-item" href="articles/agents/agent-guide-patterns.html">  Agent Guide: Common Patterns</a></li>
+    <li><a class="dropdown-item" href="articles/agents/agent-guide-api-reference.html">  Agent Guide: API Reference</a></li>
+    <li><a class="dropdown-item" href="articles/agents/agent-guide-pitfalls.html">  Agent Guide: Pitfalls &amp; Use Cases</a></li>
+    <li><a class="dropdown-item" href="articles/agents/architecture.html">Architecture</a></li>
+    <li><a class="dropdown-item" href="articles/agents/documentation.html">Documentation Convention</a></li>
+    <li><a class="dropdown-item" href="articles/agents/praat-modifications.html">Praat Source Modifications</a></li>
+    <li><a class="dropdown-item" href="articles/agents/faithfulness-report.html">Faithfulness Report</a></li>
+    <li><a class="dropdown-item" href="articles/agents/performance-inventory.html">Performance Inventory</a></li>
+    <li><a class="dropdown-item" href="articles/agents/history.html">Version History</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="news/index.html">News</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -99,7 +112,7 @@ R/
 </div>
 <div class="section level2">
 <h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a></h2>
-<p>Wrapper-type roxygen doc blocks (Sound, Formant, Pitch, etc.) follow a fixed convention — see <code>inst/agents/DOCUMENTATION.md</code>. Short version: this package does not enable roxygen markdown, so method lists must use <code>\itemize</code>/<code>\code{}</code> Rd markup, not <code>- `x`</code> bullets, or they silently render as one run-on paragraph.</p>
+<p>Wrapper-type roxygen doc blocks (Sound, Formant, Pitch, etc.) follow a fixed convention — see <code>vignettes/agents/documentation.Rmd</code>. Short version: this package does not enable roxygen markdown, so method lists must use <code>\itemize</code>/<code>\code{}</code> Rd markup, not <code>- `x`</code> bullets, or they silently render as one run-on paragraph.</p>
 <ul><li>Package logo: <code>man/figures/logo.svg</code>. pkgdown picks it up automatically for page headers, the Open Graph image and <code><a href="https://pkgdown.r-lib.org/reference/build_favicons.html" class="external-link">pkgdown::build_favicons()</a></code>. Favicons live in <code>pkgdown/favicon/</code>; regenerate with <code>pkgdown::build_favicons(overwrite = TRUE)</code> after editing the logo, then re-patch <code>site.webmanifest</code>: the API emits root-absolute icon <code>src</code> values (<code>/web-app-manifest-*.png</code>) which 404 on the <code>/pladdrr/</code> project page, so keep them relative, and set <code>name</code>/<code>short_name</code>/<code>theme_color</code> (the API leaves the first two empty). pkgdown aborts builds when a logo exists without favicons. <code>pkgdown/extra.css</code> overrides pkgdown’s logo slot (140px at &gt;=576px, 100px below) and the matching <code>.page-header</code> min-heights, because the mark carries a tagline that the 100/120px defaults render too small to read.</li>
 </ul></div>
 <div class="section level2">

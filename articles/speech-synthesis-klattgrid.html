@@ -72,6 +72,19 @@
     <li><a class="dropdown-item" href="../articles/v4-migration-guide.html">Migration Guide (v4.0)</a></li>
     <li><a class="dropdown-item" href="../articles/naming-conventions.html">Naming Conventions</a></li>
     <li><a class="dropdown-item" href="../articles/batch-operations-guide.html">Batch Operations Guide</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Developer &amp; Coding-Agent Docs</h6></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide.html">Agent Guide</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide-whats-new.html">  Agent Guide: What's New</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide-patterns.html">  Agent Guide: Common Patterns</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide-api-reference.html">  Agent Guide: API Reference</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide-pitfalls.html">  Agent Guide: Pitfalls &amp; Use Cases</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/architecture.html">Architecture</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/documentation.html">Documentation Convention</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/praat-modifications.html">Praat Source Modifications</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/faithfulness-report.html">Faithfulness Report</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/performance-inventory.html">Performance Inventory</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/history.html">Version History</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">News</a></li>
@@ -96,7 +109,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Speech Synthesis with KlattGrid</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/humlab-speech/pladdrr/blob/main/vignettes/speech-synthesis-klattgrid.Rmd" class="external-link"><code>vignettes/speech-synthesis-klattgrid.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/humlab-speech/pladdrr/blob/main/vignettes/articles/speech-synthesis-klattgrid.Rmd" class="external-link"><code>vignettes/articles/speech-synthesis-klattgrid.Rmd</code></a></small>
       <div class="d-none name"><code>speech-synthesis-klattgrid.Rmd</code></div>
     </div>
 
@@ -447,7 +460,7 @@ tiers (B1, B2, B3, …)</p>
 <span>    y <span class="op">=</span> <span class="st">"Frequency (Hz)"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="speech-synthesis-klattgrid_files/figure-html/pitch-contour-1.png" class="r-plt" alt="" width="672"></p>
+<p><img src="speech-synthesis-klattgrid_files/figure-html/pitch-contour-1.png" class="r-plt" alt="" width="504"></p>
 </div>
 <div class="section level3">
 <h3 id="common-pitch-patterns">Common Pitch Patterns<a class="anchor" aria-label="anchor" href="#common-pitch-patterns"></a>
@@ -519,7 +532,7 @@ tiers (B1, B2, B3, …)</p>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"top"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="speech-synthesis-klattgrid_files/figure-html/diphthong-1.png" class="r-plt" alt="" width="672"></p>
+<p><img src="speech-synthesis-klattgrid_files/figure-html/diphthong-1.png" class="r-plt" alt="" width="504"></p>
 </div>
 <div class="section level3">
 <h3 id="vowel-continuum">Vowel Continuum<a class="anchor" aria-label="anchor" href="#vowel-continuum"></a>
@@ -612,11 +625,11 @@ tiers (B1, B2, B3, …)</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Extracted formants from real speech:\n"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Extracted formants from real speech:</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  F1: %.0f Hz\n"</span>, <span class="va">f1_mean</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   F1: 420 Hz</span></span>
+<span><span class="co">#&gt;   F1: 421 Hz</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  F2: %.0f Hz\n"</span>, <span class="va">f2_mean</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   F2: 464 Hz</span></span>
+<span><span class="co">#&gt;   F2: 465 Hz</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  F3: %.0f Hz\n"</span>, <span class="va">f3_mean</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   F3: 3150 Hz</span></span>
+<span><span class="co">#&gt;   F3: 3080 Hz</span></span>
 <span></span>
 <span><span class="co"># Resynthesize with extracted formants</span></span>
 <span><span class="va">kg_synth</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/klattgrid_create_from_vowel.html">klattgrid_create_from_vowel</a></span><span class="op">(</span></span>
@@ -705,11 +718,11 @@ tiers (B1, B2, B3, …)</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  F0: %.0f Hz\n"</span>, <span class="va">f0_mean</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   F0: 440 Hz</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  F1: %.0f Hz\n"</span>, <span class="va">f1_mean</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   F1: 420 Hz</span></span>
+<span><span class="co">#&gt;   F1: 421 Hz</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  F2: %.0f Hz\n"</span>, <span class="va">f2_mean</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   F2: 464 Hz</span></span>
+<span><span class="co">#&gt;   F2: 465 Hz</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"  F3: %.0f Hz\n"</span>, <span class="va">f3_mean</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   F3: 3150 Hz</span></span>
+<span><span class="co">#&gt;   F3: 3080 Hz</span></span>
 <span></span>
 <span><span class="co"># 5. Resynthesize</span></span>
 <span><span class="va">kg_resynth</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/klattgrid_create_from_vowel.html">klattgrid_create_from_vowel</a></span><span class="op">(</span></span>
@@ -1028,7 +1041,7 @@ synthesizer”. <em>JASA</em>, 67(3), 971-995.</li>
 <li>pladdrr documentation:
 <code><a href="../reference/klattgrid_create_from_vowel.html">?klattgrid_create_from_vowel</a></code>
 </li>
-<li>See also: <code><a href="../articles/formantpath-robust-tracking.html">vignette("formantpath-robust-tracking")</a></code> for
+<li>See also: <code>vignette("formantpath-robust-tracking")</code> for
 formant extraction</li>
 </ul>
 </div>

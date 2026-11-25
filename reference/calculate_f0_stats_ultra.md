@@ -63,8 +63,9 @@ Pitch is always extracted with \`Sound_to_Pitch_rawCc()\`,
 \`veryAccurate = TRUE\`, \`silenceThreshold = 0.03\` (matching
 DSI201.praat's \`To Pitch (cc)...\` step). Only \`voicing_threshold\` is
 configurable; the AC/CC choice and \`veryAccurate\` are not. See the
-Tier 4 Ultra algorithm table in \`inst/agents/AGENT_GUIDE.md\` for how
-this compares to the other Ultra functions.
+Tier 4 Ultra algorithm table in
+<https://humlab-speech.github.io/pladdrr/articles/agents/agent-guide.html>
+for how this compares to the other Ultra functions.
 
 ## See also
 

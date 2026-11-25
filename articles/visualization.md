@@ -647,7 +647,6 @@ For more information on specific acoustic analyses, see:
   Basic workflow
 - [`vignette("integrated-phonetic-analysis")`](https://humlab-speech.github.io/pladdrr/articles/integrated-phonetic-analysis.md) -
   Multi-parameter analysis
-- [`vignette("textgrid-workflows")`](https://humlab-speech.github.io/pladdrr/articles/textgrid-workflows.md) -
-  Annotation-based analysis
-- [`vignette( "autoplot-autolayer")`](https://humlab-speech.github.io/pladdrr/articles/autoplot-autolayer.md) -
-  Full reference for the `autoplot`/`autolayer` methods
+- `vignette("textgrid-workflows")` - Annotation-based analysis
+- `vignette( "autoplot-autolayer")` - Full reference for the
+  `autoplot`/`autolayer` methods

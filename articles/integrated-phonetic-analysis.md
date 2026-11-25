@@ -400,8 +400,7 @@ methods (shown above for `TextGrid`) plus
 [`plot()`](https://rdrr.io/r/graphics/plot.default.html) methods for
 Sound, Pitch, Formant, Intensity, and other analysis objects. For vowel
 spaces, formant trajectories, pitch/intensity contours, spectrograms,
-and voice quality reports, see
-[`vignette("visualization")`](https://humlab-speech.github.io/pladdrr/articles/visualization.md).
+and voice quality reports, see `vignette("visualization")`.
 
 ## Real-World Applications
 
@@ -545,10 +544,8 @@ The **pladdrr** package enables:
 
 For more examples, see:
 
-- [`vignette("vowel-space-analysis")`](https://humlab-speech.github.io/pladdrr/articles/vowel-space-analysis.md) -
-  F1-F2 analysis and normalization
-- [`vignette("textgrid-workflows")`](https://humlab-speech.github.io/pladdrr/articles/textgrid-workflows.md) -
-  Advanced TextGrid manipulation
+- `vignette("vowel-space-analysis")` - F1-F2 analysis and normalization
+- `vignette("textgrid-workflows")` - Advanced TextGrid manipulation
 - `inst/examples/` - Complete workflow scripts
 
 ## References

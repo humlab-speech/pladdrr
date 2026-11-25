@@ -185,16 +185,16 @@ print(data.frame(
   Ceiling = round(fp$get_all_ceiling_frequencies()),
   Stress = round(stresses, 4)
 ))
-#>   Candidate Ceiling  Stress
-#> 1         1    4977  4.1904
-#> 2         2    5232  3.4219
-#> 3         3    5500  3.7666
-#> 4         4    5782  4.5426
-#> 5         5    6078 72.8453
+#>   Candidate Ceiling Stress
+#> 1         1    4977 5.8956
+#> 2         2    5232 3.9507
+#> 3         3    5500 3.7211
+#> 4         4    5782 3.0112
+#> 5         5    6078 2.9142
 cat("\nLowest stress: Candidate", best_idx, 
     "(", round(fp$get_ceiling_frequency(best_idx)), "Hz )\n")
 #> 
-#> Lowest stress: Candidate 2 ( 5232 Hz )
+#> Lowest stress: Candidate 5 ( 6078 Hz )
 ```
 
 ## Extracting the Optimal Formant
@@ -224,11 +224,11 @@ cat("\nFormants at midpoint (", round(mid_time, 3), "s):\n", sep = "")
 #> 
 #> Formants at midpoint (0.5s):
 cat("  F1:", round(f1), "Hz\n")
-#>   F1: 420 Hz
+#>   F1: 421 Hz
 cat("  F2:", round(f2), "Hz\n")
-#>   F2: 464 Hz
+#>   F2: 465 Hz
 cat("  F3:", round(f3), "Hz\n")
-#>   F3: 3049 Hz
+#>   F3: 2998 Hz
 ```
 
 ### Manual Path Selection
@@ -237,8 +237,13 @@ cat("  F3:", round(f3), "Hz\n")
 selected candidate for a time range:
 
 ``` r
-# Set candidate 3 for time range 0.2-0.4s
-fp$set_path(tmin = 0.2, tmax = 0.4, selected_candidate = 3)
+# Set candidate 3 for the middle third of the signal
+dur <- fp$get_xmax() - fp$get_xmin()
+fp$set_path(
+  tmin = fp$get_xmin() + dur / 3,
+  tmax = fp$get_xmin() + 2 * dur / 3,
+  selected_candidate = 3
+)
 
 # Or set optimal path for entire duration
 fp$set_optimal_path(
@@ -436,8 +441,8 @@ results <- lapply(seq_len(nrow(intervals)), function(i) {
 phone_formants <- do.call(rbind, results)
 print(phone_formants)
 #>   phone       f1       f2
-#> 1     h 420.4072 464.4267
-#> 2     ɛ 420.3874 464.4071
+#> 1     h 420.9056 464.9144
+#> 2     ɛ 420.9347 464.9425
 ```
 
 ### 4. Batch Processing Multiple Files
@@ -486,10 +491,10 @@ requested. Measure on your own data:
 ``` r
 system.time(frm_result <- sound$to_formant_burg())
 #>    user  system elapsed 
-#>   0.015   0.001   0.007
+#>   0.012   0.001   0.006
 system.time(fp <- sound$to_formant_path(num_steps_up_down = 2L))
 #>    user  system elapsed 
-#>   0.069   0.000   0.027
+#>   0.056   0.000   0.023
 ```
 
 ## Best Practices

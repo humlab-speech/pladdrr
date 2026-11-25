@@ -63,7 +63,7 @@ cat("Original audio:\n")
 cat("  Duration:", sound_orig$get_duration(), "s\n")
 #>   Duration: 1 s
 cat("  Samples:", sound_orig$get_number_of_samples(), "\n")
-#>   Samples: 16000
+#>   Samples: 44100
 
 # Extract formants with FormantPath (robust multi-ceiling)
 fp <- sound_orig$to_formant_path(
@@ -103,11 +103,11 @@ f3_mean <- mean(df$frequency[df$formant == 3], na.rm = TRUE)
 cat("Mean formant values:\n")
 #> Mean formant values:
 cat(sprintf("  F1: %.0f Hz\n", f1_mean))
-#>   F1: 420 Hz
+#>   F1: 421 Hz
 cat(sprintf("  F2: %.0f Hz\n", f2_mean))
-#>   F2: 464 Hz
+#>   F2: 465 Hz
 cat(sprintf("  F3: %.0f Hz\n", f3_mean))
-#>   F3: 3150 Hz
+#>   F3: 3080 Hz
 
 # Also extract pitch for realistic resynthesis
 pitch <- sound_orig$to_pitch()
@@ -733,10 +733,8 @@ validation
 
 ## Further Reading
 
-- [`vignette("formantpath-robust-tracking")`](https://humlab-speech.github.io/pladdrr/articles/formantpath-robust-tracking.md) -
-  FormantPath details
-- [`vignette("speech-synthesis-klattgrid")`](https://humlab-speech.github.io/pladdrr/articles/speech-synthesis-klattgrid.md) -
-  KlattGrid synthesis
+- `vignette("formantpath-robust-tracking")` - FormantPath details
+- `vignette("speech-synthesis-klattgrid")` - KlattGrid synthesis
 - [`vignette("formant-analysis")`](https://humlab-speech.github.io/pladdrr/articles/formant-analysis.md) -
   Standard formant extraction
 - Praat manual: [Manual index](https://www.fon.hum.uva.nl/praat/manual/)

@@ -69,8 +69,8 @@ The package provides three tiers of access to Praat’s methods, with Tier
 routines of Praat, and Tier 3 offers batch and parallel processing for
 common use cases. Tier 4 provides some abilities for parallel / batch
 processing of files, if beneficial. We provide coding agent friendly
-documentation of the package’s capabilities in
-[inst/agents/AGENT_GUIDE.md](https://github.com/humlab-speech/pladdrr/blob/main/inst/agents/AGENT_GUIDE.md).
+documentation of the package’s capabilities in [Agent
+Guide](https://humlab-speech.github.io/pladdrr/articles/agents/agent-guide.html).
 
 ## Limitations and caveats
 
@@ -483,7 +483,7 @@ sound_segment <- longsound$extract_part(tmin = 0, tmax = 10)
 ### Getting Help
 
 - Check the [Agent
-  Guide](https://github.com/humlab-speech/pladdrr/blob/main/inst/agents/AGENT_GUIDE.md)
+  Guide](https://humlab-speech.github.io/pladdrr/articles/agents/agent-guide.html)
   for detailed API reference
 - Contact the maintainer at `fredrik.nylen@umu.se`
 

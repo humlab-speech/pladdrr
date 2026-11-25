@@ -17,7 +17,7 @@ acquisition research, and dialectology.
 
 **Note:** For comprehensive visualization examples including additional
 plot types (spectrograms, voice quality reports, cepstral analysis), see
-[`vignette("visualization")`](https://humlab-speech.github.io/pladdrr/articles/visualization.md).
+`vignette("visualization")`.
 
 ## Background
 
@@ -149,9 +149,8 @@ cat("Prepared", nrow(vowel_segments), "vowel tokens\n")
 
 The
 [`autoplot()`](https://ggplot2.tidyverse.org/reference/autoplot.html)/[`autolayer()`](https://ggplot2.tidyverse.org/reference/autolayer.html)
-methods for `TextGrid` (see
-[`vignette("autoplot-autolayer")`](https://humlab-speech.github.io/pladdrr/articles/autoplot-autolayer.md))
-give a quick view of the annotation tier:
+methods for `TextGrid` (see `vignette("autoplot-autolayer")`) give a
+quick view of the annotation tier:
 
 ``` r
 autoplot(tg)
@@ -711,8 +710,7 @@ For related workflows, see:
 
 - [`vignette("integrated-phonetic-analysis")`](https://humlab-speech.github.io/pladdrr/articles/integrated-phonetic-analysis.md) -
   TextGrid-guided analysis
-- [`vignette("textgrid-workflows")`](https://humlab-speech.github.io/pladdrr/articles/textgrid-workflows.md) -
-  Advanced annotation techniques
+- `vignette("textgrid-workflows")` - Advanced annotation techniques
 - `inst/examples/09_vowel_space_analysis.R` - Full executable script
 
 ## References

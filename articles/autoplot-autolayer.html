@@ -72,6 +72,19 @@
     <li><a class="dropdown-item" href="../articles/v4-migration-guide.html">Migration Guide (v4.0)</a></li>
     <li><a class="dropdown-item" href="../articles/naming-conventions.html">Naming Conventions</a></li>
     <li><a class="dropdown-item" href="../articles/batch-operations-guide.html">Batch Operations Guide</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Developer &amp; Coding-Agent Docs</h6></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide.html">Agent Guide</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide-whats-new.html">  Agent Guide: What's New</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide-patterns.html">  Agent Guide: Common Patterns</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide-api-reference.html">  Agent Guide: API Reference</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/agent-guide-pitfalls.html">  Agent Guide: Pitfalls &amp; Use Cases</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/architecture.html">Architecture</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/documentation.html">Documentation Convention</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/praat-modifications.html">Praat Source Modifications</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/faithfulness-report.html">Faithfulness Report</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/performance-inventory.html">Performance Inventory</a></li>
+    <li><a class="dropdown-item" href="../articles/agents/history.html">Version History</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">News</a></li>
@@ -96,7 +109,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Composable Plotting with autoplot and autolayer</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/humlab-speech/pladdrr/blob/main/vignettes/autoplot-autolayer.Rmd" class="external-link"><code>vignettes/autoplot-autolayer.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/humlab-speech/pladdrr/blob/main/vignettes/articles/autoplot-autolayer.Rmd" class="external-link"><code>vignettes/articles/autoplot-autolayer.Rmd</code></a></small>
       <div class="d-none name"><code>autoplot-autolayer.Rmd</code></div>
     </div>
 
@@ -138,7 +151,7 @@ creates an appropriate visualization.</p>
 </h3>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">sound</span><span class="op">)</span></span></code></pre></div>
-<p><img src="autoplot-autolayer_files/figure-html/autoplot-sound-1.png" class="r-plt" alt="" width="672"></p>
+<p><img src="autoplot-autolayer_files/figure-html/autoplot-sound-1.png" class="r-plt" alt="" width="468"></p>
 </div>
 <div class="section level3">
 <h3 id="pitch-contour">Pitch Contour<a class="anchor" aria-label="anchor" href="#pitch-contour"></a>
@@ -146,7 +159,7 @@ creates an appropriate visualization.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pitch</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_pitch</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">pitch</span><span class="op">)</span></span></code></pre></div>
-<p><img src="autoplot-autolayer_files/figure-html/autoplot-pitch-1.png" class="r-plt" alt="" width="672"></p>
+<p><img src="autoplot-autolayer_files/figure-html/autoplot-pitch-1.png" class="r-plt" alt="" width="468"></p>
 </div>
 <div class="section level3">
 <h3 id="spectrogram">Spectrogram<a class="anchor" aria-label="anchor" href="#spectrogram"></a>
@@ -154,7 +167,7 @@ creates an appropriate visualization.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">spec</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_spectrogram</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">spec</span>, to_freq <span class="op">=</span> <span class="fl">5000</span><span class="op">)</span></span></code></pre></div>
-<p><img src="autoplot-autolayer_files/figure-html/autoplot-spectrogram-1.png" class="r-plt" alt="" width="672"></p>
+<p><img src="autoplot-autolayer_files/figure-html/autoplot-spectrogram-1.png" class="r-plt" alt="" width="468"></p>
 </div>
 <div class="section level3">
 <h3 id="spectrum">Spectrum<a class="anchor" aria-label="anchor" href="#spectrum"></a>
@@ -162,7 +175,7 @@ creates an appropriate visualization.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">spectrum</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_spectrum</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">spectrum</span>, to_freq <span class="op">=</span> <span class="fl">5000</span><span class="op">)</span></span></code></pre></div>
-<p><img src="autoplot-autolayer_files/figure-html/autoplot-spectrum-1.png" class="r-plt" alt="" width="672"></p>
+<p><img src="autoplot-autolayer_files/figure-html/autoplot-spectrum-1.png" class="r-plt" alt="" width="468"></p>
 </div>
 <div class="section level3">
 <h3 id="intensity">Intensity<a class="anchor" aria-label="anchor" href="#intensity"></a>
@@ -170,7 +183,7 @@ creates an appropriate visualization.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">intensity</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_intensity</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">intensity</span><span class="op">)</span></span></code></pre></div>
-<p><img src="autoplot-autolayer_files/figure-html/autoplot-intensity-1.png" class="r-plt" alt="" width="672"></p>
+<p><img src="autoplot-autolayer_files/figure-html/autoplot-intensity-1.png" class="r-plt" alt="" width="468"></p>
 </div>
 <div class="section level3">
 <h3 id="formants">Formants<a class="anchor" aria-label="anchor" href="#formants"></a>
@@ -187,7 +200,7 @@ creates an appropriate visualization.</p>
 <span>  <span class="op">}</span></span>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">formant</span>, max_formant <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
-<p><img src="autoplot-autolayer_files/figure-html/autoplot-formant-1.png" class="r-plt" alt="" width="672"></p>
+<p><img src="autoplot-autolayer_files/figure-html/autoplot-formant-1.png" class="r-plt" alt="" width="468"></p>
 </div>
 <div class="section level3">
 <h3 id="pitch-tier">Pitch Tier<a class="anchor" aria-label="anchor" href="#pitch-tier"></a>
@@ -199,13 +212,13 @@ type Praat scripts manipulate when resynthesizing prosody.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pitch_tier</span> <span class="op">&lt;-</span> <span class="va">pitch</span><span class="op">$</span><span class="fu">down_to_pitch_tier</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">pitch_tier</span><span class="op">)</span></span></code></pre></div>
-<p><img src="autoplot-autolayer_files/figure-html/autoplot-pitchtier-1.png" class="r-plt" alt="" width="672"></p>
+<p><img src="autoplot-autolayer_files/figure-html/autoplot-pitchtier-1.png" class="r-plt" alt="" width="468"></p>
 <p>Overlay the sparse tier points on the dense pitch contour with
 <code><a href="https://ggplot2.tidyverse.org/reference/autolayer.html" class="external-link">autolayer()</a></code>:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">pitch</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autolayer.html" class="external-link">autolayer</a></span><span class="op">(</span><span class="va">pitch_tier</span>, color <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="autoplot-autolayer_files/figure-html/pitch-pitchtier-overlay-1.png" class="r-plt" alt="" width="672"></p>
+<p><img src="autoplot-autolayer_files/figure-html/pitch-pitchtier-overlay-1.png" class="r-plt" alt="" width="468"></p>
 </div>
 <div class="section level3">
 <h3 id="formant-grid-and-formant-tier-styles">Formant Grid and Formant Tier Styles<a class="anchor" aria-label="anchor" href="#formant-grid-and-formant-tier-styles"></a>
@@ -223,14 +236,14 @@ time step).</p>
 <span><span class="va">grid</span><span class="op">$</span><span class="fu">add_formant_point</span><span class="op">(</span><span class="fl">2</span>, <span class="fl">0.5</span>, <span class="fl">1500</span><span class="op">)</span></span>
 <span><span class="va">grid</span><span class="op">$</span><span class="fu">add_formant_point</span><span class="op">(</span><span class="fl">3</span>, <span class="fl">0.5</span>, <span class="fl">2500</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">grid</span><span class="op">)</span></span></code></pre></div>
-<p><img src="autoplot-autolayer_files/figure-html/autoplot-formantgrid-1.png" class="r-plt" alt="" width="672"></p>
+<p><img src="autoplot-autolayer_files/figure-html/autoplot-formantgrid-1.png" class="r-plt" alt="" width="468"></p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">formant_tier</span> <span class="op">&lt;-</span> <span class="va">FormantTier</span><span class="op">$</span><span class="fu">from_formant</span><span class="op">(</span><span class="va">formant</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">formant_tier</span><span class="op">)</span>                  <span class="co"># style = "speckle" (default)</span></span></code></pre></div>
-<p><img src="autoplot-autolayer_files/figure-html/autoplot-formanttier-styles-1.png" class="r-plt" alt="" width="672"></p>
+<p><img src="autoplot-autolayer_files/figure-html/autoplot-formanttier-styles-1.png" class="r-plt" alt="" width="468"></p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">formant_tier</span>, style <span class="op">=</span> <span class="st">"line"</span><span class="op">)</span>  <span class="co"># interpolated at a fixed time step</span></span></code></pre></div>
-<p><img src="autoplot-autolayer_files/figure-html/autoplot-formanttier-styles-2.png" class="r-plt" alt="" width="672"></p>
+<p><img src="autoplot-autolayer_files/figure-html/autoplot-formanttier-styles-2.png" class="r-plt" alt="" width="468"></p>
 </div>
 <div class="section level3">
 <h3 id="cepstral-analysis">Cepstral Analysis<a class="anchor" aria-label="anchor" href="#cepstral-analysis"></a>
@@ -243,14 +256,14 @@ CPPS-based voice-quality measures.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cepstrum</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_cepstrum</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">cepstrum</span><span class="op">)</span>                <span class="co"># raw view</span></span></code></pre></div>
-<p><img src="autoplot-autolayer_files/figure-html/autoplot-cepstrum-power-1.png" class="r-plt" alt="" width="672"></p>
+<p><img src="autoplot-autolayer_files/figure-html/autoplot-cepstrum-power-1.png" class="r-plt" alt="" width="468"></p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">cepstrum</span>, power <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>  <span class="co"># power (dB) view</span></span></code></pre></div>
-<p><img src="autoplot-autolayer_files/figure-html/autoplot-cepstrum-power-2.png" class="r-plt" alt="" width="672"></p>
+<p><img src="autoplot-autolayer_files/figure-html/autoplot-cepstrum-power-2.png" class="r-plt" alt="" width="468"></p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">power_cepstrogram</span> <span class="op">&lt;-</span> <span class="va">sound</span><span class="op">$</span><span class="fu">to_powercepstrogram</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">power_cepstrogram</span><span class="op">)</span></span></code></pre></div>
-<p><img src="autoplot-autolayer_files/figure-html/autoplot-powercepstrogram-1.png" class="r-plt" alt="" width="672"></p>
+<p><img src="autoplot-autolayer_files/figure-html/autoplot-powercepstrogram-1.png" class="r-plt" alt="" width="468"></p>
 </div>
 </div>
 <div class="section level2">
@@ -263,7 +276,7 @@ CPPS-based voice-quality measures.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">spec</span>, to_freq <span class="op">=</span> <span class="fl">5000</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autolayer.html" class="external-link">autolayer</a></span><span class="op">(</span><span class="va">pitch</span>, color <span class="op">=</span> <span class="st">"cyan"</span>, geom <span class="op">=</span> <span class="st">"point"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="autoplot-autolayer_files/figure-html/spectrogram-pitch-1.png" class="r-plt" alt="" width="672"></p>
+<p><img src="autoplot-autolayer_files/figure-html/spectrogram-pitch-1.png" class="r-plt" alt="" width="468"></p>
 </div>
 <div class="section level3">
 <h3 id="spectrogram-with-formant-tracks">Spectrogram with Formant Tracks<a class="anchor" aria-label="anchor" href="#spectrogram-with-formant-tracks"></a>
@@ -271,7 +284,7 @@ CPPS-based voice-quality measures.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">spec</span>, to_freq <span class="op">=</span> <span class="fl">5000</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autolayer.html" class="external-link">autolayer</a></span><span class="op">(</span><span class="va">formant</span>, max_formant <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
-<p><img src="autoplot-autolayer_files/figure-html/spectrogram-formant-1.png" class="r-plt" alt="" width="672"></p>
+<p><img src="autoplot-autolayer_files/figure-html/spectrogram-formant-1.png" class="r-plt" alt="" width="468"></p>
 </div>
 <div class="section level3">
 <h3 id="spectrogram-with-pitch-and-formants">Spectrogram with Pitch and Formants<a class="anchor" aria-label="anchor" href="#spectrogram-with-pitch-and-formants"></a>
@@ -280,7 +293,7 @@ CPPS-based voice-quality measures.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">spec</span>, to_freq <span class="op">=</span> <span class="fl">5000</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autolayer.html" class="external-link">autolayer</a></span><span class="op">(</span><span class="va">formant</span>, max_formant <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autolayer.html" class="external-link">autolayer</a></span><span class="op">(</span><span class="va">pitch</span>, color <span class="op">=</span> <span class="st">"white"</span>, geom <span class="op">=</span> <span class="st">"point"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="autoplot-autolayer_files/figure-html/spectrogram-pitch-formant-1.png" class="r-plt" alt="" width="672"></p>
+<p><img src="autoplot-autolayer_files/figure-html/spectrogram-pitch-formant-1.png" class="r-plt" alt="" width="468"></p>
 </div>
 <div class="section level3">
 <h3 id="sound-with-pitch-overlay">Sound with Pitch Overlay<a class="anchor" aria-label="anchor" href="#sound-with-pitch-overlay"></a>
@@ -297,7 +310,7 @@ CPPS-based voice-quality measures.</p>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">time</span>, y <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,</span>
 <span>    color <span class="op">=</span> <span class="st">"red"</span>, size <span class="op">=</span> <span class="fl">0.5</span>, alpha <span class="op">=</span> <span class="fl">0.5</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<p><img src="autoplot-autolayer_files/figure-html/sound-pitch-1.png" class="r-plt" alt="" width="672"></p>
+<p><img src="autoplot-autolayer_files/figure-html/sound-pitch-1.png" class="r-plt" alt="" width="468"></p>
 </div>
 </div>
 <div class="section level2">
@@ -315,7 +328,7 @@ customize freely.</p>
 <span>    title <span class="op">=</span> <span class="st">"Fundamental Frequency"</span>,</span>
 <span>    subtitle <span class="op">=</span> <span class="st">"Extracted using autocorrelation method"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<p><img src="autoplot-autolayer_files/figure-html/custom-theme-1.png" class="r-plt" alt="" width="672"></p>
+<p><img src="autoplot-autolayer_files/figure-html/custom-theme-1.png" class="r-plt" alt="" width="468"></p>
 </div>
 <div class="section level3">
 <h3 id="custom-colors">Custom Colors<a class="anchor" aria-label="anchor" href="#custom-colors"></a>
@@ -326,7 +339,7 @@ customize freely.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_dark</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Scale for <span style="color: #00BB00;">fill</span> is already present.</span></span>
 <span><span class="co">#&gt; Adding another scale for <span style="color: #00BB00;">fill</span>, which will replace the existing scale.</span></span></code></pre></div>
-<p><img src="autoplot-autolayer_files/figure-html/custom-colors-1.png" class="r-plt" alt="" width="672"></p>
+<p><img src="autoplot-autolayer_files/figure-html/custom-colors-1.png" class="r-plt" alt="" width="468"></p>
 </div>
 <div class="section level3">
 <h3 id="faceting-by-time-windows">Faceting by Time Windows<a class="anchor" aria-label="anchor" href="#faceting-by-time-windows"></a>
@@ -337,7 +350,7 @@ customize freely.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_hline</a></span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">60</span>, <span class="fl">70</span><span class="op">)</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, alpha <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/annotate.html" class="external-link">annotate</a></span><span class="op">(</span><span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">0</span>, y <span class="op">=</span> <span class="fl">70</span>, label <span class="op">=</span> <span class="st">"Loud"</span>, hjust <span class="op">=</span> <span class="fl">0</span>, size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/annotate.html" class="external-link">annotate</a></span><span class="op">(</span><span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">0</span>, y <span class="op">=</span> <span class="fl">50</span>, label <span class="op">=</span> <span class="st">"Quiet"</span>, hjust <span class="op">=</span> <span class="fl">0</span>, size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
-<p><img src="autoplot-autolayer_files/figure-html/facet-example-1.png" class="r-plt" alt="" width="672"></p>
+<p><img src="autoplot-autolayer_files/figure-html/facet-example-1.png" class="r-plt" alt="" width="468"></p>
 </div>
 </div>
 <div class="section level2">
@@ -359,13 +372,13 @@ package.</p>
 <span><span class="va">formant_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">200</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span>
 <span><span class="va">pca</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pca_from_matrix.html">pca_from_matrix</a></span><span class="op">(</span><span class="va">formant_matrix</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">pca</span>, type <span class="op">=</span> <span class="st">"scree"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="autoplot-autolayer_files/figure-html/autoplot-pca-1.png" class="r-plt" alt="" width="672"></p>
+<p><img src="autoplot-autolayer_files/figure-html/autoplot-pca-1.png" class="r-plt" alt="" width="468"></p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">pca</span>, type <span class="op">=</span> <span class="st">"scores"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="autoplot-autolayer_files/figure-html/autoplot-pca-2.png" class="r-plt" alt="" width="672"></p>
+<p><img src="autoplot-autolayer_files/figure-html/autoplot-pca-2.png" class="r-plt" alt="" width="468"></p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">pca</span>, type <span class="op">=</span> <span class="st">"both"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="autoplot-autolayer_files/figure-html/autoplot-pca-both-1.png" class="r-plt" alt="" width="672"></p>
+<p><img src="autoplot-autolayer_files/figure-html/autoplot-pca-both-1.png" class="r-plt" alt="" width="468"></p>
 </div>
 <div class="section level3">
 <h3 id="dtw-warping-path">DTW Warping Path<a class="anchor" aria-label="anchor" href="#dtw-warping-path"></a>
@@ -378,13 +391,13 @@ existing plot.</p>
 <code class="sourceCode R"><span><span class="va">dtw_sound</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/generate_sine_wave.html">generate_sine_wave</a></span><span class="op">(</span><span class="fl">440</span>, <span class="fl">0.1</span>, sampling_rate <span class="op">=</span> <span class="fl">16000</span><span class="op">)</span></span>
 <span><span class="va">dtw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sounds_to_dtw.html">sounds_to_dtw</a></span><span class="op">(</span><span class="va">dtw_sound</span>, <span class="va">dtw_sound</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">dtw</span><span class="op">)</span></span></code></pre></div>
-<p><img src="autoplot-autolayer_files/figure-html/autoplot-dtw-1.png" class="r-plt" alt="" width="672"></p>
+<p><img src="autoplot-autolayer_files/figure-html/autoplot-dtw-1.png" class="r-plt" alt="" width="468"></p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">dtw</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autolayer.html" class="external-link">autolayer</a></span><span class="op">(</span><span class="va">dtw</span>, color <span class="op">=</span> <span class="st">"orange"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: Duplicated aesthetics after name standardisation:</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">colour</span></span></span></code></pre></div>
-<p><img src="autoplot-autolayer_files/figure-html/autolayer-dtw-1.png" class="r-plt" alt="" width="672"></p>
+<p><img src="autoplot-autolayer_files/figure-html/autolayer-dtw-1.png" class="r-plt" alt="" width="468"></p>
 </div>
 </div>
 <div class="section level2">
@@ -553,7 +566,7 @@ types</li>
 <strong>Publication quality</strong> - Vector graphics output</li>
 </ul>
 <p>For more visualization options, see
-<code><a href="../articles/visualization.html">vignette("visualization")</a></code>.</p>
+<code>vignette("visualization")</code>.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
