@@ -3772,8 +3772,6 @@ formant <- sound$to_formant_burg()  # Stable ✅
 - Impact: Eliminates all garbage collection crashes
 - Scope: Every method returning Praat objects in all 38 modules
 
-**Reference:** See `inst/agents/2026-02-05_xptr_memory_fix.md` for full technical report.
-
 ---
 
 ### Multi-threaded Praat Operations v4.8.14 (2026-02-05)

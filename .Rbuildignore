@@ -43,7 +43,6 @@
 ^revdep$
 
 # Repo docs not meant for the built package
-^README\.Rmd$
 ^LICENSE\.md$
 ^CLAUDE\.md$
 ^NEWS-archive\.md$
