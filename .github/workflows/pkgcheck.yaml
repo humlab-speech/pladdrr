@@ -48,15 +48,19 @@ jobs:
       # so a regression can never be silently absorbed by this
       # continue-on-error (the previous state: the run went green while
       # pkgcheck internally failed three checks).
-      - uses: ropensci-review-tools/pkgcheck-action@main
+      #
+      # Runs the pkgcheck-action's own image with a patched copy of its
+      # check.R (.github/scripts/pkgcheck-check.R): the stock script crashes
+      # whenever CI checks pass (pkgcheck#444, pkgcheck-action#77). This
+      # replaces the action itself, so the "pkgcheck results" issue is no
+      # longer posted; the report is gated below instead.
+      - uses: docker://ghcr.io/ropensci-review-tools/pkgcheck-action:latest
         continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         with:
-          ref: ""
-          # Refresh the single "pkgcheck results - main" report issue body on
-          # each run instead of appending a comment: the action's default
-          # (append-to-issue: true) left the issue body pointing at an old
-          # commit (v5.0.3/171c1780) while the run was v5.0.4/ab24af91.
-          append-to-issue: false
+          entrypoint: Rscript
+          args: .github/scripts/pkgcheck-check.R
 
       # pkgcheck downloads pkgstats-CRAN-current.Rds from a GitHub release
       # that upstream re-uploads daily (~05:50-06:00 UTC); a run inside that
@@ -82,12 +86,14 @@ jobs:
         if: steps.report.outputs.missing == 'true'
         run: sudo rm -rf .pkgcheck
 
-      - uses: ropensci-review-tools/pkgcheck-action@main
+      - uses: docker://ghcr.io/ropensci-review-tools/pkgcheck-action:latest
         if: steps.report.outputs.missing == 'true'
         continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         with:
-          ref: ""
-          append-to-issue: false
+          entrypoint: Rscript
+          args: .github/scripts/pkgcheck-check.R
 
       # --------------------------------------------------------------------
       # pkgcheck's own exit status reflects its rOpenSci review bar, which
