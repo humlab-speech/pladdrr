@@ -50,6 +50,7 @@ passes `@section` body text through mostly unprocessed, so `\itemize`,
 #' @param .xptr Not for direct use. External pointer to the underlying C++
 #'   object; set internally when a method returns a new object.
 #' @return A ClassName object.
+#' @usage ClassName(.xptr = NULL)
 #'
 #' @examples
 #' pitch <- Sound$create_tone(frequency = 220, duration = 0.5)$to_pitch()
@@ -86,6 +87,14 @@ Rules, in order of how often they're missed:
    write like the `Sound` doc reads. Run non-trivial rewrites past the
    `humanizer` skill patterns (AI Vocabulary, Overuse of Boldface, Em Dashes,
    Title Case in Headings are the ones that show up most in this codebase).
+7. **Every exported name needs `\usage`.** An `@name` class page gets no usage
+   from roxygen, and R-devel now reports "Exported functions without usage
+   information" for any exported function missing from `\usage` (INFO on
+   R-devel r90991). A deprecated alias documented only
+   as `@usage # Deprecated: ...` counts as missing, because roxygen copies that
+   comment into `\usage` verbatim. Give the block `@usage ClassName(args)` with
+   the real signature plus a `@param` for each argument, and confirm with
+   `tools::codoc(dir = ".")`, which must report no mismatches.
 
 ## Verifying a doc block
 
