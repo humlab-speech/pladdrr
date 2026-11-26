@@ -139,84 +139,19 @@ test_that("Table print, is_valid, get_xptr, and unknown-name access", {
   expect_null(tbl$totally_bogus_field)
 })
 
-# --- internal .table_* Rcpp exports not wired into Table()'s method list ----
-# (table_wrappers.cpp defines more primitives than the R6-style wrapper
-# exposes; call them directly to exercise the underlying C++ correctness)
+# --- internal .table_* exports with no module twin (to_matrix, column_numbers) ---
 
-test_that("internal .table_* exports for min/max/sum/quantile/matrix work", {
-  ptr <- pladdrr:::.table_create_with_column_names(3, "x")
-  pladdrr:::.table_set_numeric_value(ptr, 1, 1, 1)
-  pladdrr:::.table_set_numeric_value(ptr, 2, 1, 2)
-  pladdrr:::.table_set_numeric_value(ptr, 3, 1, 3)
-
-  expect_equal(pladdrr:::.table_get_minimum(ptr, 1), 1,
-    tolerance = sqrt(.Machine$double.eps))
-  expect_equal(pladdrr:::.table_get_maximum(ptr, 1), 3,
-    tolerance = sqrt(.Machine$double.eps))
-  expect_equal(pladdrr:::.table_get_sum(ptr, 1), 6,
-    tolerance = sqrt(.Machine$double.eps))
-  expect_equal(pladdrr:::.table_get_quantile(ptr, 1, 0.5), 2,
-    tolerance = sqrt(.Machine$double.eps))
+test_that("internal .table_to_matrix/.table_get_column_numbers work", {
+  tbl <- Table(numberOfRows = 3, columnNames = "x")
+  tbl$set_numeric_value(1, "x", 1)
+  tbl$set_numeric_value(2, "x", 2)
+  tbl$set_numeric_value(3, "x", 3)
+  ptr <- tbl$get_xptr()
 
   mat <- pladdrr:::.table_to_matrix(ptr)
   expect_equal(as.numeric(mat), c(1, 2, 3),
     tolerance = sqrt(.Machine$double.eps))
-
-  col_numbers <- pladdrr:::.table_get_column_numbers(ptr)
-  expect_length(col_numbers, 1)
-})
-
-test_that(
-  "internal .table_* exports for remove_row/remove_column/insert_column work", {
-  ptr <- pladdrr:::.table_create_with_column_names(2, c("x", "y"))
-  pladdrr:::.table_insert_column(ptr, 1, "z")
-  expect_identical(pladdrr:::.table_get_number_of_columns(ptr), 3L)
-
-  pladdrr:::.table_remove_column(ptr, 1)
-  expect_identical(pladdrr:::.table_get_number_of_columns(ptr), 2L)
-
-  pladdrr:::.table_remove_row(ptr, 1)
-  expect_identical(pladdrr:::.table_get_number_of_rows(ptr), 1L)
-})
-
-test_that("internal .table_get_numeric_value returns a cell's value directly", {
-  # .table_get_numeric_value is a bare Rcpp::export never called from the R6
-  # dispatch table (Table's get_numeric_value method goes through the
-  # RTable module instead) or from any other existing test.
-  ptr <- pladdrr:::.table_create_with_column_names(1, "x")
-  pladdrr:::.table_set_numeric_value(ptr, 1, 1, 42)
-  expect_equal(pladdrr:::.table_get_numeric_value(ptr, 1, 1), 42,
-    tolerance = sqrt(.Machine$double.eps))
-})
-
-test_that(
-  "internal .table_get_mean/stdev/minimum/maximum/sum/quantile error on out-of-range column", {
-  # Verified interactively: an out-of-range column number reaches Praat's
-  # Table_getMean() et al., which throw a MelderError that these bare
-  # wrappers catch and re-raise as a plain R error (never a crash).
-  tbl <- Table(numberOfRows = 2, columnNames = "x")
-  tbl$set_numeric_value(1, "x", 1)
-  tbl$set_numeric_value(2, "x", 2)
-  ptr <- tbl$get_xptr()
-
-  expect_error(pladdrr:::.table_get_mean(ptr, 99), "Failed to get mean")
-  expect_error(pladdrr:::.table_get_stdev(ptr, 99),
-    "Failed to get standard deviation")
-  expect_error(pladdrr:::.table_get_minimum(ptr, 99), "Failed to get minimum")
-  expect_error(pladdrr:::.table_get_maximum(ptr, 99), "Failed to get maximum")
-  expect_error(pladdrr:::.table_get_sum(ptr, 99), "Failed to get sum")
-  expect_error(pladdrr:::.table_get_quantile(ptr, 99, 0.5),
-    "Failed to get quantile")
-})
-
-test_that(
-  "internal .table_remove_row/.table_remove_column/.table_insert_column error on out-of-range index", {
-  ptr <- pladdrr:::.table_create_with_column_names(1, "x")
-  expect_error(pladdrr:::.table_remove_row(ptr, 99), "Failed to remove row")
-  expect_error(pladdrr:::.table_remove_column(ptr, 99),
-    "Failed to remove column")
-  expect_error(pladdrr:::.table_insert_column(ptr, 99, "z"),
-    "Failed to insert column")
+  expect_length(pladdrr:::.table_get_column_numbers(ptr), 1)
 })
 
 # --- RTable module (src/modules/table_module.cpp) methods reached only via
@@ -255,21 +190,27 @@ test_that(
 })
 
 test_that(
-  "RTable module statistics return NA (not an error) for an out-of-range column via $.cpp", {
-  # Verified interactively: unlike the bare .table_get_mean() etc. exports,
-  # the RTable module versions catch the same MelderError and return
-  # NA_REAL rather than raising -- this is a genuine, safe behavioral
-  # difference between the two implementations, not a copy-paste no-op.
+  "RTable module statistics error on an out-of-range column via $.cpp", {
+  # A Praat MelderError is re-raised as a plain R error (never a crash).
   tbl <- Table(numberOfRows = 2, columnNames = "x")
   tbl$set_numeric_value(1, "x", 1)
   tbl$set_numeric_value(2, "x", 2)
 
-  expect_true(is.na(tbl$.cpp$get_mean(99)))
-  expect_true(is.na(tbl$.cpp$get_stdev(99)))
-  expect_true(is.na(tbl$.cpp$get_minimum(99)))
-  expect_true(is.na(tbl$.cpp$get_maximum(99)))
-  expect_true(is.na(tbl$.cpp$get_sum(99)))
-  expect_true(is.na(tbl$.cpp$get_quantile(99, 0.5)))
+  expect_error(tbl$.cpp$get_mean(99), "Failed to get mean")
+  expect_error(tbl$.cpp$get_stdev(99), "Failed to get standard deviation")
+  expect_error(tbl$.cpp$get_minimum(99), "Failed to get minimum")
+  expect_error(tbl$.cpp$get_maximum(99), "Failed to get maximum")
+  expect_error(tbl$.cpp$get_sum(99), "Failed to get sum")
+  expect_error(tbl$.cpp$get_quantile(99, 0.5), "Failed to get quantile")
+})
+
+test_that("RTable module insert_column and get_numeric_value work via $.cpp", {
+  tbl <- Table(numberOfRows = 1, columnNames = c("x", "y"))
+  tbl$.cpp$insert_column(1, "z")
+  expect_identical(tbl$get_number_of_columns(), 3L)
+  tbl$.cpp$set_numeric_value(1, 2, 42)
+  expect_equal(tbl$.cpp$get_numeric_value(1, 2), 42,
+    tolerance = sqrt(.Machine$double.eps))
 })
 
 test_that(

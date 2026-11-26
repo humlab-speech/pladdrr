@@ -2467,68 +2467,8 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
     .Call(`_pladdrr_table_create_with_column_names`, numberOfRows, columnNames)
 }
 
-.table_get_number_of_rows <- function(xptr) {
-    .Call(`_pladdrr_table_get_number_of_rows`, xptr)
-}
-
-.table_get_number_of_columns <- function(xptr) {
-    .Call(`_pladdrr_table_get_number_of_columns`, xptr)
-}
-
-.table_get_numeric_value <- function(xptr, rowNumber, columnNumber) {
-    .Call(`_pladdrr_table_get_numeric_value`, xptr, rowNumber, columnNumber)
-}
-
-.table_get_string_value <- function(xptr, rowNumber, columnNumber) {
-    .Call(`_pladdrr_table_get_string_value`, xptr, rowNumber, columnNumber)
-}
-
-.table_set_numeric_value <- function(xptr, rowNumber, columnNumber, value) {
-    invisible(.Call(`_pladdrr_table_set_numeric_value`, xptr, rowNumber, columnNumber, value))
-}
-
-.table_remove_row <- function(xptr, rowNumber) {
-    invisible(.Call(`_pladdrr_table_remove_row`, xptr, rowNumber))
-}
-
-.table_remove_column <- function(xptr, columnNumber) {
-    invisible(.Call(`_pladdrr_table_remove_column`, xptr, columnNumber))
-}
-
-.table_insert_column <- function(xptr, columnPosition, columnName) {
-    invisible(.Call(`_pladdrr_table_insert_column`, xptr, columnPosition, columnName))
-}
-
-.table_get_mean <- function(xptr, columnNumber) {
-    .Call(`_pladdrr_table_get_mean`, xptr, columnNumber)
-}
-
-.table_get_stdev <- function(xptr, columnNumber) {
-    .Call(`_pladdrr_table_get_stdev`, xptr, columnNumber)
-}
-
-.table_get_minimum <- function(xptr, columnNumber) {
-    .Call(`_pladdrr_table_get_minimum`, xptr, columnNumber)
-}
-
-.table_get_maximum <- function(xptr, columnNumber) {
-    .Call(`_pladdrr_table_get_maximum`, xptr, columnNumber)
-}
-
-.table_get_sum <- function(xptr, columnNumber) {
-    .Call(`_pladdrr_table_get_sum`, xptr, columnNumber)
-}
-
-.table_get_quantile <- function(xptr, columnNumber, quantile) {
-    .Call(`_pladdrr_table_get_quantile`, xptr, columnNumber, quantile)
-}
-
 .table_get_column_numbers <- function(xptr) {
     .Call(`_pladdrr_table_get_column_numbers`, xptr)
-}
-
-.table_get_column_names <- function(xptr) {
-    .Call(`_pladdrr_table_get_column_names`, xptr)
 }
 
 .table_to_matrix <- function(xptr) {

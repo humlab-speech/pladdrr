@@ -33,21 +33,21 @@ NULL
 # Helpers
 # ============================================================================
 
-# Helper: Table xptr -> data.frame
+# Helper: Table RTable module object -> data.frame
 #
 # Praat Table cells are stored as strings internally. A column is treated as
 # numeric in the resulting data.frame only if every cell's string parses as
-# an R number via as.numeric(). Note: .table_get_numeric_value() (Praat's
+# an R number via as.numeric(). Note: $get_numeric_value() (Praat's
 # Table_getNumericValue_a) is NOT used for this test — for non-numeric text
 # it does not return NA/NaN, it returns a categorical level index (cells are
 # enumerated alphabetically, e.g. "bird"/"cat"/"dog" -> 1/2/3), which would
 # silently corrupt string columns into bogus integers.
-#' Read a Praat Table through its pointer into a data frame.
+#' Read a Praat Table through its RTable module object into a data frame.
 #' @noRd
-.table_to_data_frame <- function(xptr) {
-  n_rows <- .table_get_number_of_rows(xptr)
-  n_cols <- .table_get_number_of_columns(xptr)
-  col_names <- .table_get_column_names(xptr)
+.table_to_data_frame <- function(cpp) {
+  n_rows <- cpp$get_number_of_rows()
+  n_cols <- cpp$get_number_of_columns()
+  col_names <- cpp$get_column_names()
 
   columns <- vector("list", n_cols)
   for (j in seq_len(n_cols)) {
@@ -59,7 +59,7 @@ NULL
       next
     }
     str_vals <- vapply(seq_len(n_rows),
-                        function(i) .table_get_string_value(xptr, i, j),
+                        function(i) cpp$get_string_value(i, j),
                         character(1))
     num_vals <- suppressWarnings(as.numeric(str_vals))
     columns[[j]] <- if (anyNA(num_vals)) str_vals else num_vals
@@ -141,18 +141,18 @@ NULL
   col_idx <- if (
     is.character(
       column)) .self$.cpp$get_column_index(column) else as.integer(column)
-  .table_get_mean(.self$.xptr, col_idx)
+  .self$.cpp$get_mean(col_idx)
 }
 .table_methods$get_standard_deviation <- function(.self, column) {
   col_idx <- if (
     is.character(
       column)) .self$.cpp$get_column_index(column) else as.integer(column)
-  .table_get_stdev(.self$.xptr, col_idx)
+  .self$.cpp$get_stdev(col_idx)
 }
 
 # Export
 .table_methods$as_data_frame <- function(
-  .self) .table_to_data_frame(.self$.xptr)
+  .self) .table_to_data_frame(.self$.cpp)
 .table_methods$save <- function(.self, path) {
   .self$.cpp$save(.ensure_suffix(path, "Table"))
   invisible(.self)

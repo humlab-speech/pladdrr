@@ -189,64 +189,46 @@ public:
     }
 
     // Statistical functions
+    // Out-of-range column raises (matches the R6 contract), it does not return NA.
     double get_mean(int column) {
         VALIDATE_PTR(ptr, Table);
-        try {
-            return Table_getMean(ptr.get(), column);
-        } catch (MelderError) {
-            Melder_clearError();
-            return NA_REAL;
-        }
+        return praat_try_return([&] { return Table_getMean(ptr.get(), column); },
+                                "Failed to get mean");
     }
 
+    // Out-of-range column raises (matches the R6 contract), it does not return NA.
     double get_stdev(int column) {
         VALIDATE_PTR(ptr, Table);
-        try {
-            return Table_getStdev(ptr.get(), column);
-        } catch (MelderError) {
-            Melder_clearError();
-            return NA_REAL;
-        }
+        return praat_try_return([&] { return Table_getStdev(ptr.get(), column); },
+                                "Failed to get standard deviation");
     }
 
+    // Out-of-range column raises (matches the R6 contract), it does not return NA.
     double get_minimum(int column) {
         VALIDATE_PTR(ptr, Table);
-        try {
-            return Table_getMinimum(ptr.get(), column);
-        } catch (MelderError) {
-            Melder_clearError();
-            return NA_REAL;
-        }
+        return praat_try_return([&] { return Table_getMinimum(ptr.get(), column); },
+                                "Failed to get minimum");
     }
 
+    // Out-of-range column raises (matches the R6 contract), it does not return NA.
     double get_maximum(int column) {
         VALIDATE_PTR(ptr, Table);
-        try {
-            return Table_getMaximum(ptr.get(), column);
-        } catch (MelderError) {
-            Melder_clearError();
-            return NA_REAL;
-        }
+        return praat_try_return([&] { return Table_getMaximum(ptr.get(), column); },
+                                "Failed to get maximum");
     }
 
+    // Out-of-range column raises (matches the R6 contract), it does not return NA.
     double get_sum(int column) {
         VALIDATE_PTR(ptr, Table);
-        try {
-            return Table_getSum(ptr.get(), column);
-        } catch (MelderError) {
-            Melder_clearError();
-            return NA_REAL;
-        }
+        return praat_try_return([&] { return Table_getSum(ptr.get(), column); },
+                                "Failed to get sum");
     }
 
+    // Out-of-range column raises (matches the R6 contract), it does not return NA.
     double get_quantile(int column, double quantile) {
         VALIDATE_PTR(ptr, Table);
-        try {
-            return Table_getQuantile(ptr.get(), column, quantile);
-        } catch (MelderError) {
-            Melder_clearError();
-            return NA_REAL;
-        }
+        return praat_try_return([&] { return Table_getQuantile(ptr.get(), column, quantile); },
+                                "Failed to get quantile");
     }
 
     // Export

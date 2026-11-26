@@ -5679,174 +5679,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// table_get_number_of_rows
-int table_get_number_of_rows(SEXP xptr);
-RcppExport SEXP _pladdrr_table_get_number_of_rows(SEXP xptrSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
-    rcpp_result_gen = Rcpp::wrap(table_get_number_of_rows(xptr));
-    return rcpp_result_gen;
-END_RCPP
-}
-// table_get_number_of_columns
-int table_get_number_of_columns(SEXP xptr);
-RcppExport SEXP _pladdrr_table_get_number_of_columns(SEXP xptrSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
-    rcpp_result_gen = Rcpp::wrap(table_get_number_of_columns(xptr));
-    return rcpp_result_gen;
-END_RCPP
-}
-// table_get_numeric_value
-double table_get_numeric_value(SEXP xptr, int rowNumber, int columnNumber);
-RcppExport SEXP _pladdrr_table_get_numeric_value(SEXP xptrSEXP, SEXP rowNumberSEXP, SEXP columnNumberSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
-    Rcpp::traits::input_parameter< int >::type rowNumber(rowNumberSEXP);
-    Rcpp::traits::input_parameter< int >::type columnNumber(columnNumberSEXP);
-    rcpp_result_gen = Rcpp::wrap(table_get_numeric_value(xptr, rowNumber, columnNumber));
-    return rcpp_result_gen;
-END_RCPP
-}
-// table_get_string_value
-std::string table_get_string_value(SEXP xptr, int rowNumber, int columnNumber);
-RcppExport SEXP _pladdrr_table_get_string_value(SEXP xptrSEXP, SEXP rowNumberSEXP, SEXP columnNumberSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
-    Rcpp::traits::input_parameter< int >::type rowNumber(rowNumberSEXP);
-    Rcpp::traits::input_parameter< int >::type columnNumber(columnNumberSEXP);
-    rcpp_result_gen = Rcpp::wrap(table_get_string_value(xptr, rowNumber, columnNumber));
-    return rcpp_result_gen;
-END_RCPP
-}
-// table_set_numeric_value
-void table_set_numeric_value(SEXP xptr, int rowNumber, int columnNumber, double value);
-RcppExport SEXP _pladdrr_table_set_numeric_value(SEXP xptrSEXP, SEXP rowNumberSEXP, SEXP columnNumberSEXP, SEXP valueSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
-    Rcpp::traits::input_parameter< int >::type rowNumber(rowNumberSEXP);
-    Rcpp::traits::input_parameter< int >::type columnNumber(columnNumberSEXP);
-    Rcpp::traits::input_parameter< double >::type value(valueSEXP);
-    table_set_numeric_value(xptr, rowNumber, columnNumber, value);
-    return R_NilValue;
-END_RCPP
-}
-// table_remove_row
-void table_remove_row(SEXP xptr, int rowNumber);
-RcppExport SEXP _pladdrr_table_remove_row(SEXP xptrSEXP, SEXP rowNumberSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
-    Rcpp::traits::input_parameter< int >::type rowNumber(rowNumberSEXP);
-    table_remove_row(xptr, rowNumber);
-    return R_NilValue;
-END_RCPP
-}
-// table_remove_column
-void table_remove_column(SEXP xptr, int columnNumber);
-RcppExport SEXP _pladdrr_table_remove_column(SEXP xptrSEXP, SEXP columnNumberSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
-    Rcpp::traits::input_parameter< int >::type columnNumber(columnNumberSEXP);
-    table_remove_column(xptr, columnNumber);
-    return R_NilValue;
-END_RCPP
-}
-// table_insert_column
-void table_insert_column(SEXP xptr, int columnPosition, std::string columnName);
-RcppExport SEXP _pladdrr_table_insert_column(SEXP xptrSEXP, SEXP columnPositionSEXP, SEXP columnNameSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
-    Rcpp::traits::input_parameter< int >::type columnPosition(columnPositionSEXP);
-    Rcpp::traits::input_parameter< std::string >::type columnName(columnNameSEXP);
-    table_insert_column(xptr, columnPosition, columnName);
-    return R_NilValue;
-END_RCPP
-}
-// table_get_mean
-double table_get_mean(SEXP xptr, int columnNumber);
-RcppExport SEXP _pladdrr_table_get_mean(SEXP xptrSEXP, SEXP columnNumberSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
-    Rcpp::traits::input_parameter< int >::type columnNumber(columnNumberSEXP);
-    rcpp_result_gen = Rcpp::wrap(table_get_mean(xptr, columnNumber));
-    return rcpp_result_gen;
-END_RCPP
-}
-// table_get_stdev
-double table_get_stdev(SEXP xptr, int columnNumber);
-RcppExport SEXP _pladdrr_table_get_stdev(SEXP xptrSEXP, SEXP columnNumberSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
-    Rcpp::traits::input_parameter< int >::type columnNumber(columnNumberSEXP);
-    rcpp_result_gen = Rcpp::wrap(table_get_stdev(xptr, columnNumber));
-    return rcpp_result_gen;
-END_RCPP
-}
-// table_get_minimum
-double table_get_minimum(SEXP xptr, int columnNumber);
-RcppExport SEXP _pladdrr_table_get_minimum(SEXP xptrSEXP, SEXP columnNumberSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
-    Rcpp::traits::input_parameter< int >::type columnNumber(columnNumberSEXP);
-    rcpp_result_gen = Rcpp::wrap(table_get_minimum(xptr, columnNumber));
-    return rcpp_result_gen;
-END_RCPP
-}
-// table_get_maximum
-double table_get_maximum(SEXP xptr, int columnNumber);
-RcppExport SEXP _pladdrr_table_get_maximum(SEXP xptrSEXP, SEXP columnNumberSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
-    Rcpp::traits::input_parameter< int >::type columnNumber(columnNumberSEXP);
-    rcpp_result_gen = Rcpp::wrap(table_get_maximum(xptr, columnNumber));
-    return rcpp_result_gen;
-END_RCPP
-}
-// table_get_sum
-double table_get_sum(SEXP xptr, int columnNumber);
-RcppExport SEXP _pladdrr_table_get_sum(SEXP xptrSEXP, SEXP columnNumberSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
-    Rcpp::traits::input_parameter< int >::type columnNumber(columnNumberSEXP);
-    rcpp_result_gen = Rcpp::wrap(table_get_sum(xptr, columnNumber));
-    return rcpp_result_gen;
-END_RCPP
-}
-// table_get_quantile
-double table_get_quantile(SEXP xptr, int columnNumber, double quantile);
-RcppExport SEXP _pladdrr_table_get_quantile(SEXP xptrSEXP, SEXP columnNumberSEXP, SEXP quantileSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
-    Rcpp::traits::input_parameter< int >::type columnNumber(columnNumberSEXP);
-    Rcpp::traits::input_parameter< double >::type quantile(quantileSEXP);
-    rcpp_result_gen = Rcpp::wrap(table_get_quantile(xptr, columnNumber, quantile));
-    return rcpp_result_gen;
-END_RCPP
-}
 // table_get_column_numbers
 NumericVector table_get_column_numbers(SEXP xptr);
 RcppExport SEXP _pladdrr_table_get_column_numbers(SEXP xptrSEXP) {
@@ -5855,17 +5687,6 @@ BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
     rcpp_result_gen = Rcpp::wrap(table_get_column_numbers(xptr));
-    return rcpp_result_gen;
-END_RCPP
-}
-// table_get_column_names
-CharacterVector table_get_column_names(SEXP xptr);
-RcppExport SEXP _pladdrr_table_get_column_names(SEXP xptrSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
-    rcpp_result_gen = Rcpp::wrap(table_get_column_names(xptr));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -7105,22 +6926,7 @@ extern const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_spectrum_shift_frequencies", (DL_FUNC) &_pladdrr_spectrum_shift_frequencies, 4},
     {"_pladdrr_table_create", (DL_FUNC) &_pladdrr_table_create, 2},
     {"_pladdrr_table_create_with_column_names", (DL_FUNC) &_pladdrr_table_create_with_column_names, 2},
-    {"_pladdrr_table_get_number_of_rows", (DL_FUNC) &_pladdrr_table_get_number_of_rows, 1},
-    {"_pladdrr_table_get_number_of_columns", (DL_FUNC) &_pladdrr_table_get_number_of_columns, 1},
-    {"_pladdrr_table_get_numeric_value", (DL_FUNC) &_pladdrr_table_get_numeric_value, 3},
-    {"_pladdrr_table_get_string_value", (DL_FUNC) &_pladdrr_table_get_string_value, 3},
-    {"_pladdrr_table_set_numeric_value", (DL_FUNC) &_pladdrr_table_set_numeric_value, 4},
-    {"_pladdrr_table_remove_row", (DL_FUNC) &_pladdrr_table_remove_row, 2},
-    {"_pladdrr_table_remove_column", (DL_FUNC) &_pladdrr_table_remove_column, 2},
-    {"_pladdrr_table_insert_column", (DL_FUNC) &_pladdrr_table_insert_column, 3},
-    {"_pladdrr_table_get_mean", (DL_FUNC) &_pladdrr_table_get_mean, 2},
-    {"_pladdrr_table_get_stdev", (DL_FUNC) &_pladdrr_table_get_stdev, 2},
-    {"_pladdrr_table_get_minimum", (DL_FUNC) &_pladdrr_table_get_minimum, 2},
-    {"_pladdrr_table_get_maximum", (DL_FUNC) &_pladdrr_table_get_maximum, 2},
-    {"_pladdrr_table_get_sum", (DL_FUNC) &_pladdrr_table_get_sum, 2},
-    {"_pladdrr_table_get_quantile", (DL_FUNC) &_pladdrr_table_get_quantile, 3},
     {"_pladdrr_table_get_column_numbers", (DL_FUNC) &_pladdrr_table_get_column_numbers, 1},
-    {"_pladdrr_table_get_column_names", (DL_FUNC) &_pladdrr_table_get_column_names, 1},
     {"_pladdrr_table_to_matrix", (DL_FUNC) &_pladdrr_table_to_matrix, 1},
     {"_pladdrr_table_sort_rows", (DL_FUNC) &_pladdrr_table_sort_rows, 2},
     {"_pladdrr_table_extract_rows_where_column_number", (DL_FUNC) &_pladdrr_table_extract_rows_where_column_number, 4},
