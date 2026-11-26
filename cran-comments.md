@@ -1,274 +1,50 @@
 ## Submission notes
 
-pladdrr provides a dependency-free, object-oriented R interface to Praat's
-phonetic-analysis DSP routines by vendoring a **curated subset** of Praat's
-C++ source (from the pinned `praat.github.io` upstream) and compiling it via
-Rcpp. Bundling the source is what lets the package reproduce Praat's numeric
-output faithfully without requiring an external Praat installation.
+This is a new submission (version 5.2.0).
 
-### 5.1.1 resubmission — CRAN incoming findings
+pladdrr is an object-oriented R interface to Praat's phonetic-analysis DSP
+routines. It vendors a curated subset of Praat's C++ source (`src/praat.github.io`)
+and compiles it via Rcpp, so results match the Praat application without an
+external Praat installation. Bundled third-party code (Praat, pocketfft,
+libFLAC/Ogg/Vorbis/Opusfile) and its copyright holders are listed in
+`inst/COPYRIGHTS` and as `cph` in `Authors@R`. Praat is GPL (>= 3), as is the
+package.
 
-This submission addresses the three NOTEs reported by CRAN incoming on the
-5.1.1 tarball (r-devel-windows-x86_64 and r-devel-linux-x86_64-debian-gcc):
+### Package size
 
-- **Rd contents NOTE** (33 class `.Rd` files without `\usage`): the dispatch-
-  table class pages (`Sound.Rd`, `Formant.Rd`, ...) documented constructor
-  arguments via `\arguments` but carried no `\usage` section. Each of the 33
-  pages now has an explicit `\usage{Class(arg, ...)}` derived from its
-  documented constructor parameters, and the former `@section Usage:` blocks
-  were renamed `@section Construction:` so the manual no longer shows two
-  "Usage" headings on one page.
+The source tarball is 4.7 MB. Installed size is ~27 MB, mostly `libs` (22 MB,
+object code of the vendored Praat sources, which includes Praat's Unicode tables
+compiled into `longchar.cpp`). Only the Praat sources that are compiled or
+included were kept; unused upstream subtrees, GUI/manual sources and duplicate
+trees were removed.
 
-- **Overall checktime NOTE (12 min > 10 min)**: the bulk of the check time is
-  the unavoidable compilation of the 243 vendored Praat translation units (the
-  cost of bundling the DSP core, documented above), which is independent of
-  the check phases. The reducible phases were profiled per file and trimmed:
-  two PSOCK-cluster tests that spawned a fresh worker cluster on every run are
-  now skipped on CRAN, the thread-granularity bit-identity sweep (full DSP
-  analyses repeated at several thread counts) is skipped on CRAN and runs only
-  in CI, the cepstrogram fixtures were halved (0.5 s → 0.25 s), and three
-  vignette chunks that spawned PSOCK clusters / ran `microbenchmark` during
-  the CRAN-required rebuild are now `eval = FALSE`.
+### Build and compiled code
 
-- **CRAN incoming feasibility NOTE**: new-submission boilerplate (license
-  note, and technical terms such as "cepstral"/"formant" flagged as possibly
-  misspelled); no action required.
-
-The test-warning audit for this release also surfaced and fixed two issues
-that were previously hidden behind the suite's warning count: (1)
-`pitch$to_point_process()` emitted an unconditional guidance warning on every
-call, including through internal callers such as `to_textgrid_vuv()` — it is
-now a `message()`; and (2) the power-cepstrum peak annotation silently failed
-to render because `get_value_at_quefrency()` was invoked with the unsupported
-`qmin`/`qmax` arguments and an invalid `"parabolic"` interpolation — the CPP
-peak marker now draws correctly.
-
-### Installed/source size
-
-The package compiles 243 Praat translation units (~5.5 MB of `.cpp`) plus the
-headers they include — most notably Praat's Unicode character database
-(`kar/UCD_features_generated.h`, `kar/UnicodeData.h`, ~27 MB), which
-`longchar.cpp` compiles in directly and cannot be reduced without breaking
-text handling.
-
-We have removed everything not required to build:
-
-- a redundant duplicate Praat tree that was formerly shipped for the Windows
-  build (both platforms now compile from a single source directory);
-- all bundled-external-library **sources** (libFLAC was later re-vendored, BSD-3-Clause) (espeak, mp3, portaudio,
-  vorbis, opusfile, lame, clapack, gsl, glpk) — these are stubbed out at build
-  time, so only the referenced **headers** are retained;
-- Praat subtrees that are neither compiled nor on any include path
-  (artsynth, EEG, FFNet, gram, main, makefiles, dwtest, docs, generate, tests);
-- Praat manual/documentation source files (`manual_*.cpp`), which are compiled
-  nowhere in this package.
-
-This reduced the source tarball from ~52 MB to ~9 MB. The remaining size is
-inherent to faithfully wrapping Praat's DSP core, consistent with other CRAN
-packages that vendor substantial upstream C/C++ (e.g. duckdb, arrow, V8).
-
-Installed size is ~34 Mb, broken down as: `libs` 22.7 Mb (the compiled DSP
-core — object code for 243 Praat translation units plus the vendored Unicode
-tables, statically linked into one shared object), `doc` 4.3 Mb (vignettes,
-built as part of the CRAN-required vignette re-build), `extdata` 1.3 Mb and
-`signalfiles` 1.7 Mb (small WAV/TextGrid fixtures exercised by the
-`get_durations_batch()`/Tier-4 batch tests — kept intentionally small; an
-unused AVQI fixture subset was removed. See
-`tests/testthat/faithfulness/`). None of this is reducible without either
-dropping DSP coverage or dropping the bit-exact regression fixtures that
-back the package's core correctness claim.
-
-`src/Makevars` contains no non-portable flags. FP contraction (FMA fusion) is
-disabled at source level with `#pragma STDC FP_CONTRACT OFF` in the vendored
-`melder.h`, which every DSP translation unit includes. This preserves the
-package's primary correctness guarantee — the compiled DSP routines reproduce
-the reference Praat application's output bit-for-bit (the regression-test
-oracle) — without any compiler flags. The previous `-ffp-contract=off` in
-`PKG_CXXFLAGS` triggered a "Non-portable flags" warning; removing it leaves
-the check clean. GCC and Clang both honour the pragma; it is compiled out on
-other compilers. All warning-suppressing `-Wno-*` flags have been removed;
-the remaining build warnings originate in the vendored Praat C++ sources and
-are non-significant.
-
-→
-(paragraph removed — superseded by the `#pragma STDC FP_CONTRACT OFF`
-resolution described in the preceding "Compiler flags" paragraph; the
-pragma is GCC/Clang-guarded and MSVC is unaffected)
-
-The 'checking compiled code' WARNING for `stderr`/`stdout`/`_exit` symbols in
-the vendored Praat objects was resolved in this release. The `abort` calls and
-the app-shutdown `_Exit` had already been removed; the remaining direct
-references to the libc `stdout`/`stderr` streams and to `exit()` are gone:
-
-- `melder_console.cpp` now routes console output through the R API
-  (`Rprintf`/`REprintf`) in library builds instead of the libc streams.
-  R's console API is only safe on the main thread, and Praat DSP frame
-  loops on worker threads can emit casual messages (e.g.
-  `Sound_to_Pitch.cpp`), so writes are gated to the main thread — the first
-  writer (the R main thread at package load) is recorded and messages from
-  other threads are dropped; a mutex serializes main-thread writers. (The
-  `R_Outputfile`/`R_Consolefile` handles were considered and rejected: R
-  CMD check flags them as non-API entry points.)
-- All remaining `exit()` call sites (Praat's interactive CLI/argument
-  handling, compiled but never entered from the embedded library) now throw a
-  `MelderError` under `PRAAT_LIB` instead of terminating the process.
-- `melder_sysenv.cpp`: Praat's `system`/`system$`/`runSystem`/
-  `runSubprocess` script commands, which pladdrr's `PraatInterpreter`
-  exposes to arbitrary R-supplied script text, throw immediately instead of
-  forking a shell (see `melder_sysenv.cpp`, `runAny_STR`), closing the
-  shell-exec surface.
-- A Praat-internal debug/self-test command (`Praat_tests.cpp`, "Praat
-  test..." menu action) that wrote raw `fprintf(stderr, ...)` was removed
-  from the build entirely (menu registration deleted, source file dropped
-  from `SOURCES`).
-
-The 'checking compiled code' NOTE may report `stderr`/`stdout`/`_exit` in the
-vendored Praat objects. The widespread `abort` and the app-shutdown `_Exit`
-have been removed, and the remaining `printf`/`rand`/`sprintf` call sites that
-were under package control have been removed or replaced. The
-remainder are legitimate and cannot be replaced without regressions:
-
-- `melder_console.cpp` writes casual diagnostics to `stderr`/`stdout` as a
-  fallback. Praat runs DSP frame loops on worker threads that can emit these
-  messages, and R's `REprintf`/`Rprintf` are only safe on the main thread, so
-  routing them through R would be unsafe.
-- `melder_sysenv.cpp` uses `_exit` in the child of a `fork()` (the correct
-  POSIX idiom — the child must not run `atexit`/flush handlers). This
-  fork/exec path is defined but disabled: Praat's `system`/`system$`/
-  `runSystem`/`runSubprocess` script commands, which pladdrr's
-  `PraatInterpreter` exposes to arbitrary R-supplied script text, now throw
-  immediately instead of forking a shell (see `melder_sysenv.cpp`,
-  `runAny_STR`). This closes the shell-exec surface entirely; the fork/exec/
-  `_exit` code below the throw is unreachable and kept only because removing
-  it would require restructuring `melder_sysenv.cpp`'s upstream body.
-- The remaining `exit`/`isatty`/`fprintf(stderr)` live in Praat's interactive
-  `main`/CLI, which is compiled but never entered from the embedded library
-  (`-DPRAAT_LIB -DNO_GUI`).
-- A Praat-internal debug/self-test command (`Praat_tests.cpp`, "Praat
-  test..." menu action) was found to be reachable from arbitrary
-  `PraatInterpreter` script text via `praat_doMenuCommand()` and wrote raw
-  `fprintf(stderr, ...)` outside Melder's console abstraction. It has been
-  removed from the build entirely (menu registration deleted, source file
-  dropped from `SOURCES`), closing that surface rather than justifying it.
-
-### URLs
-
-Broken package-site and private-repository URLs were removed from package
-metadata and replaced in the vignettes with public canonical links or plain
-citations/contact details.
+- `src/Makevars` contains no non-portable flags. Floating-point contraction is
+  disabled in the vendored `melder.h` with `#pragma STDC FP_CONTRACT OFF`, which
+  keeps results bit-identical to Praat.
+- The package is built with `-DPRAAT_LIB -DNO_GUI`. In this configuration
+  Praat's console output goes through `Rprintf`/`REprintf` (main thread only),
+  `exit()` call sites throw an error instead, and Praat's `system`/`runSystem`
+  script commands are disabled (`melder_sysenv.cpp`), so no shell is started.
+  `R CMD check` reports no problem under "checking compiled code".
+- Computation is multi-threaded (C++ threads). The default thread count follows
+  the process CPU affinity/cgroup quota; see `?pladdrr_threads` for how to limit
+  it.
 
 ### Test environments
 
-- local macOS (aarch64), R 4.6.1 — `R CMD check --as-cran --no-manual pladdrr_5.0.5.tar.gz` (0 errors, 0 warnings, 1 note — the new-submission boilerplate)
-- GitHub Actions: R CMD check on ubuntu-latest (release + devel), macos-latest and windows-latest (all success), plus test-coverage, lintr and pkgdown
-- win-builder, R-devel and R-release — pladdrr_5.0.5 submitted, results emailed to the maintainer (identical source already passes the windows-latest R CMD check in CI)
-- R-hub: pending
+- local macOS 27.2 (aarch64), R 4.6.1: `R CMD check --as-cran` on
+  `pladdrr_5.2.0.tar.gz`, including `--run-donttest`
+- win-builder (R-release, R-devel): TODO paste results for the final tarball
+- GitHub Actions R CMD check: TODO confirm ubuntu (release, devel), macOS, Windows
+  green for the submitted commit
 
 ### R CMD check results
 
-→
-Local tarball check of the final `pladdrr_5.0.5.tar.gz` (R 4.6.1, aarch64,
-`R CMD check --as-cran --no-manual`) finishes with:
+0 errors | 0 warnings | 2 notes
 
-- 0 errors
-- 0 warnings
-- 1 note: the new-submission boilerplate. An environmental
-  outdated-macOS-HTML-Tidy note appeared on an earlier run of this release
-  and may recur on CRAN's check machines (documented below)
-
-The previously reported install-time compiler warnings have been resolved: an
-unsequenced-modification warning in vendored `melder_ftoa.cpp` was fixed at
-source, and the deprecation warnings emitted by libc++ inside the RcppXsimd
-headers are silenced with the portable define
-`-D_LIBCPP_DISABLE_DEPRECATION_WARNINGS`; the install step now completes with
-no significant warnings. Both R CMD check warnings reported previously were
-resolved in this release:
-
-- the compiled-code WARNING for the residual vendored `stderr`/`stdout`/
-  `_exit` symbols (see "Compiled-code diagnostics" above), and
-- the "Non-portable flags in variable 'PKG_CXXFLAGS'" WARNING for
-  `-ffp-contract=off` (see "Compiler flags" above).
-
-Notes are:
-
-- new submission
-- installed size
-- local clock verification unavailable during check (local-environment only)
-- HTML manual validation messages from the outdated HTML Tidy shipped with
-  macOS, which predates HTML5 (`<main>` unrecognized); not reproducible with a
-  current Tidy.
-
-win-builder R-release (R 4.6.2, mingw GCC 14.3) on the previous tarball finished with
-**0 errors, 2 warnings, 2 notes**. All four findings are addressed in this release:
-
-- Install-time significant-warnings WARNING (C++20 `-Wtemplate-id-cdtor`,
-  `-Wclass-memaccess`, `-Wuninitialized`, `-Warray-bounds` in vendored Praat
-  headers): fixed at source, 12 sites in 7 vendored files (details in
-  `inst/agents/PRAAT_MODIFICATIONS.md`). Two of them were real defects: a null
-  `intervalTier` dereference in `_Label_to_TextGrid`, and a one-int `iwork`
-  buffer passed to LAPACK `dggsvd`, which writes N ints. Reproduced and
-  verified silent with `g++ -O2 -Wall` on the affected translation units.
-- S3-registration WARNING (`as.matrix.Matrix` overwrote the 'Matrix' package's
-  registration): pladdrr objects of Praat class Matrix now carry the leading
-  class `PraatMatrix`, which owns the method; pladdrr registers nothing under
-  `as.matrix.Matrix`.
-- Top-level-files NOTE (`pladdrr-5.1.0-message`): stray file from the build
-  directory; the tarball is now built from a clean checkout and the pattern is
-  in `.Rbuildignore`.
-- CRAN-incoming-feasibility NOTE: new submission. Software names in
-  `DESCRIPTION` are quoted; the remaining flagged words (cepstral, formant,
-  MFCC, LFCC) are standard phonetics terms.
-
-A fresh win-builder run on the final tarball is pending.
-
-## Accepted goodpractice lint findings (pkgcheck)
-
-`pkgcheck` reports goodpractice lint findings as advisory (`ℹ Some goodpractice
-linters failed`); they are non-blocking and do not affect the `R CMD check`
-result (0 errors / 0 warnings). The following findings are intentionally
-accepted; the code is correct as written and "fixing" it would make it worse.
-
-- **45 `$.X` S3 methods flagged "defined but never called"**: all are registered
-  `S3method("$", Class)` in NAMESPACE and dispatched dynamically by `obj$field`;
-  the check misses the quoted `"$"` generic in the registration. False positive.
-- **19 `RcppExports.R` internal wrappers with no R-side caller**: removing them
-  requires editing vendored Praat C++ and a full recompile for zero functional
-  gain. Many are SIMD variants used by the regression test suite.
-- **71 `expect_true(is.numeric(x))` (expect_type linter)**: `is.numeric()` is
-  true for both integer and double; converting to `expect_type(x, "double")`
-  would wrongly reject integer results. The assertion is correct as written.
-- **`expect_equal()` on count/dimension results**: `get_number_of_*` and related
-  getters return a mix of double and integer types, so `expect_identical()`
-  would be type-fragile; `expect_equal()`'s tolerance is the correct assertion.
-- **70 implicit assignments in `expect_warning(x <- f())` / `expect_silent(x <- f())`**:
-  the standard testthat idiom for capturing both the warning and the return
-  value. `expect_warning()` does not return the expression value, so
-  `x <- expect_warning(f())` would break. Linter misfires on this idiom.
-- **14 unreachable-code findings**: all are `switch(...) = ..., stop(...)` default
-  branches or intentional `if (FALSE)` demonstration guards in examples —
-  linter false positives, not dead-code bugs.
-- **`line_length_linter` (2,975 hits)**: the repo's own lint standard is 120 cols
-  (`.lintr`); pkgcheck's bundled goodpractice enforces 80 cols and ignores
-  `.lintr`, including on generated `R/RcppExports.R`. Wrapping to 80 would
-  contradict the repo standard for zero functional gain.
-- **`library_require_linter` (236) / `undesirable_operator_linter` (310)**:
-  `library()` in tests/vignettes and `pladdrr:::` for testing internals are the
-  idiomatic patterns; `<<-` appears only in benchmark scripts.
-- **Function-length/cyclomatic-complexity findings**: fully addressed. A
-  whole-package scan reports 0 functions over 50 lines and 0 functions over
-  cyclomatic complexity 15 (both exported and internal helpers; Phase 7
-  refactors, verified fresh with `cyclocomp`/`length(deparse(body()))`). The
-  `@inheritParams` check is substantially addressed: 274 identical `@param`
-  descriptions across ~40 params were consolidated into 13 shared
-  `@name pladdrr-shared-*` topics (roxygenise() regenerates the affected man
-  files byte-identically; check_man clean; R CMD check 0/0/0). Remaining
-  duplicates are `...` (roxygen2 @inheritParams does not resolve the special
-  `...` param into \arguments) and 2-place groups too small to justify a topic.
-  lintr `object_usage` findings for package-internal dot-prefixed
-  helpers used across files are false positives (lintr lints each file in
-  isolation and cannot resolve cross-file internal symbols); consistent with the
-  pre-existing pattern and left as-is. The 3 remaining `expect_s3_class_linter`
-  findings are `expect_true(inherits(x, "externalptr"))` — `externalptr` is not
-  an S3 class and `expect_s3_class()` rejects it; false positive, kept as-is.
-  The 12 exported-name clashes under "Other checks" cannot be changed without
-  renaming public API.
+- CRAN incoming feasibility: "New submission". The `LICENSE` file only states the
+  copyright holder and year (`GPL-3 + file LICENSE`).
+- HTML manual validation was skipped because the HTML Tidy shipped with macOS is
+  too old (local environment only).
