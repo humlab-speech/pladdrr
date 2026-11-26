@@ -7,7 +7,7 @@
 \usage{
 get_sound_values_fast(sound, channel = 1)
 
-# Deprecated: use get_sound_values_fast() instead
+get_sound_values_zerocopy(sound, channel = 1)
 }
 \arguments{
 \item{sound}{A Sound object created with `Sound()`}

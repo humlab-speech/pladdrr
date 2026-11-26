@@ -3,6 +3,34 @@
 \name{PraatMatrix}
 \alias{PraatMatrix}
 \title{Praat Matrix Object (PraatMatrix)}
+\usage{
+PraatMatrix(xmin = NULL, xmax = NULL, nx = NULL, dx = NULL,
+  x1 = NULL, ymin = NULL, ymax = NULL, ny = NULL, dy = NULL, y1 = NULL,
+  numberOfRows = NULL, numberOfColumns = NULL, .xptr = NULL)
+}
+\arguments{
+\item{xmin, xmax}{Start and end of the x axis (s).}
+
+\item{nx}{Number of x samples.}
+
+\item{dx}{Sampling interval along x (s).}
+
+\item{x1}{Value of the first x sample (s).}
+
+\item{ymin, ymax}{Start and end of the y axis.}
+
+\item{ny}{Number of y samples.}
+
+\item{dy}{Sampling interval along y.}
+
+\item{y1}{Value of the first y sample.}
+
+\item{numberOfRows, numberOfColumns}{Grid size; an alternative to the ten
+full-domain parameters above.}
+
+\item{.xptr}{External pointer to an existing Praat Matrix. When given, all
+other arguments are ignored.}
+}
 \value{
 A \code{PraatMatrix} object with methods for two-dimensional sampled data
  access.

@@ -7,7 +7,7 @@
 \usage{
 is_fast_vector(x)
 
-# Deprecated: use is_fast_vector() instead
+is_zerocopy_vector(x)
 }
 \arguments{
 \item{x}{A vector to test}

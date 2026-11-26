@@ -3,6 +3,17 @@
 \name{IntensityTier}
 \alias{IntensityTier}
 \title{Praat IntensityTier Object}
+\usage{
+IntensityTier(tmin = NULL, tmax = NULL, .xptr = NULL)
+}
+\arguments{
+\item{tmin}{Start time of the new tier (s).}
+
+\item{tmax}{End time of the new tier (s).}
+
+\item{.xptr}{External pointer to an existing Praat IntensityTier. When given,
+\code{tmin} and \code{tmax} are ignored.}
+}
 \value{
 An \code{IntensityTier} object with methods for intensity (dB SPL)
  manipulation via time-value points.

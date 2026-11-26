@@ -19,7 +19,9 @@ klattgrid_create_from_vowel(
   formantFrequencyInterval = 1000
 )
 
-# Deprecated: use klattgrid_create_from_vowel() instead
+KlattGrid_createFromVowel(duration = 0.5, f0start = 100, f1 = 500,
+  b1 = 50, f2 = 1500, b2 = 100, f3 = 2500, b3 = 150, f4 = 3500,
+  bandWidthFraction = 0.05, formantFrequencyInterval = 1000)
 }
 \arguments{
 \item{duration}{Duration in seconds}

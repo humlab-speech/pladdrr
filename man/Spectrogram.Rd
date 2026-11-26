@@ -3,6 +3,13 @@
 \name{Spectrogram}
 \alias{Spectrogram}
 \title{Spectrogram}
+\usage{
+Spectrogram(.xptr = NULL)
+}
+\arguments{
+\item{.xptr}{External pointer to a Praat Spectrogram. Spectrograms are
+normally created with \code{sound$to_spectrogram()}.}
+}
 \value{
 A Spectrogram object.
 }

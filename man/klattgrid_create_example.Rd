@@ -7,7 +7,7 @@
 \usage{
 klattgrid_create_example()
 
-# Deprecated: use klattgrid_create_example() instead
+KlattGrid_createExample()
 }
 \value{
 KlattGrid example object

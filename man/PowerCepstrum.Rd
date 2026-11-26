@@ -3,6 +3,14 @@
 \name{PowerCepstrum}
 \alias{PowerCepstrum}
 \title{PowerCepstrum}
+\usage{
+PowerCepstrum(.xptr = NULL)
+}
+\arguments{
+\item{.xptr}{External pointer to a Praat PowerCepstrum. PowerCepstrum
+objects are normally created with \code{spectrum$to_power_cepstrum()} or
+with \code{powercepstrogram$get_power_cepstrum_at_time(time)}.}
+}
 \value{
 A PowerCepstrum object.
 }

@@ -3,6 +3,13 @@
 \name{Cepstrum}
 \alias{Cepstrum}
 \title{Praat Cepstrum Object}
+\usage{
+Cepstrum(.xptr)
+}
+\arguments{
+\item{.xptr}{External pointer to a Praat Cepstrum. This is the low-level
+constructor; \code{sound$to_cepstrum()} is the usual entry point.}
+}
 \value{
 A \code{Cepstrum} object with methods for cepstral analysis and
  quefrency-domain processing.
