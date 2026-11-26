@@ -9,7 +9,7 @@ abstract: >-
   without an external Praat installation.
 type: software
 version: 5.2.0
-date-released: "2026-11-09"
+date-released: "2026-11-26"
 doi: 10.5281/zenodo.21884217
 license: GPL-3.0-or-later
 repository-code: "https://github.com/humlab-speech/pladdrr"
@@ -26,13 +26,6 @@ authors:
     given-names: "Fredrik"
     email: "fredrik.nylen@umu.se"
     orcid: "https://orcid.org/0000-0003-3373-0934"
-  - family-names: "Skotare"
-    given-names: "Tomas"
-    orcid: "https://orcid.org/0000-0001-8445-0559"
-  - name-particle: "von"
-    family-names: "Boer"
-    given-names: "Johan"
-    orcid: "https://orcid.org/0000-0003-4188-5872"
 references:
   - type: software
     title: "Praat: doing phonetics by computer"
