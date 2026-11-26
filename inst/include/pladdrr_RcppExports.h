@@ -1365,27 +1365,6 @@ namespace pladdrr {
         return Rcpp::as<NumericVector >(rcpp_result_gen);
     }
 
-    inline NumericVector _formant_get_values_at_times(XPtr<structFormant> xptr, NumericVector times, int formant_number = 1, int unit = 0) {
-        typedef SEXP(*Ptr__formant_get_values_at_times)(SEXP,SEXP,SEXP,SEXP);
-        static Ptr__formant_get_values_at_times p__formant_get_values_at_times = NULL;
-        if (p__formant_get_values_at_times == NULL) {
-            validateSignature("NumericVector(*_formant_get_values_at_times)(XPtr<structFormant>,NumericVector,int,int)");
-            p__formant_get_values_at_times = (Ptr__formant_get_values_at_times)R_GetCCallable("pladdrr", "_pladdrr__formant_get_values_at_times");
-        }
-        RObject rcpp_result_gen;
-        {
-            RNGScope RCPP_rngScope_gen;
-            rcpp_result_gen = p__formant_get_values_at_times(Shield<SEXP>(Rcpp::wrap(xptr)), Shield<SEXP>(Rcpp::wrap(times)), Shield<SEXP>(Rcpp::wrap(formant_number)), Shield<SEXP>(Rcpp::wrap(unit)));
-        }
-        if (rcpp_result_gen.inherits("interrupted-error"))
-            throw Rcpp::internal::InterruptedException();
-        if (Rcpp::internal::isLongjumpSentinel(rcpp_result_gen))
-            throw Rcpp::LongjumpException(rcpp_result_gen);
-        if (rcpp_result_gen.inherits("try-error"))
-            throw Rcpp::exception(Rcpp::as<std::string>(rcpp_result_gen).c_str());
-        return Rcpp::as<NumericVector >(rcpp_result_gen);
-    }
-
     inline NumericVector _intensity_get_values_at_times(XPtr<structIntensity> xptr, NumericVector times, int interpolation = 1) {
         typedef SEXP(*Ptr__intensity_get_values_at_times)(SEXP,SEXP,SEXP);
         static Ptr__intensity_get_values_at_times p__intensity_get_values_at_times = NULL;

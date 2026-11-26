@@ -93,18 +93,6 @@ public:
         }
     }
 
-    XPtr<structPowerCepstrum> to_powercepstrum_ptr() {
-        VALIDATE_PTR(ptr, Cepstrum);
-        try {
-            autoPowerCepstrum powercepstrum = Cepstrum_downto_PowerCepstrum(ptr.get());
-            structPowerCepstrum* raw = powercepstrum.releaseToAmbiguousOwner();
-            return make_praat_xptr(raw);
-        } catch (MelderError) {
-            Melder_clearError();
-            Rcpp::stop("Failed to convert Cepstrum to PowerCepstrum");
-        }
-    }
-
     // Export
     DataFrame as_data_frame() {
         VALIDATE_PTR(ptr, Cepstrum);
@@ -198,7 +186,6 @@ RCPP_MODULE(cepstrum_module) {
         .method("get_index_from_quefrency", &RCepstrum::get_index_from_quefrency)
         // Conversion
         .method("to_spectrum_ptr", &RCepstrum::to_spectrum_ptr)
-        .method("to_powercepstrum_ptr", &RCepstrum::to_powercepstrum_ptr)
         // Export
         .method("as_data_frame", &RCepstrum::as_data_frame)
         .method("as_vector", &RCepstrum::as_vector)

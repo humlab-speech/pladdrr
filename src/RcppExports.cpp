@@ -4560,43 +4560,6 @@ RcppExport SEXP _pladdrr_pitch_get_values_at_times(SEXP xptrSEXP, SEXP timesSEXP
     UNPROTECT(1);
     return rcpp_result_gen;
 }
-// formant_get_values_at_times
-NumericVector formant_get_values_at_times(XPtr<structFormant> xptr, NumericVector times, int formant_number, int unit);
-static SEXP _pladdrr_formant_get_values_at_times_try(SEXP xptrSEXP, SEXP timesSEXP, SEXP formant_numberSEXP, SEXP unitSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::traits::input_parameter< XPtr<structFormant> >::type xptr(xptrSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type times(timesSEXP);
-    Rcpp::traits::input_parameter< int >::type formant_number(formant_numberSEXP);
-    Rcpp::traits::input_parameter< int >::type unit(unitSEXP);
-    rcpp_result_gen = Rcpp::wrap(formant_get_values_at_times(xptr, times, formant_number, unit));
-    return rcpp_result_gen;
-END_RCPP_RETURN_ERROR
-}
-RcppExport SEXP _pladdrr_formant_get_values_at_times(SEXP xptrSEXP, SEXP timesSEXP, SEXP formant_numberSEXP, SEXP unitSEXP) {
-    SEXP rcpp_result_gen;
-    {
-        Rcpp::RNGScope rcpp_rngScope_gen;
-        rcpp_result_gen = PROTECT(_pladdrr_formant_get_values_at_times_try(xptrSEXP, timesSEXP, formant_numberSEXP, unitSEXP));
-    }
-    Rboolean rcpp_isInterrupt_gen = Rf_inherits(rcpp_result_gen, "interrupted-error");
-    if (rcpp_isInterrupt_gen) {
-        UNPROTECT(1);
-        Rf_onintr();
-    }
-    bool rcpp_isLongjump_gen = Rcpp::internal::isLongjumpSentinel(rcpp_result_gen);
-    if (rcpp_isLongjump_gen) {
-        Rcpp::internal::resumeJump(rcpp_result_gen);
-    }
-    Rboolean rcpp_isError_gen = Rf_inherits(rcpp_result_gen, "try-error");
-    if (rcpp_isError_gen) {
-        SEXP rcpp_msgSEXP_gen = Rf_asChar(rcpp_result_gen);
-        UNPROTECT(1);
-        (Rf_error)("%s", CHAR(rcpp_msgSEXP_gen));
-    }
-    UNPROTECT(1);
-    return rcpp_result_gen;
-}
 // intensity_get_values_at_times
 NumericVector intensity_get_values_at_times(XPtr<structIntensity> xptr, NumericVector times, int interpolation);
 static SEXP _pladdrr_intensity_get_values_at_times_try(SEXP xptrSEXP, SEXP timesSEXP, SEXP interpolationSEXP) {
@@ -6473,7 +6436,6 @@ static int _pladdrr_RcppExport_validate(const char* sig) {
         signatures.insert("Rcpp::List(*.sound_extract_and_pitch_batch)(XPtr<structSound>,NumericVector,NumericVector,double,double,double)");
         signatures.insert("Rcpp::List(*.sound_extract_and_formant_batch)(XPtr<structSound>,NumericVector,NumericVector,double,double,double,double,double)");
         signatures.insert("NumericVector(*.pitch_get_values_at_times)(XPtr<structPitch>,NumericVector,int,bool)");
-        signatures.insert("NumericVector(*.formant_get_values_at_times)(XPtr<structFormant>,NumericVector,int,int)");
         signatures.insert("NumericVector(*.intensity_get_values_at_times)(XPtr<structIntensity>,NumericVector,int)");
         signatures.insert("XPtr<structLtas>(*.sound_to_ltas_pitch_corrected)(XPtr<structSound>,double,double,double,double,double,double,double)");
         signatures.insert("XPtr<structFormant>(*.sound_to_formant_robust)(XPtr<structSound>,double,double,double,double,double,double,int)");
@@ -6578,7 +6540,6 @@ RcppExport SEXP _pladdrr_RcppExport_registerCCallable() {
     R_RegisterCCallable("pladdrr", "_pladdrr_.sound_extract_and_pitch_batch", (DL_FUNC)_pladdrr_sound_extract_and_pitch_batch_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.sound_extract_and_formant_batch", (DL_FUNC)_pladdrr_sound_extract_and_formant_batch_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.pitch_get_values_at_times", (DL_FUNC)_pladdrr_pitch_get_values_at_times_try);
-    R_RegisterCCallable("pladdrr", "_pladdrr_.formant_get_values_at_times", (DL_FUNC)_pladdrr_formant_get_values_at_times_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.intensity_get_values_at_times", (DL_FUNC)_pladdrr_intensity_get_values_at_times_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.sound_to_ltas_pitch_corrected", (DL_FUNC)_pladdrr_sound_to_ltas_pitch_corrected_try);
     R_RegisterCCallable("pladdrr", "_pladdrr_.sound_to_formant_robust", (DL_FUNC)_pladdrr_sound_to_formant_robust_try);
@@ -6845,7 +6806,6 @@ extern const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_sound_extract_and_pitch_batch", (DL_FUNC) &_pladdrr_sound_extract_and_pitch_batch, 6},
     {"_pladdrr_sound_extract_and_formant_batch", (DL_FUNC) &_pladdrr_sound_extract_and_formant_batch, 8},
     {"_pladdrr_pitch_get_values_at_times", (DL_FUNC) &_pladdrr_pitch_get_values_at_times, 4},
-    {"_pladdrr_formant_get_values_at_times", (DL_FUNC) &_pladdrr_formant_get_values_at_times, 4},
     {"_pladdrr_intensity_get_values_at_times", (DL_FUNC) &_pladdrr_intensity_get_values_at_times, 3},
     {"_pladdrr_sound_to_ltas_pitch_corrected", (DL_FUNC) &_pladdrr_sound_to_ltas_pitch_corrected, 8},
     {"_pladdrr_sound_to_formant_robust", (DL_FUNC) &_pladdrr_sound_to_formant_robust, 8},

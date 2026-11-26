@@ -2042,41 +2042,6 @@ NumericVector pitch_get_values_at_times(
     return result;
 }
 
-//' Get multiple formant values at specific times in one C++ call (internal)
-//'
-//' @param xptr Formant external pointer
-//' @param times Numeric vector of times
-//' @param formant_number Which formant (1-5)
-//' @param unit Unit (0=Hertz, 1=Bark)
-//' @return Numeric vector of formant values
-//' @keywords internal
-//' @noRd
-// [[Rcpp::export(.formant_get_values_at_times)]]
-NumericVector formant_get_values_at_times(
-    XPtr<structFormant> xptr,
-    NumericVector times,
-    int formant_number = 1,
-    int unit = 0
-) {
-    structFormant* formant = get_ptr(xptr, "Formant");
-    int n = times.size();
-    NumericVector result(n);
-
-    kFormant_unit formant_unit = static_cast<kFormant_unit>(unit);
-
-    for (int i = 0; i < n; i++) {
-        double value = Formant_getValueAtTime(
-            formant,
-            formant_number,
-            times[i],
-            formant_unit
-        );
-        result[i] = value;
-    }
-
-    return result;
-}
-
 //' Get multiple intensity values at specific times in one C++ call (internal)
 //'
 //' @param xptr Intensity external pointer

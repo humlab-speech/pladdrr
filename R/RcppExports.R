@@ -2214,19 +2214,6 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
     .Call(`_pladdrr_pitch_get_values_at_times`, xptr, times, unit, interpolate)
 }
 
-#' Get multiple formant values at specific times in one C++ call (internal)
-#'
-#' @param xptr Formant external pointer
-#' @param times Numeric vector of times
-#' @param formant_number Which formant (1-5)
-#' @param unit Unit (0=Hertz, 1=Bark)
-#' @return Numeric vector of formant values
-#' @keywords internal
-#' @noRd
-.formant_get_values_at_times <- function(xptr, times, formant_number = 1L, unit = 0L) {
-    .Call(`_pladdrr_formant_get_values_at_times`, xptr, times, formant_number, unit)
-}
-
 #' Get multiple intensity values at specific times in one C++ call (internal)
 #'
 #' @param xptr Intensity external pointer

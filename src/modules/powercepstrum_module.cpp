@@ -330,58 +330,8 @@ public:
     int get_ny() { VALIDATE_PTR(ptr, PowerCepstrogram); return static_cast<int>(ptr->ny); }
     double get_dy() { VALIDATE_PTR(ptr, PowerCepstrogram); return ptr->dy; }
 
-    // CPP at specific time
-    double get_cpp_at_time(double time, std::string interpolation,
-                           double qmin, double qmax,
-                           std::string fit_method, double tolerance) {
-        VALIDATE_PTR(ptr, PowerCepstrogram);
-        try {
-            autoPowerCepstrum slice = PowerCepstrogram_to_PowerCepstrum_slice(ptr.get(), time);
-
-            kVector_peakInterpolation interp_type = kVector_peakInterpolation::PARABOLIC;
-            if (interpolation == "linear") interp_type = kVector_peakInterpolation::PARABOLIC;
-            else if (interpolation == "cubic") interp_type = kVector_peakInterpolation::CUBIC;
-
-            kCepstrum_trendType trend_type = kCepstrum_trendType::EXPONENTIAL_DECAY;
-            if (fit_method == "straight") trend_type = kCepstrum_trendType::LINEAR;
-
-            kCepstrum_trendFit fit_type = kCepstrum_trendFit::ROBUST_SLOW;
-
-            if (qmax == 0) qmax = slice->xmax;
-
-            double qpeak;
-            double cpp = PowerCepstrum_getPeakProminence(
-                slice.get(), 1.0/qmax, 1.0/qmin, interp_type,
-                qmin, qmax, trend_type, fit_type, qpeak
-            );
-            return cpp;
-        } catch (MelderError) {
-            Melder_clearError();
-            return NA_REAL;
-        }
-    }
-
-    // CPPS - critical for AVQI
-    double get_cpps(bool subtract_tilt, double time_averaging_window,
-                    double quefrency_averaging_window, double pitch_floor,
-                    double pitch_ceiling, double delta_f0, int interpolation,
-                    double qstart_fit, double qend_fit, int trend_type, int fit_method) {
-        VALIDATE_PTR(ptr, PowerCepstrogram);
-        try {
-            kVector_peakInterpolation interp = static_cast<kVector_peakInterpolation>(interpolation);
-            kCepstrum_trendType trend = static_cast<kCepstrum_trendType>(trend_type);
-            kCepstrum_trendFit fit = static_cast<kCepstrum_trendFit>(fit_method);
-
-            return PowerCepstrogram_getCPPS(
-                ptr.get(), subtract_tilt, time_averaging_window,
-                quefrency_averaging_window, pitch_floor, pitch_ceiling,
-                delta_f0, interp, qstart_fit, qend_fit, trend, fit
-            );
-        } catch (MelderError) {
-            Melder_clearError();
-            return NA_REAL;
-        }
-    }
+    // CPP / CPPS are deliberately NOT here: PowerCepstrogram's get_cpp_at_time()
+    // and get_cpps() call the .powercepstrogram_* exports (R/powercepstrum.R).
 
     // Extract slice
     XPtr<structPowerCepstrum> get_slice_ptr(double time) {
@@ -559,8 +509,6 @@ RCPP_MODULE(powercepstrum_module) {
         .method("get_ny", &RPowerCepstrogram::get_ny)
         .method("get_dy", &RPowerCepstrogram::get_dy)
         // CPP/CPPS
-        .method("get_cpp_at_time", &RPowerCepstrogram::get_cpp_at_time)
-        .method("get_cpps", &RPowerCepstrogram::get_cpps)
         // Slice/smooth
         .method("get_slice_ptr", &RPowerCepstrogram::get_slice_ptr)
         .method("smooth_ptr", &RPowerCepstrogram::smooth_ptr)

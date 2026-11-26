@@ -208,21 +208,6 @@ test_that("RPowerCepstrogram can be created from Sound", {
   expect_gt(rpcg$get_ny(), 0)
 })
 
-test_that("RPowerCepstrogram CPPS works", {
-  skip_if_no_module("powercepstrum")
-  skip_if_no_module("sound")
-
-  snd <- Sound$new(system.file("extdata", "test.flac", package = "pladdrr"))
-  sound_ptr <- snd$.xptr
-
-  pc_mod <- Rcpp::Module("powercepstrum_module", PACKAGE = "pladdrr")
-  pcg_ptr <- pc_mod$Sound_to_PowerCepstrogram(sound_ptr, 60, 0.01, 5000, 50)
-  rpcg <- new(pc_mod$RPowerCepstrogram, pcg_ptr)
-
-  cpps <- rpcg$get_cpps(TRUE, 0.02, 0.0005, 60, 330, 0.05, 2L, 0.001, 0, 2L, 2L)
-  expect_type(cpps, "double")
-})
-
 probe_test(
   "RPowerCepstrum get_peak_prominence, hillenbrand, trend, smoothing, and export methods work", {
   # PowerCepstrum$get_peak_prominence() (the R6 method) dispatches to this
@@ -306,9 +291,6 @@ probe_test(
   expect_gt(rpcg$get_dy(), 0)
 
   mid_time <- (rpcg$get_xmin() + rpcg$get_xmax()) / 2
-  cpp <- rpcg$get_cpp_at_time(mid_time, "cubic", 0.003, 0.04,
-    "exponential decay", 0.05)
-  expect_true(is.numeric(cpp))
 
   slice_ptr <- rpcg$get_slice_ptr(mid_time)
   rpc_slice <- new(pc_mod$RPowerCepstrum, slice_ptr)
