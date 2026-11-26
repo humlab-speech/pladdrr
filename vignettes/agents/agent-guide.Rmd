@@ -4,7 +4,7 @@ title: "pladdrr Agent Guide"
 
 **Version:** 5.2.0 guide refresh (2026-11-24; 5.1.1 refresh 2026-09-04; perf/memory audit notes 2026-10-19; 2026-11 audit round 2026-11-06)
 **Purpose:** Reference for LLM agents reimplementing Praat functionality via pladdrr
-**Status:** Current through package 5.2.0 (native FLAC, `PraatMatrix()` rename, CRAN check-time trimming; see `NEWS.md` under 5.2.0, 5.1.1 and 5.1.0). Shared-dispatch wrappers + threaded Praat backend + xsimd acceleration (enabled at build time, runtime toggle via `pladdrr_simd()`) + clinical Tier 4 helpers + wrapper dispatch migration (Sound/Formant/Spectrum/Spectrogram queries now use direct `.Call()` instead of Rcpp module dispatch) + current `praat.github.io/` build prefix guidance + current CPPS/CPP usage notes + macOS PSOCK parallelism + unified SIMD bridge header (`simd_bridge.h`) + GitHub Actions CI + code coverage + spectral-moments/data-frame allocation cleanup (v4.9.24) + CRAN pre-submission hygiene and full man/ coverage (v5.0.0) + Ltas full Praat-parity query coverage and new SpectrumTier peak-picking class (v5.0.3) + perf/memory audit: load-time RSS fix, FormantPath parity fix, 8 SIMD files removed (development version, 2026-10).
+**Status:** Current through package 5.2.0 (native FLAC, `PraatMatrix()` rename, CRAN check-time trimming; see `NEWS.md` under 5.2.0, 5.1.1 and 5.1.0). Shared-dispatch wrappers + threaded Praat backend + xsimd acceleration (enabled at build time, runtime toggle via `pladdrr_simd()`) + clinical Tier 4 helpers + single-implementation dispatch (Sound/Formant/Spectrum/Spectrogram/Table instance queries live only in the Rcpp module; the duplicate `.Call` wrapper copies were removed) + current `praat.github.io/` build prefix guidance + current CPPS/CPP usage notes + macOS PSOCK parallelism + unified SIMD bridge header (`simd_bridge.h`) + GitHub Actions CI + code coverage + spectral-moments/data-frame allocation cleanup (v4.9.24) + CRAN pre-submission hygiene and full man/ coverage (v5.0.0) + Ltas full Praat-parity query coverage and new SpectrumTier peak-picking class (v5.0.3) + perf/memory audit: load-time RSS fix, FormantPath parity fix, 8 SIMD files removed (development version, 2026-10).
 
 ## Guide contents
 
@@ -256,7 +256,7 @@ to be read in isolation.
 
 1. User calls: `pitch <- sound$to_pitch_cc(pitch_floor = 75, pitch_ceiling = 600)`
 2. `$.Sound` S3 dispatch looks up `to_pitch_cc` in `.sound_methods` env
-3. Method calls **either** `.self$.cpp$method()` (module, for transforms/complex ops) **or** `.Call("_pladdrr_*", .self$.xptr, args)` (wrapper, for frequent queries). As of v4.9.18: Sound (7 methods), Formant (14), Spectrum (16), Spectrogram (12) use the faster wrapper path (~30-40% less overhead).
+3. Instance methods call the Rcpp module object, `.self$.cpp$method()`, which is the single implementation of that getter (Formant, Spectrogram, Spectrum, Sound, Table queries, PowerCepstrum `get_peak_prominence`, DurationTier `save` were consolidated here; earlier releases had a parallel `.Call` wrapper copy that was removed). Transforms that build a new object and batch/threaded routines still call `Rcpp::export` functions (`.sound_to_pitch_ac(.self$.xptr, ...)`, `batch_queries.cpp`), because no module method exists for them.
 4. C++ calls Praat function (`Sound_to_Pitch_cc()`, `Formant_getValueAtTime()`, etc.)
 5. Result wrapped in `XPtr<structPitch>` with custom deleter
 6. R wrapper creates new `Pitch()` from pointer via factory function

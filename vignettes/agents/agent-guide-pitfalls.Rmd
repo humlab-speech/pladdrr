@@ -332,6 +332,24 @@ ltas$get_slope(0, 1000, 1000, 10000, "energy")  # works immediately
 The underlying C++ `.sound_to_ltas()` was always correct; only the R wrapper was missing
 the `Ltas(.xptr = ...)` wrap. All other `*_direct()` functions were already correct.
 
+### 16. A getter existing in two C++ places (fixed 5.2.x) {#pitfall-16-module-export-twins}
+
+Historically many instance getters existed twice: as a method on the Rcpp module class
+(`src/modules/<type>_module.cpp`, reached as `.self$.cpp$x()`) and as a near-identical
+`Rcpp::export` in `src/<type>_wrappers.cpp` (reached as `.x(.self$.xptr)`). Which copy R
+called differed **per method**, and the copies drifted (error handling, `NA` handling,
+argument types). Symptom: a fix compiles and installs but the repro output is byte-identical.
+
+Now (Formant, Spectrogram, Spectrum, Sound, Table, PowerCepstrum `get_peak_prominence`,
+DurationTier `save`) the module method is the only copy and R calls `.self$.cpp$x()`.
+Before changing any getter, open its R method in `R/*-wrapper.R` to see what it calls,
+and `grep` the name in both `src/modules/` and `src/*_wrappers.cpp`. Do not reintroduce an
+`Rcpp::export` that shares a name with a module method; after removing one, run
+`Rcpp::compileAttributes()` (it also rewrites `inst/include/pladdrr_RcppExports.h`).
+Argument contracts to remember: Sound `get_value_at_time` takes a string interpolation,
+`get_rms`/`get_energy`/`get_power` treat `0` as the whole range, Spectrum `as_matrix` is
+2 x nx (real, imaginary), Table statistics raise on a bad column rather than returning `NA`.
+
 ---
 
 ## Deprecated API Migration
