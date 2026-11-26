@@ -94,10 +94,10 @@ NULL
 .spectrum_methods$get_frequency_step <- function(
   .self) .spectrum_get_frequency_step(.self$.xptr)
 .spectrum_methods$get_frequency_from_bin <- function(.self, bin) {
-  .spectrum_get_frequency_from_bin(.self$.xptr, as.integer(bin))
+  .self$.cpp$get_frequency_from_bin(as.integer(bin))
 }
 .spectrum_methods$get_bin_from_frequency <- function(.self, frequency) {
-  .spectrum_get_bin_from_frequency(.self$.xptr, as.numeric(frequency))
+  .self$.cpp$get_bin_from_frequency(as.numeric(frequency))
 }
 
 # --- Query: Values ---
@@ -121,7 +121,7 @@ NULL
   .spectrum_get_centre_of_gravity(.self$.xptr, as.numeric(power))
 }
 .spectrum_methods$get_standard_deviation <- function(.self, power = 2.0) {
-  .spectrum_get_standard_deviation(.self$.xptr, as.numeric(power))
+  .self$.cpp$get_standard_deviation(as.numeric(power))
 }
 .spectrum_methods$get_skewness <- function(.self, power = 2.0) {
   .spectrum_get_skewness(.self$.xptr, as.numeric(power))
@@ -249,9 +249,9 @@ NULL
 }
 
 # --- Export ---
-.spectrum_methods$as_matrix <- function(.self) .spectrum_as_matrix(.self$.xptr)
+.spectrum_methods$as_matrix <- function(.self) .self$.cpp$as_matrix()
 .spectrum_methods$as_data_frame <- function(.self) {
-  mat <- .spectrum_as_matrix(.self$.xptr)
+  mat <- .self$.cpp$as_matrix()
   nbins <- ncol(mat)
   freq <- vapply(seq_len(nbins), .self$.cpp$get_frequency_from_bin, numeric(1))
   real_vals <- mat[1, ]

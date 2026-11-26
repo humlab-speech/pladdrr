@@ -71,21 +71,6 @@ double spectrum_get_frequency_step(SEXP xptr) {
     return spectrum->dx;
 }
 
-// [[Rcpp::export(.spectrum_get_frequency_from_bin)]]
-double spectrum_get_frequency_from_bin(SEXP xptr, int bin) {
-    XPtr<structSpectrum> spectrum(xptr);
-    if (!spectrum) stop("Invalid Spectrum pointer");
-    if (bin < 1 || bin > spectrum->nx) stop("Bin out of range");
-    return spectrum->x1 + (bin - 1) * spectrum->dx;
-}
-
-// [[Rcpp::export(.spectrum_get_bin_from_frequency)]]
-double spectrum_get_bin_from_frequency(SEXP xptr, double frequency) {
-    XPtr<structSpectrum> spectrum(xptr);
-    if (!spectrum) stop("Invalid Spectrum pointer");
-    return 1.0 + (frequency - spectrum->x1) / spectrum->dx;
-}
-
 // Query: Values
 
 // [[Rcpp::export(.spectrum_get_real_value_in_bin)]]
@@ -144,19 +129,6 @@ double spectrum_get_centre_of_gravity(SEXP xptr, double power) {
     } catch (MelderError) {
         Melder_clearError();
         stop("Failed to get centre of gravity");
-    }
-}
-
-// [[Rcpp::export(.spectrum_get_standard_deviation)]]
-double spectrum_get_standard_deviation(SEXP xptr, double power) {
-    XPtr<structSpectrum> spectrum(xptr);
-    if (!spectrum) stop("Invalid Spectrum pointer");
-    
-    try {
-        return Spectrum_getStandardDeviation(spectrum, power);
-    } catch (MelderError) {
-        Melder_clearError();
-        stop("Failed to get standard deviation");
     }
 }
 
@@ -256,21 +228,6 @@ SEXP spectrum_to_sound(XPtr<structSpectrum> spectrum) {
 }
 
 // Export
-
-// [[Rcpp::export(.spectrum_as_matrix)]]
-NumericMatrix spectrum_as_matrix(SEXP xptr) {
-    XPtr<structSpectrum> spectrum(xptr);
-    if (!spectrum) stop("Invalid Spectrum pointer");
-    
-    NumericMatrix mat(2, spectrum->nx);  // 2 rows: real + imaginary
-    
-    for (integer i = 1; i <= spectrum->nx; i++) {
-        mat(0, i - 1) = spectrum->z[1][i];  // Real part
-        mat(1, i - 1) = spectrum->z[2][i];  // Imaginary part
-    }
-    
-    return mat;
-}
 
 // ==============================================================================
 // Spectrum modification methods

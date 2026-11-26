@@ -126,40 +126,85 @@ public:
     // Query Methods
     // =========================================================================
 
-    double get_value_at_time(double time, int channel, int interpolation) {
+    // Interpolation is a string ("nearest", "linear", "cubic", "sinc70",
+    // "sinc700"); outside [xmin, xmax] the value is NA.
+    double get_value_at_time(double time, int channel, std::string interpolation) {
         VALIDATE_PTR(ptr, Sound);
         if (channel < 1 || channel > ptr->ny) {
-            Rcpp::stop("Channel out of range [1, %d]: %d", ptr->ny, channel);
+            Rcpp::stop("Invalid channel number");
         }
-        // Convert channel to 0-based for indexing
-        return Vector_getValueAtX(ptr.get(), time, channel, (kVector_valueInterpolation) interpolation);
+        if (time < ptr->xmin || time > ptr->xmax) {
+            return NA_REAL;
+        }
+
+        kVector_valueInterpolation interp_type;
+        if (interpolation == "nearest") {
+            interp_type = kVector_valueInterpolation::NEAREST;
+        } else if (interpolation == "linear") {
+            interp_type = kVector_valueInterpolation::LINEAR;
+        } else if (interpolation == "cubic") {
+            interp_type = kVector_valueInterpolation::CUBIC;
+        } else if (interpolation == "sinc70") {
+            interp_type = kVector_valueInterpolation::SINC70;
+        } else if (interpolation == "sinc700") {
+            interp_type = kVector_valueInterpolation::SINC700;
+        } else {
+            Rcpp::stop("Invalid interpolation type. Must be: nearest, linear, cubic, sinc70, or sinc700");
+        }
+
+        try {
+            return Vector_getValueAtX(ptr.get(), time, channel, interp_type);
+        } catch (MelderError) {
+            Melder_clearError();
+            return NA_REAL;
+        }
     }
 
+    // Range arguments: 0 means "start" / "end" of the sound (user-typed sentinel).
+    //
+    // These call Praat's own routines, not a SIMD reduction: a vectorised sum
+    // rounds differently and disagreed with Praat by up to 4.6e-06 (v4.9.21).
+    // Praat errors map to NA.
     double get_rms(double from_time, double to_time) {
         VALIDATE_PTR(ptr, Sound);
-        if (from_time == 0 && to_time == 0) {
-            from_time = ptr->xmin;
-            to_time = ptr->xmax;
+        if (from_time == 0.0) from_time = ptr->xmin;
+        if (to_time == 0.0) to_time = ptr->xmax;
+        try {
+            // ponytail: ny-times loop kept verbatim so the result stays bit-identical to the old export.
+            double rms = 0.0;
+            for (int ch = 1; ch <= ptr->ny; ch++) {
+                double channel_rms = Sound_getRootMeanSquare(ptr.get(), from_time, to_time);
+                rms += channel_rms * channel_rms;
+            }
+            return sqrt(rms / ptr->ny);
+        } catch (MelderError) {
+            Melder_clearError();
+            return NA_REAL;
         }
-        return Sound_getRootMeanSquare(ptr.get(), from_time, to_time);
     }
 
     double get_energy(double from_time, double to_time) {
         VALIDATE_PTR(ptr, Sound);
-        if (from_time == 0 && to_time == 0) {
-            from_time = ptr->xmin;
-            to_time = ptr->xmax;
+        if (from_time == 0.0) from_time = ptr->xmin;
+        if (to_time == 0.0) to_time = ptr->xmax;
+        try {
+            return Sound_getEnergy(ptr.get(), from_time, to_time);
+        } catch (MelderError) {
+            Melder_clearError();
+            return NA_REAL;
         }
-        return Sound_getEnergy(ptr.get(), from_time, to_time);
     }
 
     double get_power(double from_time, double to_time) {
         VALIDATE_PTR(ptr, Sound);
-        if (from_time == 0 && to_time == 0) {
-            from_time = ptr->xmin;
-            to_time = ptr->xmax;
+        if (from_time == 0.0) from_time = ptr->xmin;
+        if (to_time == 0.0) to_time = ptr->xmax;
+        try {
+            return Sound_getPower(ptr.get(), from_time, to_time);
+        } catch (MelderError) {
+            Melder_clearError();
+            return NA_REAL;
         }
-        return Sound_getPower(ptr.get(), from_time, to_time);
     }
 
     double get_intensity_db() {

@@ -1836,55 +1836,6 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
     .Call(`_pladdrr_sound_create_tone_complex`, starting_time, end_time, sample_rate, phase, frequency_step, first_frequency, ceiling, number_of_components)
 }
 
-#' Get sound duration (internal)
-#' @keywords internal
-#' @noRd
-.sound_get_duration <- function(xptr) {
-    .Call(`_pladdrr_sound_get_duration`, xptr)
-}
-
-#' Get sampling frequency (internal)
-#' @keywords internal
-#' @noRd
-.sound_get_sampling_frequency <- function(xptr) {
-    .Call(`_pladdrr_sound_get_sampling_frequency`, xptr)
-}
-
-#' Get number of samples (internal)
-#' @keywords internal
-#' @noRd
-.sound_get_number_of_samples <- function(xptr) {
-    .Call(`_pladdrr_sound_get_number_of_samples`, xptr)
-}
-
-#' Get value at time (internal)
-#' @keywords internal
-#' @noRd
-.sound_get_value_at_time <- function(xptr, time, channel, interpolation = "linear") {
-    .Call(`_pladdrr_sound_get_value_at_time`, xptr, time, channel, interpolation)
-}
-
-#' Get RMS (internal)
-#' @keywords internal
-#' @noRd
-.sound_get_rms <- function(xptr, from_time, to_time) {
-    .Call(`_pladdrr_sound_get_rms`, xptr, from_time, to_time)
-}
-
-#' Get energy (internal)
-#' @keywords internal
-#' @noRd
-.sound_get_energy <- function(xptr, from_time, to_time) {
-    .Call(`_pladdrr_sound_get_energy`, xptr, from_time, to_time)
-}
-
-#' Get power (internal)
-#' @keywords internal
-#' @noRd
-.sound_get_power <- function(xptr, from_time, to_time) {
-    .Call(`_pladdrr_sound_get_power`, xptr, from_time, to_time)
-}
-
 #' Convert Sound to Pitch (internal)
 #' @keywords internal
 #' @noRd
@@ -2408,10 +2359,6 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
     .Call(`_pladdrr_spectrogram_get_end_time`, spectrogram)
 }
 
-.spectrogram_get_time_step <- function(spectrogram) {
-    .Call(`_pladdrr_spectrogram_get_time_step`, spectrogram)
-}
-
 .spectrogram_get_number_of_time_bins <- function(spectrogram) {
     .Call(`_pladdrr_spectrogram_get_number_of_time_bins`, spectrogram)
 }
@@ -2422,30 +2369,6 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 
 .spectrogram_get_highest_frequency <- function(spectrogram) {
     .Call(`_pladdrr_spectrogram_get_highest_frequency`, spectrogram)
-}
-
-.spectrogram_get_frequency_step <- function(spectrogram) {
-    .Call(`_pladdrr_spectrogram_get_frequency_step`, spectrogram)
-}
-
-.spectrogram_get_number_of_frequency_bins <- function(spectrogram) {
-    .Call(`_pladdrr_spectrogram_get_number_of_frequency_bins`, spectrogram)
-}
-
-.spectrogram_get_time_from_frame <- function(spectrogram, frame) {
-    .Call(`_pladdrr_spectrogram_get_time_from_frame`, spectrogram, frame)
-}
-
-.spectrogram_get_frequency_from_bin <- function(spectrogram, bin) {
-    .Call(`_pladdrr_spectrogram_get_frequency_from_bin`, spectrogram, bin)
-}
-
-.spectrogram_get_power_at <- function(spectrogram, time, frequency) {
-    .Call(`_pladdrr_spectrogram_get_power_at`, spectrogram, time, frequency)
-}
-
-.spectrogram_as_matrix <- function(spectrogram) {
-    .Call(`_pladdrr_spectrogram_as_matrix`, spectrogram)
 }
 
 .spectrum_get_lowest_frequency <- function(xptr) {
@@ -2462,14 +2385,6 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 
 .spectrum_get_frequency_step <- function(xptr) {
     .Call(`_pladdrr_spectrum_get_frequency_step`, xptr)
-}
-
-.spectrum_get_frequency_from_bin <- function(xptr, bin) {
-    .Call(`_pladdrr_spectrum_get_frequency_from_bin`, xptr, bin)
-}
-
-.spectrum_get_bin_from_frequency <- function(xptr, frequency) {
-    .Call(`_pladdrr_spectrum_get_bin_from_frequency`, xptr, frequency)
 }
 
 .spectrum_get_real_value_in_bin <- function(xptr, bin) {
@@ -2490,10 +2405,6 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 
 .spectrum_get_centre_of_gravity <- function(xptr, power) {
     .Call(`_pladdrr_spectrum_get_centre_of_gravity`, xptr, power)
-}
-
-.spectrum_get_standard_deviation <- function(xptr, power) {
-    .Call(`_pladdrr_spectrum_get_standard_deviation`, xptr, power)
 }
 
 .spectrum_get_skewness <- function(xptr, power) {
@@ -2522,10 +2433,6 @@ sound_extract_parts_pooled <- function(sound_xptr, start_times, end_times, use_p
 
 .spectrum_to_sound <- function(spectrum) {
     .Call(`_pladdrr_spectrum_to_sound`, spectrum)
-}
-
-.spectrum_as_matrix <- function(xptr) {
-    .Call(`_pladdrr_spectrum_as_matrix`, xptr)
 }
 
 .spectrum_formula <- function(xptr, formula_str) {

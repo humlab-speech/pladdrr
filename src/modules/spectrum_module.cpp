@@ -53,17 +53,20 @@ public:
     // Frequency/bin conversion
     double get_frequency_from_bin(int bin) {
         VALIDATE_PTR(ptr, Spectrum);
+        if (bin < 1 || bin > ptr->nx) Rcpp::stop("Bin out of range");
         return Matrix_columnToX(ptr.get(), bin);
     }
-    int get_bin_from_frequency(double freq) {
+    // Fractional bin position (not rounded), as in Praat's "Get bin number from frequency".
+    double get_bin_from_frequency(double freq) {
         VALIDATE_PTR(ptr, Spectrum);
-        return static_cast<int>(Matrix_xToNearestColumn(ptr.get(), freq));
+        return 1.0 + (freq - ptr->x1) / ptr->dx;
     }
 
     // Query methods
     double get_standard_deviation(double power) {
         VALIDATE_PTR(ptr, Spectrum);
-        return Spectrum_getStandardDeviation(ptr.get(), power);
+        return praat_try_return([&] { return Spectrum_getStandardDeviation(ptr.get(), power); },
+                                "Failed to get standard deviation");
     }
 
 
@@ -247,14 +250,13 @@ public:
         );
     }
 
+    // 2 x nx: row 1 = real part, row 2 = imaginary part (what the R6 layer expects).
     NumericMatrix as_matrix() {
         VALIDATE_PTR(ptr, Spectrum);
-        NumericMatrix mat(ptr->nx, 4);
+        NumericMatrix mat(2, ptr->nx);
         for (integer i = 1; i <= ptr->nx; i++) {
-            mat(i-1, 0) = Matrix_columnToX(ptr.get(), i);
-            mat(i-1, 1) = ptr->z[1][i];
-            mat(i-1, 2) = ptr->z[2][i];
-            mat(i-1, 3) = ptr->z[1][i]*ptr->z[1][i] + ptr->z[2][i]*ptr->z[2][i];
+            mat(0, i - 1) = ptr->z[1][i];
+            mat(1, i - 1) = ptr->z[2][i];
         }
         return mat;
     }

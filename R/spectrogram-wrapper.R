@@ -79,7 +79,7 @@ NULL
 .spectrogram_methods$get_end_time <- function(
   .self) .spectrogram_get_end_time(.self$.xptr)
 .spectrogram_methods$get_time_step <- function(
-  .self) .spectrogram_get_time_step(.self$.xptr)
+  .self) .self$.cpp$get_time_step()
 .spectrogram_methods$get_number_of_time_bins <- function(
   .self) .spectrogram_get_number_of_time_bins(.self$.xptr)
 
@@ -89,19 +89,19 @@ NULL
 .spectrogram_methods$get_highest_frequency <- function(
   .self) .spectrogram_get_highest_frequency(.self$.xptr)
 .spectrogram_methods$get_frequency_step <- function(
-  .self) .spectrogram_get_frequency_step(.self$.xptr)
+  .self) .self$.cpp$get_frequency_step()
 .spectrogram_methods$get_number_of_frequency_bins <- function(.self)
-  .spectrogram_get_number_of_frequency_bins(.self$.xptr)
+  .self$.cpp$get_number_of_frequency_bins()
 
 # --- Conversion ---
 .spectrogram_methods$get_time_from_frame <- function(.self, frame) {
-  .spectrogram_get_time_from_frame(.self$.xptr, as.integer(frame))
+  .self$.cpp$get_time_from_frame(as.integer(frame))
 }
 .spectrogram_methods$get_frame_from_time <- function(.self, time) {
   .self$.cpp$get_frame_from_time(as.numeric(time))
 }
 .spectrogram_methods$get_frequency_from_bin <- function(.self, bin) {
-  .spectrogram_get_frequency_from_bin(.self$.xptr, as.integer(bin))
+  .self$.cpp$get_frequency_from_bin(as.integer(bin))
 }
 .spectrogram_methods$get_bin_from_frequency <- function(.self, frequency) {
   .self$.cpp$get_bin_from_frequency(as.numeric(frequency))
@@ -109,7 +109,7 @@ NULL
 
 # --- Query ---
 .spectrogram_methods$get_power_at <- function(.self, time, frequency) {
-  .spectrogram_get_power_at(.self$.xptr, as.numeric(time),
+  .self$.cpp$get_power_at(as.numeric(time),
     as.numeric(frequency))
 }
 
@@ -155,7 +155,7 @@ NULL
 
 # --- Export ---
 .spectrogram_methods$as_matrix <- function(.self, include_dimnames = TRUE) {
-  mat <- .spectrogram_as_matrix(.self$.xptr)
+  mat <- .self$.cpp$as_matrix()
   if (include_dimnames) {
     rownames(mat) <- .self$.cpp$get_frequencies_vector()
     colnames(mat) <- .self$.cpp$get_times_vector()
@@ -163,7 +163,7 @@ NULL
   mat
 }
 .spectrogram_methods$as_data_frame <- function(.self) {
-  mat <- .spectrogram_as_matrix(.self$.xptr)
+  mat <- .self$.cpp$as_matrix()
   n_time <- .self$.cpp$get_nx()
   n_freq <- .self$.cpp$get_ny()
   times <- vapply(seq_len(n_time),

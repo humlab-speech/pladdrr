@@ -65,6 +65,7 @@ public:
     // Conversion
     double get_time_from_frame(int frame) {
         VALIDATE_PTR(ptr, Spectrogram);
+        if (frame < 1 || frame > ptr->nx) Rcpp::stop("Frame index out of range");
         return Matrix_columnToX(ptr.get(), frame);
     }
     int get_frame_from_time(double time) {
@@ -73,6 +74,7 @@ public:
     }
     double get_frequency_from_bin(int bin) {
         VALIDATE_PTR(ptr, Spectrogram);
+        if (bin < 1 || bin > ptr->ny) Rcpp::stop("Bin index out of range");
         return Matrix_rowToY(ptr.get(), bin);
     }
     int get_bin_from_frequency(double freq) {
@@ -83,7 +85,12 @@ public:
     // Query
     double get_power_at(double time, double frequency) {
         VALIDATE_PTR(ptr, Spectrogram);
-        return Matrix_getValueAtXY(ptr.get(), time, frequency);
+        // Praat's "Get power at (time, frequency)": bilinear interpolation,
+        // undefined outside the domain (-> NA).
+        const double value = praat_try_return(
+            [&] { return Matrix_getValueAtXY(ptr.get(), time, frequency); },
+            "Failed to get power");
+        return isdefined(value) ? value : NA_REAL;
     }
 
     // =========================================================================
