@@ -15,6 +15,10 @@
 #' cepstrum <- sound$to_cepstrum()
 #' spectrum <- cepstrum$to_spectrum()
 #'
+#' @usage Cepstrum(.xptr)
+#' @param .xptr External pointer to a Praat Cepstrum. This is the low-level
+#'   constructor; \code{sound$to_cepstrum()} is the usual entry point.
+#'
 #' @name Cepstrum
 NULL
 

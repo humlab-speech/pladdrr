@@ -67,6 +67,11 @@
 #' wav <- system.file("extdata", "test.flac", package = "pladdrr")
 #' cepstrum <- Sound(wav)$to_spectrum()$to_power_cepstrum()
 #'
+#' @usage PowerCepstrum(.xptr = NULL)
+#' @param .xptr External pointer to a Praat PowerCepstrum. PowerCepstrum
+#'   objects are normally created with \code{spectrum$to_power_cepstrum()} or
+#'   with \code{powercepstrogram$get_power_cepstrum_at_time(time)}.
+#'
 #' @name PowerCepstrum
 NULL
 

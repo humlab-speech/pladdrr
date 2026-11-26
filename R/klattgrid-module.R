@@ -263,7 +263,9 @@ klattgrid_create_example <- function() {
 # ============================================================================
 
 #' @rdname klattgrid_create_from_vowel
-#' @usage # Deprecated: use klattgrid_create_from_vowel() instead
+#' @usage KlattGrid_createFromVowel(duration = 0.5, f0start = 100, f1 = 500,
+#'   b1 = 50, f2 = 1500, b2 = 100, f3 = 2500, b3 = 150, f4 = 3500,
+#'   bandWidthFraction = 0.05, formantFrequencyInterval = 1000)
 #' @export
 KlattGrid_createFromVowel <- function(duration = 0.5,
                                       f0start = 100.0,
@@ -279,7 +281,7 @@ KlattGrid_createFromVowel <- function(duration = 0.5,
 }
 
 #' @rdname klattgrid_create_example
-#' @usage # Deprecated: use klattgrid_create_example() instead
+#' @usage KlattGrid_createExample()
 #' @export
 KlattGrid_createExample <- function() {
   .Deprecated("klattgrid_create_example")

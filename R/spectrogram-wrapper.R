@@ -64,6 +64,10 @@
 #' spec <- snd$to_spectrogram(window_length = 0.005, max_frequency = 5000)
 #' power <- spec$get_power_at(time = 0.25, frequency = 440)
 #'
+#' @usage Spectrogram(.xptr = NULL)
+#' @param .xptr External pointer to a Praat Spectrogram. Spectrograms are
+#'   normally created with \code{sound$to_spectrogram()}.
+#'
 #' @name Spectrogram
 NULL
 

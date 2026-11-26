@@ -18,6 +18,12 @@
 #' it$get_number_of_points()
 #' it$get_value_at_time(0.5)
 #'
+#' @usage IntensityTier(tmin = NULL, tmax = NULL, .xptr = NULL)
+#' @param tmin Start time of the new tier (s).
+#' @param tmax End time of the new tier (s).
+#' @param .xptr External pointer to an existing Praat IntensityTier. When given,
+#'   \code{tmin} and \code{tmax} are ignored.
+#'
 #' @name IntensityTier
 NULL
 

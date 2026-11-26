@@ -147,7 +147,7 @@ print.fast_vector <- function(x, ...) {
 # ============================================================================
 
 #' @rdname get_sound_values_fast
-#' @usage # Deprecated: use get_sound_values_fast() instead
+#' @usage get_sound_values_zerocopy(sound, channel = 1)
 #' @export
 get_sound_values_zerocopy <- function(sound, channel = 1) {
   .Deprecated("get_sound_values_fast")
@@ -155,7 +155,7 @@ get_sound_values_zerocopy <- function(sound, channel = 1) {
 }
 
 #' @rdname sound_as_matrix_fast
-#' @usage # Deprecated: use sound_as_matrix_fast() instead
+#' @usage sound_as_matrix_zerocopy(sound, zerocopy = FALSE)
 #' @export
 sound_as_matrix_zerocopy <- function(sound, zerocopy = FALSE) {
   .Deprecated("sound_as_matrix_fast")
@@ -163,7 +163,7 @@ sound_as_matrix_zerocopy <- function(sound, zerocopy = FALSE) {
 }
 
 #' @rdname is_fast_vector
-#' @usage # Deprecated: use is_fast_vector() instead
+#' @usage is_zerocopy_vector(x)
 #' @export
 is_zerocopy_vector <- function(x) {
   .Deprecated("is_fast_vector")

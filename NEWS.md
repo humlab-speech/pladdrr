@@ -4,8 +4,19 @@
   LAME/libmad files were removed from the tarball. `Sound$save(format = "MP3")`
   now errors instead of reaching Praat's unsupported code path.
 
-## CRAN check fixes (win-builder, R-release)
+## CRAN check fixes (win-builder and incoming pretest)
 
+* Documentation: the ten exported constructors and deprecated aliases that
+  R-devel's new "Exported functions without usage information" diagnostic
+  listed now carry explicit usage. `Cepstrum()`, `IntensityTier()`,
+  `Spectrogram()`, `PowerCepstrum()` and `PraatMatrix()` were roxygen `@name`
+  class pages with no `\usage` entry; `get_sound_values_zerocopy()`,
+  `sound_as_matrix_zerocopy()`, `is_zerocopy_vector()`,
+  `KlattGrid_createExample()` and `KlattGrid_createFromVowel()` carried
+  `@usage` comment lines ("# Deprecated: ..."), which roxygen emits verbatim into
+  `\usage` without documenting the function. Each block now has a real `@usage`
+  (plus `@param` for the constructors), regenerated with roxygen2 8.1.1;
+  `tools::codoc()` reports no mismatches.
 * Vendored libFLAC no longer trips `-Wpedantic`: `flac_min()` and `flac_max()`
   in `src/praat.github.io/external/flac/flac_private_macros.h` wrap their GNU
   statement expressions in `__extension__`. This was the single WARNING of the

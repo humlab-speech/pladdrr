@@ -26,6 +26,22 @@
 #' m2 <- matrix_read(mat_file)
 #' m2$get_value(1, 1)
 #'
+#' @usage PraatMatrix(xmin = NULL, xmax = NULL, nx = NULL, dx = NULL,
+#'   x1 = NULL, ymin = NULL, ymax = NULL, ny = NULL, dy = NULL, y1 = NULL,
+#'   numberOfRows = NULL, numberOfColumns = NULL, .xptr = NULL)
+#' @param xmin,xmax Start and end of the x axis (s).
+#' @param nx Number of x samples.
+#' @param dx Sampling interval along x (s).
+#' @param x1 Value of the first x sample (s).
+#' @param ymin,ymax Start and end of the y axis.
+#' @param ny Number of y samples.
+#' @param dy Sampling interval along y.
+#' @param y1 Value of the first y sample.
+#' @param numberOfRows,numberOfColumns Grid size; an alternative to the ten
+#'   full-domain parameters above.
+#' @param .xptr External pointer to an existing Praat Matrix. When given, all
+#'   other arguments are ignored.
+#'
 #' @name PraatMatrix
 NULL
 
