@@ -57,6 +57,8 @@ trees were removed.
   below. A rerun on the fixed tarball is pending.
 - GitHub Actions R CMD check: TODO confirm ubuntu (release, devel), macOS, Windows
   green for the submitted commit
+- win-builder (R-devel, r90926), 2026-11-26, on the same previous tarball: same
+  single WARNING and single NOTE, no R-devel-specific diagnostics.
 
 ### R CMD check results
 
