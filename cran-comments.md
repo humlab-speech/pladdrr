@@ -15,8 +15,8 @@ package.
 The source tarball is 4.7 MB. Installed size is ~27 MB, mostly `libs` (22 MB,
 object code of the vendored Praat sources, which includes Praat's Unicode tables
 compiled into `longchar.cpp`). Only the Praat sources that are compiled or
-included were kept; unused upstream subtrees, GUI/manual sources and duplicate
-trees were removed.
+included were kept. Unused upstream subtrees, GUI/manual sources and duplicate
+trees have been removed.
 
 ### Build and compiled code
 
@@ -32,11 +32,11 @@ trees were removed.
   the process CPU affinity/cgroup quota; see `?pladdrr_threads` for how to limit
   it.
 - The vendored libFLAC statement-expression macros (`flac_min()`, `flac_max()`)
-  now carry `__extension__`, so R's default Windows CFLAGS (`-pedantic`) no
-  longer report "ISO C forbids braced-groups within expressions" from
-  `flac_private_macros.h`. That was the only WARNING in the previous run.
+  carry `__extension__`, so R's default Windows CFLAGS (`-pedantic`) no longer
+  report "ISO C forbids braced-groups within expressions" from
+  `flac_private_macros.h`.
 
-### Changes since the 2026-11-26 win-builder run
+### Changes since the 2026-11-26 win-builder and pretest runs
 
 - `License: GPL-3` replaces `GPL-3 + file LICENSE`, and the `LICENSE` stub is
   gone. GPL-3 needs no stub, and the stub made the incoming check echo the whole
@@ -48,35 +48,38 @@ trees were removed.
   "cepstral coefficients" and the bare `R-Praat` were reworded.
 - `README.md` links the license badge to `COPYING` in the repository; the
   `www.gnu.org` URL timed out in win-builder's URL check.
+- Documentation: the ten exports listed by R-devel's "Exported functions without
+  usage information" diagnostic (`Cepstrum`, `IntensityTier`, `Spectrogram`,
+  `PowerCepstrum`, `PraatMatrix`, `get_sound_values_zerocopy`,
+  `sound_as_matrix_zerocopy`, `is_zerocopy_vector`, `KlattGrid_createExample`,
+  `KlattGrid_createFromVowel`) now have `\usage` entries and, for the five
+  constructors, `\arguments` entries. `tools::codoc()` reports no mismatches.
 
 ### Test environments
 
 - local macOS 27.2 (aarch64), R 4.6.1: `R CMD check --as-cran` on
   `pladdrr_5.2.0.tar.gz`, including `--run-donttest`
-- win-builder (R-release), 2026-11-26, on the previous tarball: see the results
-  below. A rerun on the fixed tarball is pending.
-- GitHub Actions R CMD check: TODO confirm ubuntu (release, devel), macOS, Windows
-  green for the submitted commit
-- win-builder (R-devel, r90926), 2026-11-26, on the same previous tarball: same
-  single WARNING and single NOTE, no R-devel-specific diagnostics.
+- win-builder, R-release and R-devel (r90926), 2026-11-26
+- CRAN incoming pretest, Debian (R-devel r90991) and Windows (r90926), 2026-11-26
 
 ### R CMD check results
 
-win-builder (R-release, 2026-11-26): 0 errors | 1 warning | 1 note
+On the tarball of this submission, `R CMD check --as-cran` (local R 4.6.1)
+reports 0 errors, 0 warnings and 2 notes:
 
-- CRAN incoming feasibility: "New submission". The `LICENSE` file only states the
-  copyright holder and year (`GPL-3 + file LICENSE`).
-- HTML manual validation was skipped because the HTML Tidy shipped with macOS is
-  too old (local environment only).
-- WARNING, install: "ISO C forbids braced-groups within expressions
-  [-Wpedantic]" from `src/praat.github.io/external/flac/flac_private_macros.h`
-  (R's Windows CFLAGS include `-pedantic`). Fixed by `__extension__` on the two
-  libFLAC statement-expression macros; verified by compiling every compiled
-  libFLAC `.c` file with GCC 15 `-pedantic -std=gnu2x`, zero `-Wpedantic`
-  diagnostics.
+- CRAN incoming feasibility: "New submission".
+- HTML manual validation skipped because the local HTML Tidy is too old (local
+  environment only).
+
+The 2026-11-26 win-builder and pretest runs predate the fixes above. Their
+findings, all now addressed:
+
+- WARNING, install (Windows): "ISO C forbids braced-groups within expressions
+  [-Wpedantic]" from `src/praat.github.io/external/flac/flac_private_macros.h`.
+  R's Windows CFLAGS include `-pedantic`; the Debian run compiles with clang,
+  which does not take that header branch, hence no warning there.
 - NOTE, incoming feasibility: license-component pointer for
-  `GPL-3 + file LICENSE`, "Possibly misspelled words in DESCRIPTION"
-  (Praat/cepstral/formant), and one URL timeout (`www.gnu.org`). All three are
-  fixed as described above; the reproduction of the DESCRIPTION spell check and
-  of `analyze_license()` against the new DESCRIPTION is clean, leaving
-  "New submission" as the only expected note.
+  `GPL-3 + file LICENSE` with the whole file echoed, "Possibly misspelled words
+  in DESCRIPTION" (Praat/cepstral/formant), and a `www.gnu.org` URL timeout.
+- INFO, Debian pretest (R-devel r90991): "Exported functions without usage
+  information" for the ten names listed above.
