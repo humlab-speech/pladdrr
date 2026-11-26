@@ -15,8 +15,8 @@ package.
 The source tarball is 4.7 MB. Installed size is ~27 MB, mostly `libs` (22 MB,
 object code of the vendored Praat sources, which includes Praat's Unicode tables
 compiled into `longchar.cpp`). Only the Praat sources that are compiled or
-included were kept. Unused upstream subtrees, GUI/manual sources and duplicate
-trees have been removed.
+included were kept; unused upstream subtrees, GUI/manual sources and duplicate
+trees were removed.
 
 ### Build and compiled code
 
