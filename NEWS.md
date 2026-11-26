@@ -4,6 +4,27 @@
   LAME/libmad files were removed from the tarball. `Sound$save(format = "MP3")`
   now errors instead of reaching Praat's unsupported code path.
 
+## CRAN check fixes (win-builder, R-release)
+
+* Vendored libFLAC no longer trips `-Wpedantic`: `flac_min()` and `flac_max()`
+  in `src/praat.github.io/external/flac/flac_private_macros.h` wrap their GNU
+  statement expressions in `__extension__`. This was the single WARNING of the
+  5.2.0 win-builder run ("ISO C forbids braced-groups within expressions").
+* `License: GPL-3`, without the `+ file LICENSE` stub. GPL-3 is a standard
+  license and needs no stub file, and the stub made CRAN's incoming check echo
+  the whole file under "License components with restrictions and base license
+  permitting such". `LICENSE` is gone; `COPYING` keeps the full GPL-3 text and
+  `inst/COPYRIGHTS` the third-party attributions.
+* `DESCRIPTION` wording no longer raises "Possibly misspelled words in
+  DESCRIPTION": "robust formant tracking" became "robust vocal-tract resonance
+  tracking", "cepstral coefficients" became "spectral envelope coefficients",
+  and the bare `R-Praat` became "between R and 'Praat'". That check runs the
+  `aspell` filter over the title and description only; `inst/WORDLIST` feeds the
+  Rd and vignette spell check, not this one.
+* `README.md`: the GPL badge links to `COPYING` in the repository instead of
+  `https://www.gnu.org/licenses/gpl-3.0`, which timed out in win-builder's URL
+  check.
+
 ## FLAC is decoded and encoded natively; shipped audio slimmed
 
 * libFLAC (BSD-3-Clause, vendored from Praat under

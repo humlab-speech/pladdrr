@@ -16,17 +16,19 @@ Authors@R: c(
     person("Free Software Foundation", role = "cph",
            comment = "Copyright holder of the GNU Scientific Library, linked but not bundled")
     )
-Description: Provides direct access to 'Praat' C++ implemented
-    functionality from R. This package allows R users to leverage
-    the powerful phonetic analysis capabilities of 'Praat' directly from R. The package exposes
-    39 'Praat' modules with 500+ methods for sound manipulation, robust formant
-    tracking ('FormantPath', 'FormantModeler'), speech synthesis ('KlattGrid'), pitch
-    analysis, intensity measurements, spectral analysis ('ComplexSpectrogram'),
-    cepstral coefficients ('MFCC', 'LFCC'), statistical analysis (PCA, Discriminant),
-    auditory modeling ('Cochleagram', 'Excitation'), 'TextGrid' annotation, voice
-    quality assessment, geometric operations (Polygon), and a persistent 'Praat'
-    script interpreter with bidirectional R-Praat object transfer.
-License: GPL-3 + file LICENSE
+Description: Provides direct access to 'Praat' C++ implemented functionality
+    from R. This package allows R users to leverage the powerful phonetic
+    analysis capabilities of 'Praat' directly from R. The package exposes 39
+    'Praat' modules with 500+ methods for sound manipulation, robust
+    vocal-tract resonance tracking ('FormantPath', 'FormantModeler'), speech
+    synthesis ('KlattGrid'), pitch analysis, intensity measurements, spectral
+    analysis ('ComplexSpectrogram'), spectral envelope coefficients
+    ('MFCC', 'LFCC'), statistical analysis (PCA, Discriminant), auditory
+    modeling ('Cochleagram', 'Excitation'), 'TextGrid' annotation, voice
+    quality assessment, geometric operations (Polygon), and a persistent
+    'Praat' script interpreter with bidirectional object transfer between R and
+    'Praat'.
+License: GPL-3
 URL: https://github.com/humlab-speech/pladdrr, https://humlab-speech.github.io/pladdrr/
 BugReports: https://github.com/humlab-speech/pladdrr/issues
 Encoding: UTF-8
