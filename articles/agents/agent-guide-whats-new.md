@@ -5,6 +5,29 @@ Guide](https://humlab-speech.github.io/pladdrr/articles/agents/agent-guide.md).
 Release-by-release notes; the full archive is in [version
 history](https://humlab-speech.github.io/pladdrr/articles/agents/history.md).
 
+- **Development (2026-11) — module/export deduplication (branch
+  `refactor/dedupe-module-exports`):**
+  - **Single implementation of instance getters.** Formant (15),
+    Spectrogram (7), Spectrum (4), Sound (7), Table (15), PowerCepstrum
+    `get_peak_prominence` and DurationTier `save` now live only in their
+    Rcpp module class; R calls `.self$.cpp$x()`. The duplicate
+    `Rcpp::export` copies were deleted. This **supersedes the v4.9.18
+    “Phase 3 dispatch migration” below**, which moved these calls the
+    other way.
+  - **Behaviour:** module getters raise clean R errors on Praat failure;
+    non-finite times give `NA`; Table statistics (`get_mean`,
+    `get_stdev`, …) on the module now error on an out-of-range column
+    instead of returning `NA`; `RPowerCepstrum$get_peak_prominence`
+    takes the R6 string arguments and treats `qmax == 0` as the cepstrum
+    end.
+  - **Removed dead code:** `RPowerCepstrogram`
+    `get_cpp_at_time`/`get_cpps` (diverged; R uses
+    `.powercepstrogram_*`), `RCepstrum$to_powercepstrum_ptr`,
+    `.formant_get_values_at_times`.
+  - **Kept on purpose:** TextGrid `get_all_points` (two shapes),
+    Pitch/Intensity `get_values_at_times`, LPC `filter_inverse_ptr`,
+    Manipulation `*_ptr`, the unused Interpreter module. See pitfall 16
+    in the pitfalls page.
 - **v4.9.18 — Performance + docs + CI (2026-08-05 assessment, Phases
   1-4):**
   - **PointProcess jitter/shimmer batch cache:** First shimmer call
@@ -25,13 +48,14 @@ history](https://humlab-speech.github.io/pladdrr/articles/agents/history.md).
     (Formant, Pitch, Intensity, PointProcess, Spectrum, Spectrogram,
     Harmonicity, PowerCepstrum, LPC, TextGrid, Ltas, MFCC/LFCC, PCA,
     Discriminant, DTW).
-  - **Phase 3 — dispatch migration from module to wrapper calls:** Sound
-    (7 query methods), Formant (14), Spectrum (16), Spectrogram (12)
-    migrated from `.self$.cpp$method()` (Rcpp Module dispatch, 3 layers:
-    R→Module→C++) to `.Call("_pladdrr_*", .self$.xptr, args)` (direct
-    wrapper, 2 layers: R→C++). ~30-40% less per-call overhead. Remaining
-    module calls: simple getters without wrapper equivalents
-    (xmin/xmax), print methods, and object-creation transforms.
+  - **Phase 3 — dispatch migration from module to wrapper calls
+    (reversed 2026-11, see above):** Sound (7 query methods), Formant
+    (14), Spectrum (16), Spectrogram (12) migrated from
+    `.self$.cpp$method()` (Rcpp Module dispatch, 3 layers: R→Module→C++)
+    to `.Call("_pladdrr_*", .self$.xptr, args)` (direct wrapper, 2
+    layers: R→C++). ~30-40% less per-call overhead. Remaining module
+    calls: simple getters without wrapper equivalents (xmin/xmax), print
+    methods, and object-creation transforms.
   - **Phase 4 — CI infrastructure:**
     `.github/workflows/R-CMD-check.yaml` (ubuntu release/devel, macOS)
     with system deps. `.github/workflows/test-coverage.yaml` (covr +

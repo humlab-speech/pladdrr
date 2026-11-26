@@ -9,12 +9,12 @@ rename, CRAN check-time trimming; see `NEWS.md` under 5.2.0, 5.1.1 and
 5.1.0). Shared-dispatch wrappers + threaded Praat backend + xsimd
 acceleration (enabled at build time, runtime toggle via
 [`pladdrr_simd()`](https://humlab-speech.github.io/pladdrr/reference/pladdrr_simd.md)) +
-clinical Tier 4 helpers + wrapper dispatch migration
-(Sound/Formant/Spectrum/Spectrogram queries now use direct
-[`.Call()`](https://rdrr.io/r/base/CallExternal.html) instead of Rcpp
-module dispatch) + current `praat.github.io/` build prefix guidance +
-current CPPS/CPP usage notes + macOS PSOCK parallelism + unified SIMD
-bridge header (`simd_bridge.h`) + GitHub Actions CI + code coverage +
+clinical Tier 4 helpers + single-implementation dispatch
+(Sound/Formant/Spectrum/Spectrogram/Table instance queries live only in
+the Rcpp module; the duplicate `.Call` wrapper copies were removed) +
+current `praat.github.io/` build prefix guidance + current CPPS/CPP
+usage notes + macOS PSOCK parallelism + unified SIMD bridge header
+(`simd_bridge.h`) + GitHub Actions CI + code coverage +
 spectral-moments/data-frame allocation cleanup (v4.9.24) + CRAN
 pre-submission hygiene and full man/ coverage (v5.0.0) + Ltas full
 Praat-parity query coverage and new SpectrumTier peak-picking class
@@ -364,12 +364,15 @@ the roxygen never need to be read in isolation.
 1.  User calls:
     `pitch <- sound$to_pitch_cc(pitch_floor = 75, pitch_ceiling = 600)`
 2.  `$.Sound` S3 dispatch looks up `to_pitch_cc` in `.sound_methods` env
-3.  Method calls **either** `.self$.cpp$method()` (module, for
-    transforms/complex ops) **or**
-    `.Call("_pladdrr_*", .self$.xptr, args)` (wrapper, for frequent
-    queries). As of v4.9.18: Sound (7 methods), Formant (14), Spectrum
-    (16), Spectrogram (12) use the faster wrapper path (~30-40% less
-    overhead).
+3.  Instance methods call the Rcpp module object, `.self$.cpp$method()`,
+    which is the single implementation of that getter (Formant,
+    Spectrogram, Spectrum, Sound, Table queries, PowerCepstrum
+    `get_peak_prominence`, DurationTier `save` were consolidated here;
+    earlier releases had a parallel `.Call` wrapper copy that was
+    removed). Transforms that build a new object and batch/threaded
+    routines still call `Rcpp::export` functions
+    (`.sound_to_pitch_ac(.self$.xptr, ...)`, `batch_queries.cpp`),
+    because no module method exists for them.
 4.  C++ calls Praat function (`Sound_to_Pitch_cc()`,
     `Formant_getValueAtTime()`, etc.)
 5.  Result wrapped in `XPtr<structPitch>` with custom deleter
@@ -381,10 +384,10 @@ the roxygen never need to be read in isolation.
 
 **Key Performance Improvements:** - Shared dispatch tables eliminate
 per-instance closure allocation (9x faster creation, 160x less memory,
-v4.8.32). - Wrapper dispatch (v4.9.18) replaces Rcpp Module’s 3-layer
-R→Module→C++ path with direct 2-layer R→C++
-[`.Call()`](https://rdrr.io/r/base/CallExternal.html) for frequent query
-methods, reducing per-call overhead ~30-40%.
+v4.8.32). - Instance queries go through the Rcpp module
+(`.self$.cpp$x()`); the v4.9.18 direct-`.Call` wrapper path for these
+was removed in 2026-11 to eliminate duplicate implementations (see
+pitfall 16).
 
 ### Object Structure (Shared Dispatch Table Pattern)
 

@@ -510,6 +510,34 @@ making it unusable without manual construction:</p>
 <p>The underlying C++ <code>.sound_to_ltas()</code> was always correct;
 only the R wrapper was missing the <code>Ltas(.xptr = ...)</code> wrap.
 All other <code>*_direct()</code> functions were already correct.</p>
+</div>
+<div class="section level3">
+<h3 id="pitfall-16-module-export-twins">16. A getter existing in two C++ places (fixed 5.2.x)<a class="anchor" aria-label="anchor" href="#pitfall-16-module-export-twins"></a>
+</h3>
+<p>Historically many instance getters existed twice: as a method on the
+Rcpp module class (<code>src/modules/&lt;type&gt;_module.cpp</code>,
+reached as <code>.self$.cpp$x()</code>) and as a near-identical
+<code>Rcpp::export</code> in <code>src/&lt;type&gt;_wrappers.cpp</code>
+(reached as <code>.x(.self$.xptr)</code>). Which copy R called differed
+<strong>per method</strong>, and the copies drifted (error handling,
+<code>NA</code> handling, argument types). Symptom: a fix compiles and
+installs but the repro output is byte-identical.</p>
+<p>Now (Formant, Spectrogram, Spectrum, Sound, Table, PowerCepstrum
+<code>get_peak_prominence</code>, DurationTier <code>save</code>) the
+module method is the only copy and R calls <code>.self$.cpp$x()</code>.
+Before changing any getter, open its R method in
+<code>R/*-wrapper.R</code> to see what it calls, and <code>grep</code>
+the name in both <code>src/modules/</code> and
+<code>src/*_wrappers.cpp</code>. Do not reintroduce an
+<code>Rcpp::export</code> that shares a name with a module method; after
+removing one, run <code><a href="https://rdrr.io/pkg/Rcpp/man/compileAttributes.html" class="external-link">Rcpp::compileAttributes()</a></code> (it also
+rewrites <code>inst/include/pladdrr_RcppExports.h</code>). Argument
+contracts to remember: Sound <code>get_value_at_time</code> takes a
+string interpolation,
+<code>get_rms</code>/<code>get_energy</code>/<code>get_power</code>
+treat <code>0</code> as the whole range, Spectrum <code>as_matrix</code>
+is 2 x nx (real, imaginary), Table statistics raise on a bad column
+rather than returning <code>NA</code>.</p>
 <hr>
 </div>
 </div>

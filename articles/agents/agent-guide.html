@@ -123,9 +123,10 @@ Current through package 5.2.0 (native FLAC, <code><a href="../../reference/Praat
 rename, CRAN check-time trimming; see <code>NEWS.md</code> under 5.2.0,
 5.1.1 and 5.1.0). Shared-dispatch wrappers + threaded Praat backend +
 xsimd acceleration (enabled at build time, runtime toggle via
-<code><a href="../../reference/pladdrr_simd.html">pladdrr_simd()</a></code>) + clinical Tier 4 helpers + wrapper
-dispatch migration (Sound/Formant/Spectrum/Spectrogram queries now use
-direct <code><a href="https://rdrr.io/r/base/CallExternal.html" class="external-link">.Call()</a></code> instead of Rcpp module dispatch) + current
+<code><a href="../../reference/pladdrr_simd.html">pladdrr_simd()</a></code>) + clinical Tier 4 helpers +
+single-implementation dispatch (Sound/Formant/Spectrum/Spectrogram/Table
+instance queries live only in the Rcpp module; the duplicate
+<code>.Call</code> wrapper copies were removed) + current
 <code>praat.github.io/</code> build prefix guidance + current CPPS/CPP
 usage notes + macOS PSOCK parallelism + unified SIMD bridge header
 (<code>simd_bridge.h</code>) + GitHub Actions CI + code coverage +
@@ -580,12 +581,17 @@ v4.9.18)</strong></p>
 <li>
 <code>$.Sound</code> S3 dispatch looks up <code>to_pitch_cc</code>
 in <code>.sound_methods</code> env</li>
-<li>Method calls <strong>either</strong>
-<code>.self$.cpp$method()</code> (module, for transforms/complex ops)
-<strong>or</strong> <code>.Call("_pladdrr_*", .self$.xptr, args)</code>
-(wrapper, for frequent queries). As of v4.9.18: Sound (7 methods),
-Formant (14), Spectrum (16), Spectrogram (12) use the faster wrapper
-path (~30-40% less overhead).</li>
+<li>Instance methods call the Rcpp module object,
+<code>.self$.cpp$method()</code>, which is the single implementation of
+that getter (Formant, Spectrogram, Spectrum, Sound, Table queries,
+PowerCepstrum <code>get_peak_prominence</code>, DurationTier
+<code>save</code> were consolidated here; earlier releases had a
+parallel <code>.Call</code> wrapper copy that was removed). Transforms
+that build a new object and batch/threaded routines still call
+<code>Rcpp::export</code> functions
+(<code>.sound_to_pitch_ac(.self$.xptr, ...)</code>,
+<code>batch_queries.cpp</code>), because no module method exists for
+them.</li>
 <li>C++ calls Praat function (<code>Sound_to_Pitch_cc()</code>,
 <code>Formant_getValueAtTime()</code>, etc.)</li>
 <li>Result wrapped in <code>XPtr&lt;structPitch&gt;</code> with custom
@@ -598,10 +604,10 @@ function</li>
 </ol>
 <p><strong>Key Performance Improvements:</strong> - Shared dispatch
 tables eliminate per-instance closure allocation (9x faster creation,
-160x less memory, v4.8.32). - Wrapper dispatch (v4.9.18) replaces Rcpp
-Module’s 3-layer R→Module→C++ path with direct 2-layer R→C++
-<code><a href="https://rdrr.io/r/base/CallExternal.html" class="external-link">.Call()</a></code> for frequent query methods, reducing per-call
-overhead ~30-40%.</p>
+160x less memory, v4.8.32). - Instance queries go through the Rcpp
+module (<code>.self$.cpp$x()</code>); the v4.9.18
+direct-<code>.Call</code> wrapper path for these was removed in 2026-11
+to eliminate duplicate implementations (see pitfall 16).</p>
 </div>
 <div class="section level3">
 <h3 id="object-structure-shared-dispatch-table-pattern">Object Structure (Shared Dispatch Table Pattern)<a class="anchor" aria-label="anchor" href="#object-structure-shared-dispatch-table-pattern"></a>

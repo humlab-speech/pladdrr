@@ -39,10 +39,24 @@ Pitch <- function(.xptr = NULL) {
 ```
 
 **Characteristics:** - `.self$.xptr` + `.self$.cpp` (both present,
-`.xptr` is the external pointer to C++ Praat object) - Wrapper dispatch
-(v4.9.18) replaces Rcpp Module’s 3-layer R→Module→C++ path with direct
-2-layer R→C++ [`.Call()`](https://rdrr.io/r/base/CallExternal.html) for
-frequent query methods, reducing per-call overhead ~30-40%. - All
+`.xptr` is the external pointer to C++ Praat object) - **One
+implementation per instance method (5.2.x):** an instance getter/mutator
+lives in exactly one place, the Rcpp module class
+(`src/modules/*_module.cpp`), and the R method calls it as
+`.self$.cpp$method(...)`. The v4.9.18 “wrapper dispatch” (`.Call` on
+`.xptr` for Sound/Formant/Spectrum/Spectrogram/Table queries) was
+reversed: it had left a second, drifting copy of each getter as an
+`Rcpp::export` in `src/*_wrappers.cpp`, so a fix to one copy silently
+did nothing. Module methods carry the guards the exports had (Praat
+`MelderError` → R error via `praat_try_return`, non-finite time → `NA`,
+range checks, `0` meaning whole range). - **`Rcpp::export` is for things
+with no module twin:** factories and converters (`Sound` → `Pitch`, …),
+batch/threaded routines (`batch_queries.cpp`), and a few shape-specific
+helpers (e.g. `.table_to_matrix`, `.powercepstrogram_*`). Do not add an
+export with the same name as a module method of the same class. Known
+remaining twins that are intentionally different: TextGrid
+`get_all_points` (export → data.table, module → list), Pitch/Intensity
+`get_values_at_times` (batch export vs module NA semantics). - All
 wrappers inherit dispatch from this pattern via `$.PraatObject`.
 
 **List of types using this pattern:** AmplitudeTier, Cepstrum,

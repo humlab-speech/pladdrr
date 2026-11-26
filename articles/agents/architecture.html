@@ -154,10 +154,29 @@ R6Class.</p>
 <span><span class="op">}</span></span></code></pre></div>
 <p><strong>Characteristics:</strong> - <code>.self$.xptr</code> +
 <code>.self$.cpp</code> (both present, <code>.xptr</code> is the
-external pointer to C++ Praat object) - Wrapper dispatch (v4.9.18)
-replaces Rcpp Module’s 3-layer R→Module→C++ path with direct 2-layer
-R→C++ <code><a href="https://rdrr.io/r/base/CallExternal.html" class="external-link">.Call()</a></code> for frequent query methods, reducing per-call
-overhead ~30-40%. - All wrappers inherit dispatch from this pattern via
+external pointer to C++ Praat object) - <strong>One implementation per
+instance method (5.2.x):</strong> an instance getter/mutator lives in
+exactly one place, the Rcpp module class
+(<code>src/modules/*_module.cpp</code>), and the R method calls it as
+<code>.self$.cpp$method(...)</code>. The v4.9.18 “wrapper dispatch”
+(<code>.Call</code> on <code>.xptr</code> for
+Sound/Formant/Spectrum/Spectrogram/Table queries) was reversed: it had
+left a second, drifting copy of each getter as an
+<code>Rcpp::export</code> in <code>src/*_wrappers.cpp</code>, so a fix
+to one copy silently did nothing. Module methods carry the guards the
+exports had (Praat <code>MelderError</code> → R error via
+<code>praat_try_return</code>, non-finite time → <code>NA</code>, range
+checks, <code>0</code> meaning whole range). -
+<strong><code>Rcpp::export</code> is for things with no module
+twin:</strong> factories and converters (<code>Sound</code> →
+<code>Pitch</code>, …), batch/threaded routines
+(<code>batch_queries.cpp</code>), and a few shape-specific helpers
+(e.g. <code>.table_to_matrix</code>, <code>.powercepstrogram_*</code>).
+Do not add an export with the same name as a module method of the same
+class. Known remaining twins that are intentionally different: TextGrid
+<code>get_all_points</code> (export → data.table, module → list),
+Pitch/Intensity <code>get_values_at_times</code> (batch export vs module
+NA semantics). - All wrappers inherit dispatch from this pattern via
 <code>$.PraatObject</code>.</p>
 <p><strong>List of types using this pattern:</strong> AmplitudeTier,
 Cepstrum, Cochleagram, ComplexSpectrogram, Discriminant, DurationTier,

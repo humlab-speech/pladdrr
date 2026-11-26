@@ -119,6 +119,40 @@
 Release-by-release notes; the full archive is in <a href="history.html">version history</a>.</p>
 <ul>
 <li>
+<strong>Development (2026-11) — module/export deduplication (branch
+<code>refactor/dedupe-module-exports</code>):</strong>
+<ul>
+<li>
+<strong>Single implementation of instance getters.</strong> Formant
+(15), Spectrogram (7), Spectrum (4), Sound (7), Table (15),
+PowerCepstrum <code>get_peak_prominence</code> and DurationTier
+<code>save</code> now live only in their Rcpp module class; R calls
+<code>.self$.cpp$x()</code>. The duplicate <code>Rcpp::export</code>
+copies were deleted. This <strong>supersedes the v4.9.18 “Phase 3
+dispatch migration” below</strong>, which moved these calls the other
+way.</li>
+<li>
+<strong>Behaviour:</strong> module getters raise clean R errors on
+Praat failure; non-finite times give <code>NA</code>; Table statistics
+(<code>get_mean</code>, <code>get_stdev</code>, …) on the module now
+error on an out-of-range column instead of returning <code>NA</code>;
+<code>RPowerCepstrum$get_peak_prominence</code> takes the R6 string
+arguments and treats <code>qmax == 0</code> as the cepstrum end.</li>
+<li>
+<strong>Removed dead code:</strong> <code>RPowerCepstrogram</code>
+<code>get_cpp_at_time</code>/<code>get_cpps</code> (diverged; R uses
+<code>.powercepstrogram_*</code>),
+<code>RCepstrum$to_powercepstrum_ptr</code>,
+<code>.formant_get_values_at_times</code>.</li>
+<li>
+<strong>Kept on purpose:</strong> TextGrid
+<code>get_all_points</code> (two shapes), Pitch/Intensity
+<code>get_values_at_times</code>, LPC <code>filter_inverse_ptr</code>,
+Manipulation <code>*_ptr</code>, the unused Interpreter module. See
+pitfall 16 in the pitfalls page.</li>
+</ul>
+</li>
+<li>
 <strong>v4.9.18 — Performance + docs + CI (2026-08-05 assessment,
 Phases 1-4):</strong>
 <ul>
@@ -147,14 +181,14 @@ category, <code>@seealso</code> cross-references, and improved
 Spectrum, Spectrogram, Harmonicity, PowerCepstrum, LPC, TextGrid, Ltas,
 MFCC/LFCC, PCA, Discriminant, DTW).</li>
 <li>
-<strong>Phase 3 — dispatch migration from module to wrapper
-calls:</strong> Sound (7 query methods), Formant (14), Spectrum (16),
-Spectrogram (12) migrated from <code>.self$.cpp$method()</code> (Rcpp
-Module dispatch, 3 layers: R→Module→C++) to
-<code>.Call("_pladdrr_*", .self$.xptr, args)</code> (direct wrapper, 2
-layers: R→C++). ~30-40% less per-call overhead. Remaining module calls:
-simple getters without wrapper equivalents (xmin/xmax), print methods,
-and object-creation transforms.</li>
+<strong>Phase 3 — dispatch migration from module to wrapper calls
+(reversed 2026-11, see above):</strong> Sound (7 query methods), Formant
+(14), Spectrum (16), Spectrogram (12) migrated from
+<code>.self$.cpp$method()</code> (Rcpp Module dispatch, 3 layers:
+R→Module→C++) to <code>.Call("_pladdrr_*", .self$.xptr, args)</code>
+(direct wrapper, 2 layers: R→C++). ~30-40% less per-call overhead.
+Remaining module calls: simple getters without wrapper equivalents
+(xmin/xmax), print methods, and object-creation transforms.</li>
 <li>
 <strong>Phase 4 — CI infrastructure:</strong>
 <code>.github/workflows/R-CMD-check.yaml</code> (ubuntu release/devel,
