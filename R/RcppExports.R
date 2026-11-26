@@ -587,68 +587,8 @@ sound_extract_electroglottogram_cpp <- function(xptr, channel, invert) {
     .Call(`_pladdrr_formant_from_sound_sl`, sound, time_step, number_of_poles, maximum_formant, window_length, pre_emphasis_from)
 }
 
-.formant_get_number_of_frames <- function(formant) {
-    .Call(`_pladdrr_formant_get_number_of_frames`, formant)
-}
-
-.formant_get_time_step <- function(formant) {
-    .Call(`_pladdrr_formant_get_time_step`, formant)
-}
-
-.formant_get_min_num_formants <- function(formant) {
-    .Call(`_pladdrr_formant_get_min_num_formants`, formant)
-}
-
-.formant_get_max_num_formants <- function(formant) {
-    .Call(`_pladdrr_formant_get_max_num_formants`, formant)
-}
-
-.formant_get_value_at_time <- function(formant, formant_number, time, unit) {
-    .Call(`_pladdrr_formant_get_value_at_time`, formant, formant_number, time, unit)
-}
-
 .formant_get_all_values_at_time <- function(formant, time, max_formants, unit) {
     .Call(`_pladdrr_formant_get_all_values_at_time`, formant, time, max_formants, unit)
-}
-
-.formant_get_bandwidth_at_time <- function(formant, formant_number, time, unit) {
-    .Call(`_pladdrr_formant_get_bandwidth_at_time`, formant, formant_number, time, unit)
-}
-
-.formant_get_mean <- function(formant, formant_number, from_time, to_time, unit) {
-    .Call(`_pladdrr_formant_get_mean`, formant, formant_number, from_time, to_time, unit)
-}
-
-.formant_get_standard_deviation <- function(formant, formant_number, from_time, to_time, unit) {
-    .Call(`_pladdrr_formant_get_standard_deviation`, formant, formant_number, from_time, to_time, unit)
-}
-
-.formant_get_quantile <- function(formant, formant_number, quantile, from_time, to_time, unit) {
-    .Call(`_pladdrr_formant_get_quantile`, formant, formant_number, quantile, from_time, to_time, unit)
-}
-
-.formant_get_minimum <- function(formant, formant_number, from_time, to_time, unit, interpolate) {
-    .Call(`_pladdrr_formant_get_minimum`, formant, formant_number, from_time, to_time, unit, interpolate)
-}
-
-.formant_get_maximum <- function(formant, formant_number, from_time, to_time, unit, interpolate) {
-    .Call(`_pladdrr_formant_get_maximum`, formant, formant_number, from_time, to_time, unit, interpolate)
-}
-
-.formant_get_time_of_minimum <- function(formant, formant_number, from_time, to_time, unit, interpolate) {
-    .Call(`_pladdrr_formant_get_time_of_minimum`, formant, formant_number, from_time, to_time, unit, interpolate)
-}
-
-.formant_get_time_of_maximum <- function(formant, formant_number, from_time, to_time, unit, interpolate) {
-    .Call(`_pladdrr_formant_get_time_of_maximum`, formant, formant_number, from_time, to_time, unit, interpolate)
-}
-
-.formant_as_data_frame <- function(formant, max_formants) {
-    .Call(`_pladdrr_formant_as_data_frame`, formant, max_formants)
-}
-
-.formant_save <- function(formant, path) {
-    invisible(.Call(`_pladdrr_formant_save`, formant, path))
 }
 
 .formant_tracker <- function(formant, number_of_tracks, ref_f1 = 550.0, ref_f2 = 1650.0, ref_f3 = 2750.0, ref_f4 = 3850.0, ref_f5 = 4950.0, frequency_cost = 1.0, bandwidth_cost = 1.0, transition_cost = 1.0) {

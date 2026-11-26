@@ -121,134 +121,84 @@ public:
 
     int get_min_num_formants() {
         VALIDATE_PTR(ptr, Formant);
-        integer min_nFormants = 1000;
-        for (integer i = 1; i <= ptr->nx; i++) {
-            Formant_Frame frame = &ptr->frames[i];
-            if (frame->numberOfFormants < min_nFormants) {
-                min_nFormants = frame->numberOfFormants;
-            }
-        }
-        return static_cast<int>(min_nFormants == 1000 ? 0 : min_nFormants);
+        return praat_try_return([&] { return static_cast<int>(Formant_getMinNumFormants(ptr.get())); },
+                                "Failed to get minimum number of formants");
     }
 
     int get_max_num_formants() {
         VALIDATE_PTR(ptr, Formant);
-        integer max_nFormants = 0;
-        for (integer i = 1; i <= ptr->nx; i++) {
-            Formant_Frame frame = &ptr->frames[i];
-            if (frame->numberOfFormants > max_nFormants) {
-                max_nFormants = frame->numberOfFormants;
-            }
-        }
-        return static_cast<int>(max_nFormants);
+        return praat_try_return([&] { return static_cast<int>(Formant_getMaxNumFormants(ptr.get())); },
+                                "Failed to get maximum number of formants");
     }
 
     // =========================================================================
     // Query Methods
     // =========================================================================
+    //
+    // Single implementation of the Formant getters; the R6 layer calls them via
+    // .cpp$ (there is no Rcpp::export twin -- do not add one). Praat errors
+    // surface as R errors, and a non-finite query time is a missing value
+    // (Praat's Sampled_getValueAtX throws on it).
 
     double get_value_at_time(int formant_number, double time, int unit) {
         VALIDATE_PTR(ptr, Formant);
-        GUARD_NAN_SCALAR(time);
-        return Formant_getValueAtTime(
-            ptr.get(),
-            formant_number,
-            time,
-            static_cast<kFormant_unit>(unit)
-        );
+        if (!R_finite(time)) return NA_REAL;
+        double value = praat_try_return([&] {
+            return Formant_getValueAtTime(ptr.get(), formant_number, time,
+                                          static_cast<kFormant_unit>(unit));
+        }, "Failed to get formant value at time");
+        return isdefined(value) ? value : NA_REAL;
     }
 
     double get_bandwidth_at_time(int formant_number, double time, int unit) {
         VALIDATE_PTR(ptr, Formant);
-        GUARD_NAN_SCALAR(time);
-        return Formant_getBandwidthAtTime(
-            ptr.get(),
-            formant_number,
-            time,
-            static_cast<kFormant_unit>(unit)
-        );
+        if (!R_finite(time)) return NA_REAL;
+        return praat_try_return([&] {
+            return Formant_getBandwidthAtTime(ptr.get(), formant_number, time,
+                                              static_cast<kFormant_unit>(unit));
+        }, "Failed to get formant bandwidth at time");
     }
 
     double get_mean(int formant_number, double from_time, double to_time, int unit) {
         VALIDATE_PTR(ptr, Formant);
-        return Formant_getMean(
-            ptr.get(),
-            formant_number,
-            from_time,
-            to_time,
-            static_cast<kFormant_unit>(unit)
-        );
+        return praat_try_return([&] { return Formant_getMean(ptr.get(), formant_number, from_time, to_time, static_cast<kFormant_unit>(unit)); },
+                                "Failed to get mean formant");
     }
 
     double get_standard_deviation(int formant_number, double from_time, double to_time, int unit) {
         VALIDATE_PTR(ptr, Formant);
-        return Formant_getStandardDeviation(
-            ptr.get(),
-            formant_number,
-            from_time,
-            to_time,
-            static_cast<kFormant_unit>(unit)
-        );
+        return praat_try_return([&] { return Formant_getStandardDeviation(ptr.get(), formant_number, from_time, to_time, static_cast<kFormant_unit>(unit)); },
+                                "Failed to get formant standard deviation");
     }
 
     double get_quantile(int formant_number, double quantile, double from_time, double to_time, int unit) {
         VALIDATE_PTR(ptr, Formant);
-        return Formant_getQuantile(
-            ptr.get(),
-            formant_number,
-            quantile,
-            from_time,
-            to_time,
-            static_cast<kFormant_unit>(unit)
-        );
+        return praat_try_return([&] { return Formant_getQuantile(ptr.get(), formant_number, quantile, from_time, to_time, static_cast<kFormant_unit>(unit)); },
+                                "Failed to get formant quantile");
     }
 
     double get_minimum(int formant_number, double from_time, double to_time, int unit, bool interpolate) {
         VALIDATE_PTR(ptr, Formant);
-        return Formant_getMinimum(
-            ptr.get(),
-            formant_number,
-            from_time,
-            to_time,
-            static_cast<kFormant_unit>(unit),
-            interpolate
-        );
+        return praat_try_return([&] { return Formant_getMinimum(ptr.get(), formant_number, from_time, to_time, static_cast<kFormant_unit>(unit), interpolate ? 1 : 0); },
+                                "Failed to get minimum formant");
     }
 
     double get_maximum(int formant_number, double from_time, double to_time, int unit, bool interpolate) {
         VALIDATE_PTR(ptr, Formant);
-        return Formant_getMaximum(
-            ptr.get(),
-            formant_number,
-            from_time,
-            to_time,
-            static_cast<kFormant_unit>(unit),
-            interpolate
-        );
+        return praat_try_return([&] { return Formant_getMaximum(ptr.get(), formant_number, from_time, to_time, static_cast<kFormant_unit>(unit), interpolate ? 1 : 0); },
+                                "Failed to get maximum formant");
     }
 
     double get_time_of_minimum(int formant_number, double from_time, double to_time, int unit, bool interpolate) {
         VALIDATE_PTR(ptr, Formant);
-        return Formant_getTimeOfMinimum(
-            ptr.get(),
-            formant_number,
-            from_time,
-            to_time,
-            static_cast<kFormant_unit>(unit),
-            interpolate
-        );
+        return praat_try_return([&] { return Formant_getTimeOfMinimum(ptr.get(), formant_number, from_time, to_time, static_cast<kFormant_unit>(unit), interpolate ? 1 : 0); },
+                                "Failed to get time of minimum formant");
     }
 
     double get_time_of_maximum(int formant_number, double from_time, double to_time, int unit, bool interpolate) {
         VALIDATE_PTR(ptr, Formant);
-        return Formant_getTimeOfMaximum(
-            ptr.get(),
-            formant_number,
-            from_time,
-            to_time,
-            static_cast<kFormant_unit>(unit),
-            interpolate
-        );
+        return praat_try_return([&] { return Formant_getTimeOfMaximum(ptr.get(), formant_number, from_time, to_time, static_cast<kFormant_unit>(unit), interpolate ? 1 : 0); },
+                                "Failed to get time of maximum formant");
     }
 
     // =========================================================================
@@ -341,21 +291,30 @@ public:
     DataFrame as_data_frame(int max_formants) {
         VALIDATE_PTR(ptr, Formant);
 
-        std::vector<double> times;
-        std::vector<int> formant_nums;
-        std::vector<double> frequencies;
-        std::vector<double> bandwidths;
+        // Long format: one row per (frame, formant number). Pre-count rows and
+        // fill Rcpp vectors directly (no std::vector push_back + copy).
+        integer total_rows = 0;
+        for (integer iframe = 1; iframe <= ptr->nx; iframe++) {
+            total_rows += std::min(ptr->frames[iframe].numberOfFormants, (integer)max_formants);
+        }
 
+        NumericVector times(total_rows);
+        IntegerVector formant_nums(total_rows);
+        NumericVector frequencies(total_rows);
+        NumericVector bandwidths(total_rows);
+
+        integer row = 0;
         for (integer iframe = 1; iframe <= ptr->nx; iframe++) {
             double time = Sampled_indexToX(ptr.get(), iframe);
             Formant_Frame frame = &ptr->frames[iframe];
 
             integer nFormants = std::min(frame->numberOfFormants, (integer)max_formants);
             for (integer iformant = 1; iformant <= nFormants; iformant++) {
-                times.push_back(time);
-                formant_nums.push_back(iformant);
-                frequencies.push_back(frame->formant[iformant].frequency);
-                bandwidths.push_back(frame->formant[iformant].bandwidth);
+                times[row] = time;
+                formant_nums[row] = static_cast<int>(iformant);
+                frequencies[row] = frame->formant[iformant].frequency;
+                bandwidths[row] = frame->formant[iformant].bandwidth;
+                row++;
             }
         }
 
@@ -412,7 +371,7 @@ public:
             Data_writeToTextFile(ptr.get(), &file);
         } catch (MelderError) {
             Melder_clearError();
-            Rcpp::stop("Failed to save Formant to file: %s", path.c_str());
+            Rcpp::stop("Failed to save formant to file: %s", path.c_str());
         }
     }
 };
