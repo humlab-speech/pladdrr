@@ -237,7 +237,7 @@ LPC_SRC = praat.github.io/LPC/LPC.cpp \
           praat.github.io/LPC/LPC_and_LFCC.cpp
 
 # Action dispatch
-ACTION_SRC = praat_actions_libmode.cpp
+ACTION_SRC = praat_actions_libmode.cpp praat_fixed_buttons_libmode.cpp
 
 # Wrapper sources
 WRAPPER_SRC = praat_wrapper.cpp praat_direct.cpp sound_wrappers.cpp \

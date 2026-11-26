@@ -75,7 +75,7 @@ void praat_statistics_prefsChanged () { /* No-op */ }
 void praat_addMenus (structGuiWindow *) { /* No-op */ }
 void praat_addMenus2 () { /* No-op */ }
 // REMOVED: praat_sortActions, praat_sortMenuCommands - now in praat_actions.cpp/praat_menuCommands.cpp
-void praat_addFixedButtons (structGuiWindow *) { /* No-op */ }
+// praat_addFixedButtons: see praat_fixed_buttons_libmode.cpp
 // REMOVED: praat_actions_exit_optimizeByLeaking, praat_menuCommands_exit_optimizeByLeaking - now in real files
 void Preferences_exit_optimizeByLeaking () { /* No-op */ }
 

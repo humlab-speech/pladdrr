@@ -32,6 +32,10 @@
 #include "praat.github.io/melder/melder_info.h"
 #include "praat.github.io/fon/praat_uvafon_init.h"
 
+// Defined in praat_fixed_buttons_libmode.cpp (declared in sys/praatP.h upstream)
+struct structGuiWindow;
+void praat_addFixedButtons (structGuiWindow *window);
+
 using namespace Rcpp;
 
 // ==============================================================================
@@ -49,7 +53,10 @@ void praat_interpreter_init() {
             
             // Register all Praat object classes and commands
             praat_uvafon_init();
-            
+
+            // Rename..., Copy..., Info, Remove
+            praat_addFixedButtons(nullptr);
+
             praat_interpreter_initialized = true;
         } catch (MelderError) {
             Melder_clearError();
@@ -451,6 +458,14 @@ int praat_interpreter_set_object(SEXP xptr, std::string name, std::string class_
         // Add to Praat's object list with the given name
         autostring32 name32 = Melder_8to32(name.c_str());
         praat_new(std::move(copy), name32.get());
+
+        // praat_new() flags the object as "being created" and only
+        // praat_updateSelection() clears that. Left set, the next command's
+        // praat_updateSelection() re-selects this object next to the command's
+        // result (so `To Pitch` followed by `Rename:` saw two selected objects).
+        // Clear the flag without selecting, which keeps the object unselected.
+        theCurrentPraatObjects->list[theCurrentPraatObjects->n].isBeingCreated = false;
+        theCurrentPraatObjects->totalBeingCreated--;
 
         // Return the ID of the newly added object
         return theCurrentPraatObjects->list[theCurrentPraatObjects->n].id;

@@ -303,6 +303,28 @@ GuiMenuItem praat_addMenuCommand_ (conststring32 window, conststring32 menu, con
     return nullptr;  // No GUI menu item in library mode
 }
 
+// Fixed-button commands (Rename..., Copy..., Info, Remove). Upstream they are
+// GUI buttons whose sensitivity follows the selection; in library mode they are
+// plain menu commands that are always executable and check the selection
+// themselves (see praat_fixed_buttons_libmode.cpp).
+void praat_addFixedButtonCommand_ (GuiForm /*parent*/, conststring32 title, UiCallback callback,
+    conststring32 nameOfCallback, int /*x*/, int /*y*/)
+{
+    if (lookupCommand (U"Objects", U"", title))
+        return;
+    autoPraat_Command me = Thing_new (Praat_Command);
+    my window = Melder_dup_f (U"Objects");
+    my menu = Melder_dup_f (U"");
+    my title = Melder_dup_f (title);
+    my callback = callback;
+    my nameOfCallback = nameOfCallback;
+    my unhidable = true;
+    my noApi = str32equ (title, U"Inspect");
+    my executable = true;
+    my visible = true;
+    theCommands. addItem_move (me.move());
+}
+
 // Menu command dispatch
 int praat_doMenuCommand (conststring32 title, conststring32 arguments, Interpreter interpreter) {
     for (integer i = 1; i <= theCommands.size; i++) {

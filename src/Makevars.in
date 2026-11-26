@@ -235,7 +235,7 @@ LPC_SRC = praat.github.io/LPC/LPC.cpp \
 # MP3 decoding is stubbed (mp3_stubs.cpp); Sound() falls back to 'av' for MP3.
 
 # Action dispatch (library-mode implementation)
-ACTION_SRC = praat_actions_libmode.cpp
+ACTION_SRC = praat_actions_libmode.cpp praat_fixed_buttons_libmode.cpp
 
 # Wrapper sources
 # Note: pitch_wrappers, intensity_wrappers, harmonicity_wrappers removed (superseded by modules)
