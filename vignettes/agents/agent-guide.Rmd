@@ -264,7 +264,7 @@ to be read in isolation.
 
 **Key Performance Improvements:**
 - Shared dispatch tables eliminate per-instance closure allocation (9x faster creation, 160x less memory, v4.8.32).
-- Wrapper dispatch (v4.9.18) replaces Rcpp Module's 3-layer R→Module→C++ path with direct 2-layer R→C++ `.Call()` for frequent query methods, reducing per-call overhead ~30-40%.
+- Instance queries go through the Rcpp module (`.self$.cpp$x()`); the v4.9.18 direct-`.Call` wrapper path for these was removed in 2026-11 to eliminate duplicate implementations (see pitfall 16).
 
 ### Object Structure (Shared Dispatch Table Pattern)
 
