@@ -111,8 +111,8 @@ NULL
   }
   trend_type <- match.arg(trend_type)
   fit_method <- match.arg(fit_method)
-  .powercepstrum_get_peak_prominence(
-    .self$.xptr, as.character(interpolation), as.numeric(pitch_floor),
+  .self$.cpp$get_peak_prominence(
+    as.character(interpolation), as.numeric(pitch_floor),
     as.numeric(pitch_ceiling), as.numeric(qmin), as.numeric(qmax),
     as.character(trend_type), as.character(fit_method), as.numeric(tolerance)
   )

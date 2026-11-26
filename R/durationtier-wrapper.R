@@ -80,7 +80,7 @@ NULL
   data.frame(time = times, duration_factor = values)
 }
 .durationtier_methods$save <- function(.self, path) {
-  .durationtier_save(.self$.xptr, as.character(path))
+  .self$.cpp$save(as.character(path))
   invisible(.self)
 }
 

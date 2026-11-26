@@ -107,25 +107,46 @@ public:
         }
     }
 
-    double get_peak_prominence(double pitch_floor, double pitch_ceiling,
-                               int interpolation, double qstart_fit, double qend_fit,
-                               int trend_type, int fit_method) {
+    // Strings are the R6 contract: interpolation "none"/"parabolic"/"cubic"/
+    // "sinc70"/"sinc700"; trend_type "straight"/"exponential decay"; fit_method
+    // "robust"/"robust slow"/"least squares". pitch_floor/pitch_ceiling bound the
+    // peak search, qmin/qmax the quefrency range of the trend fit (qmax == 0 means
+    // the end of the cepstrum). `tolerance` is unused by Praat's
+    // PowerCepstrum_getPeakProminence(); kept for API compatibility.
+    double get_peak_prominence(std::string interpolation, double pitch_floor, double pitch_ceiling,
+                               double qmin, double qmax, std::string trend_type,
+                               std::string fit_method, double tolerance) {
         VALIDATE_PTR(ptr, PowerCepstrum);
-        try {
-            kVector_peakInterpolation interp = static_cast<kVector_peakInterpolation>(interpolation);
-            kCepstrum_trendType trend = static_cast<kCepstrum_trendType>(trend_type);
-            kCepstrum_trendFit fit = static_cast<kCepstrum_trendFit>(fit_method);
+        (void) tolerance;
 
-            double qpeak = 0.0;
-            double prominence = PowerCepstrum_getPeakProminence(
-                ptr.get(), pitch_floor, pitch_ceiling, interp,
-                qstart_fit, qend_fit, trend, fit, qpeak
-            );
-            return prominence;
-        } catch (MelderError) {
-            Melder_clearError();
-            return NA_REAL;
-        }
+        kVector_peakInterpolation interp_type;
+        if (interpolation == "none") interp_type = kVector_peakInterpolation::NONE;
+        else if (interpolation == "parabolic") interp_type = kVector_peakInterpolation::PARABOLIC;
+        else if (interpolation == "cubic") interp_type = kVector_peakInterpolation::CUBIC;
+        else if (interpolation == "sinc70") interp_type = kVector_peakInterpolation::SINC70;
+        else if (interpolation == "sinc700") interp_type = kVector_peakInterpolation::SINC700;
+        else Rcpp::stop("Invalid interpolation type");
+
+        kCepstrum_trendType trend_type_enum;
+        if (trend_type == "straight") trend_type_enum = kCepstrum_trendType::LINEAR;
+        else if (trend_type == "exponential decay") trend_type_enum = kCepstrum_trendType::EXPONENTIAL_DECAY;
+        else Rcpp::stop("Invalid trend type");
+
+        kCepstrum_trendFit fit_type;
+        if (fit_method == "robust") fit_type = kCepstrum_trendFit::ROBUST_FAST;
+        else if (fit_method == "least squares" || fit_method == "least_squares")
+            fit_type = kCepstrum_trendFit::LEAST_SQUARES;
+        else if (fit_method == "robust slow") fit_type = kCepstrum_trendFit::ROBUST_SLOW;
+        else Rcpp::stop("Invalid fit method");
+
+        if (qmax == 0) qmax = ptr->xmax;
+
+        return praat_try_return([&] {
+            double qpeak;
+            return PowerCepstrum_getPeakProminence(
+                ptr.get(), pitch_floor, pitch_ceiling, interp_type,
+                qmin, qmax, trend_type_enum, fit_type, qpeak);
+        }, "Failed to get peak prominence");
     }
 
     List get_peak_prominence_hillenbrand(double pitch_floor, double pitch_ceiling) {

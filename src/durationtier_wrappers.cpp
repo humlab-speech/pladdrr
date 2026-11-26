@@ -56,17 +56,3 @@ SEXP durationtier_create(double tmin, double tmax) {
 // I/O METHODS
 // ============================================================================
 
-// [[Rcpp::export(.durationtier_save)]]
-void durationtier_save(XPtr<structDurationTier> tier, std::string path) {
-    if (!tier) stop("Invalid DurationTier pointer");
-    
-    try {
-        structMelderFile file = {};
-        Melder_relativePathToFile(Melder_peek8to32(path.c_str()), &file);
-        Data_writeToTextFile(tier.get(), &file);
-    } catch (MelderError) {
-        Melder_clearError();
-        stop("Failed to save DurationTier");
-    }
-}
-

@@ -159,67 +159,6 @@ SEXP spectrum_to_powercepstrum(SEXP spectrum_xptr) {
 // PowerCepstrum query methods
 // ==============================================================================
 
-// [[Rcpp::export(.powercepstrum_get_peak_prominence)]]
-double powercepstrum_get_peak_prominence(SEXP xptr, std::string interpolation,
-                                         double pitch_floor, double pitch_ceiling,
-                                         double qmin, double qmax,
-                                         std::string trend_type, std::string fit_method,
-                                         double tolerance) {
-    XPtr<structPowerCepstrum> cepstrum(xptr);
-    if (!cepstrum) stop("Invalid PowerCepstrum pointer");
-    
-    // Convert interpolation string to enum
-    kVector_peakInterpolation interp_type = kVector_peakInterpolation::NONE;
-    if (interpolation == "none") interp_type = kVector_peakInterpolation::NONE;
-    else if (interpolation == "parabolic") interp_type = kVector_peakInterpolation::PARABOLIC;
-    else if (interpolation == "cubic") interp_type = kVector_peakInterpolation::CUBIC;
-    else if (interpolation == "sinc70") interp_type = kVector_peakInterpolation::SINC70;
-    else if (interpolation == "sinc700") interp_type = kVector_peakInterpolation::SINC700;
-    else stop("Invalid interpolation type");
-    
-    // tolerance is unused by Praat's PowerCepstrum_getPeakProminence(), but we
-    // keep the argument for API compatibility with the existing R wrapper.
-    (void) tolerance;
-
-    kCepstrum_trendType trend_type_enum = kCepstrum_trendType::EXPONENTIAL_DECAY;
-    if (trend_type == "straight") trend_type_enum = kCepstrum_trendType::LINEAR;
-    else if (trend_type == "exponential decay") trend_type_enum = kCepstrum_trendType::EXPONENTIAL_DECAY;
-    else stop("Invalid trend type");
-
-    kCepstrum_trendFit fit_type = kCepstrum_trendFit::ROBUST_SLOW;
-    if (fit_method == "robust") fit_type = kCepstrum_trendFit::ROBUST_FAST;
-    else if (fit_method == "least squares" || fit_method == "least_squares")
-        fit_type = kCepstrum_trendFit::LEAST_SQUARES;
-    else if (fit_method == "robust slow") fit_type = kCepstrum_trendFit::ROBUST_SLOW;
-    else stop("Invalid fit method");
-    
-    // Handle qmax = 0 (use default)
-    if (qmax == 0) {
-        qmax = cepstrum->xmax;
-    }
-    
-    try {
-        double qpeak;
-        // Note: pitch_floor and pitch_ceiling define the peak search range
-        // qmin and qmax define the quefrency range for trend line fitting
-        double prominence = PowerCepstrum_getPeakProminence(
-            cepstrum.get(),
-            pitch_floor,  // Pitch floor for peak search (e.g., 60 Hz)
-            pitch_ceiling,  // Pitch ceiling for peak search (e.g., 333.3 Hz)
-            interp_type,
-            qmin,  // Quefrency start for trend line fit (e.g., 0.001 s)
-            qmax,  // Quefrency end for trend line fit (e.g., 0.05 s)
-            trend_type_enum,
-            fit_type,
-            qpeak
-        );
-        return prominence;
-    } catch (MelderError) {
-        Melder_clearError();
-        stop("Failed to get peak prominence");
-    }
-}
-
 // ==============================================================================
 // PowerCepstrum modification
 // ==============================================================================

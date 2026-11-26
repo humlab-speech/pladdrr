@@ -555,10 +555,6 @@ should_use_simd_for_batch_queries_bridge <- function() {
     .Call(`_pladdrr_durationtier_create`, tmin, tmax)
 }
 
-.durationtier_save <- function(tier, path) {
-    invisible(.Call(`_pladdrr_durationtier_save`, tier, path))
-}
-
 electroglottogram_create_cpp <- function(xmin, xmax, nx, dx, x1) {
     .Call(`_pladdrr_electroglottogram_create_cpp`, xmin, xmax, nx, dx, x1)
 }
@@ -986,10 +982,6 @@ sound_extract_electroglottogram_cpp <- function(xptr, channel, invert) {
 
 .spectrum_to_powercepstrum <- function(spectrum_xptr) {
     .Call(`_pladdrr_spectrum_to_powercepstrum`, spectrum_xptr)
-}
-
-.powercepstrum_get_peak_prominence <- function(xptr, interpolation, pitch_floor, pitch_ceiling, qmin, qmax, trend_type, fit_method, tolerance) {
-    .Call(`_pladdrr_powercepstrum_get_peak_prominence`, xptr, interpolation, pitch_floor, pitch_ceiling, qmin, qmax, trend_type, fit_method, tolerance)
 }
 
 .powercepstrogram_get_cpp_at_time <- function(xptr, time, interpolation, qmin, qmax, fit_method, tolerance) {

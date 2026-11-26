@@ -225,13 +225,9 @@ test_that("RPowerCepstrogram CPPS works", {
 
 probe_test(
   "RPowerCepstrum get_peak_prominence, hillenbrand, trend, smoothing, and export methods work", {
-  # Coverage gap-fill note (task 20): PowerCepstrum$get_peak_prominence() (the
-  # R6 method) dispatches to the bare .powercepstrum_get_peak_prominence()
-  # wrapper.cpp export, NOT to this module's own get_peak_prominence() method
-  # -- so this module method is otherwise dead code from the R6 API's
-  # perspective (confirmed dual-implementation trap). Exercised directly here
-  # via new(pc_mod$RPowerCepstrum, ptr), matching this file's existing
-  # convention of testing module-only surface that the R6 wrapper doesn't use.
+  # PowerCepstrum$get_peak_prominence() (the R6 method) dispatches to this
+  # module's get_peak_prominence(); exercised directly here via
+  # new(pc_mod$RPowerCepstrum, ptr).
   skip_if_no_module("powercepstrum")
   skip_if_no_module("sound")
   skip_if_no_module("spectrum")
@@ -247,7 +243,8 @@ probe_test(
   # interpolation = parabolic(1), trend_type = exponential decay(2),
   # fit_method = robust slow(3) -- same integer codes R/constants.R's
   # .interp_map / .trend_line_map / .trend_fit_map use for these module calls.
-  prom <- rpc$get_peak_prominence(60, 333.3, 1L, 0.001, 0.05, 2L, 3L)
+  prom <- rpc$get_peak_prominence("parabolic", 60, 333.3, 0.001, 0.05,
+    "exponential decay", "robust slow", 0)
   expect_true(is.numeric(prom))
 
   hb <- rpc$get_peak_prominence_hillenbrand(60, 333.3)

@@ -511,17 +511,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// durationtier_save
-void durationtier_save(XPtr<structDurationTier> tier, std::string path);
-RcppExport SEXP _pladdrr_durationtier_save(SEXP tierSEXP, SEXP pathSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< XPtr<structDurationTier> >::type tier(tierSEXP);
-    Rcpp::traits::input_parameter< std::string >::type path(pathSEXP);
-    durationtier_save(tier, path);
-    return R_NilValue;
-END_RCPP
-}
 // electroglottogram_create_cpp
 SEXP electroglottogram_create_cpp(double xmin, double xmax, int nx, double dx, double x1);
 RcppExport SEXP _pladdrr_electroglottogram_create_cpp(SEXP xminSEXP, SEXP xmaxSEXP, SEXP nxSEXP, SEXP dxSEXP, SEXP x1SEXP) {
@@ -1883,25 +1872,6 @@ BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type spectrum_xptr(spectrum_xptrSEXP);
     rcpp_result_gen = Rcpp::wrap(spectrum_to_powercepstrum(spectrum_xptr));
-    return rcpp_result_gen;
-END_RCPP
-}
-// powercepstrum_get_peak_prominence
-double powercepstrum_get_peak_prominence(SEXP xptr, std::string interpolation, double pitch_floor, double pitch_ceiling, double qmin, double qmax, std::string trend_type, std::string fit_method, double tolerance);
-RcppExport SEXP _pladdrr_powercepstrum_get_peak_prominence(SEXP xptrSEXP, SEXP interpolationSEXP, SEXP pitch_floorSEXP, SEXP pitch_ceilingSEXP, SEXP qminSEXP, SEXP qmaxSEXP, SEXP trend_typeSEXP, SEXP fit_methodSEXP, SEXP toleranceSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type xptr(xptrSEXP);
-    Rcpp::traits::input_parameter< std::string >::type interpolation(interpolationSEXP);
-    Rcpp::traits::input_parameter< double >::type pitch_floor(pitch_floorSEXP);
-    Rcpp::traits::input_parameter< double >::type pitch_ceiling(pitch_ceilingSEXP);
-    Rcpp::traits::input_parameter< double >::type qmin(qminSEXP);
-    Rcpp::traits::input_parameter< double >::type qmax(qmaxSEXP);
-    Rcpp::traits::input_parameter< std::string >::type trend_type(trend_typeSEXP);
-    Rcpp::traits::input_parameter< std::string >::type fit_method(fit_methodSEXP);
-    Rcpp::traits::input_parameter< double >::type tolerance(toleranceSEXP);
-    rcpp_result_gen = Rcpp::wrap(powercepstrum_get_peak_prominence(xptr, interpolation, pitch_floor, pitch_ceiling, qmin, qmax, trend_type, fit_method, tolerance));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -6684,7 +6654,6 @@ extern const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_sound_to_cochleagram_edb", (DL_FUNC) &_pladdrr_sound_to_cochleagram_edb, 8},
     {"_pladdrr_cochleagram_to_excitation", (DL_FUNC) &_pladdrr_cochleagram_to_excitation, 2},
     {"_pladdrr_durationtier_create", (DL_FUNC) &_pladdrr_durationtier_create, 2},
-    {"_pladdrr_durationtier_save", (DL_FUNC) &_pladdrr_durationtier_save, 2},
     {"_pladdrr_electroglottogram_create_cpp", (DL_FUNC) &_pladdrr_electroglottogram_create_cpp, 5},
     {"_pladdrr_sound_extract_electroglottogram_cpp", (DL_FUNC) &_pladdrr_sound_extract_electroglottogram_cpp, 3},
     {"_pladdrr_spectrum_to_excitation", (DL_FUNC) &_pladdrr_spectrum_to_excitation, 2},
@@ -6768,7 +6737,6 @@ extern const R_CallMethodDef CallEntries[] = {
     {"_pladdrr_pointprocess_to_sound_hum", (DL_FUNC) &_pladdrr_pointprocess_to_sound_hum, 1},
     {"_pladdrr_sound_to_powercepstrogram", (DL_FUNC) &_pladdrr_sound_to_powercepstrogram, 5},
     {"_pladdrr_spectrum_to_powercepstrum", (DL_FUNC) &_pladdrr_spectrum_to_powercepstrum, 1},
-    {"_pladdrr_powercepstrum_get_peak_prominence", (DL_FUNC) &_pladdrr_powercepstrum_get_peak_prominence, 9},
     {"_pladdrr_powercepstrogram_get_cpp_at_time", (DL_FUNC) &_pladdrr_powercepstrogram_get_cpp_at_time, 7},
     {"_pladdrr_powercepstrogram_get_mean_cpp", (DL_FUNC) &_pladdrr_powercepstrogram_get_mean_cpp, 7},
     {"_pladdrr_powercepstrogram_to_powercepstrum_slice", (DL_FUNC) &_pladdrr_powercepstrogram_to_powercepstrum_slice, 2},
