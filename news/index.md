@@ -7,6 +7,53 @@
   `Sound$save(format = "MP3")` now errors instead of reaching Praat’s
   unsupported code path.
 
+### CRAN check fixes (win-builder and incoming pretest)
+
+- Documentation: the ten exported constructors and deprecated aliases
+  that R-devel’s new “Exported functions without usage information”
+  diagnostic listed now carry explicit usage.
+  [`Cepstrum()`](https://humlab-speech.github.io/pladdrr/reference/Cepstrum.md),
+  [`IntensityTier()`](https://humlab-speech.github.io/pladdrr/reference/IntensityTier.md),
+  [`Spectrogram()`](https://humlab-speech.github.io/pladdrr/reference/Spectrogram.md),
+  [`PowerCepstrum()`](https://humlab-speech.github.io/pladdrr/reference/PowerCepstrum.md)
+  and
+  [`PraatMatrix()`](https://humlab-speech.github.io/pladdrr/reference/PraatMatrix.md)
+  were roxygen `@name` class pages with no `\usage` entry;
+  [`get_sound_values_zerocopy()`](https://humlab-speech.github.io/pladdrr/reference/get_sound_values_fast.md),
+  [`sound_as_matrix_zerocopy()`](https://humlab-speech.github.io/pladdrr/reference/sound_as_matrix_fast.md),
+  [`is_zerocopy_vector()`](https://humlab-speech.github.io/pladdrr/reference/is_fast_vector.md),
+  [`KlattGrid_createExample()`](https://humlab-speech.github.io/pladdrr/reference/klattgrid_create_example.md)
+  and
+  [`KlattGrid_createFromVowel()`](https://humlab-speech.github.io/pladdrr/reference/klattgrid_create_from_vowel.md)
+  carried `@usage` comment lines (“# Deprecated: …”), which roxygen
+  emits verbatim into `\usage` without documenting the function. Each
+  block now has a real `@usage` (plus `@param` for the constructors),
+  regenerated with roxygen2 8.1.1;
+  [`tools::codoc()`](https://rdrr.io/r/tools/codoc.html) reports no
+  mismatches.
+- Vendored libFLAC no longer trips `-Wpedantic`: `flac_min()` and
+  `flac_max()` in
+  `src/praat.github.io/external/flac/flac_private_macros.h` wrap their
+  GNU statement expressions in `__extension__`. This was the single
+  WARNING of the 5.2.0 win-builder run (“ISO C forbids braced-groups
+  within expressions”).
+- `License: GPL-3`, without the `+ file LICENSE` stub. GPL-3 is a
+  standard license and needs no stub file, and the stub made CRAN’s
+  incoming check echo the whole file under “License components with
+  restrictions and base license permitting such”. `LICENSE` is gone;
+  `COPYING` keeps the full GPL-3 text and `inst/COPYRIGHTS` the
+  third-party attributions.
+- `DESCRIPTION` wording no longer raises “Possibly misspelled words in
+  DESCRIPTION”: “robust formant tracking” became “robust vocal-tract
+  resonance tracking”, “cepstral coefficients” became “spectral envelope
+  coefficients”, and the bare `R-Praat` became “between R and ‘Praat’”.
+  That check runs the `aspell` filter over the title and description
+  only; `inst/WORDLIST` feeds the Rd and vignette spell check, not this
+  one.
+- `README.md`: the GPL badge links to `COPYING` in the repository
+  instead of `https://www.gnu.org/licenses/gpl-3.0`, which timed out in
+  win-builder’s URL check.
+
 ### FLAC is decoded and encoded natively; shipped audio slimmed
 
 - libFLAC (BSD-3-Clause, vendored from Praat under

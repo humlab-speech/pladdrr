@@ -8,7 +8,7 @@ testing the synthesizer.
 ``` r
 klattgrid_create_example()
 
-# Deprecated: use klattgrid_create_example() instead
+KlattGrid_createExample()
 ```
 
 ## Value

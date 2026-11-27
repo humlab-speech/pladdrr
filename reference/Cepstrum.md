@@ -2,6 +2,19 @@
 
 Praat Cepstrum object with direct C++ module binding.
 
+## Usage
+
+``` r
+Cepstrum(.xptr)
+```
+
+## Arguments
+
+- .xptr:
+
+  External pointer to a Praat Cepstrum. This is the low-level
+  constructor; `sound$to_cepstrum()` is the usual entry point.
+
 ## Value
 
 A `Cepstrum` object with methods for cepstral analysis and

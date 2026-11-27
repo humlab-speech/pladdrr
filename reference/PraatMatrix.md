@@ -3,6 +3,57 @@
 Praat Matrix object with direct C++ module binding for matrix
 operations.
 
+## Usage
+
+``` r
+PraatMatrix(xmin = NULL, xmax = NULL, nx = NULL, dx = NULL,
+  x1 = NULL, ymin = NULL, ymax = NULL, ny = NULL, dy = NULL, y1 = NULL,
+  numberOfRows = NULL, numberOfColumns = NULL, .xptr = NULL)
+```
+
+## Arguments
+
+- xmin, xmax:
+
+  Start and end of the x axis (s).
+
+- nx:
+
+  Number of x samples.
+
+- dx:
+
+  Sampling interval along x (s).
+
+- x1:
+
+  Value of the first x sample (s).
+
+- ymin, ymax:
+
+  Start and end of the y axis.
+
+- ny:
+
+  Number of y samples.
+
+- dy:
+
+  Sampling interval along y.
+
+- y1:
+
+  Value of the first y sample.
+
+- numberOfRows, numberOfColumns:
+
+  Grid size; an alternative to the ten full-domain parameters above.
+
+- .xptr:
+
+  External pointer to an existing Praat Matrix. When given, all other
+  arguments are ignored.
+
 ## Value
 
 A `PraatMatrix` object with methods for two-dimensional sampled data

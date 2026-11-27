@@ -8,7 +8,7 @@ access.
 ``` r
 sound_as_matrix_fast(sound, zerocopy = FALSE)
 
-# Deprecated: use sound_as_matrix_fast() instead
+sound_as_matrix_zerocopy(sound, zerocopy = FALSE)
 ```
 
 ## Arguments

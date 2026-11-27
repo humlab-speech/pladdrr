@@ -528,9 +528,8 @@ This package includes components from several third-party projects:
 - **Vorbis/Ogg & Opusfile** (BSD-3-Clause) - Audio codec support
 
 All third-party components are compatible with GPL-3. For full licensing
-details, see: - `LICENSE` - Copyright and GPL-3 license declaration -
-`inst/COPYRIGHTS` - Third-party component attributions - `COPYING` -
-Complete GPL-3 license text
+details, see: - `inst/COPYRIGHTS` - Third-party component attributions -
+`COPYING` - Complete GPL-3 license text
 
 ## References
 

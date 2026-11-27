@@ -3,6 +3,27 @@
 Praat IntensityTier object with direct C++ module binding for intensity
 manipulation.
 
+## Usage
+
+``` r
+IntensityTier(tmin = NULL, tmax = NULL, .xptr = NULL)
+```
+
+## Arguments
+
+- tmin:
+
+  Start time of the new tier (s).
+
+- tmax:
+
+  End time of the new tier (s).
+
+- .xptr:
+
+  External pointer to an existing Praat IntensityTier. When given,
+  `tmin` and `tmax` are ignored.
+
 ## Value
 
 An `IntensityTier` object with methods for intensity (dB SPL)

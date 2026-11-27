@@ -83,7 +83,59 @@
     <p>Praat Matrix object with direct C++ module binding for matrix operations.</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">PraatMatrix</span><span class="op">(</span>xmin <span class="op">=</span> <span class="cn">NULL</span>, xmax <span class="op">=</span> <span class="cn">NULL</span>, nx <span class="op">=</span> <span class="cn">NULL</span>, dx <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  x1 <span class="op">=</span> <span class="cn">NULL</span>, ymin <span class="op">=</span> <span class="cn">NULL</span>, ymax <span class="op">=</span> <span class="cn">NULL</span>, ny <span class="op">=</span> <span class="cn">NULL</span>, dy <span class="op">=</span> <span class="cn">NULL</span>, y1 <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  numberOfRows <span class="op">=</span> <span class="cn">NULL</span>, numberOfColumns <span class="op">=</span> <span class="cn">NULL</span>, .xptr <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    </div>
 
+    <div class="section level2">
+    <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
+
+
+<dl><dt id="arg-xmin-xmax">xmin, xmax<a class="anchor" aria-label="anchor" href="#arg-xmin-xmax"></a></dt>
+<dd><p>Start and end of the x axis (s).</p></dd>
+
+
+<dt id="arg-nx">nx<a class="anchor" aria-label="anchor" href="#arg-nx"></a></dt>
+<dd><p>Number of x samples.</p></dd>
+
+
+<dt id="arg-dx">dx<a class="anchor" aria-label="anchor" href="#arg-dx"></a></dt>
+<dd><p>Sampling interval along x (s).</p></dd>
+
+
+<dt id="arg-x-">x1<a class="anchor" aria-label="anchor" href="#arg-x-"></a></dt>
+<dd><p>Value of the first x sample (s).</p></dd>
+
+
+<dt id="arg-ymin-ymax">ymin, ymax<a class="anchor" aria-label="anchor" href="#arg-ymin-ymax"></a></dt>
+<dd><p>Start and end of the y axis.</p></dd>
+
+
+<dt id="arg-ny">ny<a class="anchor" aria-label="anchor" href="#arg-ny"></a></dt>
+<dd><p>Number of y samples.</p></dd>
+
+
+<dt id="arg-dy">dy<a class="anchor" aria-label="anchor" href="#arg-dy"></a></dt>
+<dd><p>Sampling interval along y.</p></dd>
+
+
+<dt id="arg-y-">y1<a class="anchor" aria-label="anchor" href="#arg-y-"></a></dt>
+<dd><p>Value of the first y sample.</p></dd>
+
+
+<dt id="arg-numberofrows-numberofcolumns">numberOfRows, numberOfColumns<a class="anchor" aria-label="anchor" href="#arg-numberofrows-numberofcolumns"></a></dt>
+<dd><p>Grid size; an alternative to the ten
+full-domain parameters above.</p></dd>
+
+
+<dt id="arg--xptr">.xptr<a class="anchor" aria-label="anchor" href="#arg--xptr"></a></dt>
+<dd><p>External pointer to an existing Praat Matrix. When given, all
+other arguments are ignored.</p></dd>
+
+</dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A <code>PraatMatrix</code> object with methods for two-dimensional sampled data

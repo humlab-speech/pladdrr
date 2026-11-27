@@ -4,6 +4,19 @@ A Spectrogram is a time-frequency representation of sound: a matrix of
 power values indexed by time (columns) and frequency (rows). Created
 from a Sound via short-time Fourier transform (STFT).
 
+## Usage
+
+``` r
+Spectrogram(.xptr = NULL)
+```
+
+## Arguments
+
+- .xptr:
+
+  External pointer to a Praat Spectrogram. Spectrograms are normally
+  created with `sound$to_spectrogram()`.
+
 ## Value
 
 A Spectrogram object.

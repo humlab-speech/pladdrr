@@ -8,7 +8,7 @@ through Praat's per-sample accessor as \`sound\$get_values()\` does.
 ``` r
 get_sound_values_fast(sound, channel = 1)
 
-# Deprecated: use get_sound_values_fast() instead
+get_sound_values_zerocopy(sound, channel = 1)
 ```
 
 ## Arguments

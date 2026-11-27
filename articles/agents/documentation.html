@@ -171,6 +171,7 @@ comments.</p>
 <span><span class="co">#' @param .xptr Not for direct use. External pointer to the underlying C++</span></span>
 <span><span class="co">#'   object; set internally when a method returns a new object.</span></span>
 <span><span class="co">#' @return A ClassName object.</span></span>
+<span><span class="co">#' @usage ClassName(.xptr = NULL)</span></span>
 <span><span class="co">#'</span></span>
 <span><span class="co">#' @examples</span></span>
 <span><span class="co">#' pitch &lt;- Sound$create_tone(frequency = 220, duration = 0.5)$to_pitch()</span></span>
@@ -218,6 +219,18 @@ Plain, direct, friendly-scientific register — write like the
 <code>humanizer</code> skill patterns (AI Vocabulary, Overuse of
 Boldface, Em Dashes, Title Case in Headings are the ones that show up
 most in this codebase).</li>
+<li>
+<strong>Every exported name needs <code>\usage</code>.</strong> An
+<code>@name</code> class page gets no usage from roxygen, and R-devel
+now reports “Exported functions without usage information” for any
+exported function missing from <code>\usage</code> (INFO on R-devel
+r90991). A deprecated alias documented only as
+<code>@usage # Deprecated: ...</code> counts as missing, because roxygen
+copies that comment into <code>\usage</code> verbatim. Give the block
+<code>@usage ClassName(args)</code> with the real signature plus a
+<code>@param</code> for each argument, and confirm with
+<code>tools::codoc(dir = ".")</code>, which must report no
+mismatches.</li>
 </ol>
 </div>
 <div class="section level2">

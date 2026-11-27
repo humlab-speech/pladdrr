@@ -40,8 +40,10 @@ Load, create and inspect audio. Start here.
 - [`sound_from_values()`](https://humlab-speech.github.io/pladdrr/reference/sound_from_values.md)
   : Create Sound from numeric values
 - [`sound_as_matrix_fast()`](https://humlab-speech.github.io/pladdrr/reference/sound_as_matrix_fast.md)
+  [`sound_as_matrix_zerocopy()`](https://humlab-speech.github.io/pladdrr/reference/sound_as_matrix_fast.md)
   : Convert Sound to Matrix (Fast Copy)
 - [`get_sound_values_fast()`](https://humlab-speech.github.io/pladdrr/reference/get_sound_values_fast.md)
+  [`get_sound_values_zerocopy()`](https://humlab-speech.github.io/pladdrr/reference/get_sound_values_fast.md)
   : Get Sound Values (Fast Copy)
 - [`get_sound_times_fast()`](https://humlab-speech.github.io/pladdrr/reference/get_sound_times_fast.md)
   : Get Sound Sample Times (Fast Computation)
@@ -240,7 +242,7 @@ Intensity contours, tiers and per-sound level statistics.
 
 - [`Intensity()`](https://humlab-speech.github.io/pladdrr/reference/Intensity.md)
   : Intensity
-- [`IntensityTier`](https://humlab-speech.github.io/pladdrr/reference/IntensityTier.md)
+- [`IntensityTier()`](https://humlab-speech.github.io/pladdrr/reference/IntensityTier.md)
   : Praat IntensityTier Object
 - [`intensity_tier_to_amplitude_tier()`](https://humlab-speech.github.io/pladdrr/reference/intensity_tier_to_amplitude_tier.md)
   : Convert IntensityTier to AmplitudeTier
@@ -273,7 +275,7 @@ Spectrum, spectrogram, LTAS and batch spectral moments.
 
 - [`Spectrum()`](https://humlab-speech.github.io/pladdrr/reference/Spectrum.md)
   : Spectrum
-- [`Spectrogram`](https://humlab-speech.github.io/pladdrr/reference/Spectrogram.md)
+- [`Spectrogram()`](https://humlab-speech.github.io/pladdrr/reference/Spectrogram.md)
   : Spectrogram
 - [`Ltas()`](https://humlab-speech.github.io/pladdrr/reference/Ltas.md)
   : Ltas
@@ -305,7 +307,7 @@ Spectrum, spectrogram, LTAS and batch spectral moments.
 Cepstral coefficients (MFCC, LFCC), power cepstrum/cepstrogram, cochlea
 models.
 
-- [`Cepstrum`](https://humlab-speech.github.io/pladdrr/reference/Cepstrum.md)
+- [`Cepstrum()`](https://humlab-speech.github.io/pladdrr/reference/Cepstrum.md)
   : Praat Cepstrum Object
 - [`MFCC()`](https://humlab-speech.github.io/pladdrr/reference/MFCC.md)
   : MFCC
@@ -313,7 +315,7 @@ models.
   : LFCC
 - [`LPC()`](https://humlab-speech.github.io/pladdrr/reference/LPC.md) :
   LPC
-- [`PowerCepstrum`](https://humlab-speech.github.io/pladdrr/reference/PowerCepstrum.md)
+- [`PowerCepstrum()`](https://humlab-speech.github.io/pladdrr/reference/PowerCepstrum.md)
   : PowerCepstrum
 - [`PowerCepstrogram()`](https://humlab-speech.github.io/pladdrr/reference/PowerCepstrogram.md)
   : PowerCepstrogram
@@ -377,8 +379,10 @@ Parametric synthesis and articulatory models.
 - [`KlattGrid()`](https://humlab-speech.github.io/pladdrr/reference/KlattGrid.md)
   : Create a KlattGrid object
 - [`klattgrid_create_example()`](https://humlab-speech.github.io/pladdrr/reference/klattgrid_create_example.md)
+  [`KlattGrid_createExample()`](https://humlab-speech.github.io/pladdrr/reference/klattgrid_create_example.md)
   : Create example KlattGrid
 - [`klattgrid_create_from_vowel()`](https://humlab-speech.github.io/pladdrr/reference/klattgrid_create_from_vowel.md)
+  [`KlattGrid_createFromVowel()`](https://humlab-speech.github.io/pladdrr/reference/klattgrid_create_from_vowel.md)
   : Create KlattGrid from vowel parameters
 - [`VocalTract()`](https://humlab-speech.github.io/pladdrr/reference/VocalTract.md)
   : VocalTract
@@ -509,7 +513,7 @@ Containers and tiers that the analysers return.
   : Electroglottogram
 - [`electroglottogram_create()`](https://humlab-speech.github.io/pladdrr/reference/electroglottogram_create.md)
   : Create an Electroglottogram object
-- [`PraatMatrix`](https://humlab-speech.github.io/pladdrr/reference/PraatMatrix.md)
+- [`PraatMatrix()`](https://humlab-speech.github.io/pladdrr/reference/PraatMatrix.md)
   : Praat Matrix Object (PraatMatrix)
 - [`matrix_create()`](https://humlab-speech.github.io/pladdrr/reference/matrix_create.md)
   : Create a Praat Matrix with full parameters
@@ -758,6 +762,7 @@ as.data.frame, as.matrix, print and summary methods for pladdrr objects.
 - [`is_fast_access()`](https://humlab-speech.github.io/pladdrr/reference/is_fast_access.md)
   : Check if Vector is a Fast-Access Vector
 - [`is_fast_vector()`](https://humlab-speech.github.io/pladdrr/reference/is_fast_vector.md)
+  [`is_zerocopy_vector()`](https://humlab-speech.github.io/pladdrr/reference/is_fast_vector.md)
   : Check if Vector is a Fast-Access Vector
 
 ## Internal and development

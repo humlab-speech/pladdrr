@@ -8,7 +8,7 @@ Tests whether a numeric vector was created by
 ``` r
 is_fast_vector(x)
 
-# Deprecated: use is_fast_vector() instead
+is_zerocopy_vector(x)
 ```
 
 ## Arguments

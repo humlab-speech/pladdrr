@@ -6,6 +6,20 @@ from the filter (vocal tract, high quefrency). Created from a Spectrum
 or extracted from a PowerCepstrogram at a specific time. The primary
 voice quality metric from this object is CPP (Cepstral Peak Prominence).
 
+## Usage
+
+``` r
+PowerCepstrum(.xptr = NULL)
+```
+
+## Arguments
+
+- .xptr:
+
+  External pointer to a Praat PowerCepstrum. PowerCepstrum objects are
+  normally created with `spectrum$to_power_cepstrum()` or with
+  `powercepstrogram$get_power_cepstrum_at_time(time)`.
+
 ## Value
 
 A PowerCepstrum object.
