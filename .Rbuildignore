@@ -333,3 +333,4 @@ manual_.*\.cpp$
 ^src/praat\.github\.io/sys/Ui\.cpp$
 ^src/praat\.github\.io/sys/UiFile\.cpp$
 ^src/praat\.github\.io/sys/UiPause\.cpp$
+^.*\.dmg$
